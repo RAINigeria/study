@@ -1,0 +1,11 @@
+.custom-p .bullet-1 ul{
+    list-style-type: disc;
+    margin: 20px 0;
+    padding: 0;
+  }
+ 
+  
+  .custom-p .li1 li{
+    margin-bottom: 8px;
+  list-style-position: inside;
+  }
