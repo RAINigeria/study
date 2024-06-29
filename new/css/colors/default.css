@@ -40,7 +40,7 @@
 .timeline-page .timeline-item .duration-right:after,
 .swiper-slider-hero .swiper-container .swiper-button-prev:hover,
 .swiper-slider-hero .swiper-container .swiper-button-next:hover {
-    background-color: #2f55d4 !important;
+    background-color: #d3aa3c !important;
 }
 
 .text-primary,
@@ -95,7 +95,7 @@
 .dropdown-primary .dropdown-menu .dropdown-item:active, 
 .dropdown-primary .dropdown-menu .dropdown-item.focus, 
 .dropdown-primary .dropdown-menu .dropdown-item:focus {
-    color: #2f55d4 !important;
+    color: #d3aa3c;
 }
 
 .btn-primary,
@@ -181,7 +181,7 @@
 
 a.text-primary:hover, 
 a.text-primary:focus {
-    color: #284bc1 !important;
+    color: #d6a937;
 }
 
 .social-icon li a:hover .fea-social {
@@ -212,7 +212,8 @@ a.text-primary:focus {
 .saas-feature-shape-right:after,
 .social-feature-left:after,
 .social-feature-right:after {
-    background: rgba(47, 85, 212, 0.1);
+    background: #d3aa3c;
+    opacity: 0.8;
 }
 
 .features:hover .image:before {
@@ -224,7 +225,7 @@ a.text-primary:focus {
 }
 
 .owl-theme .owl-dots .owl-dot span {
-    background: rgba(47, 85, 212, 0.5) !important;
+    background: #d3aa3c; !important;
 }
 
 .play-icon i,
@@ -243,7 +244,7 @@ a.text-primary:focus {
 
 .classic-app-image .bg-app-shape:after,
 .classic-saas-image .bg-saas-shape:after {
-    box-shadow: 0 0 40px rgba(47, 85, 212, 0.5);
+    box-shadow: 0 0 40px rgba(47, 85, 212, 0.5) !important;
 }
 
 .app-feature-shape-right:after,

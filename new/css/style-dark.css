@@ -50,7 +50,7 @@
 }
 
 .text-primary {
-  color: #2f55d4 !important;
+  color: #d3aa3c;
 }
 
 a {
@@ -59,7 +59,7 @@ a {
 }
 
 a.text-primary:hover, a.text-primary:focus {
-  color: #284bc1 !important;
+  color: #d3aa3c;
 }
 
 .bg-secondary {
@@ -4895,11 +4895,11 @@ a.text-white:hover, a.text-white:focus {
 }
 
 .text-primary {
-  color: #2f55d4 !important;
+  color: #d3aa3c;
 }
 
 a.text-primary:hover, a.text-primary:focus {
-  color: #284bc1 !important;
+  color: #d3aa3c;
 }
 
 .bg-secondary {
