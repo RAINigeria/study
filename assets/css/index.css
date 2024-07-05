@@ -66,7 +66,8 @@ header, nav, section, article, aside, footer, hgroup {
   box-sizing: border-box;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Rubik+Maps&display=swap');
+
+@import url("https://fonts.googleapis.com/css?family=Nunito:300,400,600,700&display=swap");
 
 
 html, body {
