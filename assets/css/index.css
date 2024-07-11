@@ -67,12 +67,12 @@ header, nav, section, article, aside, footer, hgroup {
 }
 
 
-@import url("https://fonts.googleapis.com/css?family=Nunito:300,400,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700&display=swap");
 
 
 html, body {
   text-size-adjust: none;
-  font-family: 'Montserrat';
+  font-family: 'Nunito';
   font-weight: 400;
   background-color: #fff;
   -ms-text-size-adjust: 100%;
@@ -113,7 +113,7 @@ global styles
 html,
 body {
   background: #fff;
-  font-family: 'Montserrat';
+  font-family: 'Nunito';
 }
 
 ::selection {
