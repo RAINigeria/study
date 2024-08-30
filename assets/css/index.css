@@ -66,12 +66,13 @@ header, nav, section, article, aside, footer, hgroup {
   box-sizing: border-box;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Rubik+Maps&display=swap');
+
+@import url("https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700&display=swap");
 
 
 html, body {
   text-size-adjust: none;
-  font-family: 'Montserrat';
+  font-family: 'Nunito';
   font-weight: 400;
   background-color: #fff;
   -ms-text-size-adjust: 100%;
@@ -112,7 +113,7 @@ global styles
 html,
 body {
   background: #fff;
-  font-family: 'Montserrat';
+  font-family: 'Nunito';
 }
 
 ::selection {
