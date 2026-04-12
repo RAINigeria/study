@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EKF · SLAM · Sensor Fusion · IPS — Complete Engineering Tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Lora:ital,wght@0,400;0,500;1,400&family=Source+Code+Pro:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --bg2: #ede8df;
+  --surface: #ffffff;
+  --border: #d4c9b5;
+  --border-strong: #b8a990;
+  --ink: #1a1410;
+  --ink2: #3d3328;
+  --ink-light: #7a6e5f;
+  --teal: #0f6b6b;
+  --teal-light: #e0f0f0;
+  --amber: #c07020;
+  --amber-light: #fdf3e0;
+  --red: #a02020;
+  --green: #1a6b1a;
+  --green-light: #e5f5e5;
+  --heading: 'Playfair Display', serif;
+  --body: 'Lora', serif;
+  --sans: 'DM Sans', sans-serif;
+  --mono: 'Source Code Pro', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* Paper texture overlay */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:1000;
+  opacity:0.4;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position:fixed;
+  left:0; top:0; bottom:0;
+  width:270px;
+  background: var(--surface);
+  border-right: 2px solid var(--border);
+  overflow-y:auto;
+  z-index:100;
+}
+
+.sidebar-logo {
+  padding: 28px 24px 22px;
+  border-bottom: 2px solid var(--border);
+}
+
+.sidebar-logo .brand {
+  font-family: var(--heading);
+  font-size: 26px;
+  color: var(--teal);
+  line-height: 1.1;
+}
+
+.sidebar-logo .tagline {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-light);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+.nav-group {
+  padding: 14px 0 6px;
+  border-bottom: 1px solid var(--bg2);
+}
+
+.nav-group-title {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--amber);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0 24px 8px;
+}
+
+.nav-link {
+  display: block;
+  padding: 6px 24px 6px 28px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--ink-light);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+
+.nav-link:hover { color: var(--teal); border-left-color: var(--teal); background: var(--teal-light); }
+.nav-link.active { color: var(--teal); border-left-color: var(--teal); font-weight: 500; }
+
+/* MAIN */
+.main { margin-left: 270px; }
+
+/* HERO */
+.hero {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 70px 64px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 80% 50%, rgba(15,107,107,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(192,112,32,0.2) 0%, transparent 50%);
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: var(--heading);
+  font-size: 62px;
+  line-height: 1.0;
+  color: #f5f0e8;
+  margin-bottom: 22px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: #7dcfcf;
+}
+
+.hero-desc {
+  font-family: var(--sans);
+  font-size: 15px;
+  color: #b8b0a0;
+  max-width: 600px;
+  line-height: 1.7;
+}
+
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 6px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: #c8c0b0;
+  border-radius: 2px;
+}
+
+/* CONTENT */
+.content { padding: 0 64px 80px; }
+
+/* SECTIONS */
+.section {
+  padding: 56px 0 24px;
+  border-bottom: 1px solid var(--border);
+  max-width: 860px;
+}
+.section:last-child { border-bottom: none; }
+
+.section-label {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+
+.section h2 {
+  font-family: var(--heading);
+  font-size: 42px;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.section h3 {
+  font-family: var(--heading);
+  font-size: 26px;
+  color: var(--ink);
+  margin: 36px 0 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section h4 {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin: 26px 0 10px;
+}
+
+p { margin-bottom: 16px; color: var(--ink2); }
+strong { color: var(--ink); font-weight: 600; font-family: var(--sans); }
+em { color: var(--teal); font-style: italic; }
+
+/* CALLOUTS */
+.note {
+  background: var(--teal-light);
+  border: 1px solid #a0d0d0;
+  border-left: 4px solid var(--teal);
+  padding: 18px 22px;
+  margin: 22px 0;
+  border-radius: 0 4px 4px 0;
+}
+.note.warn {
+  background: var(--amber-light);
+  border-color: #e0c090;
+  border-left-color: var(--amber);
+}
+.note.key {
+  background: var(--green-light);
+  border-color: #a0d0a0;
+  border-left-color: var(--green);
+}
+.note-title {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.note.warn .note-title { color: var(--amber); }
+.note.key .note-title { color: var(--green); }
+.note p { margin: 0; font-size: 14px; }
+
+/* CODE */
+.code-wrap {
+  background: #1a1410;
+  border: 1px solid #3d3328;
+  border-radius: 4px;
+  margin: 20px 0;
+  overflow: hidden;
+}
+.code-header {
+  background: #2a2018;
+  padding: 9px 18px;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: #7a6e5f;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #3d3328;
+}
+.code-lang { color: var(--amber); font-weight: 500; }
+pre {
+  padding: 20px 22px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.75;
+  color: #c8b89a;
+}
+.ck { color: #7dcfcf; }   /* keyword */
+.cf { color: #e8a050; }   /* function */
+.cs { color: #a8d870; }   /* string */
+.cc { color: #6e7f6e; font-style: italic; } /* comment */
+.cn { color: #d8a0d8; }   /* number */
+.co { color: #c8b89a; }   /* default */
+
+/* MATH */
+.math {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--teal);
+  padding: 18px 22px;
+  margin: 18px 0;
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--ink);
+  overflow-x: auto;
+  border-radius: 0 4px 4px 0;
+}
+.math .label {
+  font-family: var(--sans);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+.math .var { color: var(--teal); font-weight: 600; }
+.math .comment { color: var(--ink-light); font-style: italic; }
+
+/* DIAGRAM */
+.diagram {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 28px;
+  margin: 22px 0;
+  text-align: center;
+  border-radius: 4px;
+}
+.diagram-cap {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--ink-light);
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; margin: 18px 0; }
+table { width:100%; border-collapse: collapse; font-family: var(--sans); font-size: 13px; }
+th {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink2);
+  vertical-align: top;
+}
+tr:nth-child(even) td { background: var(--bg2); }
+
+/* COMPARE BOXES */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+.compare-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+  border-radius: 4px;
+}
+.compare-box.good { border-top: 3px solid var(--green); }
+.compare-box.bad  { border-top: 3px solid var(--red); }
+.compare-title {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.compare-box.good .compare-title { color: var(--green); }
+.compare-box.bad  .compare-title { color: var(--red); }
+.compare-box p { font-size: 13px; margin-bottom: 8px; }
+.compare-box p:last-child { margin: 0; }
+
+/* STEP LIST */
+.steps { margin: 18px 0; }
+.step { display:flex; gap:18px; padding:16px 0; border-bottom:1px solid var(--bg2); }
+.step:last-child { border-bottom: none; }
+.step-n {
+  font-family: var(--heading);
+  font-size: 38px;
+  color: var(--border);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 44px;
+}
+.step-body h4 { margin: 2px 0 6px; font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: 0.5px; text-transform: uppercase; }
+.step-body p { margin: 0; font-size: 14px; }
+
+/* PIPELINE */
+.pipe {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 22px 0;
+}
+.pipe-box {
+  flex: 1;
+  min-width: 100px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 13px 16px;
+  text-align: center;
+}
+.pipe-box:first-child { border-radius: 4px 0 0 4px; }
+.pipe-box:last-child  { border-radius: 0 4px 4px 0; }
+.pipe-box.hi  { border-color: var(--teal); background: var(--teal-light); }
+.pipe-box.hi2 { border-color: var(--amber); background: var(--amber-light); }
+.pipe-title { font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--ink); }
+.pipe-sub   { font-family: var(--sans); font-size: 11px; color: var(--ink-light); margin-top: 3px; }
+.pipe-arr   { display:flex; align-items:center; padding: 0 4px; color: var(--border-strong); font-size: 20px; }
+
+/* FOOTER */
+.footer {
+  margin-left: 270px;
+  padding: 24px 64px;
+  border-top: 2px solid var(--border);
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--ink-light);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* BACK TOP */
+.top-btn {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 16px;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: background 0.2s;
+}
+.top-btn:hover { background: var(--teal); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main,.footer{margin-left:0;}
+  .content,.hero{padding-left:24px;padding-right:24px;}
+  .hero h1{font-size:40px;}
+  .compare{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">EKF &<br>SLAM</div>
+    <div class="tagline">Complete Engineering Guide</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-title">01 · Foundation</div>
+    <a href="#why-ekf" class="nav-link">Why Not Standard KF?</a>
+    <a href="#nonlinearity" class="nav-link">Nonlinearity Explained</a>
+    <a href="#linearisation" class="nav-link">Linearisation & Jacobians</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">02 · Extended Kalman Filter</div>
+    <a href="#ekf-cycle" class="nav-link">The EKF Cycle</a>
+    <a href="#ekf-equations" class="nav-link">EKF Equations</a>
+    <a href="#ekf-code" class="nav-link">EKF in Python</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">03 · Sensor Fusion</div>
+    <a href="#what-to-fuse" class="nav-link">What to Fuse With What</a>
+    <a href="#odometry" class="nav-link">Odometry & Wheel Encoders</a>
+    <a href="#fusion-ekf" class="nav-link">Fusing in EKF</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">04 · SLAM</div>
+    <a href="#slam-problem" class="nav-link">The SLAM Problem</a>
+    <a href="#ekf-slam" class="nav-link">EKF-SLAM State Vector</a>
+    <a href="#slam-pipeline" class="nav-link">Full SLAM Pipeline</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">05 · LiDAR</div>
+    <a href="#lidar-how" class="nav-link">How LiDAR Works</a>
+    <a href="#point-cloud" class="nav-link">Point Cloud Construction</a>
+    <a href="#icp" class="nav-link">ICP Scan Matching</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">06 · Computer Vision</div>
+    <a href="#cv-views" class="nav-link">Plan View vs Perspective</a>
+    <a href="#cv-position" class="nav-link">Positioning from Vision</a>
+    <a href="#visual-slam" class="nav-link">Visual SLAM (ORB-SLAM)</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-group-title">07 · Indoor Positioning</div>
+    <a href="#ips-intro" class="nav-link">WiFi IPS Concepts</a>
+    <a href="#rssi" class="nav-link">RSSI & Trilateration</a>
+    <a href="#fingerprinting" class="nav-link">Fingerprinting Method</a>
+    <a href="#ips-code" class="nav-link">Python IPS Example</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-content">
+    <div class="hero-eyebrow">Robotics · State Estimation · Localisation</div>
+    <h1>Extended Kalman,<br><em>SLAM</em> & Indoor<br>Positioning</h1>
+    <p class="hero-desc">
+      A complete guide for the curious engineer — from why the standard Kalman filter breaks on robots,
+      to building full SLAM pipelines with LiDAR and computer vision, to locating yourself indoors with WiFi.
+      Written for novices, uncompromising on depth.
+    </p>
+    <div class="hero-pills">
+      <span class="pill">EKF</span>
+      <span class="pill">Sensor Fusion</span>
+      <span class="pill">SLAM</span>
+      <span class="pill">LiDAR</span>
+      <span class="pill">ORB-SLAM</span>
+      <span class="pill">WiFi IPS</span>
+      <span class="pill">Python Code</span>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ============================================================ -->
+<!-- WHY NOT KF -->
+<!-- ============================================================ -->
+<div class="section" id="why-ekf">
+  <div class="section-label">01 · Foundation</div>
+  <h2>Why Can't We Use the Standard Kalman Filter for SLAM?</h2>
+
+  <p>Before answering this, let's be clear about what the standard (linear) Kalman filter requires. It is the optimal estimator when two conditions hold: <strong>the motion model is linear</strong> (the robot's next state is a linear function of its current state), and <strong>the measurement model is linear</strong> (what the sensor reads is a linear function of the state). In those conditions, the Kalman filter gives you the best possible estimate — no algorithm can do better.</p>
+
+  <p>A robot navigating in 2D has a state of [x, y, heading θ]. Now, if the robot drives forward a distance <em>d</em>, where does it end up?</p>
+
+  <div class="math">
+    <div class="label">Robot motion — what it actually looks like</div>
+    x_new = x + d · <span class="var">cos(θ)</span>
+y_new = y + d · <span class="var">sin(θ)</span>
+θ_new = θ + Δθ
+  </div>
+
+  <p>The problem is the <strong>cos(θ) and sin(θ)</strong> terms. These are not linear functions of θ. You cannot write this as a matrix multiplication <em>F × state</em> — which is exactly what the standard Kalman filter requires. The moment your robot turns and then drives forward, you have a nonlinear system, and the standard Kalman filter gives you wrong answers.</p>
+
+  <div class="compare">
+    <div class="compare-box bad">
+      <div class="compare-title">Standard KF Assumes</div>
+      <p>next_state = <strong>F</strong> × current_state + noise</p>
+      <p>F is a constant matrix. Works only when motion is purely linear — e.g. a train on a straight track.</p>
+    </div>
+    <div class="compare-box good">
+      <div class="compare-title">Reality in Robotics</div>
+      <p>next_state = <strong>f(</strong>current_state, control<strong>)</strong> + noise</p>
+      <p>f is a nonlinear function. Turning, driving in curves, any real robot motion.</p>
+    </div>
+  </div>
+
+  <p>Similarly for measurements — if your sensor is a LiDAR measuring range and bearing to a landmark, the measurement equation involves <strong>atan2()</strong> and <strong>sqrt()</strong> — both nonlinear. Again, the standard KF cannot handle this.</p>
+
+  <div class="note">
+    <div class="note-title">Simple Analogy</div>
+    <p>Imagine predicting where a ball thrown at an angle will land. If you assume the ball moves in a straight line (linear), your prediction is wildly wrong — it actually follows a parabola (nonlinear gravity). The Extended Kalman Filter handles the parabola by approximating it as a straight line locally, at each timestep.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- NONLINEARITY -->
+<!-- ============================================================ -->
+<div class="section" id="nonlinearity">
+  <div class="section-label">01 · Foundation</div>
+  <h2>Understanding Nonlinearity</h2>
+
+  <p>A function is <strong>linear</strong> if it satisfies: f(a + b) = f(a) + f(b), and f(k·a) = k·f(a). Doubling the input doubles the output. Visually, it's a straight line through the origin.</p>
+
+  <p><strong>cos(θ)</strong> is very obviously not linear. cos(0) = 1, cos(π/2) = 0, cos(π) = −1. The output does not scale proportionally with the input. It curves. And this curvature is exactly what breaks the Kalman filter's assumptions.</p>
+
+  <div class="diagram">
+    <div class="diagram-cap">Why nonlinearity breaks the KF — the Gaussian transformation problem</div>
+    <svg width="640" height="200" viewBox="0 0 640 200">
+      <!-- Input Gaussian -->
+      <text x="100" y="20" fill="#7a6e5f" font-size="11" text-anchor="middle" font-family="DM Sans" letter-spacing="1">INPUT (θ uncertain)</text>
+      <path d="M 30,160 Q 60,160 70,130 Q 80,90 100,70 Q 120,90 130,130 Q 140,160 170,160" fill="rgba(15,107,107,0.15)" stroke="#0f6b6b" stroke-width="2"/>
+      <text x="100" y="180" fill="#0f6b6b" font-size="11" text-anchor="middle" font-family="Source Code Pro">N(μ_θ, σ_θ²)</text>
+
+      <!-- Arrow + function label -->
+      <line x1="190" y1="115" x2="280" y2="115" stroke="#b8a990" stroke-width="1.5"/>
+      <polygon points="280,111 290,115 280,119" fill="#b8a990"/>
+      <text x="235" y="108" fill="#c07020" font-size="12" text-anchor="middle" font-family="Source Code Pro">f(θ) = cos(θ)</text>
+      <text x="235" y="130" fill="#7a6e5f" font-size="10" text-anchor="middle" font-family="DM Sans">NONLINEAR</text>
+
+      <!-- Output: distorted, non-Gaussian -->
+      <text x="460" y="20" fill="#7a6e5f" font-size="11" text-anchor="middle" font-family="DM Sans" letter-spacing="1">OUTPUT (cos(θ) uncertain)</text>
+      <text x="460" y="180" fill="#a02020" font-size="11" text-anchor="middle" font-family="Source Code Pro">skewed, non-Gaussian!</text>
+      <!-- Skewed shape -->
+      <path d="M 310,160 Q 340,160 360,145 Q 380,125 400,90 Q 415,70 435,75 Q 455,80 470,100 Q 490,130 510,155 Q 530,165 560,160"
+            fill="rgba(160,32,32,0.12)" stroke="#a02020" stroke-width="2"/>
+
+      <!-- EKF approximation arrow -->
+      <line x1="580" y1="115" x2="630" y2="115" stroke="#0f6b6b" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="605" y="108" fill="#0f6b6b" font-size="10" text-anchor="middle" font-family="DM Sans">EKF</text>
+      <text x="605" y="130" fill="#0f6b6b" font-size="10" text-anchor="middle" font-family="DM Sans">approx</text>
+    </svg>
+  </div>
+
+  <p>The core issue: the Kalman filter represents uncertainty as a <strong>Gaussian (bell curve)</strong>. When you pass a Gaussian through a linear function, you get another Gaussian — the filter can track it perfectly. But when you pass it through a <em>nonlinear</em> function like cos(θ), the output is no longer Gaussian — it becomes skewed and deformed. The KF's entire mathematical machinery assumes Gaussians throughout, so it breaks down.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- LINEARISATION -->
+<!-- ============================================================ -->
+<div class="section" id="linearisation">
+  <div class="section-label">01 · Foundation</div>
+  <h2>Linearisation & Jacobians</h2>
+
+  <p>The EKF's solution is elegant: instead of giving up on Gaussians, it <strong>locally approximates the nonlinear function as linear</strong> at each timestep. If you zoom in on any smooth curve near a specific point, it looks like a straight line. That's a first-order Taylor expansion.</p>
+
+  <div class="math">
+    <div class="label">First-Order Taylor Expansion — Linearise f(x) around current estimate x̂</div>
+f(x) ≈ f(<span class="var">x̂</span>) + <span class="var">∂f/∂x</span>|_{x=x̂} · (x − <span class="var">x̂</span>)
+
+The term  <span class="var">∂f/∂x</span>|_{x=x̂}  is the <span class="var">Jacobian matrix</span> of f evaluated at x̂.
+It is a matrix of all partial derivatives of f with respect to all state variables.
+  </div>
+
+  <p>The <strong>Jacobian</strong> is just the slope of the function at the current operating point. For a 1D function it's the derivative. For a vector function (which is what we have — robot state has multiple variables), it's a matrix of all partial derivatives.</p>
+
+  <div class="note">
+    <div class="note-title">Key Intuition</div>
+    <p>Think of driving on a curved road. At any given moment, you're travelling in a straight line — locally. The EKF does the same thing mathematically: at each timestep, it finds the slope of the curve at the current estimate and pretends the function is a straight line with that slope. It then runs the standard KF on this linear approximation. In the next timestep, it recalculates the slope at the new estimate. This process is called <strong>linearisation at the operating point</strong>.</p>
+  </div>
+
+  <h3>Jacobian Example — Robot Motion Model</h3>
+
+  <div class="math">
+    <div class="label">Robot state: [x, y, θ] — motion model f(state, control)</div>
+f₁ = x + d·<span class="var">cos(θ)</span>
+f₂ = y + d·<span class="var">sin(θ)</span>
+f₃ = θ + Δθ
+
+Jacobian F = ∂f/∂state:
+
+F = | ∂f₁/∂x  ∂f₁/∂y  ∂f₁/∂θ |   =  | 1  0  <span class="var">−d·sin(θ)</span> |
+    | ∂f₂/∂x  ∂f₂/∂y  ∂f₂/∂θ |      | 0  1   <span class="var">d·cos(θ)</span>  |
+    | ∂f₃/∂x  ∂f₃/∂y  ∂f₃/∂θ |      | 0  0      1      |
+
+<span class="comment">// This 3×3 matrix is evaluated at the current θ estimate each timestep.</span>
+<span class="comment">// It replaces the constant F matrix of the standard KF.</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EKF CYCLE -->
+<!-- ============================================================ -->
+<div class="section" id="ekf-cycle">
+  <div class="section-label">02 · Extended Kalman Filter</div>
+  <h2>The EKF Cycle</h2>
+
+  <p>The EKF operates in a two-step cycle, just like the standard KF, repeated at every timestep:</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h4>Predict (Motion Update)</h4>
+        <p>Use the robot's <strong>motion model</strong> to predict where the robot is now, based on where it was and what command was given (e.g. "drive forward 10cm, turn 5°"). The prediction is uncertain because motors slip, wheels skid, and the model is imperfect. The uncertainty (covariance) grows during this step — the robot becomes <em>less</em> certain of its position.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h4>Update (Measurement Update)</h4>
+        <p>The robot <strong>observes</strong> something — a landmark via LiDAR, a feature in a camera image, a GPS reading. It compares what it <em>expected</em> to see (based on the predicted state) with what it <em>actually</em> saw. The difference is the <strong>innovation</strong> (or residual). The EKF uses this innovation to correct the prediction, weighted by how much it trusts the measurement versus the motion model. Uncertainty shrinks during this step.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram">
+    <div class="diagram-cap">EKF Predict → Update cycle</div>
+    <svg width="600" height="160" viewBox="0 0 600 160">
+      <!-- Prior -->
+      <rect x="10" y="50" width="110" height="60" fill="white" stroke="#d4c9b5" rx="4"/>
+      <text x="65" y="74" fill="#0f6b6b" font-size="11" text-anchor="middle" font-family="DM Sans" font-weight="600">PRIOR</text>
+      <text x="65" y="91" fill="#7a6e5f" font-size="10" text-anchor="middle" font-family="Source Code Pro">x̂, P</text>
+      <text x="65" y="106" fill="#7a6e5f" font-size="10" text-anchor="middle" font-family="DM Sans">State + Covariance</text>
+
+      <!-- Arrow + motion input -->
+      <line x1="120" y1="80" x2="185" y2="80" stroke="#b8a990" stroke-width="1.5"/>
+      <polygon points="185,76 195,80 185,84" fill="#b8a990"/>
+      <text x="152" y="72" fill="#c07020" font-size="10" text-anchor="middle" font-family="DM Sans">control u</text>
+
+      <!-- Predict box -->
+      <rect x="195" y="40" width="110" height="80" fill="#e0f0f0" stroke="#0f6b6b" stroke-width="1.5" rx="4"/>
+      <text x="250" y="64" fill="#0f6b6b" font-size="11" text-anchor="middle" font-family="DM Sans" font-weight="600">PREDICT</text>
+      <text x="250" y="82" fill="#1a1410" font-size="10" text-anchor="middle" font-family="Source Code Pro">x̂⁻ = f(x̂, u)</text>
+      <text x="250" y="98" fill="#1a1410" font-size="10" text-anchor="middle" font-family="Source Code Pro">P⁻ = F·P·Fᵀ+Q</text>
+      <text x="250" y="112" fill="#7a6e5f" font-size="9" text-anchor="middle" font-family="DM Sans">uncertainty grows ↑</text>
+
+      <!-- Arrow + sensor input -->
+      <line x1="305" y1="80" x2="370" y2="80" stroke="#b8a990" stroke-width="1.5"/>
+      <polygon points="370,76 380,80 370,84" fill="#b8a990"/>
+      <text x="342" y="72" fill="#c07020" font-size="10" text-anchor="middle" font-family="DM Sans">sensor z</text>
+
+      <!-- Update box -->
+      <rect x="380" y="40" width="110" height="80" fill="#fdf3e0" stroke="#c07020" stroke-width="1.5" rx="4"/>
+      <text x="435" y="64" fill="#c07020" font-size="11" text-anchor="middle" font-family="DM Sans" font-weight="600">UPDATE</text>
+      <text x="435" y="82" fill="#1a1410" font-size="10" text-anchor="middle" font-family="Source Code Pro">K = P⁻Hᵀ(HP⁻Hᵀ+R)⁻¹</text>
+      <text x="435" y="98" fill="#1a1410" font-size="10" text-anchor="middle" font-family="Source Code Pro">x̂ = x̂⁻ + K(z−h(x̂⁻))</text>
+      <text x="435" y="112" fill="#7a6e5f" font-size="9" text-anchor="middle" font-family="DM Sans">uncertainty shrinks ↓</text>
+
+      <!-- Arrow back to posterior -->
+      <line x1="490" y1="80" x2="555" y2="80" stroke="#b8a990" stroke-width="1.5"/>
+      <polygon points="555,76 565,80 555,84" fill="#b8a990"/>
+
+      <!-- Posterior -->
+      <rect x="565" y="50" width="30" height="60" fill="white" stroke="#d4c9b5" rx="4"/>
+      <text x="580" y="80" fill="#0f6b6b" font-size="9" text-anchor="middle" font-family="DM Sans" writing-mode="vertical-lr">POSTERIOR</text>
+
+      <!-- Feedback arrow (loop) -->
+      <path d="M 580 110 Q 580 145 300 145 Q 20 145 20 110" fill="none" stroke="#d4c9b5" stroke-width="1" stroke-dasharray="5,3"/>
+      <polygon points="20,106 24,116 16,116" fill="#d4c9b5"/>
+      <text x="300" y="158" fill="#7a6e5f" font-size="10" text-anchor="middle" font-family="DM Sans">repeat every timestep</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EKF EQUATIONS -->
+<!-- ============================================================ -->
+<div class="section" id="ekf-equations">
+  <div class="section-label">02 · Extended Kalman Filter</div>
+  <h2>EKF Equations in Full</h2>
+
+  <p>These are the six equations of the EKF. Every implementation of EKF — for robots, aircraft, SLAM, anything — uses exactly these equations. The only thing that changes is the specific form of <em>f</em>, <em>h</em>, and their Jacobians <em>F</em> and <em>H</em>.</p>
+
+  <div class="math">
+    <div class="label">PREDICTION STEP — using motion model f and control input u</div>
+<span class="var">x̂⁻</span> = f(x̂, u)                     <span class="comment">// predicted state mean — apply motion model</span>
+<span class="var">P⁻</span>  = F · P · Fᵀ + Q              <span class="comment">// predicted covariance — F is Jacobian of f, Q is process noise</span>
+  </div>
+
+  <div class="math">
+    <div class="label">UPDATE STEP — using measurement model h and sensor reading z</div>
+<span class="var">ŷ</span>   = z − h(x̂⁻)                  <span class="comment">// innovation: what we measured minus what we expected to measure</span>
+<span class="var">S</span>   = H · P⁻ · Hᵀ + R            <span class="comment">// innovation covariance — H is Jacobian of h, R is sensor noise</span>
+<span class="var">K</span>   = P⁻ · Hᵀ · S⁻¹             <span class="comment">// Kalman gain — how much to trust the measurement vs prediction</span>
+<span class="var">x̂</span>   = x̂⁻ + K · ŷ                 <span class="comment">// updated state estimate</span>
+<span class="var">P</span>   = (I − K · H) · P⁻           <span class="comment">// updated covariance — uncertainty reduced</span>
+  </div>
+
+  <p>A few things to note: the <strong>Kalman gain K</strong> is the key weighting factor. If the sensor noise R is large (sensor is unreliable), K is small — the correction is small, trust the prediction more. If the prediction covariance P⁻ is large (motion model is unreliable), K is large — trust the sensor more. It automatically balances the two sources of information.</p>
+
+  <div class="note key">
+    <div class="note-title">The Innovation ŷ</div>
+    <p>The innovation <strong>ŷ = z − h(x̂⁻)</strong> is the difference between what the sensor actually measured (z) and what the filter expected it to measure given the predicted state. If this is consistently large, either your sensor model h() is wrong, your motion model is wrong, or your noise parameters Q and R are wrong. Monitoring the innovation is the primary tool for debugging EKF implementations.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EKF CODE -->
+<!-- ============================================================ -->
+<div class="section" id="ekf-code">
+  <div class="section-label">02 · Extended Kalman Filter</div>
+  <h2>EKF in Python</h2>
+
+  <p>Here is a complete, minimal EKF implementation for a 2D robot with a range/bearing sensor observing known landmarks.</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>EKF 2D Robot Localisation — full implementation</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre><span class="ck">import</span> numpy <span class="ck">as</span> np
+
+<span class="cc"># ─────────────────────────────────────────────────────────
+#  EKF for 2D robot: state = [x, y, theta]
+#  Control: [distance, delta_theta]
+#  Sensors: range & bearing to known landmarks
+# ─────────────────────────────────────────────────────────</span>
+
+<span class="ck">class</span> <span class="cf">EKF2DRobot</span>:
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, init_state, init_cov, Q, R):
+        <span class="co">"""
+        init_state : [x, y, theta] initial estimate
+        init_cov   : 3x3 initial covariance matrix
+        Q          : 3x3 process noise covariance (motion uncertainty)
+        R          : 2x2 measurement noise covariance (sensor uncertainty)
+        """</span>
+        self.x = np.array(init_state, dtype=float)  <span class="cc"># state mean</span>
+        self.P = np.array(init_cov, dtype=float)    <span class="cc"># covariance</span>
+        self.Q = np.array(Q, dtype=float)
+        self.R = np.array(R, dtype=float)
+
+    <span class="cc"># ──── MOTION MODEL ────</span>
+    <span class="ck">def</span> <span class="cf">motion_model</span>(self, state, u):
+        <span class="co">"""Nonlinear motion model f(x, u)"""</span>
+        x, y, theta = state
+        d, dtheta   = u
+        <span class="ck">return</span> np.array([
+            x + d * np.cos(theta),
+            y + d * np.sin(theta),
+            theta + dtheta
+        ])
+
+    <span class="ck">def</span> <span class="cf">motion_jacobian</span>(self, state, u):
+        <span class="co">"""Jacobian F = ∂f/∂state evaluated at current state"""</span>
+        _, _, theta = state
+        d, _        = u
+        F = np.array([
+            [<span class="cn">1</span>, <span class="cn">0</span>, -d * np.sin(theta)],
+            [<span class="cn">0</span>, <span class="cn">1</span>,  d * np.cos(theta)],
+            [<span class="cn">0</span>, <span class="cn">0</span>,  <span class="cn">1</span>             ]
+        ])
+        <span class="ck">return</span> F
+
+    <span class="cc"># ──── MEASUREMENT MODEL ────</span>
+    <span class="ck">def</span> <span class="cf">measurement_model</span>(self, state, landmark):
+        <span class="co">"""h(x) — expected range & bearing to landmark from state"""</span>
+        x, y, theta = state
+        lx, ly      = landmark
+        dx = lx - x
+        dy = ly - y
+        r     = np.sqrt(dx**<span class="cn">2</span> + dy**<span class="cn">2</span>)
+        phi   = np.arctan2(dy, dx) - theta  <span class="cc"># bearing relative to robot heading</span>
+        phi   = np.arctan2(np.sin(phi), np.cos(phi))  <span class="cc"># normalise to [-π, π]</span>
+        <span class="ck">return</span> np.array([r, phi])
+
+    <span class="ck">def</span> <span class="cf">measurement_jacobian</span>(self, state, landmark):
+        <span class="co">"""Jacobian H = ∂h/∂state"""</span>
+        x, y, theta = state
+        lx, ly      = landmark
+        dx  = lx - x;  dy = ly - y
+        r2  = dx**<span class="cn">2</span> + dy**<span class="cn">2</span>
+        r   = np.sqrt(r2)
+        H = np.array([
+            [-dx/r,   -dy/r,   <span class="cn">0</span>],
+            [ dy/r2,  -dx/r2, -<span class="cn">1</span>]
+        ])
+        <span class="ck">return</span> H
+
+    <span class="cc"># ──── PREDICT STEP ────</span>
+    <span class="ck">def</span> <span class="cf">predict</span>(self, u):
+        F        = self.motion_jacobian(self.x, u)
+        self.x   = self.motion_model(self.x, u)    <span class="cc"># propagate mean</span>
+        self.P   = F @ self.P @ F.T + self.Q       <span class="cc"># propagate covariance</span>
+
+    <span class="cc"># ──── UPDATE STEP ────</span>
+    <span class="ck">def</span> <span class="cf">update</span>(self, z, landmark):
+        H        = self.measurement_jacobian(self.x, landmark)
+        z_hat    = self.measurement_model(self.x, landmark) <span class="cc"># expected measurement</span>
+
+        y_innov  = z - z_hat                               <span class="cc"># innovation</span>
+        y_innov[<span class="cn">1</span>] = np.arctan2(np.sin(y_innov[<span class="cn">1</span>]),          <span class="cc"># normalise bearing</span>
+                                  np.cos(y_innov[<span class="cn">1</span>]))
+
+        S        = H @ self.P @ H.T + self.R               <span class="cc"># innovation covariance</span>
+        K        = self.P @ H.T @ np.linalg.inv(S)        <span class="cc"># Kalman gain</span>
+        self.x   = self.x + K @ y_innov                   <span class="cc"># update state</span>
+        I        = np.eye(len(self.x))
+        self.P   = (I - K @ H) @ self.P                   <span class="cc"># update covariance</span>
+        <span class="ck">return</span> y_innov, S                                  <span class="cc"># return for monitoring</span>
+
+
+<span class="cc"># ──── USAGE EXAMPLE ────</span>
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    <span class="cc"># Initialise EKF</span>
+    ekf = <span class="cf">EKF2DRobot</span>(
+        init_state = [<span class="cn">0.0</span>, <span class="cn">0.0</span>, <span class="cn">0.0</span>],
+        init_cov   = np.diag([<span class="cn">0.1</span>, <span class="cn">0.1</span>, <span class="cn">0.05</span>]),
+        Q          = np.diag([<span class="cn">0.01</span>, <span class="cn">0.01</span>, <span class="cn">0.005</span>]),  <span class="cc"># motion noise</span>
+        R          = np.diag([<span class="cn">0.05</span>, <span class="cn">0.02</span>])           <span class="cc"># sensor noise (range, bearing)</span>
+    )
+
+    landmarks = [[<span class="cn">5.0</span>, <span class="cn">3.0</span>], [<span class="cn">-2.0</span>, <span class="cn">7.0</span>], [<span class="cn">8.0</span>, <span class="cn">-1.0</span>]]
+
+    <span class="cc"># Simulate a few timesteps</span>
+    controls     = [[<span class="cn">1.0</span>, <span class="cn">0.1</span>], [<span class="cn">1.0</span>, <span class="cn">0.0</span>], [<span class="cn">0.5</span>, -<span class="cn">0.2</span>]]
+    measurements = [[<span class="cn">5.1</span>, <span class="cn">-0.62</span>], [<span class="cn">4.2</span>, <span class="cn">0.04</span>], [<span class="cn">3.9</span>, <span class="cn">0.11</span>]]
+
+    <span class="ck">for</span> i, (u, z) <span class="ck">in</span> enumerate(zip(controls, measurements)):
+        ekf.predict(u)
+        innov, S = ekf.update(z, landmarks[<span class="cn">0</span>])
+        print(<span class="cs">f"Step {i+1}: state = {ekf.x.round(3)}"</span>)
+        print(<span class="cs">f"         innovation = {innov.round(3)}"</span>)
+        print(<span class="cs">f"         position uncertainty = {np.sqrt(ekf.P[0,0]):.3f}m"</span>)
+    </pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- WHAT TO FUSE -->
+<!-- ============================================================ -->
+<div class="section" id="what-to-fuse">
+  <div class="section-label">03 · Sensor Fusion</div>
+  <h2>What to Fuse With What?</h2>
+
+  <p>This is the most common practical question: <em>"I have these sensors — which ones should I combine?"</em> The answer is always: combine sensors whose <strong>errors are complementary</strong> — where one sensor's weakness is another's strength.</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Sensor</th><th>Strength</th><th>Weakness</th><th>Best Fused With</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Wheel Odometry</strong></td>
+          <td>Smooth, high-rate, no lag, good short-term accuracy</td>
+          <td>Cumulative drift over time; slippage on rough terrain</td>
+          <td>GPS (outdoor) or LiDAR/visual (indoor)</td>
+        </tr>
+        <tr>
+          <td><strong>IMU (accelerometer + gyro)</strong></td>
+          <td>Very high rate (100–1000Hz), measures forces directly</td>
+          <td>Accelerometer bias → velocity drift → position drift</td>
+          <td>GPS (outdoor), barometer (altitude), odometry</td>
+        </tr>
+        <tr>
+          <td><strong>GPS (outdoor)</strong></td>
+          <td>Absolute position, no long-term drift</td>
+          <td>Low rate (~1–10Hz), noisy (~2–5m), fails indoors</td>
+          <td>IMU, odometry — to fill gaps and smooth</td>
+        </tr>
+        <tr>
+          <td><strong>LiDAR</strong></td>
+          <td>Precise 3D environment map, good range accuracy</td>
+          <td>No features in featureless environments; heavy compute</td>
+          <td>IMU (for motion compensation), odometry</td>
+        </tr>
+        <tr>
+          <td><strong>Camera (monocular)</strong></td>
+          <td>Rich texture, cheap, lightweight</td>
+          <td>No direct depth, scale ambiguity, fails in dark/blur</td>
+          <td>IMU (for depth scale and fast motion), LiDAR</td>
+        </tr>
+        <tr>
+          <td><strong>Camera (stereo)</strong></td>
+          <td>Direct depth from disparity, no scale ambiguity</td>
+          <td>Expensive, heavier baseline limits depth range</td>
+          <td>IMU, odometry</td>
+        </tr>
+        <tr>
+          <td><strong>WiFi RSSI</strong></td>
+          <td>Ubiquitous indoors, no extra hardware</td>
+          <td>High noise, multipath, environment changes affect it</td>
+          <td>IMU, odometry — for indoor SLAM</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <div class="note-title">Golden Rule of Sensor Fusion</div>
+    <p>You are not averaging sensors — you are <strong>trusting each sensor in proportion to how reliable it is at this moment</strong>. GPS is reliable in open sky but useless under a bridge. IMU is reliable for fast-changing orientation but terrible for slow drift. The EKF's covariance matrices Q and R encode this trust, and the Kalman gain K automatically weights the sensors appropriately.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ODOMETRY -->
+<!-- ============================================================ -->
+<div class="section" id="odometry">
+  <div class="section-label">03 · Sensor Fusion</div>
+  <h2>Odometry & Wheel Encoders</h2>
+
+  <p><strong>Odometry</strong> is dead-reckoning from wheel rotation. Each wheel has an encoder — a disc with slots that breaks a light beam as the wheel turns, generating pulses. Counting pulses tells you how far the wheel has rotated, and therefore how far the robot has moved.</p>
+
+  <div class="math">
+    <div class="label">Differential drive robot odometry — from wheel encoder ticks</div>
+ticks_left, ticks_right    <span class="comment">// raw encoder counts this timestep</span>
+
+d_left  = ticks_left  × (2π × wheel_radius) / ticks_per_revolution
+d_right = ticks_right × (2π × wheel_radius) / ticks_per_revolution
+
+d       = (d_left + d_right) / 2          <span class="comment">// forward distance</span>
+dtheta  = (d_right - d_left) / wheelbase   <span class="comment">// rotation (positive = left turn)</span>
+
+<span class="comment">// Then apply to robot pose:</span>
+x_new = x + d · cos(θ)
+y_new = y + d · sin(θ)
+θ_new = θ + dtheta
+  </div>
+
+  <h4>Why Odometry Drifts</h4>
+  <p>Every integration step accumulates error. A 1% error in wheel circumference (due to tyre pressure changes) compounded over 100m of travel gives 1m of position error. Wheel slippage on carpet, turning friction, uneven floors — all add unbounded drift over time. This is the fundamental limitation that makes sensor fusion necessary: <strong>odometry is excellent for short timescales and useless for long ones</strong>.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- FUSION EKF -->
+<!-- ============================================================ -->
+<div class="section" id="fusion-ekf">
+  <div class="section-label">03 · Sensor Fusion</div>
+  <h2>Fusing Sensors in the EKF</h2>
+
+  <p>In an EKF, each sensor provides one <strong>measurement update</strong>. You can process multiple sensors in sequence within one timestep — there's no limit. The predict step uses the motion model (odometry or IMU). Each sensor then contributes an update step.</p>
+
+  <div class="pipe">
+    <div class="pipe-box hi">
+      <div class="pipe-title">Odometry / IMU</div>
+      <div class="pipe-sub">→ Predict step</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box hi2">
+      <div class="pipe-title">LiDAR scan</div>
+      <div class="pipe-sub">→ Update #1</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box hi2">
+      <div class="pipe-title">Camera feature</div>
+      <div class="pipe-sub">→ Update #2</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box hi2">
+      <div class="pipe-title">GPS fix</div>
+      <div class="pipe-sub">→ Update #3</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">
+      <div class="pipe-title">Fused State</div>
+      <div class="pipe-sub">x̂, P updated</div>
+    </div>
+  </div>
+
+  <p>The key is that each sensor update uses its own <strong>measurement model h</strong> and its own <strong>noise matrix R</strong>. You do not need to modify the predict step at all when adding a new sensor — just add another update step with the appropriate h and H. This modularity is what makes EKF-based fusion so powerful in practice.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLAM PROBLEM -->
+<!-- ============================================================ -->
+<div class="section" id="slam-problem">
+  <div class="section-label">04 · SLAM</div>
+  <h2>The SLAM Problem</h2>
+
+  <p>SLAM — Simultaneous Localisation and Mapping — is the problem of a robot that <strong>has no map and no reliable position</strong>, but must build both simultaneously. It is a chicken-and-egg problem:</p>
+
+  <ul style="margin:14px 0 14px 22px;">
+    <li style="margin-bottom:8px; color: var(--ink2);">To localise accurately, you need a map of the environment</li>
+    <li style="margin-bottom:8px; color: var(--ink2);">To build an accurate map, you need to know your position</li>
+  </ul>
+
+  <p>SLAM solves both simultaneously by treating them as a joint estimation problem. The robot maintains uncertainty about both its own position <em>and</em> the positions of observed landmarks. As it moves and observes things, it updates both estimates together.</p>
+
+  <div class="note warn">
+    <div class="note-title">Why is this Hard?</div>
+    <p>Errors in the robot's position estimate cause errors in landmark positions (you place the landmark where you think you are, not where you actually are). Errors in landmark positions then feed back into poor localisation in future steps. The errors are <strong>correlated</strong> — you cannot treat them independently. EKF-SLAM handles this by maintaining the full joint covariance matrix, which encodes all these correlations.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EKF SLAM -->
+<!-- ============================================================ -->
+<div class="section" id="ekf-slam">
+  <div class="section-label">04 · SLAM</div>
+  <h2>EKF-SLAM State Vector</h2>
+
+  <p>The key insight of EKF-SLAM is to put the robot's pose <em>and all the landmark positions</em> into one big state vector, and maintain the full covariance matrix across all of them.</p>
+
+  <div class="math">
+    <div class="label">EKF-SLAM state vector — robot pose + N landmarks</div>
+state = [<span class="var">x_robot</span>, <span class="var">y_robot</span>, <span class="var">θ_robot</span>,  <span class="var">x_L1</span>, <span class="var">y_L1</span>,  <span class="var">x_L2</span>, <span class="var">y_L2</span>,  ...,  <span class="var">x_LN</span>, <span class="var">y_LN</span>]
+
+Dimension: 3 + 2N   (robot pose + 2 coords per landmark)
+
+Covariance P: (3+2N) × (3+2N) matrix
+  - P[0:3, 0:3]     = robot pose uncertainty
+  - P[3:, 3:]       = landmark position uncertainties
+  - P[0:3, 3:]      = cross-correlations between robot and landmarks
+                      (THIS IS THE KEY — these correlations are what makes SLAM work)
+  </div>
+
+  <h3>Adding a New Landmark</h3>
+  <p>When the robot first observes a new landmark, it is added to the state vector. Its initial position estimate is computed from the robot's current position + the measured range/bearing. Its initial uncertainty is determined by both the robot's current position uncertainty and the measurement noise. From this moment, the robot's position estimate and the landmark's position estimate are <strong>permanently correlated</strong> in the covariance matrix.</p>
+
+  <div class="math">
+    <div class="label">Initialise new landmark from robot state + range/bearing measurement</div>
+Given: robot pose = [x_r, y_r, θ_r], measurement = [range r, bearing φ]
+
+x_L = x_r + r · cos(θ_r + φ)
+y_L = y_r + r · sin(θ_r + φ)
+
+Jacobian J_r  = ∂[x_L, y_L] / ∂[x_r, y_r, θ_r]    <span class="comment">// 2×3</span>
+Jacobian J_z  = ∂[x_L, y_L] / ∂[r, φ]               <span class="comment">// 2×2</span>
+
+P_LL = J_r · P_rr · J_r.T + J_z · R · J_z.T         <span class="comment">// landmark covariance</span>
+P_rL = P_rr · J_r.T                                   <span class="comment">// robot-landmark cross-covariance</span>
+  </div>
+
+  <h3>Data Association — Which Landmark is Which?</h3>
+  <p>A critical practical challenge: when the robot sees a feature, is it a new landmark or one it has seen before? This is the <strong>data association problem</strong>. The standard approach is to compute the <em>Mahalanobis distance</em> between the observation and each known landmark in the map — if the distance is below a threshold, it's a match. If it matches no known landmark, it's new.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SLAM PIPELINE -->
+<!-- ============================================================ -->
+<div class="section" id="slam-pipeline">
+  <div class="section-label">04 · SLAM</div>
+  <h2>Full SLAM Pipeline</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h4>Motion Update (Predict)</h4>
+        <p>Read odometry or IMU. Apply motion model to propagate robot pose estimate. Update covariance — only the robot-pose portion changes; landmark portions are unaffected by motion (landmarks don't move).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h4>Feature Extraction</h4>
+        <p>From LiDAR scan or camera frame, extract observable features — corners, edges, visual keypoints. Each feature will become a potential landmark observation. For LiDAR: line extraction or corner detection. For camera: ORB, SIFT, or deep feature descriptors.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h4>Data Association</h4>
+        <p>For each observed feature, decide: is it a previously mapped landmark, or a new one? Compute Mahalanobis distance to all known landmarks. Below threshold → match and update. Above all thresholds → initialise as new landmark in state vector.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h4>EKF Update</h4>
+        <p>For each matched landmark, run the EKF update step. The innovation (observed vs expected measurement) corrects both the robot pose and the landmark position estimate simultaneously, via the cross-correlation terms in P.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">5</div>
+      <div class="step-body">
+        <h4>Map Maintenance</h4>
+        <p>Periodically trim landmarks that are consistently mis-associated or rarely observed. In loop-closure events (robot returns to previously visited area), large corrections can occur — graph-SLAM and pose-graph optimisation handle this better than EKF-SLAM for large environments.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note warn">
+    <div class="note-title">EKF-SLAM Limitation — Scale</div>
+    <p>EKF-SLAM has O(N²) computational cost where N is the number of landmarks — updating the full covariance matrix gets expensive fast. For small environments (&lt;100 landmarks) it's fine. For large environments (1000s of landmarks), use <strong>graph-SLAM</strong> or <strong>particle filter SLAM</strong> (FastSLAM) instead.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- LIDAR HOW -->
+<!-- ============================================================ -->
+<div class="section" id="lidar-how">
+  <div class="section-label">05 · LiDAR</div>
+  <h2>How LiDAR Works</h2>
+
+  <p>LiDAR (Light Detection And Ranging) measures distances by emitting a laser pulse and timing how long it takes for the reflected pulse to return. Since light travels at a known speed (3×10⁸ m/s), the round-trip time gives the distance precisely.</p>
+
+  <div class="math">
+    <div class="label">Time-of-Flight range measurement</div>
+range = (speed_of_light × time_of_flight) / 2
+
+Example: echo returns after 66.7 nanoseconds:
+range = (3×10⁸ m/s × 66.7×10⁻⁹ s) / 2 = <span class="var">10.0 metres</span>
+  </div>
+
+  <p>A 2D LiDAR (like the RPLiDAR A1 used in many robots) rotates a single laser+detector unit, sweeping 360° and taking ~8000 measurements per rotation. Each measurement gives one range at one angle, producing a 2D ring of distances around the robot. A 3D LiDAR (like the Velodyne VLP-16) has 16 laser beams at different vertical angles simultaneously, producing a full 3D point cloud.</p>
+
+  <div class="diagram">
+    <div class="diagram-cap">2D LiDAR — 360° range scan producing polar measurements</div>
+    <svg width="400" height="280" viewBox="0 0 400 280">
+      <!-- Robot body -->
+      <rect x="180" y="120" width="40" height="40" fill="white" stroke="#0f6b6b" stroke-width="2" rx="4"/>
+      <text x="200" y="144" fill="#0f6b6b" font-size="9" text-anchor="middle" font-family="DM Sans">ROBOT</text>
+      <!-- LiDAR centre -->
+      <circle cx="200" cy="140" r="4" fill="#0f6b6b"/>
+
+      <!-- Environment obstacles (simulated walls/objects) -->
+      <rect x="60" y="30" width="80" height="20" fill="#f5f0e8" stroke="#b8a990" stroke-width="1.5" rx="2"/>
+      <rect x="280" y="50" width="60" height="70" fill="#f5f0e8" stroke="#b8a990" stroke-width="1.5" rx="2"/>
+      <rect x="80" y="220" width="180" height="20" fill="#f5f0e8" stroke="#b8a990" stroke-width="1.5" rx="2"/>
+      <rect x="30" y="80" width="20" height="120" fill="#f5f0e8" stroke="#b8a990" stroke-width="1.5" rx="2"/>
+
+      <!-- LiDAR rays -->
+      <line x1="200" y1="140" x2="100" y2="40"  stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="310" y2="55"  stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="340" y2="140" stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="280" y2="200" stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="200" y2="220" stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="120" y2="220" stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="50"  y2="180" stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="50"  y2="100" stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+      <line x1="200" y1="140" x2="70"  y2="40"  stroke="#0f6b6b" stroke-width="0.8" opacity="0.6"/>
+
+      <!-- Hit points -->
+      <circle cx="100" cy="40"  r="3.5" fill="#c07020"/>
+      <circle cx="310" cy="55"  r="3.5" fill="#c07020"/>
+      <circle cx="340" cy="140" r="3.5" fill="#c07020"/>
+      <circle cx="280" cy="200" r="3.5" fill="#c07020"/>
+      <circle cx="200" cy="220" r="3.5" fill="#c07020"/>
+      <circle cx="120" cy="220" r="3.5" fill="#c07020"/>
+      <circle cx="50"  cy="180" r="3.5" fill="#c07020"/>
+      <circle cx="50"  cy="100" r="3.5" fill="#c07020"/>
+      <circle cx="70"  cy="40"  r="3.5" fill="#c07020"/>
+
+      <!-- Labels -->
+      <text x="350" y="140" fill="#c07020" font-size="9" font-family="DM Sans">hit point</text>
+      <text x="200" y="270" fill="#7a6e5f" font-size="10" text-anchor="middle" font-family="DM Sans">each ray → one (angle, range) measurement</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- POINT CLOUD -->
+<!-- ============================================================ -->
+<div class="section" id="point-cloud">
+  <div class="section-label">05 · LiDAR</div>
+  <h2>Point Cloud Construction</h2>
+
+  <p>A <strong>point cloud</strong> is simply a collection of 3D points (x, y, z) representing the surface of the environment as seen from the LiDAR. Each laser pulse that returns a reflection produces one point.</p>
+
+  <div class="math">
+    <div class="label">Convert LiDAR polar measurement to 3D Cartesian point</div>
+Each measurement: (range r, azimuth angle α, elevation angle ε)
+
+x = r · cos(ε) · cos(α)
+y = r · cos(ε) · sin(α)
+z = r · sin(ε)
+
+<span class="comment">// For a 2D LiDAR: ε = 0, so all points are in the plane z = 0</span>
+<span class="comment">// For a 3D LiDAR (Velodyne VLP-16): ε ranges from −15° to +15° across 16 beams</span>
+  </div>
+
+  <h4>Point Cloud in Python (Open3D)</h4>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>Build and visualise point cloud from raw LiDAR data</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre><span class="ck">import</span> numpy <span class="ck">as</span> np
+<span class="ck">import</span> open3d <span class="ck">as</span> o3d
+
+<span class="ck">def</span> <span class="cf">lidar_to_pointcloud</span>(ranges, azimuths, elevations):
+    <span class="co">"""
+    ranges     : array of distances (metres)
+    azimuths   : horizontal angles (radians)
+    elevations : vertical angles (radians)
+    returns    : open3d PointCloud
+    """</span>
+    r = np.array(ranges)
+    a = np.array(azimuths)
+    e = np.array(elevations)
+
+    <span class="cc"># Convert spherical → Cartesian</span>
+    x = r * np.cos(e) * np.cos(a)
+    y = r * np.cos(e) * np.sin(a)
+    z = r * np.sin(e)
+
+    points = np.column_stack([x, y, z])
+
+    <span class="cc"># Filter out invalid returns (range = 0 means no return)</span>
+    valid = r > <span class="cn">0.1</span>
+    points = points[valid]
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(points)
+    <span class="ck">return</span> pcd
+
+
+<span class="cc"># Simulate VLP-16 data (16 beams × 1800 azimuth steps)</span>
+n_beams    = <span class="cn">16</span>
+n_azimuth  = <span class="cn">1800</span>
+elevations_per_beam = np.linspace(np.radians(-<span class="cn">15</span>), np.radians(<span class="cn">15</span>), n_beams)
+
+<span class="cc"># Simulate flat floor at z = -1m (range varies with elevation)</span>
+all_ranges, all_az, all_el = [], [], []
+<span class="ck">for</span> el <span class="ck">in</span> elevations_per_beam:
+    azs = np.linspace(<span class="cn">0</span>, <span class="cn">2</span>*np.pi, n_azimuth)
+    <span class="cc"># Fake: range to flat floor (if beam points down, hits floor)</span>
+    rs = np.where(el < <span class="cn">0</span>, abs(<span class="cn">1.0</span>/np.sin(-el)), <span class="cn">30.0</span>) + np.random.randn(n_azimuth)*<span class="cn">0.02</span>
+    all_ranges.extend(rs.tolist())
+    all_az.extend(azs.tolist())
+    all_el.extend([el]*n_azimuth)
+
+pcd = <span class="cf">lidar_to_pointcloud</span>(all_ranges, all_az, all_el)
+print(<span class="cs">f"Point cloud: {len(pcd.points)} points"</span>)
+
+<span class="cc"># Downsample (voxel grid to reduce density)</span>
+pcd_down = pcd.voxel_down_sample(voxel_size=<span class="cn">0.05</span>)
+
+<span class="cc"># Estimate surface normals (needed for registration)</span>
+pcd_down.estimate_normals(
+    search_param=o3d.geometry.KDTreeSearchParamHybrid(radius=<span class="cn">0.1</span>, max_nn=<span class="cn">30</span>)
+)
+
+o3d.visualization.draw_geometries([pcd_down])
+    </pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- ICP -->
+<!-- ============================================================ -->
+<div class="section" id="icp">
+  <div class="section-label">05 · LiDAR</div>
+  <h2>ICP Scan Matching</h2>
+
+  <p>ICP (Iterative Closest Point) is the algorithm that aligns two point clouds. It answers: <em>"Given two LiDAR scans taken from slightly different positions, what is the transformation (translation + rotation) that best aligns them?"</em> This gives you odometry from LiDAR alone — called LiDAR odometry or scan matching.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h4>Find Correspondences</h4>
+        <p>For each point in the source cloud, find the nearest point in the target cloud (using a KD-tree for efficiency). These point pairs are the current correspondences.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h4>Estimate Transformation</h4>
+        <p>Find the rigid body transformation (rotation R + translation t) that minimises the sum of squared distances between all correspondence pairs. This has a closed-form solution using SVD (Singular Value Decomposition).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h4>Apply and Repeat</h4>
+        <p>Apply the transformation to the source cloud. Recompute correspondences. Repeat until the change in transformation per iteration falls below a threshold (convergence). Typically 10–50 iterations.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>ICP scan matching with Open3D</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre><span class="ck">import</span> open3d <span class="ck">as</span> o3d
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+
+<span class="ck">def</span> <span class="cf">match_scans</span>(source_pcd, target_pcd, init_transform=None, max_dist=<span class="cn">0.5</span>):
+    <span class="co">"""
+    Align source scan to target using ICP.
+    Returns the transformation matrix (4×4 homogeneous).
+    """</span>
+    <span class="ck">if</span> init_transform <span class="ck">is</span> <span class="ck">None</span>:
+        init_transform = np.eye(<span class="cn">4</span>)  <span class="cc"># identity if no prior guess</span>
+
+    result = o3d.pipelines.registration.registration_icp(
+        source_pcd, target_pcd,
+        max_correspondence_distance = max_dist,
+        init                        = init_transform,
+        estimation_method           = o3d.pipelines.registration.TransformationEstimationPointToPlane(),
+        criteria                    = o3d.pipelines.registration.ICPConvergenceCriteria(
+                                        max_iteration=<span class="cn">50</span>)
+    )
+
+    <span class="ck">return</span> result.transformation, result.fitness, result.inlier_rmse
+
+
+<span class="cc"># Extract robot motion from transformation matrix</span>
+<span class="ck">def</span> <span class="cf">transform_to_pose_delta</span>(T):
+    <span class="co">"""Extract dx, dy, dtheta from 4×4 transformation"""</span>
+    dx     = T[<span class="cn">0</span>, <span class="cn">3</span>]
+    dy     = T[<span class="cn">1</span>, <span class="cn">3</span>]
+    dtheta = np.arctan2(T[<span class="cn">1</span>, <span class="cn">0</span>], T[<span class="cn">0</span>, <span class="cn">0</span>])
+    <span class="ck">return</span> dx, dy, dtheta
+
+
+<span class="cc"># Usage: compare two consecutive scans</span>
+<span class="cc"># T, fitness, rmse = match_scans(scan_at_t1, scan_at_t2)</span>
+<span class="cc"># dx, dy, dθ = transform_to_pose_delta(T)</span>
+<span class="cc"># → feed into EKF predict step as odometry measurement</span>
+    </pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CV VIEWS -->
+<!-- ============================================================ -->
+<div class="section" id="cv-views">
+  <div class="section-label">06 · Computer Vision</div>
+  <h2>Plan View vs Perspective View</h2>
+
+  <p>This is a fundamental question about how cameras "see" the world and where position information comes from.</p>
+
+  <h3>Perspective View (normal camera — from the front)</h3>
+  <p>A standard camera produces a perspective projection — exactly how the human eye works. Objects that are far away appear small. Parallel lines appear to converge (railway tracks meeting at the horizon). This view gives rich texture information but <strong>has no direct depth</strong> — a small object nearby and a large object far away can produce the same image. Depth must be inferred from cues (stereo disparity, motion parallax, known object sizes, monocular depth estimation).</p>
+
+  <div class="compare">
+    <div class="compare-box good">
+      <div class="compare-title">Perspective View — Front Camera</div>
+      <p><strong>Rich texture:</strong> faces, text, colours, fine detail</p>
+      <p><strong>Navigation cues:</strong> detect obstacles, doorways, paths</p>
+      <p><strong>Position:</strong> indirect — need depth estimation or stereo</p>
+      <p><strong>Example:</strong> any phone camera, webcam, dashcam</p>
+    </div>
+    <div class="compare-box good">
+      <div class="compare-title">Plan View — Top-Down Camera</div>
+      <p><strong>Direct position:</strong> object location in X-Y plane is immediate</p>
+      <p><strong>Map-like:</strong> matches floor plan directly, easy to integrate</p>
+      <p><strong>Position:</strong> pixel (px, py) maps directly to (x, y) on floor</p>
+      <p><strong>Example:</strong> WAMI systems, overhead warehouse cameras, UAV nadir</p>
+    </div>
+  </div>
+
+  <h3>How to Determine an Object's Position from a Front Camera</h3>
+  <p>Given a single perspective camera image, where is an object? This requires knowing its <strong>depth</strong> — how far it is from the camera. Several approaches:</p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Method</th><th>How It Works</th><th>Accuracy</th><th>Cost</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Stereo camera</strong></td>
+          <td>Two cameras side by side. Disparity (how far an object shifts between left and right image) gives depth. d = f × baseline / disparity</td>
+          <td>Good (&lt;1% at close range)</td>
+          <td>2× cameras, calibration</td>
+        </tr>
+        <tr>
+          <td><strong>Monocular + IMU</strong></td>
+          <td>Track feature motion as camera moves. Motion parallax gives relative depth. IMU provides scale</td>
+          <td>Medium, drifts over time</td>
+          <td>1 camera + IMU</td>
+        </tr>
+        <tr>
+          <td><strong>Known object size</strong></td>
+          <td>If you know an object is 1.8m tall and it appears 200px tall in a 1000px image with 60° FoV, geometry gives range</td>
+          <td>Good if object known</td>
+          <td>None — just maths</td>
+        </tr>
+        <tr>
+          <td><strong>Monocular depth net</strong></td>
+          <td>Neural network predicts depth map from single image (MiDaS, Depth Anything)</td>
+          <td>Approximate, relative only</td>
+          <td>GPU compute</td>
+        </tr>
+        <tr>
+          <td><strong>Camera + LiDAR</strong></td>
+          <td>Project LiDAR points onto camera image. Points with known 3D positions label pixels with exact depth</td>
+          <td>Excellent</td>
+          <td>LiDAR required</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CV POSITION -->
+<!-- ============================================================ -->
+<div class="section" id="cv-position">
+  <div class="section-label">06 · Computer Vision</div>
+  <h2>Positioning from Vision — The Maths</h2>
+
+  <h3>Camera Projection Model</h3>
+  <p>A 3D world point (X, Y, Z) in camera coordinates projects to a 2D image pixel (u, v) through the camera's intrinsic matrix K:</p>
+
+  <div class="math">
+    <div class="label">Perspective projection — 3D world point → image pixel</div>
+[u, v, 1]ᵀ = (1/Z) · <span class="var">K</span> · [X, Y, Z]ᵀ
+
+where K = | <span class="var">f_x</span>   0   <span class="var">c_x</span> |
+          |  0   <span class="var">f_y</span>  <span class="var">c_y</span> |
+          |  0    0    1   |
+
+f_x, f_y = focal length in pixels  (f_x = focal_length_mm / pixel_pitch_mm)
+c_x, c_y = principal point (usually image centre)
+
+Solving for 3D given 2D pixel + depth Z:
+X = (u − c_x) · Z / f_x
+Y = (v − c_y) · Z / f_y
+  </div>
+
+  <h3>Estimating Camera Pose from Known Points — PnP</h3>
+  <p>If you know the 3D positions of several landmarks in the world, and you can see those landmarks in the camera image, you can solve for the camera's position and orientation. This is the <strong>Perspective-n-Point (PnP)</strong> problem — exactly what is used in visual SLAM for localisation.</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>PnP pose estimation — camera position from known landmarks</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre><span class="ck">import</span> cv2
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+
+<span class="cc"># Known 3D landmark positions in world frame (metres)</span>
+object_points = np.array([
+    [<span class="cn">0.0</span>, <span class="cn">0.0</span>, <span class="cn">0.0</span>],
+    [<span class="cn">1.0</span>, <span class="cn">0.0</span>, <span class="cn">0.0</span>],
+    [<span class="cn">0.0</span>, <span class="cn">1.0</span>, <span class="cn">0.0</span>],
+    [<span class="cn">1.0</span>, <span class="cn">1.0</span>, <span class="cn">0.0</span>],
+    [<span class="cn">0.5</span>, <span class="cn">0.5</span>, <span class="cn">1.0</span>]
+], dtype=np.float32)
+
+<span class="cc"># Corresponding 2D pixel positions in camera image</span>
+image_points = np.array([
+    [<span class="cn">320</span>, <span class="cn">240</span>],
+    [<span class="cn">420</span>, <span class="cn">235</span>],
+    [<span class="cn">315</span>, <span class="cn">340</span>],
+    [<span class="cn">415</span>, <span class="cn">338</span>],
+    [<span class="cn">368</span>, <span class="cn">200</span>]
+], dtype=np.float32)
+
+<span class="cc"># Camera intrinsic matrix (from calibration)</span>
+K = np.array([
+    [<span class="cn">800</span>,   <span class="cn">0</span>, <span class="cn">320</span>],
+    [  <span class="cn">0</span>, <span class="cn">800</span>, <span class="cn">240</span>],
+    [  <span class="cn">0</span>,   <span class="cn">0</span>,   <span class="cn">1</span>]
+], dtype=np.float64)
+dist_coeffs = np.zeros(<span class="cn">4</span>)   <span class="cc"># assume no distortion (use calibrated values)</span>
+
+<span class="cc"># Solve PnP</span>
+success, rvec, tvec = cv2.solvePnP(
+    object_points, image_points, K, dist_coeffs,
+    flags=cv2.SOLVEPNP_ITERATIVE
+)
+
+<span class="ck">if</span> success:
+    <span class="cc"># Convert rotation vector to rotation matrix</span>
+    R, _ = cv2.Rodrigues(rvec)
+
+    <span class="cc"># Camera position in world frame</span>
+    cam_pos_world = -R.T @ tvec
+    print(<span class="cs">f"Camera position: {cam_pos_world.ravel().round(3)} m"</span>)
+    print(<span class="cs">f"Camera rotation:\n{R.round(3)}"</span>)
+
+    <span class="cc"># Re-projection error (should be < 2 pixels)</span>
+    proj_pts, _ = cv2.projectPoints(object_points, rvec, tvec, K, dist_coeffs)
+    err = np.mean(np.linalg.norm(image_points - proj_pts.reshape(-<span class="cn">1</span>,<span class="cn">2</span>), axis=<span class="cn">1</span>))
+    print(<span class="cs">f"Reprojection error: {err:.3f} pixels"</span>)
+    </pre>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- VISUAL SLAM -->
+<!-- ============================================================ -->
+<div class="section" id="visual-slam">
+  <div class="section-label">06 · Computer Vision</div>
+  <h2>Visual SLAM (ORB-SLAM Concept)</h2>
+
+  <p>ORB-SLAM is the most widely used visual SLAM system. It uses only a camera (monocular, stereo, or RGB-D) to simultaneously build a map of the environment and localise the camera within it.</p>
+
+  <div class="pipe">
+    <div class="pipe-box hi">
+      <div class="pipe-title">ORB Feature</div>
+      <div class="pipe-sub">Extraction</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">
+      <div class="pipe-title">Feature</div>
+      <div class="pipe-sub">Matching</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box hi2">
+      <div class="pipe-title">Pose</div>
+      <div class="pipe-sub">Estimation (PnP)</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box">
+      <div class="pipe-title">Map Point</div>
+      <div class="pipe-sub">Triangulation</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box hi">
+      <div class="pipe-title">Bundle</div>
+      <div class="pipe-sub">Adjustment</div>
+    </div>
+    <div class="pipe-arr">→</div>
+    <div class="pipe-box hi2">
+      <div class="pipe-title">Loop</div>
+      <div class="pipe-sub">Closure</div>
+    </div>
+  </div>
+
+  <p><strong>ORB features</strong> are fast-to-compute binary descriptors that are rotation and scale invariant. They mark distinctive image patches that can be reliably found across frames. <strong>Bundle adjustment</strong> is a global optimisation that jointly refines all camera poses and all 3D map point positions to minimise re-projection error. <strong>Loop closure</strong> detects when the robot revisits a previously mapped area and corrects the accumulated drift by recognising the scene using a bag-of-words vocabulary tree.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- IPS INTRO -->
+<!-- ============================================================ -->
+<div class="section" id="ips-intro">
+  <div class="section-label">07 · Indoor Positioning</div>
+  <h2>WiFi IPS — Concepts</h2>
+
+  <p>GPS does not work indoors — the signals are too weak after passing through walls and ceilings. <strong>Indoor Positioning Systems (IPS)</strong> use alternative signals to localise inside buildings. WiFi is the most practical choice because access points (APs) already exist in most buildings — no new infrastructure is needed.</p>
+
+  <p>The key signal is <strong>RSSI — Received Signal Strength Indicator</strong>. Every WiFi device can measure how strong the signal from each access point is, typically in dBm (decibel-milliwatts). RSSI decreases as you move away from an AP, and changes as walls and obstacles absorb the signal. By measuring RSSI from multiple APs simultaneously, you can estimate your position.</p>
+
+  <div class="note warn">
+    <div class="note-title">Why WiFi IPS is Hard</div>
+    <p>WiFi signals suffer from <strong>multipath</strong> — signals bounce off walls and arrive at the receiver from multiple directions, constructively or destructively interfering. This makes RSSI noisy and unpredictable. The same location can give RSSI readings that vary by ±5–10 dBm between measurements seconds apart. This is why naive trilateration fails, and fingerprinting methods outperform it significantly indoors.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- RSSI TRILATERATION -->
+<!-- ============================================================ -->
+<div class="section" id="rssi">
+  <div class="section-label">07 · Indoor Positioning</div>
+  <h2>RSSI & Trilateration</h2>
+
+  <p>Trilateration estimates position by computing the distance to each AP from the RSSI, then finding the point that is consistent with all those distances.</p>
+
+  <div class="math">
+    <div class="label">RSSI to distance — log-distance path loss model</div>
+RSSI(d) = RSSI_0 − 10·<span class="var">n</span>·log10(d/d0)
+
+RSSI_0 = reference RSSI at d0 = 1m  (calibrate this per AP)
+n       = path loss exponent  (free space = 2, indoors = 2.5–4.5)
+d       = distance in metres
+
+Solving for distance:
+d = d0 · 10^( (RSSI_0 − RSSI) / (10·n) )
+  </div>
+
+  <p>With 3 APs giving distances d1, d2, d3 to their known positions, you can trilaterate position. In theory this gives an exact answer. In practice, the noisy RSSI-to-distance conversion means the three circles don't intersect at a single point — you solve using least squares instead.</p>
+
+  <div class="diagram">
+    <div class="diagram-cap">Trilateration — 3 APs, 3 range circles, intersection = position</div>
+    <svg width="400" height="280" viewBox="0 0 400 280">
+      <!-- AP positions -->
+      <rect x="45" y="20" width="30" height="20" fill="white" stroke="#0f6b6b" stroke-width="1.5" rx="2"/>
+      <text x="60" y="34" fill="#0f6b6b" font-size="10" text-anchor="middle" font-family="DM Sans">AP1</text>
+
+      <rect x="315" y="20" width="30" height="20" fill="white" stroke="#0f6b6b" stroke-width="1.5" rx="2"/>
+      <text x="330" y="34" fill="#0f6b6b" font-size="10" text-anchor="middle" font-family="DM Sans">AP2</text>
+
+      <rect x="165" y="230" width="30" height="20" fill="white" stroke="#0f6b6b" stroke-width="1.5" rx="2"/>
+      <text x="180" y="244" fill="#0f6b6b" font-size="10" text-anchor="middle" font-family="DM Sans">AP3</text>
+
+      <!-- Range circles -->
+      <circle cx="60"  cy="30" r="140" fill="none" stroke="#0f6b6b" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+      <circle cx="330" cy="30" r="130" fill="none" stroke="#c07020" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+      <circle cx="180" cy="240" r="130" fill="none" stroke="#1a6b1a" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+
+      <!-- True position -->
+      <circle cx="195" cy="130" r="8" fill="rgba(160,32,32,0.2)" stroke="#a02020" stroke-width="2"/>
+      <circle cx="195" cy="130" r="3" fill="#a02020"/>
+      <text x="210" y="128" fill="#a02020" font-size="11" font-family="DM Sans">ESTIMATED</text>
+      <text x="210" y="142" fill="#a02020" font-size="11" font-family="DM Sans">POSITION</text>
+
+      <!-- Distance lines -->
+      <line x1="60"  y1="30" x2="195" y2="130" stroke="#0f6b6b" stroke-width="0.8" opacity="0.4"/>
+      <line x1="330" y1="30" x2="195" y2="130" stroke="#c07020" stroke-width="0.8" opacity="0.4"/>
+      <line x1="180" y1="240" x2="195" y2="130" stroke="#1a6b1a" stroke-width="0.8" opacity="0.4"/>
+
+      <text x="200" y="270" fill="#7a6e5f" font-size="10" text-anchor="middle" font-family="DM Sans">dashed circles = estimated range from RSSI</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FINGERPRINTING -->
+<!-- ============================================================ -->
+<div class="section" id="fingerprinting">
+  <div class="section-label">07 · Indoor Positioning</div>
+  <h2>Fingerprinting Method</h2>
+
+  <p>Fingerprinting avoids the unreliable RSSI-to-distance conversion entirely. Instead, it treats the RSSI vector at each location as a <strong>fingerprint</strong> that uniquely identifies that location, and uses a database of pre-measured fingerprints to match the current observation to a known position.</p>
+
+  <h4>Two phases</h4>
+  <div class="steps">
+    <div class="step">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h4>Offline — Radio Map Collection</h4>
+        <p>Walk through the building, stopping at known grid positions (e.g. every 1m). At each position, record the RSSI from all visible APs (take 20–50 samples and average). Store these as a radio map: a database of (x, y) → [RSSI_AP1, RSSI_AP2, ... RSSI_APn] entries.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h4>Online — Position Estimation</h4>
+        <p>Measure current RSSI vector. Find the radio map entry with the closest RSSI signature. Use k-nearest-neighbours (kNN) in RSSI space — the estimated position is the weighted average of the k closest radio map entries, where the weight is the inverse RSSI distance.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note key">
+    <div class="note-title">Typical Accuracy</div>
+    <p>Fingerprinting with WiFi typically achieves <strong>2–5m accuracy (CEP50)</strong> in typical indoor environments — meaning 50% of estimates are within 2–5m of ground truth. With Bluetooth BLE beacons (much shorter range, denser coverage) this improves to <strong>0.5–2m</strong>. With UWB (Ultra-Wideband), accuracy reaches <strong>10–30cm</strong>.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- IPS CODE -->
+<!-- ============================================================ -->
+<div class="section" id="ips-code">
+  <div class="section-label">07 · Indoor Positioning</div>
+  <h2>Python IPS Example</h2>
+
+  <p>Complete implementation of a WiFi fingerprinting IPS — offline radio map building and online kNN positioning.</p>
+
+  <div class="code-wrap">
+    <div class="code-header">
+      <span>WiFi Fingerprinting IPS — scan, build map, locate</span>
+      <span class="code-lang">Python</span>
+    </div>
+    <pre><span class="ck">import</span> numpy <span class="ck">as</span> np
+<span class="ck">from</span> sklearn.neighbors <span class="ck">import</span> KNeighborsRegressor
+<span class="ck">from</span> sklearn.preprocessing <span class="ck">import</span> StandardScaler
+<span class="ck">import</span> subprocess
+<span class="ck">import</span> re
+
+
+<span class="cc"># ─────────────────────────────────────────────────────────
+#  WiFi SCANNING (Linux — uses iwlist)
+# ─────────────────────────────────────────────────────────</span>
+
+<span class="ck">def</span> <span class="cf">scan_wifi</span>(interface=<span class="cs">'wlan0'</span>):
+    <span class="co">"""
+    Scan for WiFi networks and return dict of {BSSID: RSSI_dBm}.
+    Requires: sudo iwlist wlan0 scan (may need root)
+    """</span>
+    result = subprocess.run(
+        [<span class="cs">'sudo'</span>, <span class="cs">'iwlist'</span>, interface, <span class="cs">'scan'</span>],
+        capture_output=<span class="ck">True</span>, text=<span class="ck">True</span>
+    )
+
+    networks = {}
+    current_bssid = <span class="ck">None</span>
+    <span class="ck">for</span> line <span class="ck">in</span> result.stdout.split(<span class="cs">'\n'</span>):
+        bssid_match = re.search(<span class="cs">r'Address: ([0-9A-Fa-f:]{17})'</span>, line)
+        rssi_match  = re.search(<span class="cs">r'Signal level=(-?\d+) dBm'</span>, line)
+        <span class="ck">if</span> bssid_match:
+            current_bssid = bssid_match.group(<span class="cn">1</span>)
+        <span class="ck">if</span> rssi_match <span class="ck">and</span> current_bssid:
+            networks[current_bssid] = int(rssi_match.group(<span class="cn">1</span>))
+    <span class="ck">return</span> networks
+
+
+<span class="ck">def</span> <span class="cf">scan_multiple</span>(n=<span class="cn">10</span>, interface=<span class="cs">'wlan0'</span>):
+    <span class="co">"""Average n scans to reduce noise"""</span>
+    scans = [<span class="cf">scan_wifi</span>(interface) <span class="ck">for</span> _ <span class="ck">in</span> range(n)]
+    all_bssids = set().union(*scans)
+    averaged = {}
+    <span class="ck">for</span> bssid <span class="ck">in</span> all_bssids:
+        vals = [s.get(bssid, -<span class="cn">100</span>) <span class="ck">for</span> s <span class="ck">in</span> scans]
+        averaged[bssid] = np.mean(vals)
+    <span class="ck">return</span> averaged
+
+
+<span class="cc"># ─────────────────────────────────────────────────────────
+#  RADIO MAP (Fingerprint Database)
+# ─────────────────────────────────────────────────────────</span>
+
+<span class="ck">class</span> <span class="cf">RadioMap</span>:
+    <span class="ck">def</span> <span class="cf">__init__</span>(self):
+        self.entries    = []   <span class="cc"># list of (x, y, {bssid: rssi})</span>
+        self.ap_list    = []   <span class="cc"># sorted list of known AP BSSIDs</span>
+        self.model      = <span class="ck">None</span>
+        self.scaler     = <span class="ck">None</span>
+
+    <span class="ck">def</span> <span class="cf">add_entry</span>(self, x, y, rssi_dict):
+        <span class="co">"""Add one calibration point to the radio map"""</span>
+        self.entries.append({<span class="cs">'pos'</span>: (x, y), <span class="cs">'rssi'</span>: rssi_dict})
+        <span class="cc"># Update known AP list</span>
+        <span class="ck">for</span> bssid <span class="ck">in</span> rssi_dict:
+            <span class="ck">if</span> bssid <span class="ck">not</span> <span class="ck">in</span> self.ap_list:
+                self.ap_list.append(bssid)
+
+    <span class="ck">def</span> <span class="cf">rssi_to_vector</span>(self, rssi_dict, fill=-<span class="cn">100</span>):
+        <span class="co">"""Convert RSSI dict to fixed-length feature vector"""</span>
+        <span class="ck">return</span> np.array([rssi_dict.get(ap, fill) <span class="ck">for</span> ap <span class="ck">in</span> self.ap_list])
+
+    <span class="ck">def</span> <span class="cf">build_model</span>(self, k=<span class="cn">3</span>):
+        <span class="co">"""Train kNN model from collected entries"""</span>
+        X = np.array([self.<span class="cf">rssi_to_vector</span>(e[<span class="cs">'rssi'</span>]) <span class="ck">for</span> e <span class="ck">in</span> self.entries])
+        y = np.array([e[<span class="cs">'pos'</span>] <span class="ck">for</span> e <span class="ck">in</span> self.entries])
+
+        self.scaler = StandardScaler()
+        X_scaled    = self.scaler.fit_transform(X)
+
+        self.model = KNeighborsRegressor(
+            n_neighbors = k,
+            weights     = <span class="cs">'distance'</span>,  <span class="cc"># closer matches weighted more</span>
+            metric      = <span class="cs">'euclidean'</span>
+        )
+        self.model.fit(X_scaled, y)
+        print(<span class="cs">f"Radio map built: {len(self.entries)} calibration points, {len(self.ap_list)} APs"</span>)
+
+    <span class="ck">def</span> <span class="cf">locate</span>(self, rssi_dict):
+        <span class="co">"""Estimate position from current RSSI scan"""</span>
+        <span class="ck">if</span> self.model <span class="ck">is</span> <span class="ck">None</span>:
+            <span class="ck">raise</span> RuntimeError(<span class="cs">"Call build_model() first"</span>)
+        x_vec   = self.<span class="cf">rssi_to_vector</span>(rssi_dict).reshape(<span class="cn">1</span>, -<span class="cn">1</span>)
+        x_scaled = self.scaler.transform(x_vec)
+        pos     = self.model.predict(x_scaled)[<span class="cn">0</span>]
+        <span class="ck">return</span> pos   <span class="cc"># (x, y) in metres</span>
+
+    <span class="ck">def</span> <span class="cf">locate_with_uncertainty</span>(self, rssi_dict):
+        <span class="co">"""Return position estimate and uncertainty (std of kNN neighbours)"""</span>
+        x_vec     = self.<span class="cf">rssi_to_vector</span>(rssi_dict).reshape(<span class="cn">1</span>, -<span class="cn">1</span>)
+        x_scaled  = self.scaler.transform(x_vec)
+
+        distances, indices = self.model.kneighbors(x_scaled)
+        neighbour_pos = np.array([self.entries[i][<span class="cs">'pos'</span>] <span class="ck">for</span> i <span class="ck">in</span> indices[<span class="cn">0</span>]])
+
+        weights   = <span class="cn">1.0</span> / (distances[<span class="cn">0</span>] + <span class="cn">1e-6</span>)
+        weights  /= weights.sum()
+
+        pos_est   = np.average(neighbour_pos, weights=weights, axis=<span class="cn">0</span>)
+        pos_std   = np.sqrt(np.average((neighbour_pos - pos_est)**<span class="cn">2</span>, weights=weights, axis=<span class="cn">0</span>))
+        <span class="ck">return</span> pos_est, pos_std
+
+
+<span class="cc"># ─────────────────────────────────────────────────────────
+#  FUSE IPS WITH EKF (using WiFi as position measurement)
+# ─────────────────────────────────────────────────────────</span>
+
+<span class="ck">class</span> <span class="cf">IPSFusedEKF</span>:
+    <span class="co">"""
+    EKF that fuses odometry (predict) with WiFi IPS (update).
+    State: [x, y, theta, vx, vy]  — position, heading, velocity
+    """</span>
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, radio_map):
+        self.radio_map = radio_map
+        self.x = np.zeros(<span class="cn">5</span>)
+        self.P = np.diag([<span class="cn">4.0</span>, <span class="cn">4.0</span>, <span class="cn">0.5</span>, <span class="cn">0.1</span>, <span class="cn">0.1</span>])   <span class="cc"># initial uncertainty</span>
+        self.Q = np.diag([<span class="cn">0.01</span>, <span class="cn">0.01</span>, <span class="cn">0.005</span>, <span class="cn">0.001</span>, <span class="cn">0.001</span>])
+        self.R_wifi = np.diag([<span class="cn">4.0</span>, <span class="cn">4.0</span>])   <span class="cc"># WiFi position noise ≈ 2m std</span>
+
+    <span class="ck">def</span> <span class="cf">predict</span>(self, u, dt):
+        <span class="co">"""u = [v_forward, omega] from wheel odometry, dt = timestep"""</span>
+        x, y, theta, vx, vy = self.x
+        v, w = u
+        <span class="cc"># Motion model</span>
+        self.x = np.array([
+            x     + v * np.cos(theta) * dt,
+            y     + v * np.sin(theta) * dt,
+            theta + w * dt,
+            v * np.cos(theta),
+            v * np.sin(theta)
+        ])
+        <span class="cc"># Jacobian (simplified)</span>
+        F = np.eye(<span class="cn">5</span>)
+        F[<span class="cn">0</span>,<span class="cn">2</span>] = -v * np.sin(theta) * dt
+        F[<span class="cn">1</span>,<span class="cn">2</span>] =  v * np.cos(theta) * dt
+        self.P = F @ self.P @ F.T + self.Q
+
+    <span class="ck">def</span> <span class="cf">update_wifi</span>(self, rssi_scan):
+        <span class="co">"""Update state using WiFi fingerprint position estimate"""</span>
+        pos_est, pos_std = self.radio_map.<span class="cf">locate_with_uncertainty</span>(rssi_scan)
+
+        <span class="cc"># Adaptive noise based on fingerprint uncertainty</span>
+        R = np.diag(np.maximum(pos_std**<span class="cn">2</span>, [<span class="cn">1.0</span>, <span class="cn">1.0</span>]))
+
+        H = np.zeros((<span class="cn">2</span>, <span class="cn">5</span>))
+        H[<span class="cn">0</span>,<span class="cn">0</span>] = <span class="cn">1</span>; H[<span class="cn">1</span>,<span class="cn">1</span>] = <span class="cn">1</span>   <span class="cc"># observe only x, y</span>
+
+        z     = pos_est
+        z_hat = self.x[:<span class="cn">2</span>]
+        y_inn = z - z_hat
+
+        S     = H @ self.P @ H.T + R
+        K     = self.P @ H.T @ np.linalg.inv(S)
+        self.x = self.x + K @ y_inn
+        self.P = (np.eye(<span class="cn">5</span>) - K @ H) @ self.P
+
+        <span class="ck">return</span> pos_est, np.sqrt(np.diag(R))
+
+
+<span class="cc"># ─────────────────────────────────────────────────────────
+#  DEMO — simulate radio map + locate
+# ─────────────────────────────────────────────────────────</span>
+
+<span class="ck">def</span> <span class="cf">simulate_rssi</span>(pos, ap_positions, noise_std=<span class="cn">4.0</span>, n_paths=<span class="cn">2.5</span>):
+    <span class="co">"""Simulate RSSI at a position from a list of APs"""</span>
+    x, y = pos
+    rssi = {}
+    <span class="ck">for</span> i, (ax, ay) <span class="ck">in</span> enumerate(ap_positions):
+        d     = max(np.sqrt((x-ax)**<span class="cn">2</span> + (y-ay)**<span class="cn">2</span>), <span class="cn">0.5</span>)
+        rssi_0 = -<span class="cn">40</span>   <span class="cc"># RSSI at 1m</span>
+        rssi_d = rssi_0 - <span class="cn">10</span> * n_paths * np.log10(d)
+        rssi_d += np.random.randn() * noise_std   <span class="cc"># add noise</span>
+        rssi[<span class="cs">f'AP_{i}'</span>] = <span class="cf">round</span>(rssi_d, <span class="cn">1</span>)
+    <span class="ck">return</span> rssi
+
+
+<span class="ck">if</span> __name__ == <span class="cs">'__main__'</span>:
+    np.random.seed(<span class="cn">42</span>)
+
+    <span class="cc"># AP positions in the building (metres)</span>
+    ap_positions = [(<span class="cn">0</span>,<span class="cn">0</span>), (<span class="cn">10</span>,<span class="cn">0</span>), (<span class="cn">0</span>,<span class="cn">10</span>), (<span class="cn">10</span>,<span class="cn">10</span>), (<span class="cn">5</span>,<span class="cn">5</span>)]
+
+    <span class="cc"># Build radio map on 1m grid</span>
+    rm = <span class="cf">RadioMap</span>()
+    <span class="ck">for</span> xi <span class="ck">in</span> np.arange(<span class="cn">0</span>, <span class="cn">11</span>, <span class="cn">1.0</span>):
+        <span class="ck">for</span> yi <span class="ck">in</span> np.arange(<span class="cn">0</span>, <span class="cn">11</span>, <span class="cn">1.0</span>):
+            rssi = <span class="cf">simulate_rssi</span>((xi, yi), ap_positions, noise_std=<span class="cn">2.0</span>)
+            rm.<span class="cf">add_entry</span>(xi, yi, rssi)
+
+    rm.<span class="cf">build_model</span>(k=<span class="cn">5</span>)
+
+    <span class="cc"># Test: estimate position at (3.7, 6.2)</span>
+    true_pos = (<span class="cn">3.7</span>, <span class="cn">6.2</span>)
+    test_scan = <span class="cf">simulate_rssi</span>(true_pos, ap_positions, noise_std=<span class="cn">5.0</span>)
+    est, std  = rm.<span class="cf">locate_with_uncertainty</span>(test_scan)
+
+    print(<span class="cs">f"\nTrue position:      ({true_pos[0]:.1f}, {true_pos[1]:.1f}) m"</span>)
+    print(<span class="cs">f"Estimated position: ({est[0]:.2f}, {est[1]:.2f}) m"</span>)
+    print(<span class="cs">f"Error:              {np.linalg.norm(est - np.array(true_pos)):.2f} m"</span>)
+    print(<span class="cs">f"Uncertainty:        ±{std[0]:.2f}m (x), ±{std[1]:.2f}m (y)"</span>)
+    </pre>
+  </div>
+
+  <h3>Fusing WiFi IPS with EKF</h3>
+  <p>The <code>IPSFusedEKF</code> class above shows the fusion approach. Odometry runs the <strong>predict step</strong> at high rate (e.g. 10Hz). WiFi scans run an <strong>update step</strong> at low rate (e.g. 0.5Hz — WiFi scanning is slow). The EKF automatically weights the two: between WiFi updates, it relies on odometry; when a WiFi update arrives, it corrects the growing drift. The result is smoother and more accurate than either sensor alone.</p>
+
+  <div class="note key">
+    <div class="note-title">Practical Tips for WiFi IPS</div>
+    <p>① Always collect multiple scans per calibration point and average them. ② Collect the radio map at the same time of day and day of week as deployment — AP load affects signal. ③ Mark which APs are internal building APs vs external neighbours — neighbours may disappear or move. ④ Re-calibrate whenever the environment changes significantly (furniture moved, walls added). ⑤ Use at least 5–8 visible APs for reliable fingerprinting — fewer than 3 and accuracy degrades sharply.</p>
+  </div>
+
+</div><!-- end last section -->
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<div class="footer">
+  <span>EKF · SLAM · Sensor Fusion · LiDAR · Vision · IPS — Complete Engineering Tutorial</span>
+  <span>From first principles to working Python code</span>
+</div>
+
+<a href="#top" class="top-btn">↑ Top</a>
+
+<script>
+  const links = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.section');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href')==='#'+id));
+      }
+    });
+  }, { rootMargin:'-15% 0px -75% 0px' });
+  sections.forEach(s => { if(s.id) obs.observe(s); });
+</script>
+</body>
+</html>

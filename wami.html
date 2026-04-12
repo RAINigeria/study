@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAMI System Engineering — Complete Build Tutorial</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --border: #1e2d3d;
+    --accent: #00d4ff;
+    --accent2: #ff6b35;
+    --accent3: #39ff14;
+    --text: #c9d1d9;
+    --text-dim: #6e7f8f;
+    --text-bright: #e6edf3;
+    --heading-font: 'Bebas Neue', sans-serif;
+    --body-font: 'IBM Plex Sans', sans-serif;
+    --mono-font: 'IBM Plex Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body-font);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,212,255,0.015) 2px,
+      rgba(0,212,255,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* SIDEBAR NAV */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 260px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0 0 40px;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .sidebar-logo .title {
+    font-family: var(--heading-font);
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    line-height: 1.1;
+  }
+
+  .sidebar-logo .subtitle {
+    font-family: var(--mono-font);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  .nav-section {
+    padding: 6px 0;
+  }
+
+  .nav-section-title {
+    font-family: var(--mono-font);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 20px 4px;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 7px 20px 7px 24px;
+    font-family: var(--mono-font);
+    font-size: 12px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+
+  .nav-link:hover {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(0,212,255,0.05);
+  }
+
+  .nav-link.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+  }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    padding: 80px 60px 60px;
+    background: linear-gradient(135deg, #080c10 0%, #0d1a2a 50%, #080c10 100%);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .hero::after {
+    content: 'WAMI';
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    font-family: var(--heading-font);
+    font-size: 280px;
+    color: rgba(0,212,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -10px;
+  }
+
+  .hero-tag {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+
+  .hero h1 {
+    font-family: var(--heading-font);
+    font-size: 72px;
+    letter-spacing: 4px;
+    color: var(--text-bright);
+    line-height: 0.95;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-desc {
+    max-width: 640px;
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s forwards;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.4s forwards;
+  }
+
+  .stat {
+    border-left: 2px solid var(--accent);
+    padding-left: 16px;
+  }
+
+  .stat-val {
+    font-family: var(--heading-font);
+    font-size: 32px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: var(--mono-font);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* CONTENT AREA */
+  .content {
+    padding: 0 60px 80px;
+  }
+
+  /* SECTIONS */
+  .section {
+    padding: 60px 0 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child { border-bottom: none; }
+
+  .section-number {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+  }
+
+  .section h2 {
+    font-family: var(--heading-font);
+    font-size: 48px;
+    letter-spacing: 3px;
+    color: var(--text-bright);
+    line-height: 1;
+    margin-bottom: 24px;
+  }
+
+  .section h3 {
+    font-family: var(--heading-font);
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--text-bright);
+    margin: 36px 0 14px;
+  }
+
+  .section h4 {
+    font-family: var(--mono-font);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 28px 0 10px;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text);
+    max-width: 820px;
+  }
+
+  /* CALLOUT BOXES */
+  .callout {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 24px 0;
+    max-width: 820px;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .callout.warning {
+    border-left-color: var(--accent2);
+  }
+
+  .callout.success {
+    border-left-color: var(--accent3);
+  }
+
+  .callout-title {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .callout.warning .callout-title { color: var(--accent2); }
+  .callout.success .callout-title { color: var(--accent3); }
+
+  .callout p { margin: 0; font-size: 14px; }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 20px 0;
+    overflow-x: auto;
+    max-width: 820px;
+    position: relative;
+  }
+
+  .code-block-label {
+    position: absolute;
+    top: 8px; right: 12px;
+    font-family: var(--mono-font);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  pre, code {
+    font-family: var(--mono-font);
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .c-accent { color: var(--accent); }
+  .c-accent2 { color: var(--accent2); }
+  .c-accent3 { color: var(--accent3); }
+  .c-dim { color: var(--text-dim); }
+  .c-bright { color: var(--text-bright); }
+
+  /* MATH EQUATIONS */
+  .equation {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 20px 28px;
+    margin: 20px 0;
+    font-family: var(--mono-font);
+    font-size: 15px;
+    color: var(--text-bright);
+    max-width: 820px;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+
+  .equation .eq-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  /* TABLES */
+  .table-wrap {
+    max-width: 820px;
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: var(--mono-font);
+  }
+
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(30,45,61,0.5);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,212,255,0.03); }
+
+  /* SVG DIAGRAMS */
+  .diagram-wrap {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin: 28px 0;
+    max-width: 820px;
+    text-align: center;
+  }
+
+  .diagram-title {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  svg text {
+    font-family: var(--mono-font);
+  }
+
+  /* STEP LIST */
+  .steps {
+    max-width: 820px;
+    margin: 20px 0;
+  }
+
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(30,45,61,0.5);
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: var(--heading-font);
+    font-size: 36px;
+    color: var(--border);
+    letter-spacing: 2px;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 50px;
+  }
+
+  .step-content h4 {
+    margin: 0 0 6px;
+    font-family: var(--mono-font);
+    font-size: 13px;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .step-content p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  /* COMPONENT CARD GRID */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    max-width: 820px;
+    margin: 20px 0;
+  }
+
+  .card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: var(--accent); }
+
+  .card-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: var(--mono-font);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+    max-width: none;
+  }
+
+  /* PIPELINE DIAGRAM */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    max-width: 820px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+
+  .pipeline-step {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    min-width: 120px;
+    text-align: center;
+    flex: 1;
+  }
+
+  .pipeline-step:first-child { border-radius: 4px 0 0 4px; }
+  .pipeline-step:last-child { border-radius: 0 4px 4px 0; }
+
+  .pipeline-step.highlight { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+  .pipeline-step.highlight2 { border-color: var(--accent2); background: rgba(255,107,53,0.05); }
+
+  .pipeline-label {
+    font-family: var(--mono-font);
+    font-size: 11px;
+    color: var(--text-bright);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .pipeline-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+
+  .pipeline-arrow {
+    font-size: 18px;
+    color: var(--border);
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* HIGHLIGHT TEXT */
+  strong { color: var(--text-bright); font-weight: 600; }
+  em { color: var(--accent); font-style: normal; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+  /* FOOTER */
+  .footer {
+    margin-left: 260px;
+    padding: 30px 60px;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono-font);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* BACK TO TOP */
+  .back-to-top {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 10px 14px;
+    font-family: var(--mono-font);
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .back-to-top:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main, .footer { margin-left: 0; }
+    .content, .hero { padding-left: 24px; padding-right: 24px; }
+    .hero h1 { font-size: 48px; }
+    .hero::after { display: none; }
+    .hero-stats { flex-wrap: wrap; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="title">WAMI<br>ENGINEERING</div>
+    <div class="subtitle">// BUILD TUTORIAL v1.0</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">01 // Overview</div>
+    <a href="#intro" class="nav-link">System Introduction</a>
+    <a href="#architecture" class="nav-link">System Architecture</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">02 // Sensor Payload</div>
+    <a href="#components" class="nav-link">Payload Components</a>
+    <a href="#camera-array" class="nav-link">Camera Array Design</a>
+    <a href="#fpa" class="nav-link">Focal Plane Arrays</a>
+    <a href="#lenses" class="nav-link">Telescopic Optics</a>
+    <a href="#gimbal" class="nav-link">Gimbal & Stabilisation</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">03 // Geometry & Optics</div>
+    <a href="#altitude-geometry" class="nav-link">Altitude & Slant Range</a>
+    <a href="#cos-correction" class="nav-link">Cos θ Correction</a>
+    <a href="#gsd" class="nav-link">GSD Calculations</a>
+    <a href="#coverage" class="nav-link">Coverage vs Resolution</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">04 // Electronics</div>
+    <a href="#mipi" class="nav-link">MIPI CSI-2 Interface</a>
+    <a href="#sensor-connect" class="nav-link">Sensor Connection</a>
+    <a href="#multi-camera" class="nav-link">Multi-Camera Wiring</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">05 // Processing</div>
+    <a href="#pipeline" class="nav-link">Processing Pipeline</a>
+    <a href="#georeg" class="nav-link">Geo-Registration</a>
+    <a href="#mosaicking" class="nav-link">Mosaicking</a>
+    <a href="#oblique-corr" class="nav-link">Oblique Correction</a>
+    <a href="#alignment" class="nav-link">Online Calibration</a>
+    <a href="#tracking" class="nav-link">Target Tracking</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">06 // Build Guide</div>
+    <a href="#parts-list" class="nav-link">Parts List</a>
+    <a href="#assembly" class="nav-link">Assembly Steps</a>
+    <a href="#software-stack" class="nav-link">Software Stack</a>
+    <a href="#calibration" class="nav-link">Ground Calibration</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero" id="top">
+    <div class="hero-tag">// Wide-Area Motion Imagery // Complete Engineering Guide</div>
+    <h1>BUILD YOUR<br>OWN <span>WAMI</span><br>PAYLOAD</h1>
+    <p class="hero-desc">
+      A complete technical tutorial covering every layer of a Wide-Area Motion Imagery surveillance system — from individual sensor physics to full mosaic processing pipeline. Built from first principles.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-val">113km²</div>
+        <div class="stat-label">// TARGET COVERAGE</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">35cm</div>
+        <div class="stat-label">// GROUND RESOLUTION</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">8</div>
+        <div class="stat-label">// CAMERA ARRAY</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">440MP</div>
+        <div class="stat-label">// MOSAIC RESOLUTION</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: INTRO -->
+    <!-- ============================================================ -->
+    <div class="section" id="intro">
+      <div class="section-number">// 01.01</div>
+      <h2>SYSTEM<br>INTRODUCTION</h2>
+
+      <p>Wide-Area Motion Imagery (WAMI) is a surveillance approach that uses an airborne array of cameras to image an entire city-scale area simultaneously, at video frame rates, continuously — enabling operators to detect and track every moving vehicle and person within the coverage zone in real time, and to rewind and forensically trace any movement backwards in time.</p>
+
+      <p>Unlike a conventional camera that can only stare at one narrow patch of ground at a time, a WAMI payload <strong>stares at everything at once</strong>. This is the key capability that makes it operationally revolutionary — no subject can be lost simply by moving out of frame.</p>
+
+      <div class="callout">
+        <div class="callout-title">// Core Principle</div>
+        <p>WAMI does not trade resolution for coverage in the way a single wide-angle camera would. It achieves both by using <strong>many sensors in parallel</strong>, each covering a tile of the total area at acceptable resolution. The mosaic of tiles gives you the city. Each tile gives you the detail.</p>
+      </div>
+
+      <h3>WHAT THIS TUTORIAL COVERS</h3>
+      <p>This tutorial walks through every engineering layer of a WAMI system from scratch — the optics, the sensor electronics, the mechanical arrangement, the processing pipeline, and the calibration procedure. By the end you will have enough to specify, assemble, and operate a functional prototype.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">🔭</div>
+          <div class="card-title">Optics</div>
+          <p>Telescopic lens design, focal length selection, field of view tiling, depth of field at altitude</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📷</div>
+          <div class="card-title">Sensors</div>
+          <p>CMOS FPA selection, pixel pitch, quantum efficiency, MIPI CSI-2 interface</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📐</div>
+          <div class="card-title">Geometry</div>
+          <p>Slant range, cos θ correction, GSD calculations, oblique angle effects</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">Mechanics</div>
+          <p>Camera ring arrangement, gimbal stabilisation, thermal management, vibration isolation</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🖥️</div>
+          <div class="card-title">Processing</div>
+          <p>Geo-registration, mosaicking, oblique correction, online calibration, target tracking</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔌</div>
+          <div class="card-title">Electronics</div>
+          <p>Multi-camera wiring, CSI aggregation, FPGA/Jetson interface, data downlink</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SYSTEM ARCHITECTURE -->
+    <!-- ============================================================ -->
+    <div class="section" id="architecture">
+      <div class="section-number">// 01.02</div>
+      <h2>SYSTEM<br>ARCHITECTURE</h2>
+
+      <p>A WAMI system has five major layers. Understanding how they connect before diving into each is critical to appreciating why design decisions at one layer constrain choices at others.</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">// WAMI System Layers</div>
+        <svg width="700" height="340" viewBox="0 0 700 340">
+          <!-- Layer boxes -->
+          <rect x="40" y="20" width="620" height="52" fill="#131920" stroke="#1e2d3d" rx="3"/>
+          <text x="60" y="42" fill="#00d4ff" font-size="11" letter-spacing="2" font-family="IBM Plex Mono">LAYER 5 // EXPLOITATION</text>
+          <text x="60" y="60" fill="#6e7f8f" font-size="11" font-family="IBM Plex Mono">Operator interface · evidence packaging · forensic analysis · target tracking</text>
+
+          <rect x="40" y="88" width="620" height="52" fill="#131920" stroke="#1e2d3d" rx="3"/>
+          <text x="60" y="110" fill="#00d4ff" font-size="11" letter-spacing="2" font-family="IBM Plex Mono">LAYER 4 // PROCESSING</text>
+          <text x="60" y="128" fill="#6e7f8f" font-size="11" font-family="IBM Plex Mono">Geo-registration · mosaicking · oblique correction · online calibration</text>
+
+          <rect x="40" y="156" width="620" height="52" fill="#131920" stroke="#1e2d3d" rx="3"/>
+          <text x="60" y="178" fill="#ff6b35" font-size="11" letter-spacing="2" font-family="IBM Plex Mono">LAYER 3 // ELECTRONICS</text>
+          <text x="60" y="196" fill="#6e7f8f" font-size="11" font-family="IBM Plex Mono">MIPI CSI-2 · FPGA aggregation · embedded compute · data downlink</text>
+
+          <rect x="40" y="224" width="620" height="52" fill="#131920" stroke="#1e2d3d" rx="3"/>
+          <text x="60" y="246" fill="#ff6b35" font-size="11" letter-spacing="2" font-family="IBM Plex Mono">LAYER 2 // SENSOR</text>
+          <text x="60" y="264" fill="#6e7f8f" font-size="11" font-family="IBM Plex Mono">CMOS FPA array · lens optics · gimbal mount · thermal management</text>
+
+          <rect x="40" y="292" width="620" height="36" fill="#0d1117" stroke="#1e2d3d" rx="3"/>
+          <text x="60" y="308" fill="#6e7f8f" font-size="11" letter-spacing="2" font-family="IBM Plex Mono">LAYER 1 // PLATFORM</text>
+          <text x="380" y="308" fill="#6e7f8f" font-size="11" font-family="IBM Plex Mono">Aerostat / UAV / Aircraft</text>
+
+          <!-- Arrows between layers -->
+          <text x="340" y="83" fill="#1e2d3d" font-size="16" text-anchor="middle">⬆</text>
+          <text x="340" y="151" fill="#1e2d3d" font-size="16" text-anchor="middle">⬆</text>
+          <text x="340" y="219" fill="#1e2d3d" font-size="16" text-anchor="middle">⬆</text>
+          <text x="340" y="287" fill="#1e2d3d" font-size="16" text-anchor="middle">⬆</text>
+        </svg>
+      </div>
+
+      <p>This tutorial focuses on <strong>Layers 2 and 3</strong> (sensor payload and electronics) in detail, with thorough coverage of <strong>Layer 4</strong> (processing). Layer 1 (platform) and Layer 5 (exploitation software UI) are touched on but not the primary focus.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: COMPONENTS -->
+    <!-- ============================================================ -->
+    <div class="section" id="components">
+      <div class="section-number">// 02.01</div>
+      <h2>PAYLOAD<br>COMPONENTS</h2>
+
+      <p>The sensor payload is the physical assembly that flies on the aircraft. It contains every component needed to capture, convert, and begin processing imagery before it ever reaches the ground station.</p>
+
+      <h3>COMPONENT LIST</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Function</th>
+              <th>Critical Spec</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CMOS Image Sensors (×8)</td>
+              <td>Convert photons to digital pixel values</td>
+              <td>≥50MP per sensor, small pixel pitch</td>
+            </tr>
+            <tr>
+              <td>Telescopic Lenses (×8)</td>
+              <td>Focus ground scene onto sensor surface</td>
+              <td>Focal length matched to altitude + GSD</td>
+            </tr>
+            <tr>
+              <td>Camera Mounting Ring</td>
+              <td>Hold all 8 cameras at precise angles</td>
+              <td>Thermally stable, micron-level rigidity</td>
+            </tr>
+            <tr>
+              <td>Gyrostabilised Gimbal</td>
+              <td>Isolate payload from platform vibration</td>
+              <td>3-axis, ±0.01° pointing stability</td>
+            </tr>
+            <tr>
+              <td>FPGA / Jetson Compute</td>
+              <td>Ingest all 8 CSI streams, begin processing</td>
+              <td>Bandwidth ≥ 8 × sensor data rate</td>
+            </tr>
+            <tr>
+              <td>GPS/IMU Unit</td>
+              <td>Provide position and attitude for geo-reg</td>
+              <td>RTK GPS, &lt;0.1° attitude accuracy</td>
+            </tr>
+            <tr>
+              <td>Power Supply / Regulation</td>
+              <td>Clean power to sensors and compute</td>
+              <td>Low noise, isolation from motors</td>
+            </tr>
+            <tr>
+              <td>Thermal Management</td>
+              <td>Remove heat from sensors and compute</td>
+              <td>Sensors must stay within ±2°C of cal temp</td>
+            </tr>
+            <tr>
+              <td>Downlink Transmitter</td>
+              <td>Send processed data to ground station</td>
+              <td>Bandwidth ≥ compressed video data rate</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-title">// Key Insight</div>
+        <p>None of these components is individually exotic. The engineering challenge is in their <strong>precise integration</strong> — particularly the alignment of 8 lenses to 8 sensors, and the software that corrects residual misalignments in real time.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CAMERA ARRAY -->
+    <!-- ============================================================ -->
+    <div class="section" id="camera-array">
+      <div class="section-number">// 02.02</div>
+      <h2>CAMERA<br>ARRAY DESIGN</h2>
+
+      <p>The defining feature of a WAMI payload is that it uses <strong>many cameras in a mosaic arrangement</strong>, not a single large camera. This is driven by both physics and economics — there is no single sensor with enough pixels to achieve both city-scale coverage and 30cm ground resolution simultaneously. The mosaic approach also allows cameras to point obliquely outward, dramatically increasing coverage area per unit altitude.</p>
+
+      <h3>RING ARRANGEMENT</h3>
+
+      <p>For 360° coverage (aerostat-based systems like Kestrel), cameras are arranged in an outward-facing ring, each pointed radially outward at a steep oblique angle. For directional systems (fixed-wing aircraft like PSS Cessna), cameras are arranged in a downward/forward-facing mosaic through the aircraft belly.</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">// 8-Camera Ring Arrangement — Top View</div>
+        <svg width="480" height="480" viewBox="0 0 480 480">
+          <!-- Grid lines -->
+          <line x1="240" y1="40" x2="240" y2="440" stroke="#1e2d3d" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="40" y1="240" x2="440" y2="240" stroke="#1e2d3d" stroke-width="1" stroke-dasharray="4,4"/>
+
+          <!-- Coverage circles -->
+          <circle cx="240" cy="240" r="170" fill="none" stroke="#1e2d3d" stroke-width="1" stroke-dasharray="4,8"/>
+          <circle cx="240" cy="240" r="100" fill="none" stroke="#1e2d3d" stroke-width="1"/>
+          <circle cx="240" cy="240" r="50" fill="rgba(0,212,255,0.08)" stroke="#00d4ff" stroke-width="1"/>
+
+          <!-- Centre platform -->
+          <rect x="215" y="215" width="50" height="50" fill="#131920" stroke="#00d4ff" rx="3"/>
+          <text x="240" y="236" fill="#00d4ff" font-size="9" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">GIMBAL</text>
+          <text x="240" y="250" fill="#00d4ff" font-size="9" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">PLATFORM</text>
+
+          <!-- 8 cameras at 45° intervals -->
+          <!-- CAM 0 - North (270° = top) -->
+          <g transform="rotate(0, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 0</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">EO</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 1 - NE -->
+          <g transform="rotate(45, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 1</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">IR</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 2 - E -->
+          <g transform="rotate(90, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 2</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">EO</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 3 - SE -->
+          <g transform="rotate(135, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 3</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">IR</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 4 - S -->
+          <g transform="rotate(180, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 4</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">EO</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 5 - SW -->
+          <g transform="rotate(225, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 5</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">IR</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 6 - W -->
+          <g transform="rotate(270, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 6</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">EO</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- CAM 7 - NW -->
+          <g transform="rotate(315, 240, 240)">
+            <rect x="218" y="100" width="44" height="30" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+            <text x="240" y="112" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM 7</text>
+            <text x="240" y="123" fill="#6e7f8f" font-size="7" text-anchor="middle" font-family="IBM Plex Mono">IR</text>
+            <line x1="240" y1="130" x2="240" y2="215" stroke="#ff6b35" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+          </g>
+
+          <!-- Labels -->
+          <text x="240" y="466" fill="#6e7f8f" font-size="10" text-anchor="middle" font-family="IBM Plex Mono">45° spacing · alternating EO/IR · all pointing radially outward at ~70° off vertical</text>
+        </svg>
+      </div>
+
+      <h3>SIDE VIEW — OBLIQUE POINTING ANGLE</h3>
+      <div class="diagram-wrap">
+        <div class="diagram-title">// Single Camera — Oblique Viewing Geometry</div>
+        <svg width="600" height="320" viewBox="0 0 600 320">
+          <!-- Ground line -->
+          <line x1="20" y1="280" x2="580" y2="280" stroke="#1e2d3d" stroke-width="2"/>
+          <text x="30" y="296" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">GROUND LEVEL</text>
+
+          <!-- Platform -->
+          <rect x="270" y="40" width="60" height="30" fill="#131920" stroke="#00d4ff" rx="3"/>
+          <text x="300" y="57" fill="#00d4ff" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">PLATFORM</text>
+
+          <!-- Altitude line (vertical) -->
+          <line x1="300" y1="70" x2="300" y2="280" stroke="#1e2d3d" stroke-width="1" stroke-dasharray="5,3"/>
+          <text x="308" y="180" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">h = altitude</text>
+
+          <!-- Camera on platform (right side) -->
+          <rect x="330" y="44" width="36" height="22" fill="#0d1117" stroke="#ff6b35" rx="2"/>
+          <text x="348" y="59" fill="#ff6b35" font-size="8" text-anchor="middle" font-family="IBM Plex Mono">CAM</text>
+
+          <!-- Line of sight - oblique -->
+          <line x1="348" y1="66" x2="480" y2="280" stroke="#ff6b35" stroke-width="1.5"/>
+
+          <!-- Slant range label -->
+          <text x="430" y="185" fill="#ff6b35" font-size="10" font-family="IBM Plex Mono" transform="rotate(52, 430, 185)">slant range = h/cosθ</text>
+
+          <!-- Theta angle arc -->
+          <path d="M 300 90 Q 320 90 318 108" fill="none" stroke="#39ff14" stroke-width="1.5"/>
+          <text x="322" y="103" fill="#39ff14" font-size="11" font-family="IBM Plex Mono">θ</text>
+
+          <!-- Ground footprint -->
+          <line x1="300" y1="280" x2="480" y2="280" stroke="#39ff14" stroke-width="2"/>
+          <text x="390" y="272" fill="#39ff14" font-size="10" text-anchor="middle" font-family="IBM Plex Mono">ground range = h·tanθ</text>
+
+          <!-- Footprint stretch arrow -->
+          <line x1="460" y1="280" x2="540" y2="280" stroke="#00d4ff" stroke-width="2"/>
+          <polygon points="540,276 548,280 540,284" fill="#00d4ff"/>
+          <text x="500" y="296" fill="#00d4ff" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">pixel footprint</text>
+          <text x="500" y="308" fill="#00d4ff" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">stretched by 1/cosθ</text>
+
+          <!-- Nadir point -->
+          <circle cx="300" cy="280" r="3" fill="#1e2d3d"/>
+          <text x="288" y="296" fill="#6e7f8f" font-size="9" font-family="IBM Plex Mono">nadir</text>
+        </svg>
+      </div>
+
+      <h3>OVERLAP ZONES</h3>
+      <p>Adjacent cameras must overlap by <strong>at least 15–20% of their field of view</strong>. This overlap serves two purposes: it eliminates gaps in coverage, and it provides the redundant features needed by the online calibration algorithm to detect and correct any inter-camera misalignment.</p>
+
+      <div class="callout">
+        <div class="callout-title">// Design Rule</div>
+        <p>More overlap = better calibration stability, but reduced net coverage area per camera. 15–20% is the standard engineering compromise. Below 10% and calibration becomes unreliable; above 30% and you're wasting pixel budget on redundant coverage.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- FPA -->
+    <!-- ============================================================ -->
+    <div class="section" id="fpa">
+      <div class="section-number">// 02.03</div>
+      <h2>FOCAL PLANE<br>ARRAYS</h2>
+
+      <p>A focal plane array (FPA) is the core sensor chip inside each camera. It is a 2D grid of photodetectors — each detector is one pixel. When light falls on a detector, it generates an electric charge proportional to the number of photons received. That charge is read out as a voltage and digitised to give a pixel value.</p>
+
+      <h3>FPA ARCHITECTURE</h3>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">// FPA Internal Structure</div>
+        <svg width="600" height="280" viewBox="0 0 600 280">
+          <!-- Main FPA block -->
+          <rect x="40" y="20" width="320" height="200" fill="#0d1117" stroke="#1e2d3d" rx="3"/>
+          <text x="200" y="42" fill="#6e7f8f" font-size="10" text-anchor="middle" letter-spacing="2" font-family="IBM Plex Mono">FOCAL PLANE ARRAY</text>
+
+          <!-- Pixel grid -->
+          <g opacity="0.6">
+            <!-- Row of pixels -->
+            <rect x="55" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="75" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="95" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="115" y="55" width="18" height="18" fill="#131920" stroke="#00d4ff" stroke-width="1.5"/>
+            <rect x="135" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="155" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="175" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="195" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="215" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="235" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="255" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="275" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="295" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="315" y="55" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+
+            <!-- Multiple rows -->
+            <rect x="55" y="75" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="75" y="75" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="95" y="75" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="115" y="75" width="18" height="18" fill="rgba(0,212,255,0.15)" stroke="#00d4ff" stroke-width="1.5"/>
+            <rect x="135" y="75" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <rect x="155" y="75" width="18" height="18" fill="#131920" stroke="#1e2d3d"/>
+            <!-- dots -->
+            <text x="200" y="108" fill="#1e2d3d" font-size="18" text-anchor="middle" font-family="IBM Plex Mono">· · · · ·</text>
+            <text x="200" y="130" fill="#1e2d3d" font-size="18" text-anchor="middle" font-family="IBM Plex Mono">· · · · ·</text>
+            <text x="200" y="152" fill="#1e2d3d" font-size="18" text-anchor="middle" font-family="IBM Plex Mono">· · · · ·</text>
+          </g>
+
+          <!-- Bottom: Readout row -->
+          <rect x="55" y="165" width="280" height="22" fill="#131920" stroke="#ff6b35" rx="2"/>
+          <text x="195" y="180" fill="#ff6b35" font-size="9" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">HORIZONTAL SHIFT REGISTER / READOUT</text>
+
+          <!-- ADC block -->
+          <rect x="55" y="198" width="280" height="18" fill="#0d1117" stroke="#1e2d3d" rx="2"/>
+          <text x="195" y="211" fill="#6e7f8f" font-size="9" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">ADC — ANALOGUE TO DIGITAL CONVERTER</text>
+
+          <!-- Pixel callout -->
+          <line x1="125" y1="64" x2="430" y2="80" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3,3"/>
+          <rect x="430" y="60" width="150" height="50" fill="#131920" stroke="#00d4ff" rx="2"/>
+          <text x="505" y="78" fill="#00d4ff" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">ONE PIXEL</text>
+          <text x="505" y="92" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">photodiode + CFA</text>
+          <text x="505" y="104" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">filter + transistors</text>
+
+          <!-- Output arrow -->
+          <line x1="195" y1="216" x2="195" y2="255" stroke="#39ff14" stroke-width="1.5"/>
+          <polygon points="191,255 195,263 199,255" fill="#39ff14"/>
+          <text x="210" y="248" fill="#39ff14" font-size="9" font-family="IBM Plex Mono">DIGITAL OUTPUT</text>
+          <text x="210" y="262" fill="#6e7f8f" font-size="9" font-family="IBM Plex Mono">MIPI CSI-2 serial data</text>
+        </svg>
+      </div>
+
+      <h3>EO vs IR SENSORS</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Property</th><th>EO (Electro-Optical)</th><th>IR (Infrared)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Wavelength</td><td>400–700nm (visible)</td><td>3–5µm (MWIR) or 8–12µm (LWIR)</td></tr>
+            <tr><td>Detector material</td><td>Silicon CMOS</td><td>InSb, MCT, or uncooled microbolometer</td></tr>
+            <tr><td>Cooling required?</td><td>No</td><td>Yes for high-perf (cooled to ~77K); no for microbolometer</td></tr>
+            <tr><td>Day/night</td><td>Day only (or with illumination)</td><td>Day and night — detects thermal emission</td></tr>
+            <tr><td>Resolution</td><td>High — 50MP+ readily available</td><td>Lower — typically 1–4MP at practical cost</td></tr>
+            <tr><td>Cost</td><td>Low — phone-grade sensors ~$10–50</td><td>High — cooled IR arrays $10k–$100k+</td></tr>
+            <tr><td>Interface</td><td>MIPI CSI-2 standard</td><td>Varies — often GigE or proprietary</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">// Sensor Selection for Prototype</div>
+        <p>For a first prototype, start with <strong>Sony IMX sensors</strong> (IMX294, IMX410, or IMX455) — large format, high resolution, well-documented, available without NDA. The IMX455 gives 61MP at 3.76µm pixel pitch in a 35mm format, excellent for high-altitude work. For IR capability later, an uncooled LWIR microbolometer like the <strong>FLIR Lepton</strong> or <strong>Seek Mosaic</strong> can be added to alternate camera slots.</p>
+      </div>
+
+      <h3>BAYER PATTERN & DEMOSAICING</h3>
+      <p>Most colour CMOS sensors use a Bayer colour filter array — each pixel is covered by either a red, green, or blue filter in a 2×2 RGGB pattern. The raw output is therefore a <em>Bayer image</em>, not a full colour image. Before use, the image must go through <strong>demosaicing</strong> — an interpolation algorithm that reconstructs full RGB colour at every pixel from its neighbours. This is part of the processing pipeline and must be accounted for in compute budget.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- LENSES -->
+    <!-- ============================================================ -->
+    <div class="section" id="lenses">
+      <div class="section-number">// 02.04</div>
+      <h2>TELESCOPIC<br>OPTICS</h2>
+
+      <p>The lens is the component that determines ground resolution. Given a sensor with known pixel pitch and a required ground sample distance (GSD) at a given slant range, the required focal length can be calculated exactly.</p>
+
+      <h3>FOCAL LENGTH CALCULATION</h3>
+
+      <div class="equation">
+        <div class="eq-label">// Fundamental Lens Equation for Aerial Work</div>
+        <span class="c-accent">focal_length</span> = (<span class="c-accent2">pixel_pitch</span> × <span class="c-accent3">slant_range</span>) / <span class="c-bright">GSD</span>
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Example: Sony IMX455 at 1km altitude, 70° off-nadir</div>
+        pixel_pitch  = <span class="c-accent2">3.76 µm</span>  (0.00376 mm)
+slant_range  = <span class="c-accent3">1000m / cos(70°)</span>  =  <span class="c-accent3">2924m</span>
+target GSD   = <span class="c-bright">0.35m</span>  (35cm)
+
+focal_length = (0.00376 mm × 2,924,000 mm) / 350 mm
+             = <span class="c-accent">31.4mm</span>
+      </div>
+
+      <div class="callout">
+        <div class="callout-title">// Note</div>
+        <p>A 31mm focal length for a 35mm-format sensor is a moderate telephoto — similar to a 50mm equivalent on a full-frame camera. At 2km altitude the same calculation gives ~63mm. At 3km altitude ~94mm. These are all achievable with standard M42 or C-mount machine vision lenses, not exotic military optics.</p>
+      </div>
+
+      <h3>LENS QUALITY REQUIREMENTS</h3>
+
+      <p>For WAMI use, the lens must be:</p>
+      <ul style="margin: 12px 0 20px 20px; max-width: 820px;">
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Sharp corner-to-corner</strong> — vignetting and corner softness that are acceptable in photography degrade mosaic stitching quality badly</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Low distortion</strong> — barrel/pincushion distortion must be characterised and corrected; the geo-registration algorithm needs a rectilinear projection</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Fixed focal length</strong> — no zoom, no autofocus mechanism. Set to infinity on the ground, lock with thread adhesive (Loctite)</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Thermally stable</strong> — focus shift with temperature must be &lt;1 depth-of-field unit across operating temperature range (−10°C to +40°C typically)</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Matched set</strong> — all 8 lenses should be the same model and ideally same production batch to minimise inter-camera colour and vignetting differences</li>
+      </ul>
+
+      <h3>DEPTH OF FIELD AT ALTITUDE</h3>
+      <p>A key advantage of aerial photography: at 1km+ altitude, depth of field is effectively infinite for any practical focal length. Focus set once at infinity covers everything from horizon to horizon. This eliminates autofocus as a concern entirely.</p>
+
+      <div class="equation">
+        <div class="eq-label">// Hyperfocal distance — beyond this, everything is sharp to infinity</div>
+        H = f² / (N × c)
+
+where: f = focal length,  N = f-number,  c = circle of confusion (~2 × pixel pitch)
+
+Example (31mm lens, f/4, IMX455):
+  c = 2 × 0.00376mm = 0.00752mm
+  H = (31)² / (4 × 0.00752) = 961 / 0.030 = <span class="c-accent">~32,000mm ≈ 32m</span>
+
+At 1km altitude everything beyond 32m from the lens is in focus.
+<span class="c-accent3">// Conclusion: focus once, lock, forget.</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GIMBAL -->
+    <!-- ============================================================ -->
+    <div class="section" id="gimbal">
+      <div class="section-number">// 02.05</div>
+      <h2>GIMBAL &<br>STABILISATION</h2>
+
+      <p>The gimbal is the mechanical decoupling layer between the aircraft (which vibrates, pitches, rolls, and yaws) and the sensor payload (which needs to point at a fixed patch of ground). Without stabilisation, imagery is blurred and geo-registration fails.</p>
+
+      <h3>STABILISATION REQUIREMENTS</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Disturbance Source</th><th>Frequency</th><th>Mitigation</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Engine/motor vibration</td><td>50–200 Hz</td><td>Vibration isolators (rubber dampers) between payload and airframe</td></tr>
+            <tr><td>Wind gusts</td><td>0.1–2 Hz</td><td>3-axis gyrostabilised gimbal with rate feedback</td></tr>
+            <tr><td>Platform attitude changes</td><td>0.01–0.5 Hz</td><td>IMU-referenced gimbal, GPS/INS integration</td></tr>
+            <tr><td>Thermal expansion</td><td>DC / very slow</td><td>Invar or carbon fibre structural elements, online calibration</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>GIMBAL ARCHITECTURE</h3>
+      <p>A 3-axis brushless motor gimbal provides <strong>roll, pitch, and yaw</strong> correction. IMU sensors on the payload continuously measure attitude error; a PID controller drives the gimbal motors to null the error. Modern drone-grade gimbals (e.g. Gremsy H16, DJI RS Pro) achieve ±0.01° stabilisation, more than adequate for WAMI work.</p>
+
+      <div class="callout warning">
+        <div class="callout-title">// Critical Note</div>
+        <p>For a ring camera array, the gimbal must stabilise the <strong>entire ring assembly</strong> as a rigid body. Do not attempt to stabilise individual cameras. The inter-camera geometry must be preserved rigidly — the gimbal corrects the whole payload's attitude, not each camera independently.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: GEOMETRY -->
+    <!-- ============================================================ -->
+    <div class="section" id="altitude-geometry">
+      <div class="section-number">// 03.01</div>
+      <h2>ALTITUDE &<br>SLANT RANGE</h2>
+
+      <p>Every ground resolution and coverage calculation depends on getting the geometry right. The fundamental geometric relationship for an obliquely-pointing camera at altitude is the slant range equation.</p>
+
+      <h3>GEOMETRY DEFINITIONS</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Symbol</th><th>Name</th><th>Definition</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>h</td><td>Altitude AGL</td><td>Platform height above ground level</td></tr>
+            <tr><td>θ</td><td>Off-nadir angle</td><td>Angle between camera pointing direction and vertical</td></tr>
+            <tr><td>R</td><td>Slant range</td><td>Straight-line distance from camera to target ground point</td></tr>
+            <tr><td>GSD</td><td>Ground Sample Distance</td><td>Physical size of one pixel projected on the ground</td></tr>
+            <tr><td>GSD_r</td><td>Range GSD</td><td>GSD in the direction away from nadir (larger for oblique)</td></tr>
+            <tr><td>GSD_az</td><td>Azimuth GSD</td><td>GSD perpendicular to range direction (less affected by angle)</td></tr>
+            <tr><td>p</td><td>Pixel pitch</td><td>Physical size of one sensor pixel</td></tr>
+            <tr><td>f</td><td>Focal length</td><td>Lens focal length</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Slant Range</div>
+        R = h / cos(θ)
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Ground Range (horizontal distance to target)</div>
+        d = h × tan(θ)
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Numerical example: h = 1000m, θ = 70°</div>
+        R = 1000 / cos(70°) = 1000 / 0.342 = <span class="c-accent">2924m</span>
+d = 1000 × tan(70°) = 1000 × 2.747 = <span class="c-accent2">2747m</span>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- COS CORRECTION -->
+    <!-- ============================================================ -->
+    <div class="section" id="cos-correction">
+      <div class="section-number">// 03.02</div>
+      <h2>COS θ<br>CORRECTION</h2>
+
+      <p>When a camera points obliquely at the ground, each pixel covers a <strong>different-sized area depending on direction</strong>. In the range direction (along the viewing direction projected to ground), pixels are stretched by a factor of 1/cos(θ). In the azimuth direction (perpendicular), they are much less affected. This creates a non-square pixel footprint that must be corrected before mosaicking.</p>
+
+      <h3>GSD IN EACH DIRECTION</h3>
+
+      <div class="equation">
+        <div class="eq-label">// Azimuth GSD (perpendicular to look direction — less distorted)</div>
+        GSD_az = (p × R) / f
+               = (p × h) / (f × cos θ)
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Range GSD (along look direction — stretched by oblique angle)</div>
+        GSD_r = GSD_az / cos(θ)
+              = (p × h) / (f × cos²θ)
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Numerical example: p=3.76µm, f=31mm, h=1000m, θ=70°</div>
+        GSD_az = (0.00376mm × 1,000,000mm) / (31mm × cos(70°))
+               = 3760 / (31 × 0.342)
+               = 3760 / 10.6
+               = <span class="c-accent">355mm ≈ 35.5cm</span>
+
+GSD_r  = 355mm / cos(70°)
+       = 355 / 0.342
+       = <span class="c-accent2">1038mm ≈ 104cm</span>
+
+<span class="c-dim">// A pixel that is 35cm wide is nearly 1m deep in the range direction.</span>
+<span class="c-dim">// This is why resolution degrades with oblique angle — range pixels are stretched.</span>
+      </div>
+
+      <h3>ORTHORECTIFICATION</h3>
+      <p>To correct for this stretch before mosaicking, each image tile must be <strong>orthorectified</strong> — projected onto a flat horizontal ground plane as if viewed from directly above. This is done using the known camera position (from GPS), attitude (from IMU), and a digital elevation model (DEM) of the terrain.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>Build Ray from Camera to Ground</h4>
+            <p>For each pixel in the raw image, compute the 3D ray from the camera centre through that pixel using the known focal length and pixel position. Transform to world coordinates using the GPS position and IMU attitude.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>Intersect Ray with Ground Plane</h4>
+            <p>Find where each ray intersects the terrain. If a DEM is available, use it; otherwise assume flat ground at the average altitude of the scene. The intersection gives the ground coordinate (latitude, longitude) of that pixel.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>Resample to Regular Grid</h4>
+            <p>Map pixel values from the raw (stretched) image to a regular UTM or WGS84 grid at the target GSD. Use bilinear or bicubic interpolation. The output is a georeferenced image tile with square pixels at the nominal GSD.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>Apply Lens Distortion Correction</h4>
+            <p>Before or after ray-casting, correct for radial and tangential lens distortion using pre-calibrated coefficients (k1, k2, p1, p2). Use OpenCV's undistort() or equivalent. This is critical for accurate mosaicking.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-label">python</div>
+        <pre><span class="c-dim"># Orthorectification core — Python pseudocode</span>
+<span class="c-dim"># For each camera in the ring:</span>
+
+<span class="c-accent">import</span> numpy <span class="c-accent">as</span> np
+
+<span class="c-accent">def</span> <span class="c-accent2">ray_to_ground</span>(px, py, f, cam_pos, cam_R, h_ground):
+    <span class="c-dim">"""
+    px, py   : pixel coordinates (centred)
+    f        : focal length in pixels (f_mm / pixel_pitch_mm)
+    cam_pos  : [X, Y, Z] camera position in world coords (m)
+    cam_R    : 3x3 rotation matrix from IMU (body to world)
+    h_ground : ground height (m, from DEM or assumed flat)
+    returns  : (lat, lon) or (X, Y) ground coordinate
+    """</span>
+    <span class="c-dim"># Ray in camera frame (normalised)</span>
+    ray_cam = np.array([px, py, f])
+    ray_cam = ray_cam / np.linalg.norm(ray_cam)
+
+    <span class="c-dim"># Transform to world frame using IMU rotation</span>
+    ray_world = cam_R @ ray_cam
+
+    <span class="c-dim"># Scale to intersect ground plane at h_ground</span>
+    <span class="c-dim"># Parametric: P = cam_pos + t * ray_world</span>
+    <span class="c-dim"># At ground: P[2] = h_ground</span>
+    t = (h_ground - cam_pos[2]) / ray_world[2]
+
+    ground_point = cam_pos + t * ray_world
+    <span class="c-accent">return</span> ground_point[0], ground_point[1]  <span class="c-dim"># X, Y ground</span>
+
+
+<span class="c-accent">def</span> <span class="c-accent2">orthorectify</span>(raw_image, f, cam_pos, cam_R, h_ground, output_gsd, bounds):
+    <span class="c-dim">"""Resample raw image to orthorectified grid"""</span>
+    H, W = raw_image.shape[:2]
+    cx, cy = W/2, H/2  <span class="c-dim"># principal point</span>
+
+    <span class="c-dim"># Build output grid</span>
+    x_range = np.arange(bounds[<span class="c-accent2">0</span>], bounds[<span class="c-accent2">2</span>], output_gsd)
+    y_range = np.arange(bounds[<span class="c-accent2">1</span>], bounds[<span class="c-accent2">3</span>], output_gsd)
+    out_X, out_Y = np.meshgrid(x_range, y_range)
+
+    <span class="c-dim"># For each output pixel, find corresponding raw pixel</span>
+    <span class="c-dim"># (inverse mapping via projection equations)</span>
+    <span class="c-dim"># ... (project ground point back through camera model)</span>
+
+    <span class="c-accent">return</span> ortho_image
+        </pre>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GSD CALCULATIONS -->
+    <!-- ============================================================ -->
+    <div class="section" id="gsd">
+      <div class="section-number">// 03.03</div>
+      <h2>GSD<br>CALCULATIONS</h2>
+
+      <p>Ground Sample Distance is the single most important design parameter — it determines what you can and cannot see. This section gives you the complete toolkit to calculate GSD for any combination of sensor, lens, altitude, and pointing angle.</p>
+
+      <h3>COMPLETE GSD FORMULA SET</h3>
+
+      <div class="equation">
+        <div class="eq-label">// Nadir GSD (straight down, θ = 0)</div>
+        GSD = (pixel_pitch × altitude) / focal_length
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Oblique GSD — Azimuth direction</div>
+        GSD_az = (pixel_pitch × altitude) / (focal_length × cos θ)
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Oblique GSD — Range direction (always larger)</div>
+        GSD_r = (pixel_pitch × altitude) / (focal_length × cos² θ)
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Effective GSD (geometric mean — used for spec purposes)</div>
+        GSD_eff = sqrt(GSD_az × GSD_r)
+                = (pixel_pitch × altitude) / (focal_length × cos^1.5 θ)
+      </div>
+
+      <h3>GSD WORKED EXAMPLES</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Altitude</th><th>θ off-nadir</th><th>Slant Range</th><th>GSD_az</th><th>GSD_r</th><th>GSD_eff</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>500m</td><td>60°</td><td>1000m</td><td>17.7cm</td><td>35.4cm</td><td>25cm</td></tr>
+            <tr><td>1000m</td><td>70°</td><td>2924m</td><td>35.5cm</td><td>104cm</td><td>61cm</td></tr>
+            <tr><td>1000m</td><td>60°</td><td>2000m</td><td>24.3cm</td><td>48.5cm</td><td>34cm</td></tr>
+            <tr><td>3000m</td><td>70°</td><td>8772m</td><td>106cm</td><td>310cm</td><td>181cm</td></tr>
+            <tr><td>3000m</td><td>60°</td><td>6000m</td><td>72.7cm</td><td>145cm</td><td>103cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><em>Using IMX455: p = 3.76µm, f = 31mm for 1000m rows; f = 94mm for 3000m rows.</em></p>
+
+      <div class="callout warning">
+        <div class="callout-title">// Takeaway</div>
+        <p>To maintain acceptable resolution at larger oblique angles you need either a <strong>longer focal length lens</strong> or you accept lower resolution in the range direction. WAMI systems deliberately operate where the range GSD is 2–3× the azimuth GSD — tracking moving objects (which have extent in both dimensions) tolerates this asymmetry well.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- COVERAGE -->
+    <!-- ============================================================ -->
+    <div class="section" id="coverage">
+      <div class="section-number">// 03.04</div>
+      <h2>COVERAGE vs<br>RESOLUTION</h2>
+
+      <p>Coverage per camera is determined by the total sensor pixel count and the per-pixel GSD.</p>
+
+      <div class="equation">
+        <div class="eq-label">// Ground coverage of one camera (azimuth direction, in pixels)</div>
+        Width_ground = sensor_width_pixels × GSD_az
+        Height_ground = sensor_height_pixels × GSD_az  <span class="c-dim">(simplified — ignoring range stretch)</span>
+        Area ≈ Width_ground × Height_ground
+      </div>
+
+      <div class="equation">
+        <div class="eq-label">// Example: IMX455, 9576 × 6388 pixels, GSD_az = 35.5cm at 1km/70°</div>
+        Width_ground  = 9576 × 0.355m = <span class="c-accent">3399m = 3.4km</span>
+Height_ground = 6388 × 0.355m = <span class="c-accent">2268m = 2.3km</span>
+Area per cam  ≈ 3.4 × 2.3 = <span class="c-accent2">~7.8 km²</span>
+
+8 cameras (ring, 360°, with 20% overlap):
+Effective coverage ≈ 8 × 7.8 × 0.8 = <span class="c-accent3">~50 km²</span>
+
+<span class="c-dim">// Note: oblique stretch in range direction increases coverage further</span>
+<span class="c-dim">// Range footprint per camera ≈ 7.8 × (1/cos²70°) ≈ 66 km²</span>
+<span class="c-dim">// With ring geometry: net coverage ~90–120 km²  ✓ matches Kestrel spec</span>
+      </div>
+
+      <h3>THE FUNDAMENTAL TRADEOFF SURFACE</h3>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">// Coverage vs Resolution vs Altitude — Design Space</div>
+        <svg width="620" height="280" viewBox="0 0 620 280">
+          <!-- Axes -->
+          <line x1="60" y1="240" x2="580" y2="240" stroke="#1e2d3d" stroke-width="1.5"/>
+          <line x1="60" y1="240" x2="60" y2="20" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <!-- X axis label -->
+          <text x="320" y="268" fill="#6e7f8f" font-size="11" text-anchor="middle" font-family="IBM Plex Mono">OBLIQUE ANGLE θ  (degrees off nadir)</text>
+          <text x="100" y="256" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">0°</text>
+          <text x="196" y="256" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">30°</text>
+          <text x="292" y="256" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">45°</text>
+          <text x="388" y="256" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">60°</text>
+          <text x="484" y="256" fill="#6e7f8f" font-size="10" font-family="IBM Plex Mono">75°</text>
+
+          <!-- Y axis label -->
+          <text x="14" y="140" fill="#6e7f8f" font-size="11" font-family="IBM Plex Mono" transform="rotate(-90, 14, 140)">METRIC VALUE</text>
+
+          <!-- Coverage curve — increases with angle -->
+          <polyline points="100,200 196,180 292,155 388,115 484,65" fill="none" stroke="#00d4ff" stroke-width="2"/>
+          <text x="490" y="60" fill="#00d4ff" font-size="10" font-family="IBM Plex Mono">COVERAGE</text>
+
+          <!-- GSD_az curve — mild degradation -->
+          <polyline points="100,80 196,85 292,94 388,110 484,148" fill="none" stroke="#39ff14" stroke-width="2"/>
+          <text x="490" y="155" fill="#39ff14" font-size="10" font-family="IBM Plex Mono">GSD_az</text>
+
+          <!-- GSD_r curve — severe degradation -->
+          <polyline points="100,80 196,92 292,115 388,160 484,230" fill="none" stroke="#ff6b35" stroke-width="2"/>
+          <text x="490" y="230" fill="#ff6b35" font-size="10" font-family="IBM Plex Mono">GSD_range</text>
+
+          <!-- WAMI operating zone -->
+          <rect x="370" y="30" width="100" height="210" fill="rgba(0,212,255,0.05)" stroke="#00d4ff" stroke-width="1" stroke-dasharray="4,4"/>
+          <text x="420" y="46" fill="#00d4ff" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">WAMI</text>
+          <text x="420" y="58" fill="#00d4ff" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">ZONE</text>
+        </svg>
+      </div>
+
+      <p>WAMI systems operate in the 60–75° off-nadir zone to maximise coverage. The penalty is significant range GSD degradation, but this is acceptable for the tracking mission because moving objects are large enough (vehicles are &gt;2m) to be detected even at 1m GSD.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: ELECTRONICS / MIPI -->
+    <!-- ============================================================ -->
+    <div class="section" id="mipi">
+      <div class="section-number">// 04.01</div>
+      <h2>MIPI CSI-2<br>INTERFACE</h2>
+
+      <p>MIPI CSI-2 (Camera Serial Interface 2) is the standard digital interface between a CMOS image sensor and a host processor. Understanding this interface is essential for connecting your bare sensors to a compute board.</p>
+
+      <h3>CSI-2 PHYSICAL LAYER</h3>
+
+      <p>CSI-2 uses <strong>differential serial lanes</strong> — each lane is a pair of wires (+ and −) that carry a high-speed differential signal. This gives noise immunity and allows very high data rates. A typical camera uses 2 or 4 data lanes plus one clock lane.</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">// MIPI CSI-2 Pin Connections</div>
+        <svg width="600" height="260" viewBox="0 0 600 260">
+          <!-- Sensor block -->
+          <rect x="20" y="30" width="130" height="200" fill="#0d1117" stroke="#ff6b35" rx="3"/>
+          <text x="85" y="52" fill="#ff6b35" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">SENSOR</text>
+          <text x="85" y="64" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">e.g. IMX455</text>
+
+          <!-- Sensor pins -->
+          <text x="140" y="92" fill="#6e7f8f" font-size="9" text-anchor="end" font-family="IBM Plex Mono">3.3V PWR</text>
+          <text x="140" y="110" fill="#6e7f8f" font-size="9" text-anchor="end" font-family="IBM Plex Mono">GND</text>
+          <text x="140" y="128" fill="#00d4ff" font-size="9" text-anchor="end" font-family="IBM Plex Mono">CLK_P</text>
+          <text x="140" y="144" fill="#00d4ff" font-size="9" text-anchor="end" font-family="IBM Plex Mono">CLK_N</text>
+          <text x="140" y="162" fill="#39ff14" font-size="9" text-anchor="end" font-family="IBM Plex Mono">D0_P</text>
+          <text x="140" y="178" fill="#39ff14" font-size="9" text-anchor="end" font-family="IBM Plex Mono">D0_N</text>
+          <text x="140" y="196" fill="#39ff14" font-size="9" text-anchor="end" font-family="IBM Plex Mono">D1_P / D2_P</text>
+          <text x="140" y="212" fill="#39ff14" font-size="9" text-anchor="end" font-family="IBM Plex Mono">D1_N / D2_N</text>
+          <text x="140" y="228" fill="#ff6b35" font-size="9" text-anchor="end" font-family="IBM Plex Mono">I2C SDA/SCL</text>
+
+          <!-- Lines to processor -->
+          <line x1="150" y1="90" x2="290" y2="90" stroke="#6e7f8f" stroke-width="1"/>
+          <line x1="150" y1="108" x2="290" y2="108" stroke="#6e7f8f" stroke-width="1"/>
+          <line x1="150" y1="127" x2="290" y2="127" stroke="#00d4ff" stroke-width="1.5"/>
+          <line x1="150" y1="143" x2="290" y2="143" stroke="#00d4ff" stroke-width="1.5"/>
+          <line x1="150" y1="161" x2="290" y2="161" stroke="#39ff14" stroke-width="1.5"/>
+          <line x1="150" y1="177" x2="290" y2="177" stroke="#39ff14" stroke-width="1.5"/>
+          <line x1="150" y1="195" x2="290" y2="195" stroke="#39ff14" stroke-width="1.5"/>
+          <line x1="150" y1="211" x2="290" y2="211" stroke="#39ff14" stroke-width="1.5"/>
+          <line x1="150" y1="227" x2="290" y2="227" stroke="#ff6b35" stroke-width="1"/>
+
+          <!-- Cable label -->
+          <text x="218" y="78" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">FFC CABLE</text>
+          <text x="218" y="88" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">or PCB trace</text>
+
+          <!-- Processor block -->
+          <rect x="290" y="30" width="140" height="200" fill="#0d1117" stroke="#00d4ff" rx="3"/>
+          <text x="360" y="52" fill="#00d4ff" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">HOST SoC</text>
+          <text x="360" y="64" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">Jetson / RPi / FPGA</text>
+          <text x="360" y="90" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">CSI-2 DPHY RX</text>
+          <text x="360" y="140" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">ISP block</text>
+          <text x="360" y="190" fill="#ff6b35" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">I2C master</text>
+          <text x="360" y="204" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">(sensor config)</text>
+
+          <!-- Output arrow -->
+          <line x1="430" y1="130" x2="510" y2="130" stroke="#39ff14" stroke-width="2"/>
+          <polygon points="510,126 520,130 510,134" fill="#39ff14"/>
+          <text x="530" y="118" fill="#39ff14" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">RAW</text>
+          <text x="530" y="132" fill="#39ff14" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">BAYER</text>
+          <text x="530" y="146" fill="#39ff14" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">FRAMES</text>
+
+          <!-- Labels for wire types -->
+          <text x="560" y="180" fill="#00d4ff" font-size="8" font-family="IBM Plex Mono">CLK: timing</text>
+          <text x="560" y="194" fill="#39ff14" font-size="8" font-family="IBM Plex Mono">D: pixel data</text>
+          <text x="560" y="208" fill="#ff6b35" font-size="8" font-family="IBM Plex Mono">I2C: control</text>
+        </svg>
+      </div>
+
+      <h3>DATA RATE CALCULATION</h3>
+
+      <div class="equation">
+        <div class="eq-label">// Data rate per camera (raw, uncompressed)</div>
+        data_rate = width × height × fps × bit_depth
+
+Example (IMX455, 9576 × 6388, 10fps, 12-bit):
+  = 9576 × 6388 × 10 × 12
+  = <span class="c-accent">7.35 Gbits/s per camera</span>
+
+8 cameras total:
+  = 8 × 7.35 = <span class="c-accent2">58.8 Gbits/s</span>
+
+<span class="c-dim">// CSI-2 with 4 lanes at 2.5Gbps/lane = 10Gbps per camera port</span>
+<span class="c-dim">// Need 8 separate CSI-2 ports or FPGA-based aggregation</span>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-title">// Multi-Camera Challenge</div>
+        <p>This is why Raspberry Pi is only a <strong>prototyping tool</strong> for one camera. For 8 simultaneous cameras you need either a <strong>Jetson AGX Orin</strong> (up to 16 CSI lanes, handles ~4 high-res cameras) or an <strong>FPGA</strong> (Xilinx Zynq, Intel Agilex) that aggregates all 8 streams before feeding a CPU for processing. Real WAMI systems use custom FPGAs precisely for this aggregation layer.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SENSOR CONNECTION -->
+    <!-- ============================================================ -->
+    <div class="section" id="sensor-connect">
+      <div class="section-number">// 04.02</div>
+      <h2>SENSOR<br>CONNECTION</h2>
+
+      <p>Here is the practical procedure for connecting a bare CMOS sensor module to a Raspberry Pi or Jetson for prototyping.</p>
+
+      <h3>RASPBERRY PI — SINGLE CAMERA</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>Hardware connection</h4>
+            <p>Connect the camera module FFC (flat flex cable) to the Pi's CSI connector. Lift the black latch, insert cable with contacts facing away from the USB ports, press latch down. The 15-pin connector carries power, I2C, and all MIPI data lanes.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>Enable camera in config</h4>
+            <p>Run <code>sudo raspi-config</code> → Interface Options → Camera → Enable. Or edit /boot/config.txt: add <code>start_x=1</code> and <code>gpu_mem=128</code>. Reboot.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>Capture raw frames with libcamera</h4>
+            <p>Use <code>libcamera-raw -t 1000 --segment 1 -o frame%03d.raw</code> to capture raw Bayer frames to disk. For video: <code>libcamera-vid -t 10000 -o test.h264</code>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>Python/OpenCV access</h4>
+            <p>Use <code>picamera2</code> library for Python access. Allows setting exposure, gain, frame rate, and capturing numpy arrays directly for processing in OpenCV.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-label">python</div>
+        <pre><span class="c-dim"># Capture raw frame from Pi camera using picamera2</span>
+<span class="c-accent">from</span> picamera2 <span class="c-accent">import</span> Picamera2
+<span class="c-accent">import</span> numpy <span class="c-accent">as</span> np
+<span class="c-accent">import</span> cv2
+
+picam2 = Picamera2()
+
+<span class="c-dim"># Configure for raw capture at full resolution</span>
+config = picam2.create_still_configuration(
+    raw={<span class="c-accent2">"size"</span>: picam2.sensor_resolution},
+    main={<span class="c-accent2">"size"</span>: (<span class="c-accent3">4056</span>, <span class="c-accent3">3040</span>)}
+)
+picam2.configure(config)
+picam2.start()
+
+<span class="c-dim"># Capture one frame</span>
+request = picam2.capture_request()
+raw_array = request.make_array(<span class="c-accent2">"raw"</span>)  <span class="c-dim"># Bayer data</span>
+rgb_array = request.make_array(<span class="c-accent2">"main"</span>)  <span class="c-dim"># demosaiced RGB</span>
+request.release()
+
+<span class="c-dim"># Save or process</span>
+cv2.imwrite(<span class="c-accent2">"frame.png"</span>, cv2.cvtColor(rgb_array, cv2.COLOR_RGB2BGR))
+print(<span class="c-accent2">f"Captured: {rgb_array.shape}"</span>)
+
+picam2.stop()
+        </pre>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MULTI-CAMERA -->
+    <!-- ============================================================ -->
+    <div class="section" id="multi-camera">
+      <div class="section-number">// 04.03</div>
+      <h2>MULTI-CAMERA<br>WIRING</h2>
+
+      <p>Scaling from 1 to 8 cameras is the key engineering challenge in the electronics layer. Several approaches exist with different tradeoffs.</p>
+
+      <h3>ARCHITECTURE OPTIONS</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Architecture</th><th>Hardware</th><th>Max Cameras</th><th>Complexity</th><th>Use Case</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Single SBC</td><td>Raspberry Pi 5</td><td>2</td><td>Low</td><td>1-2 cam prototype</td></tr>
+            <tr><td>Parallel SBCs</td><td>4× Jetson Nano</td><td>8 (2 each)</td><td>Medium</td><td>Distributed prototype</td></tr>
+            <tr><td>High-end SoC</td><td>Jetson AGX Orin</td><td>6–8</td><td>Medium</td><td>Advanced prototype</td></tr>
+            <tr><td>FPGA aggregator</td><td>Xilinx Zynq UltraScale+</td><td>16+</td><td>High</td><td>Production system</td></tr>
+            <tr><td>Custom ASIC</td><td>Custom silicon</td><td>Unlimited</td><td>Very high</td><td>Kestrel/ARGUS class</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>RECOMMENDED PROTOTYPE PATH</h3>
+
+      <div class="pipeline">
+        <div class="pipeline-step highlight">
+          <div class="pipeline-label">8× Camera</div>
+          <div class="pipeline-sub">Modules</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="pipeline-label">4× Jetson</div>
+          <div class="pipeline-sub">Nano (2 cam ea.)</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="pipeline-label">Ethernet</div>
+          <div class="pipeline-sub">GigE switch</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step highlight2">
+          <div class="pipeline-label">Master Node</div>
+          <div class="pipeline-sub">Jetson AGX</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-step">
+          <div class="pipeline-label">Mosaicking</div>
+          <div class="pipeline-sub">+ geo-reg</div>
+        </div>
+      </div>
+
+      <p>Each Jetson Nano handles 2 cameras, performs initial processing (debayer, lens correction, geo-registration of its tile), and streams compressed geo-tagged tiles to the master Jetson AGX over Gigabit Ethernet. The AGX merges all 8 tiles into the final mosaic.</p>
+
+      <div class="callout success">
+        <div class="callout-title">// Synchronisation</div>
+        <p>All 8 cameras must capture their frames at the <strong>exact same moment</strong>. Use a hardware trigger signal — a single GPIO pulse broadcast to all cameras simultaneously via a star topology. Without synchronisation, moving objects will appear at different positions in adjacent tiles, making tracking impossible.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: PROCESSING -->
+    <!-- ============================================================ -->
+    <div class="section" id="pipeline">
+      <div class="section-number">// 05.01</div>
+      <h2>PROCESSING<br>PIPELINE</h2>
+
+      <p>Processing is the most complex layer of a WAMI system. Raw sensor data must pass through a sequence of transformations before it becomes a usable, geo-referenced, stitched mosaic. Every step must run faster than real time — for 10fps output, the entire pipeline must complete in under 100ms per frame.</p>
+
+      <h3>FULL PIPELINE</h3>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">// Per-Camera Processing Chain (runs in parallel on all 8 cameras)</div>
+        <svg width="660" height="420" viewBox="0 0 660 420">
+          <!-- Step boxes -->
+          <rect x="230" y="10" width="200" height="36" fill="#131920" stroke="#ff6b35" rx="3"/>
+          <text x="330" y="24" fill="#ff6b35" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">1. RAW BAYER CAPTURE</text>
+          <text x="330" y="38" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">MIPI CSI-2 → frame buffer</text>
+
+          <line x1="330" y1="46" x2="330" y2="60" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <rect x="230" y="60" width="200" height="36" fill="#131920" stroke="#ff6b35" rx="3"/>
+          <text x="330" y="74" fill="#ff6b35" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">2. DEBAYERING</text>
+          <text x="330" y="88" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">Bayer → RGB (bilinear / AHD)</text>
+
+          <line x1="330" y1="96" x2="330" y2="110" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <rect x="230" y="110" width="200" height="36" fill="#131920" stroke="#ff6b35" rx="3"/>
+          <text x="330" y="124" fill="#ff6b35" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">3. LENS CORRECTION</text>
+          <text x="330" y="138" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">undistort k1,k2,p1,p2 coefficients</text>
+
+          <line x1="330" y1="146" x2="330" y2="160" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <rect x="230" y="160" width="200" height="36" fill="#131920" stroke="#00d4ff" rx="3"/>
+          <text x="330" y="174" fill="#00d4ff" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">4. ORTHORECTIFICATION</text>
+          <text x="330" y="188" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">cos θ correction · GPS+IMU data</text>
+
+          <line x1="330" y1="196" x2="330" y2="210" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <rect x="230" y="210" width="200" height="36" fill="#131920" stroke="#00d4ff" rx="3"/>
+          <text x="330" y="224" fill="#00d4ff" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">5. GEO-REGISTRATION</text>
+          <text x="330" y="238" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">assign WGS84 coords to each pixel</text>
+
+          <line x1="330" y1="246" x2="330" y2="268" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <!-- Merge point -->
+          <rect x="100" y="268" width="460" height="36" fill="#131920" stroke="#39ff14" rx="3"/>
+          <text x="330" y="282" fill="#39ff14" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">6. MOSAIC MERGE  (all 8 tiles →  master node)</text>
+          <text x="330" y="296" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">align overlaps · feather seams · online calibration correction</text>
+
+          <line x1="330" y1="304" x2="330" y2="318" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <rect x="180" y="318" width="300" height="36" fill="#131920" stroke="#39ff14" rx="3"/>
+          <text x="330" y="332" fill="#39ff14" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">7. MOTION DETECTION</text>
+          <text x="330" y="346" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">frame differencing · background subtraction</text>
+
+          <line x1="330" y1="354" x2="330" y2="368" stroke="#1e2d3d" stroke-width="1.5"/>
+
+          <rect x="180" y="368" width="300" height="36" fill="#131920" stroke="#39ff14" rx="3"/>
+          <text x="330" y="382" fill="#39ff14" font-size="10" text-anchor="middle" letter-spacing="1" font-family="IBM Plex Mono">8. TARGET TRACKING + ARCHIVE</text>
+          <text x="330" y="396" fill="#6e7f8f" font-size="9" text-anchor="middle" font-family="IBM Plex Mono">Kalman filter tracks · 30-day rolling buffer</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- GEO REGISTRATION -->
+    <!-- ============================================================ -->
+    <div class="section" id="georeg">
+      <div class="section-number">// 05.02</div>
+      <h2>GEO-<br>REGISTRATION</h2>
+
+      <p>Geo-registration is the process of assigning a geographic coordinate (latitude, longitude, altitude) to every pixel in every camera frame. It transforms raw imagery from <em>camera space</em> to <em>world space</em>, which is what makes mosaicking and forensic tracking possible.</p>
+
+      <h3>SENSOR FUSION: GPS + IMU</h3>
+
+      <p>Accurate geo-registration requires knowing, at the moment of each frame capture:</p>
+      <ul style="margin: 12px 0 20px 20px; max-width: 820px;">
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Position</strong> — from RTK GPS, ideally to &lt;10cm accuracy</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Attitude</strong> — roll, pitch, yaw from IMU/INS, to &lt;0.05°</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Camera boresight</strong> — the pre-calibrated offset between IMU axes and camera optical axis</li>
+        <li style="margin-bottom: 8px; color: var(--text);"><strong>Timestamp</strong> — GPS-synchronised, to &lt;1ms accuracy</li>
+      </ul>
+
+      <div class="code-block">
+        <div class="code-block-label">python</div>
+        <pre><span class="c-dim"># Geo-registration: assign lat/lon to each pixel</span>
+<span class="c-accent">import</span> numpy <span class="c-accent">as</span> np
+<span class="c-accent">from</span> scipy.spatial.transform <span class="c-accent">import</span> Rotation
+
+<span class="c-accent">def</span> <span class="c-accent2">pixel_to_latlon</span>(px, py, cam_params, platform_state, terrain_h=<span class="c-accent3">0</span>):
+    <span class="c-dim">"""
+    px, py         : pixel coords (0-centred)
+    cam_params     : dict with focal_length, pixel_pitch, boresight_R
+    platform_state : dict with lat, lon, alt, roll, pitch, yaw (radians)
+    terrain_h      : ground elevation (m ASL)
+    """</span>
+    f_pixels = cam_params[<span class="c-accent2">'focal_length_mm'</span>] / cam_params[<span class="c-accent2">'pixel_pitch_mm'</span>]
+
+    <span class="c-dim"># 1. Build unit ray in camera frame</span>
+    ray_cam = np.array([px, py, f_pixels], dtype=float)
+    ray_cam /= np.linalg.norm(ray_cam)
+
+    <span class="c-dim"># 2. Camera to body frame (boresight rotation)</span>
+    ray_body = cam_params[<span class="c-accent2">'boresight_R'</span>] @ ray_cam
+
+    <span class="c-dim"># 3. Body to NED (navigation) frame using IMU angles</span>
+    R_body2ned = Rotation.from_euler(
+        <span class="c-accent2">'ZYX'</span>,
+        [platform_state[<span class="c-accent2">'yaw'</span>],
+         platform_state[<span class="c-accent2">'pitch'</span>],
+         platform_state[<span class="c-accent2">'roll'</span>]]
+    ).as_matrix()
+    ray_ned = R_body2ned @ ray_body
+
+    <span class="c-dim"># 4. Scale ray to intersect terrain height</span>
+    alt_agl = platform_state[<span class="c-accent2">'alt'</span>] - terrain_h
+    <span class="c-accent">if</span> ray_ned[<span class="c-accent3">2</span>] >= <span class="c-accent3">0</span>:
+        <span class="c-accent">return</span> <span class="c-accent">None</span>  <span class="c-dim"># Ray points up, no intersection</span>
+    t = alt_agl / (-ray_ned[<span class="c-accent3">2</span>])
+    offset_north = ray_ned[<span class="c-accent3">0</span>] * t  <span class="c-dim"># metres north</span>
+    offset_east  = ray_ned[<span class="c-accent3">1</span>] * t  <span class="c-dim"># metres east</span>
+
+    <span class="c-dim"># 5. Convert offsets to lat/lon</span>
+    lat = platform_state[<span class="c-accent2">'lat'</span>] + (offset_north / <span class="c-accent3">111320</span>)
+    lon = platform_state[<span class="c-accent2">'lon'</span>] + (offset_east / (
+          <span class="c-accent3">111320</span> * np.cos(np.radians(platform_state[<span class="c-accent2">'lat'</span>]))))
+
+    <span class="c-accent">return</span> lat, lon
+        </pre>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- MOSAICKING -->
+    <!-- ============================================================ -->
+    <div class="section" id="mosaicking">
+      <div class="section-number">// 05.03</div>
+      <h2>MOSAICKING</h2>
+
+      <p>Mosaicking assembles the 8 individual geo-registered camera tiles into one seamless wide-area image. After orthorectification, each tile is referenced to the same coordinate grid — mosaicking is therefore primarily about handling the <strong>overlap zones</strong> between adjacent cameras.</p>
+
+      <h3>SEAM HANDLING STRATEGIES</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Strategy</th><th>Description</th><th>Quality</th><th>Compute Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Hard cut</td><td>Simply take one camera's data at boundary</td><td>Poor — visible seams</td><td>Minimal</td></tr>
+            <tr><td>Alpha blending</td><td>Linear fade across overlap zone</td><td>Medium — blurs moving objects at seam</td><td>Low</td></tr>
+            <tr><td>Multi-band blending</td><td>Blend low frequencies broadly, high frequencies sharply</td><td>Good — smooth with preserved detail</td><td>Medium</td></tr>
+            <tr><td>Seam-finding + blending</td><td>Find optimal seam path, blend either side</td><td>Best — invisible seams</td><td>High</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-label">python</div>
+        <pre><span class="c-dim"># Simple alpha blend across overlap zone</span>
+<span class="c-dim"># tiles: list of (image, geo_transform) tuples</span>
+<span class="c-accent">import</span> numpy <span class="c-accent">as</span> np
+
+<span class="c-accent">def</span> <span class="c-accent2">blend_tiles</span>(tiles, output_bounds, output_gsd):
+    <span class="c-dim">"""Merge list of (image, geo_transform) tiles into one mosaic"""</span>
+    w = <span class="c-accent">int</span>((output_bounds[<span class="c-accent3">2</span>] - output_bounds[<span class="c-accent3">0</span>]) / output_gsd)
+    h = <span class="c-accent">int</span>((output_bounds[<span class="c-accent3">3</span>] - output_bounds[<span class="c-accent3">1</span>]) / output_gsd)
+
+    mosaic     = np.zeros((h, w, <span class="c-accent3">3</span>), dtype=np.float32)
+    weight_map = np.zeros((h, w),    dtype=np.float32)
+
+    <span class="c-accent">for</span> tile_img, geo_tf <span class="c-accent">in</span> tiles:
+        <span class="c-dim"># Place tile in mosaic using geo transform</span>
+        row0, col0 = world_to_pixel(geo_tf, output_bounds, output_gsd)
+
+        th, tw = tile_img.shape[:2]
+        <span class="c-dim"># Build distance-to-edge weight (feathering)</span>
+        dist_x = np.minimum(np.arange(tw), tw - np.arange(tw)).astype(float)
+        dist_y = np.minimum(np.arange(th), th - np.arange(th)).astype(float)
+        weight = np.outer(dist_y, dist_x)
+        weight = weight / (weight.max() + <span class="c-accent3">1e-6</span>)
+
+        r1, r2 = row0, row0 + th
+        c1, c2 = col0, col0 + tw
+
+        mosaic    [r1:r2, c1:c2] += tile_img * weight[..., np.newaxis]
+        weight_map[r1:r2, c1:c2] += weight
+
+    <span class="c-dim"># Normalise by accumulated weights</span>
+    mask = weight_map > <span class="c-accent3">0</span>
+    mosaic[mask] /= weight_map[mask, np.newaxis]
+    <span class="c-accent">return</span> mosaic.astype(np.uint8)
+        </pre>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- OBLIQUE CORRECTION -->
+    <!-- ============================================================ -->
+    <div class="section" id="oblique-corr">
+      <div class="section-number">// 05.04</div>
+      <h2>OBLIQUE<br>CORRECTION</h2>
+
+      <p>Beyond the cos θ pixel stretch, oblique imagery introduces additional effects that must be corrected for high-quality mosaicking:</p>
+
+      <h3>1. RELIEF DISPLACEMENT</h3>
+      <p>Tall objects (buildings, trees) appear to lean away from nadir. A building 20m tall at 3km range and 70° off-nadir will appear displaced by <code>20m × tan(70°) = 55m</code> from its true base position. Correction requires a digital surface model (DSM) with building heights, not just terrain elevation.</p>
+
+      <h3>2. BIDIRECTIONAL REFLECTANCE (BRDF)</h3>
+      <p>Ground surfaces reflect light differently depending on viewing angle and sun position. Oblique cameras looking sunward see brighter imagery than those looking away. Correct using radiometric calibration: capture grey calibration targets on the ground before flight, or apply relative normalization across the mosaic.</p>
+
+      <h3>3. ATMOSPHERIC PATH LENGTH</h3>
+      <p>At 70° off-nadir, the atmospheric path is 1/cos(70°) = 2.9× longer than nadir. This increases haze and reduces contrast for the oblique cameras. Apply atmospheric correction or simply apply a contrast/haze correction per camera as a function of off-nadir angle.</p>
+
+      <div class="equation">
+        <div class="eq-label">// Simplified atmospheric correction</div>
+        corrected_pixel = raw_pixel × exp(k × (1/cos(θ) - 1))
+
+where k = atmospheric coefficient (~0.05-0.15 depending on visibility)
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ONLINE CALIBRATION -->
+    <!-- ============================================================ -->
+    <div class="section" id="alignment">
+      <div class="section-number">// 05.05</div>
+      <h2>ONLINE<br>CALIBRATION</h2>
+
+      <p>Even with rigid mechanical mounting, inter-camera alignment drifts during flight due to vibration and thermal effects. Online calibration continuously monitors and corrects this drift without interrupting operation.</p>
+
+      <h3>OVERLAP ZONE FEATURE MATCHING</h3>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>Extract features in overlap zones</h4>
+            <p>Every N frames (e.g. N=10), extract keypoints from the overlap region between adjacent cameras using SIFT, ORB, or SuperPoint. These are distinctive image features — corners, junctions, texture patches — that can be reliably found in both camera images.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>Match features across cameras</h4>
+            <p>Match corresponding features between adjacent camera images using descriptor matching (BFMatcher or FLANN). Apply RANSAC to reject outliers. The remaining inlier matches are the same ground points seen from both cameras.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>Estimate residual misalignment</h4>
+            <p>After applying the nominal geo-registration, matching features should appear at the same ground coordinates in both cameras. Any systematic offset between matched pairs indicates a boresight calibration error for that camera pair. Compute the homography matrix H that best aligns the two sets of matched points.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>Apply correction and update boresight model</h4>
+            <p>Apply the estimated homography as a warp correction during mosaicking. Slowly update the stored boresight calibration parameters with a moving average to track gradual drift without overreacting to noise.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-block-label">python</div>
+        <pre><span class="c-accent">import</span> cv2
+<span class="c-accent">import</span> numpy <span class="c-accent">as</span> np
+
+<span class="c-accent">def</span> <span class="c-accent2">compute_alignment_correction</span>(img_a, img_b, overlap_mask):
+    <span class="c-dim">"""
+    Estimate homography to align camera B's overlap zone to camera A.
+    img_a, img_b  : orthorectified tiles for adjacent cameras
+    overlap_mask  : binary mask of the overlap region
+    returns       : 3×3 homography matrix H (or None if failed)
+    """</span>
+    <span class="c-dim"># Crop to overlap zone</span>
+    a_crop = cv2.bitwise_and(img_a, img_a, mask=overlap_mask)
+    b_crop = cv2.bitwise_and(img_b, img_b, mask=overlap_mask)
+
+    <span class="c-dim"># Convert to grayscale</span>
+    a_gray = cv2.cvtColor(a_crop, cv2.COLOR_BGR2GRAY)
+    b_gray = cv2.cvtColor(b_crop, cv2.COLOR_BGR2GRAY)
+
+    <span class="c-dim"># Detect and match features</span>
+    orb = cv2.ORB_create(nfeatures=<span class="c-accent3">500</span>)
+    kp_a, des_a = orb.detectAndCompute(a_gray, <span class="c-accent">None</span>)
+    kp_b, des_b = orb.detectAndCompute(b_gray, <span class="c-accent">None</span>)
+
+    <span class="c-accent">if</span> des_a <span class="c-accent">is</span> <span class="c-accent">None</span> <span class="c-accent">or</span> des_b <span class="c-accent">is</span> <span class="c-accent">None</span>:
+        <span class="c-accent">return</span> <span class="c-accent">None</span>
+
+    matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=<span class="c-accent">True</span>)
+    matches = matcher.match(des_a, des_b)
+    matches = sorted(matches, key=<span class="c-accent">lambda</span> m: m.distance)[:<span class="c-accent3">50</span>]
+
+    <span class="c-accent">if</span> <span class="c-accent">len</span>(matches) < <span class="c-accent3">10</span>:
+        <span class="c-accent">return</span> <span class="c-accent">None</span>
+
+    pts_a = np.float32([kp_a[m.queryIdx].pt <span class="c-accent">for</span> m <span class="c-accent">in</span> matches])
+    pts_b = np.float32([kp_b[m.trainIdx].pt <span class="c-accent">for</span> m <span class="c-accent">in</span> matches])
+
+    <span class="c-dim"># RANSAC homography estimation</span>
+    H, mask = cv2.findHomography(pts_b, pts_a, cv2.RANSAC, <span class="c-accent3">5.0</span>)
+    inliers = mask.ravel().sum()
+
+    <span class="c-accent">if</span> inliers < <span class="c-accent3">8</span>:
+        <span class="c-accent">return</span> <span class="c-accent">None</span>
+
+    <span class="c-accent">return</span> H, inliers
+        </pre>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- TRACKING -->
+    <!-- ============================================================ -->
+    <div class="section" id="tracking">
+      <div class="section-number">// 05.06</div>
+      <h2>TARGET<br>TRACKING</h2>
+
+      <p>Once the mosaic is assembled, motion detection and tracking extract the operationally useful intelligence — the positions and trajectories of all moving objects.</p>
+
+      <h3>MOTION DETECTION</h3>
+      <p>The simplest and most effective approach for WAMI is <strong>frame differencing</strong>: subtract the previous frame from the current frame. Moving objects produce non-zero difference values; static background produces near-zero values. Threshold the difference, apply morphological operations to clean up noise, and find connected components — each connected component is a detected mover.</p>
+
+      <h3>BACKGROUND MODEL</h3>
+      <p>For persistent surveillance, maintain a <strong>rolling background model</strong> — a time-averaged mosaic of the scene that updates slowly. Subtract the background model from each new frame. This handles slow changes (shadows moving, parked cars) without triggering false detections.</p>
+
+      <h3>KALMAN FILTER TRACKING</h3>
+      <p>A Kalman filter maintains a probabilistic estimate of each tracked object's position and velocity, updated with each detection. This handles missed detections (object temporarily occluded) and ambiguous associations (two objects close together).</p>
+
+      <div class="equation">
+        <div class="eq-label">// Kalman state vector for ground target tracking</div>
+        state = [x, y, vx, vy]   <span class="c-dim">// position (m) and velocity (m/s) in world coords</span>
+
+Predict:  x_pred = F × x_prev
+          P_pred = F × P_prev × Fᵀ + Q    <span class="c-dim">// F = motion model, Q = process noise</span>
+
+Update:   K = P_pred × Hᵀ × (H × P_pred × Hᵀ + R)⁻¹   <span class="c-dim">// Kalman gain</span>
+          x = x_pred + K × (z - H × x_pred)              <span class="c-dim">// z = measurement</span>
+          P = (I - K × H) × P_pred
+      </div>
+
+      <h3>30-DAY ARCHIVE AND FORENSIC REPLAY</h3>
+      <p>The mosaic is continuously written to a rolling circular buffer — 30 days of full-resolution imagery. The database is indexed by time and geographic location, enabling operators to query: <em>"show me what happened at this location between 14:00 and 15:00 yesterday"</em>. Track history is stored separately and linked to the video archive for forensic analysis.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 6: BUILD GUIDE -->
+    <!-- ============================================================ -->
+    <div class="section" id="parts-list">
+      <div class="section-number">// 06.01</div>
+      <h2>PARTS<br>LIST</h2>
+
+      <p>Recommended component list for a prototype WAMI payload targeting 500m–1km AGL, 50km² coverage, ~35cm GSD (8 camera ring).</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Item</th><th>Recommended Part</th><th>Qty</th><th>Est. Cost</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Image sensor module</td><td>Sony IMX455 based (e.g. ASI6200MM)</td><td>8</td><td>~$800 each</td></tr>
+            <tr><td>Telephoto lens</td><td>C-mount 25–50mm f/2.8 machine vision</td><td>8</td><td>~$150 each</td></tr>
+            <tr><td>Embedded compute (slave)</td><td>NVIDIA Jetson Nano 4GB</td><td>4</td><td>~$150 each</td></tr>
+            <tr><td>Embedded compute (master)</td><td>NVIDIA Jetson AGX Orin 32GB</td><td>1</td><td>~$900</td></tr>
+            <tr><td>Network switch</td><td>Gigabit managed switch (8-port)</td><td>1</td><td>~$80</td></tr>
+            <tr><td>GPS/IMU unit</td><td>Septentrio AsteRx-i or VectorNav VN-300</td><td>1</td><td>~$2000–5000</td></tr>
+            <tr><td>3-axis gimbal</td><td>Gremsy H16 payload gimbal</td><td>1</td><td>~$2000</td></tr>
+            <tr><td>Camera mounting ring</td><td>Custom CNC aluminium (design provided)</td><td>1</td><td>~$500 machined</td></tr>
+            <tr><td>NVMe SSD (archive)</td><td>Samsung 990 Pro 4TB</td><td>2</td><td>~$300 each</td></tr>
+            <tr><td>Power distribution board</td><td>Custom PCB or Mauch Power Module</td><td>1</td><td>~$100</td></tr>
+            <tr><td>Vibration isolators</td><td>Sorbothane hemisphere mounts</td><td>8</td><td>~$10 each</td></tr>
+            <tr><td>Hardware trigger board</td><td>Custom Arduino/STM32 GPIO trigger</td><td>1</td><td>~$30</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>Estimated prototype total: ~$15,000–20,000 USD</strong>, excluding platform (drone/aerostat) and ground station.</p>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- ASSEMBLY -->
+    <!-- ============================================================ -->
+    <div class="section" id="assembly">
+      <div class="section-number">// 06.02</div>
+      <h2>ASSEMBLY<br>STEPS</h2>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h4>Machine the camera ring</h4>
+            <p>CNC machine the camera mounting ring from 6061 aluminium. Each camera pocket must be machined to ±0.05mm position accuracy and ±0.1° angular accuracy. Anodise for thermal stability. Drill and tap M3 mounting holes for each camera. Include cable routing channels for FFC cables.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h4>Mount lenses to sensors</h4>
+            <p>Use a collimation bench to precisely set back-focus distance for each lens/sensor pair. The sensor must be exactly at the focal plane of the lens. Use lens collar shims to achieve ±0.01mm back-focus accuracy. Once set, apply Loctite 243 to lock the lens collar in position.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h4>Install cameras in ring</h4>
+            <p>Mount each camera assembly into the ring pockets. Torque mounting screws to spec. Route FFC cables through cable channels to compute board locations. Label each camera 0–7 clockwise from North.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <h4>Install compute stack</h4>
+            <p>Mount 4 Jetson Nanos and the AGX Orin to the underside of the ring plate on vibration-isolated standoffs. Connect cameras 0–1 to Jetson A, 2–3 to Jetson B, etc. Connect all Jetsons to the GigE switch. Connect switch to AGX Orin.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <h4>Install GPS/IMU and trigger</h4>
+            <p>Mount GPS antenna on top of the payload, clear line-of-sight to sky. Connect GPS/IMU to AGX Orin via serial or Ethernet. Mount trigger board and connect trigger outputs to each camera's external trigger input pin.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">06</div>
+          <div class="step-content">
+            <h4>Mount on gimbal</h4>
+            <p>Attach complete payload assembly to gimbal. Balance carefully — offset mass causes gimbal motor overload and reduces stabilisation performance. Add/remove ballast weights at designated balance points until payload is within ±5g of gimbal centre in all axes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SOFTWARE STACK -->
+    <!-- ============================================================ -->
+    <div class="section" id="software-stack">
+      <div class="section-number">// 06.03</div>
+      <h2>SOFTWARE<br>STACK</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Layer</th><th>Component</th><th>Tools / Libraries</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>OS</td><td>Linux (Ubuntu 22.04 LTS)</td><td>JetPack SDK for Jetson boards</td></tr>
+            <tr><td>Camera driver</td><td>V4L2 / libcamera</td><td>picamera2, v4l2-ctl</td></tr>
+            <tr><td>GPU compute</td><td>CUDA / cuDNN</td><td>NVIDIA JetPack, OpenCV CUDA</td></tr>
+            <tr><td>Image processing</td><td>Debayer, undistort, warp</td><td>OpenCV, NumPy, SciPy</td></tr>
+            <tr><td>Geo-registration</td><td>Projection, ray-casting</td><td>pyproj, GDAL, custom code</td></tr>
+            <tr><td>Mosaicking</td><td>Tile stitching, blending</td><td>OpenCV stitching module, GDAL VRT</td></tr>
+            <tr><td>Feature matching</td><td>Online calibration</td><td>OpenCV ORB/SIFT/SuperPoint</td></tr>
+            <tr><td>Motion detection</td><td>Moving object detection</td><td>OpenCV BackgroundSubtractorMOG2</td></tr>
+            <tr><td>Tracking</td><td>Kalman filter tracker</td><td>FilterPy, custom Kalman, DeepSORT</td></tr>
+            <tr><td>Archive</td><td>Rolling video + track database</td><td>FFmpeg, SQLite / TimescaleDB</td></tr>
+            <tr><td>Downlink</td><td>Stream to ground station</td><td>GStreamer, WebRTC, custom UDP</td></tr>
+            <tr><td>Inter-node comms</td><td>Jetson slave → master</td><td>ZeroMQ or ROS2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- CALIBRATION -->
+    <!-- ============================================================ -->
+    <div class="section" id="calibration">
+      <div class="section-number">// 06.04</div>
+      <h2>GROUND<br>CALIBRATION</h2>
+
+      <p>Before first flight, and periodically thereafter, the payload must be calibrated on the ground to determine the intrinsic and extrinsic parameters of each camera.</p>
+
+      <h3>INTRINSIC CALIBRATION (per camera)</h3>
+      <p>Determines focal length, principal point, and distortion coefficients for each lens/sensor combination. Use a checkerboard target and OpenCV's <code>calibrateCamera()</code> function. Capture 20–30 images of the checkerboard at different positions and angles. This gives you the k1, k2, p1, p2 distortion coefficients you need for undistortion.</p>
+
+      <div class="code-block">
+        <div class="code-block-label">python</div>
+        <pre><span class="c-accent">import</span> cv2
+<span class="c-accent">import</span> numpy <span class="c-accent">as</span> np
+<span class="c-accent">import</span> glob
+
+<span class="c-dim"># Checkerboard dimensions</span>
+BOARD_W, BOARD_H = <span class="c-accent3">9</span>, <span class="c-accent3">6</span>
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, <span class="c-accent3">30</span>, <span class="c-accent3">0.001</span>)
+
+<span class="c-dim"># Prepare object points (0,0,0), (1,0,0), (2,0,0) ...etc</span>
+objp = np.zeros((BOARD_W * BOARD_H, <span class="c-accent3">3</span>), np.float32)
+objp[:, :<span class="c-accent3">2</span>] = np.mgrid[<span class="c-accent3">0</span>:BOARD_W, <span class="c-accent3">0</span>:BOARD_H].T.reshape(-<span class="c-accent3">1</span>, <span class="c-accent3">2</span>)
+
+objpoints, imgpoints = [], []
+
+<span class="c-accent">for</span> fname <span class="c-accent">in</span> glob.glob(<span class="c-accent2">'cal_images/cam0/*.png'</span>):
+    img = cv2.imread(fname)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    ret, corners = cv2.findChessboardCorners(gray, (BOARD_W, BOARD_H), <span class="c-accent">None</span>)
+    <span class="c-accent">if</span> ret:
+        objpoints.append(objp)
+        corners2 = cv2.cornerSubPix(gray, corners, (<span class="c-accent3">11</span>,<span class="c-accent3">11</span>), (-<span class="c-accent3">1</span>,-<span class="c-accent3">1</span>), criteria)
+        imgpoints.append(corners2)
+
+ret, K, dist, rvecs, tvecs = cv2.calibrateCamera(
+    objpoints, imgpoints, gray.shape[::-<span class="c-accent3">1</span>], <span class="c-accent">None</span>, <span class="c-accent">None</span>
+)
+print(<span class="c-accent2">f"Camera matrix:\n{K}"</span>)
+print(<span class="c-accent2">f"Distortion: {dist}"</span>)
+print(<span class="c-accent2">f"RMS reprojection error: {ret:.4f} pixels"</span>)
+<span class="c-dim"># Target: RMS < 0.5 pixels</span>
+
+np.save(<span class="c-accent2">'cam0_K.npy'</span>, K)
+np.save(<span class="c-accent2">'cam0_dist.npy'</span>, dist)
+        </pre>
+      </div>
+
+      <h3>EXTRINSIC CALIBRATION (inter-camera)</h3>
+      <p>Determines the 3D rotation and translation between each camera and the IMU reference frame (the <em>boresight</em>). Place the payload on a known flat surface, capture images of a large calibration target with known ground coordinates, and use the projection equations to solve for each camera's orientation relative to the IMU. This must be redone if any camera is dismounted and remounted.</p>
+
+      <h3>BORESIGHT VERIFICATION FLIGHT</h3>
+      <p>After ground calibration, fly the payload over a scene with easily-identified features at known coordinates (road intersections, building corners from a map). Check that the geo-registered mosaic correctly places features at their known positions. Residual errors indicate boresight calibration error and feed back into the extrinsic calibration refinement.</p>
+
+      <div class="callout success">
+        <div class="callout-title">// Target Accuracy</div>
+        <p>For a well-calibrated system at 1km AGL: geo-registration accuracy should be <strong>&lt;1 pixel</strong> (&lt;35cm) for static features. Tracking accuracy for moving targets depends on IMU quality but typically achieves <strong>1–3 pixel RMS</strong> (0.35m–1m) across the mosaic.</p>
+      </div>
+
+      <h3>FINAL CHECKLIST BEFORE FLIGHT</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Check</th><th>Method</th><th>Pass Criteria</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Lens focus</td><td>Image distant target, check sharpness</td><td>MTF50 &gt; 0.4 cycles/pixel at corners</td></tr>
+            <tr><td>Intrinsic calibration</td><td>Checkerboard cal, compute RMS</td><td>RMS reprojection &lt; 0.5 pixels</td></tr>
+            <tr><td>Trigger sync</td><td>Flash strobe target, check all 8 frames</td><td>All cameras capture same flash frame</td></tr>
+            <tr><td>Data rates</td><td>Monitor GigE throughput</td><td>No dropped frames at operating fps</td></tr>
+            <tr><td>GPS lock</td><td>Check fix status and HDOP</td><td>HDOP &lt; 1.5, ≥8 satellites</td></tr>
+            <tr><td>IMU initialisation</td><td>Static alignment period &gt; 2min</td><td>Attitude uncertainty &lt; 0.05°</td></tr>
+            <tr><td>Storage</td><td>Check write speed and free space</td><td>Write speed &gt; data rate × 1.5 margin</td></tr>
+            <tr><td>Gimbal balance</td><td>Power gimbal, check motor current</td><td>All axes &lt; 30% rated current at hover</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>// WAMI ENGINEERING TUTORIAL — COMPLETE BUILD GUIDE</span>
+  <span>// COVERS: OPTICS · SENSORS · GEOMETRY · ELECTRONICS · PROCESSING</span>
+</div>
+
+<a href="#top" class="back-to-top">↑ TOP</a>
+
+<!-- NAV ACTIVE STATE SCRIPT -->
+<script>
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.section, .hero');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => { if(s.id) observer.observe(s); });
+</script>
+
+</body>
+</html>

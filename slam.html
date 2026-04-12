@@ -1,0 +1,3208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAM: Complete Course Notes — Robotics & Intelligence Nigeria Ring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#080c12;--bg2:#0e1420;--bg3:#141b27;--border:#1e2d42;
+  --amber:#f59e0b;--amber2:#fbbf24;--teal:#22d3ee;--teal2:#67e8f9;
+  --green:#34d399;--red:#f87171;--purple:#a78bfa;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --sidebar-w:280px;--header-h:60px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Pro',Georgia,serif;font-size:18px;line-height:1.8;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(245,158,11,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,.03) 1px,transparent 1px);
+  background-size:40px 40px}
+
+/* HEADER */
+.site-header{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header-h);
+  background:rgba(8,12,18,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:16px}
+.site-header .logo{font-family:'Exo 2',sans-serif;font-weight:800;font-size:15px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+.site-header .tagline{font-family:'Exo 2',sans-serif;font-size:12px;color:var(--text3);letter-spacing:.05em;margin-left:auto}
+.progress-bar{position:fixed;top:var(--header-h);left:0;right:0;z-index:101;height:2px;background:var(--border)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--teal));width:0%;transition:width .1s}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:calc(var(--header-h)+2px);bottom:0;left:0;width:var(--sidebar-w);
+  background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;z-index:90;padding:20px 0 40px}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sidebar-part{display:flex;align-items:center;gap:10px;padding:8px 20px;
+  font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--amber);cursor:pointer;user-select:none}
+.sidebar-part .pn{width:20px;height:20px;border-radius:4px;background:var(--amber);color:var(--bg);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0}
+.sidebar-link{display:block;padding:4px 20px 4px 50px;font-family:'Exo 2',sans-serif;
+  font-size:11.5px;color:var(--text3);text-decoration:none;transition:color .2s,background .2s;
+  border-left:2px solid transparent}
+.sidebar-link:hover{color:var(--text2);background:rgba(245,158,11,.05)}
+.sidebar-link.active{color:var(--amber2);border-left-color:var(--amber2)}
+
+/* MAIN */
+main{margin-left:var(--sidebar-w);padding:calc(var(--header-h)+40px) 64px 80px;position:relative;z-index:1;max-width:980px}
+
+/* HERO */
+.hero{padding:60px 0 40px;border-bottom:1px solid var(--border);margin-bottom:60px}
+.hero-label{font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+.hero h1{font-family:'Exo 2',sans-serif;font-size:clamp(2.2rem,4vw,3.4rem);font-weight:800;
+  line-height:1.1;color:#fff;margin-bottom:20px}
+.hero h1 span{color:var(--amber)}
+.hero-sub{font-size:18px;color:var(--text2);max-width:600px;margin-bottom:32px}
+.hero-badges{display:flex;flex-wrap:wrap;gap:10px}
+.badge{padding:5px 14px;border-radius:4px;border:1px solid;font-family:'Exo 2',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ba{border-color:var(--amber);color:var(--amber)}
+.bt{border-color:var(--teal);color:var(--teal)}
+.bg{border-color:var(--green);color:var(--green)}
+
+/* PART HEADER */
+.part-header{display:flex;align-items:flex-start;gap:20px;padding:32px 0 24px;
+  border-top:1px solid var(--border);margin-top:60px}
+.part-badge{padding:6px 14px;background:var(--amber);color:var(--bg);font-family:'Exo 2',sans-serif;
+  font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;
+  white-space:nowrap;margin-top:6px}
+.part-badge.t{background:var(--teal)}.part-badge.g{background:var(--green)}
+.part-badge.r{background:var(--red)}.part-badge.p{background:var(--purple)}
+.part-badge.gr{background:var(--text2);color:var(--bg)}
+.part-title{font-family:'Exo 2',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:#fff;line-height:1.2}
+.part-title small{display:block;font-size:13px;font-weight:400;color:var(--text3);letter-spacing:.06em;margin-top:4px;text-transform:uppercase}
+
+/* HEADINGS */
+h2{font-family:'Exo 2',sans-serif;font-size:1.2rem;font-weight:700;color:var(--amber2);
+  margin:40px 0 12px;padding-left:14px;border-left:3px solid var(--amber)}
+h3{font-family:'Exo 2',sans-serif;font-size:1.05rem;font-weight:600;color:var(--teal2);margin:28px 0 10px}
+h4{font-family:'Exo 2',sans-serif;font-size:.95rem;font-weight:600;color:var(--text2);margin:18px 0 8px}
+p{margin-bottom:14px}
+strong{color:var(--text)}
+code{font-family:'JetBrains Mono',monospace;font-size:.82em;background:var(--bg3);
+  padding:2px 6px;border-radius:3px;color:var(--teal2)}
+
+/* CALLOUT */
+.callout{border-left:4px solid var(--amber);background:rgba(245,158,11,.06);
+  border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0}
+.callout.t{border-color:var(--teal);background:rgba(34,211,238,.05)}
+.callout.g{border-color:var(--green);background:rgba(52,211,153,.05)}
+.callout.r{border-color:var(--red);background:rgba(248,113,113,.05)}
+.ctitle{font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;margin-bottom:8px;color:var(--amber)}
+.callout.t .ctitle{color:var(--teal)}.callout.g .ctitle{color:var(--green)}.callout.r .ctitle{color:var(--red)}
+
+/* MATH BLOCK */
+.math{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:20px 24px;margin:18px 0;font-family:'JetBrains Mono',monospace;
+  font-size:13.5px;line-height:1.85;color:#e2e8f0;overflow-x:auto}
+.math .lbl{font-family:'Exo 2',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text3);margin-bottom:8px;display:block}
+.math .eq{color:var(--amber2)}.math .hi{color:var(--teal2)}
+.math .box{border:1px solid var(--amber);border-radius:4px;padding:8px 16px;
+  display:inline-block;margin:6px 0;background:rgba(245,158,11,.05)}
+
+/* TABLES */
+.tw{overflow-x:auto;margin:18px 0}
+table{width:100%;border-collapse:collapse;font-size:15px}
+thead th{background:var(--bg3);padding:10px 16px;text-align:left;font-family:'Exo 2',sans-serif;
+  font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--amber);border-bottom:2px solid var(--amber)}
+tbody tr{border-bottom:1px solid var(--border)}
+tbody tr:hover{background:rgba(255,255,255,.02)}
+tbody td{padding:10px 16px;color:var(--text2);vertical-align:top}
+tbody td:first-child{color:var(--text);font-weight:600}
+
+/* DIAGRAM */
+.diagram{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:20px 24px;margin:18px 0;font-family:'JetBrains Mono',monospace;
+  font-size:13px;line-height:1.7;color:var(--text2);white-space:pre;overflow-x:auto}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:12px;margin:18px 0}
+.step{display:flex;gap:16px;align-items:flex-start;padding:14px 18px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;transition:border-color .2s}
+.step:hover{border-color:var(--amber)}
+.sn{width:28px;height:28px;border-radius:6px;background:var(--amber);color:var(--bg);
+  font-family:'Exo 2',sans-serif;font-size:13px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.sn.t{background:var(--teal)}.sn.g{background:var(--green)}
+.sc h4{margin:0 0 6px;color:var(--text)}.sc p{margin:0;font-size:16px;color:var(--text2)}
+
+/* ── COLLAPSIBLE CODE SECTION ── */
+.collapse-wrap{margin:18px 0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.collapse-btn{width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:13px 18px;background:var(--bg3);cursor:pointer;border:none;text-align:left;
+  font-family:'Exo 2',sans-serif;transition:background .2s;gap:12px}
+.collapse-btn:hover{background:#18222e}
+.collapse-btn .cb-left{display:flex;align-items:center;gap:12px}
+.collapse-btn .cb-icon{font-size:16px;line-height:1}
+.collapse-btn .cb-label{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text2)}
+.collapse-btn .cb-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 10px;border-radius:3px;border:1px solid}
+.cb-tag.py{border-color:#60a5fa;color:#60a5fa}.cb-tag.ar{border-color:var(--green);color:var(--green)}
+.cb-tag.cpp{border-color:var(--green);color:var(--green)}
+.collapse-btn .cb-arrow{font-size:18px;color:var(--text3);transition:transform .3s;flex-shrink:0}
+.collapse-btn[aria-expanded="true"] .cb-arrow{transform:rotate(180deg)}
+.collapse-content{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.collapse-content.open{max-height:6000px}
+.collapse-content pre{margin:0;border-radius:0;border:none;border-top:1px solid var(--border)}
+.collapse-content .code-header{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#1a2234;border-bottom:1px solid var(--border)}
+.code-dots{display:flex;gap:6px}
+.code-dots span{width:10px;height:10px;border-radius:50%}
+.dr{background:#f87171}.dy{background:var(--amber)}.dg{background:var(--green)}
+pre code.hljs{font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.65;
+  padding:18px 20px;background:#0d1321;border-radius:0}
+.code-lang{font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.code-lang.py{color:#60a5fa}.code-lang.ar{color:var(--green)}
+
+/* QUESTIONS */
+.questions{margin:20px 0}
+.question{display:flex;gap:16px;align-items:flex-start;padding:14px 18px;margin-bottom:10px;
+  border:1px solid var(--border);border-radius:8px;background:var(--bg3);transition:border-color .2s}
+.question:hover{border-color:var(--teal)}
+.qn{font-family:'Exo 2',sans-serif;font-size:12px;font-weight:700;color:var(--teal);min-width:28px;padding-top:2px}
+.qt{font-size:16px;color:var(--text2)}
+
+/* FUSION DIAGRAM */
+.fusion-diag{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:28px 24px;margin:20px 0}
+.fusion-row{display:flex;align-items:center;gap:12px;margin:7px 0;flex-wrap:wrap}
+.fb{padding:8px 14px;border-radius:6px;font-family:'Exo 2',sans-serif;font-size:12px;font-weight:600;text-align:center;white-space:nowrap}
+.fb-s{background:rgba(34,211,238,.1);border:1px solid var(--teal);color:var(--teal2)}
+.fb-a{background:rgba(245,158,11,.1);border:1px solid var(--amber);color:var(--amber2)}
+.fb-r{background:rgba(52,211,153,.1);border:1px solid var(--green);color:var(--green)}
+.fa{color:var(--text3);font-size:18px}
+
+/* FOOTER */
+footer{margin-left:var(--sidebar-w);padding:40px 64px;border-top:1px solid var(--border);
+  background:var(--bg2);position:relative;z-index:1}
+footer p{font-family:'Exo 2',sans-serif;font-size:12px;color:var(--text3);letter-spacing:.05em;margin:0}
+.fl{color:var(--amber);font-weight:700}
+
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  main,footer{margin-left:0;padding-left:20px;padding-right:20px}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">⬡ RINR — Robotics &amp; Intelligence Nigeria Ring</div>
+  <div class="tagline">SLAM Complete Course Notes</div>
+</header>
+<div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div><div class="sidebar-part"><span class="pn">—</span>Introduction</div>
+    <a href="#intro" class="sidebar-link">What is SLAM?</a>
+  </div>
+  <div><div class="sidebar-part"><span class="pn">1</span>Differential Drive</div>
+    <a href="#p1-convention" class="sidebar-link">Angle Convention</a>
+    <a href="#p1-encoders" class="sidebar-link">Wheel Encoders</a>
+    <a href="#p1-derivation" class="sidebar-link">Full Derivation (ICC)</a>
+    <a href="#p1-why-mid" class="sidebar-link">Why θ + Δθ/2?</a>
+    <a href="#p1-equations" class="sidebar-link">Pose Update Equations</a>
+    <a href="#p1-example" class="sidebar-link">Worked Example</a>
+    <a href="#p1-drift" class="sidebar-link">Drift &amp; Sensor Fusion</a>
+    <a href="#p1-arduino" class="sidebar-link">Arduino Code</a>
+    <a href="#p1-python" class="sidebar-link">Python Simulation</a>
+  </div>
+  <div><div class="sidebar-part"><span class="pn">2</span>Ackermann Steering</div>
+    <a href="#p2-what" class="sidebar-link">What is Ackermann?</a>
+    <a href="#p2-build" class="sidebar-link">Lab Build Guide</a>
+    <a href="#p2-condition" class="sidebar-link">Ackermann Condition</a>
+    <a href="#p2-derivation" class="sidebar-link">Full Derivation</a>
+    <a href="#p2-example" class="sidebar-link">Worked Example</a>
+    <a href="#p2-holonomic" class="sidebar-link">Holonomic Robots</a>
+    <a href="#p2-arduino" class="sidebar-link">Arduino Code</a>
+  </div>
+  <div><div class="sidebar-part"><span class="pn">3</span>LiDAR SLAM</div>
+    <a href="#p3-physics" class="sidebar-link">Physics of LiDAR</a>
+    <a href="#p3-hardware" class="sidebar-link">RPLiDAR &amp; YLiDAR</a>
+    <a href="#p3-3d" class="sidebar-link">3D LiDAR</a>
+    <a href="#p3-grid" class="sidebar-link">Occupancy Grid</a>
+    <a href="#p3-icp" class="sidebar-link">ICP Algorithm</a>
+    <a href="#p3-rpcode" class="sidebar-link">RPLiDAR Python</a>
+    <a href="#p3-ylcode" class="sidebar-link">YLiDAR Python</a>
+    <a href="#p3-gridcode" class="sidebar-link">Grid Builder Code</a>
+    <a href="#p3-icpcode" class="sidebar-link">ICP Full Code</a>
+    <a href="#p3-ros" class="sidebar-link">ROS / Gazebo</a>
+  </div>
+  <div><div class="sidebar-part"><span class="pn">4</span>Indoor Positioning</div>
+    <a href="#p4-uwb" class="sidebar-link">UWB — Physics &amp; TWR</a>
+    <a href="#p4-trilat" class="sidebar-link">Trilateration Derivation</a>
+    <a href="#p4-uwbcode" class="sidebar-link">UWB Python Code</a>
+    <a href="#p4-pozyx" class="sidebar-link">Pozyx Arduino Code</a>
+    <a href="#p4-wifi" class="sidebar-link">Wi-Fi Fingerprinting</a>
+    <a href="#p4-wificode" class="sidebar-link">Wi-Fi Python Code</a>
+    <a href="#p4-aruco" class="sidebar-link">ArUco Markers</a>
+    <a href="#p4-compare" class="sidebar-link">Technology Comparison</a>
+  </div>
+  <div><div class="sidebar-part"><span class="pn">5</span>Kalman &amp; Fusion</div>
+    <a href="#p5-prob" class="sidebar-link">Probability Basics</a>
+    <a href="#p5-model" class="sidebar-link">System Model</a>
+    <a href="#p5-predict" class="sidebar-link">Predict Step</a>
+    <a href="#p5-update" class="sidebar-link">Update Step</a>
+    <a href="#p5-gain" class="sidebar-link">Kalman Gain Intuition</a>
+    <a href="#p5-worked" class="sidebar-link">2-Cycle Worked Example</a>
+    <a href="#p5-ekf" class="sidebar-link">Extended KF (EKF)</a>
+    <a href="#p5-kfcode" class="sidebar-link">KF Python Code</a>
+    <a href="#p5-ekfcode" class="sidebar-link">EKF Full Code</a>
+    <a href="#p5-arch" class="sidebar-link">Fusion Architecture</a>
+  </div>
+  <div><div class="sidebar-part"><span class="pn">✓</span>Review</div>
+    <a href="#review" class="sidebar-link">10 Review Questions</a>
+    <a href="#reading" class="sidebar-link">Further Reading</a>
+  </div>
+</nav>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="intro">
+  <div class="hero-label">Robotics &amp; Intelligence Nigeria Ring · SLAM Module · Complete Edition</div>
+  <h1><span>SLAM:</span> Simultaneous<br>Localization &amp; Mapping</h1>
+  <p class="hero-sub">Full course notes covering odometry derivations, LiDAR, indoor positioning, and Kalman filtering — with complete Python and Arduino implementations for RPLiDAR, YLiDAR, UWB, and EKF sensor fusion.</p>
+  <div class="hero-badges">
+    <span class="badge ba">Differential Drive</span>
+    <span class="badge ba">Ackermann Steering</span>
+    <span class="badge bt">LiDAR · RPLiDAR · YLiDAR · 3D</span>
+    <span class="badge bt">UWB · Wi-Fi · ArUco IPS</span>
+    <span class="badge bg">Kalman Filter · EKF · Fusion</span>
+    <span class="badge bg">Arduino + Python Code</span>
+  </div>
+</section>
+
+<div class="callout">
+  <div class="ctitle">📖 How to Use These Notes</div>
+  Each section contains full explanations and derivations. All code blocks are <strong>collapsible</strong> — click any code section header to expand or collapse it. This keeps the page readable while making every line of code accessible.
+</div>
+
+<h2>What is SLAM?</h2>
+<p><strong>SLAM — Simultaneous Localization and Mapping</strong> — is the process by which a robot builds a map of an unknown environment <em>while at the same time</em> figuring out its own position within that map. These two tasks are deeply interdependent: a good map requires knowing where you are, but knowing where you are requires a good map.</p>
+<div class="callout t">
+  <div class="ctitle">🎯 The Core Challenge</div>
+  Imagine being blindfolded and dropped in an unknown room. You explore by feel, remember what you've touched, and build a mental floorplan — all while tracking your own movements. SLAM gives robots exactly this capability, using sensors instead of touch.
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  PART 1                                             -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="part-header" id="p1-convention">
+  <span class="part-badge">Part 1</span>
+  <div class="part-title">Wheel Encoders &amp; Odometry<small>Differential Drive Kinematics — Full Derivation</small></div>
+</div>
+
+<h2>1.1 Odometry and Our Angle Convention</h2>
+<p><strong>Odometry</strong> estimates a robot's position and orientation by measuring how far its wheels have turned. The key convention used throughout these notes:</p>
+<div class="callout r">
+  <div class="ctitle">⚠ Critical Convention — Vertical Axis (y-axis)</div>
+  The heading angle <strong>θ is measured from the y-axis (vertical)</strong>, not the x-axis. This matches compass conventions — θ = 0 means facing straight up (+y). When θ = 0 and the robot moves forward, <strong>y increases and x stays constant</strong>.
+</div>
+<div class="tw"><table>
+  <thead><tr><th>θ Value</th><th>Robot is Facing</th><th>x changes?</th><th>y changes?</th></tr></thead>
+  <tbody>
+    <tr><td>0°</td><td>Straight up — +y direction</td><td>No</td><td>Yes ↑</td></tr>
+    <tr><td>90°</td><td>Right — +x direction</td><td>Yes →</td><td>No</td></tr>
+    <tr><td>−90°</td><td>Left — −x direction</td><td>Yes ←</td><td>No</td></tr>
+    <tr><td>180°</td><td>Straight down — −y direction</td><td>No</td><td>Yes ↓</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="p1-encoders">1.2 Wheel Encoders</h2>
+<p>A <strong>wheel encoder</strong> counts rotations of the wheel shaft. Each count is a <strong>tick</strong>. Two common types:</p>
+<div class="tw"><table>
+  <thead><tr><th>Type</th><th>How It Works</th><th>Lab Use</th></tr></thead>
+  <tbody>
+    <tr><td>Incremental Quadrature</td><td>Two channels (A &amp; B) pulse as shaft rotates. Order of A/B pulses encodes direction.</td><td>Most student robots — cheap and reliable</td></tr>
+    <tr><td>Absolute Encoder</td><td>Reports exact angular position at all times, even after power-off.</td><td>Industrial robots, higher cost</td></tr>
+  </tbody>
+</table></div>
+<div class="math">
+  <span class="lbl">Ticks → Distance</span>
+  circumference = π × wheel_diameter<br>
+  distance = ticks × <span class="eq">(π × diameter) / ticks_per_revolution</span><br><br>
+  <strong>Example:</strong> diameter = 0.065 m, 500 TPR, ticks = 1250<br>
+  distance = 1250 × (π × 0.065) / 500 = <span class="hi">0.5105 m ≈ 51 cm</span>
+</div>
+
+<h2 id="p1-derivation">1.3 Deriving the Kinematic Equations from Geometry</h2>
+<h3>Step A — The Instantaneous Center of Curvature (ICC)</h3>
+<p>When the two wheels travel different distances in the same interval, the robot moves along a circular arc. Both wheels share the same rigid chassis, so they must rotate about a common center — the <strong>ICC</strong>.</p>
+<div class="diagram">           ICC
+            *
+           /|
+          / |  R + L/2 (outer, right wheel)
+   dR→   /  |
+        /   |
+  [LW]─────[Center]─────[RW]
+        \   |
+         \  |  R − L/2 (inner, left wheel)
+          \ |
+           \|</div>
+<p>Let R = turning radius of robot center, L = wheelbase, Δθ = angle swept. Both wheels trace arcs through the same angle Δθ:</p>
+<div class="math">
+  dL = (R − L/2) × Δθ &nbsp;&nbsp;&nbsp;&nbsp; ...[1] (left wheel, inner)<br>
+  dR = (R + L/2) × Δθ &nbsp;&nbsp;&nbsp;&nbsp; ...[2] (right wheel, outer)
+</div>
+
+<h3>Step B — Deriving Δθ (Heading Change)</h3>
+<p>Subtract equation [1] from equation [2]:</p>
+<div class="math">
+  dR − dL = (R + L/2)×Δθ − (R − L/2)×Δθ<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= Δθ × [(R + L/2) − (R − L/2)]<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= Δθ × L<br><br>
+  <div class="box"><span class="eq">Δθ = (dR − dL) / L</span></div><br>
+  <em>✓ If dR = dL → Δθ = 0 (straight ahead)</em><br>
+  <em>✓ If dR &gt; dL → Δθ &gt; 0 → robot turns left (counterclockwise)</em>
+</div>
+
+<h3>Step C — Deriving d_center (Distance Traveled)</h3>
+<p>Add equations [1] and [2]. Since d_center = R × Δθ:</p>
+<div class="math">
+  dR + dL = Δθ × (R + L/2) + Δθ × (R − L/2) = 2 × R × Δθ = 2 × d_center<br><br>
+  <div class="box"><span class="eq">d_center = (dR + dL) / 2</span></div><br>
+  <em>The robot's center point travels the average of the two wheel distances.</em>
+</div>
+
+<h3 id="p1-why-mid">Step D — Why θ + Δθ/2 and Not Just θ?</h3>
+<p>During the time step, the robot's heading sweeps <em>continuously</em> from θ at the start to θ + Δθ at the end. We need to choose a heading to use in the position update. Three options:</p>
+<div class="tw"><table>
+  <thead><tr><th>Method</th><th>Heading Used</th><th>Error</th></tr></thead>
+  <tbody>
+    <tr><td>Forward Euler</td><td>θ (start)</td><td>O(Δθ) — large error when turning sharply</td></tr>
+    <tr><td>Backward Euler</td><td>θ + Δθ (end)</td><td>O(Δθ) — same magnitude, opposite bias</td></tr>
+    <tr><td>Midpoint Rule ✓</td><td>θ + Δθ/2 (middle)</td><td>O(Δθ²) — much smaller; exact for constant curvature</td></tr>
+  </tbody>
+</table></div>
+<p>The midpoint formula is not just more accurate — it gives the <em>exact</em> result for a circular arc, proven by integration:</p>
+<div class="math">
+  <span class="lbl">Proof: Exact Arc Integral = Midpoint Formula</span>
+  x_exact = x + R × [sin(θ+Δθ) − sin(θ)]<br><br>
+  Using sum-to-product identity: sin(A) − sin(B) = 2·cos((A+B)/2)·sin((A−B)/2)<br><br>
+  = x + R × 2·cos(θ + Δθ/2)·sin(Δθ/2)<br>
+  = x + (R·Δθ) × [sin(Δθ/2)/(Δθ/2)] × cos(θ + Δθ/2) ... but R·Δθ = d_center<br><br>
+  For small Δθ: sin(Δθ/2)/(Δθ/2) → 1, giving:<br>
+  = x + d_center × <span class="hi">sin(θ + Δθ/2)</span> &nbsp; ✓ exact for circular arc
+</div>
+
+<h3 id="p1-equations">Step E — Complete Pose Update Equations</h3>
+<div class="math">
+  <div class="box">
+    d_center = (dR + dL) / 2<br>
+    Δθ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= (dR − dL) / L<br><br>
+    x_new = x_old + d_center × <span class="eq">sin</span>(θ_old + Δθ/2)<br>
+    y_new = y_old + d_center × <span class="eq">cos</span>(θ_old + Δθ/2)<br>
+    θ_new = θ_old + Δθ
+  </div><br>
+  <strong>Self-check (θ = 0, straight ahead):</strong><br>
+  x_new = x + d·sin(0) = x + 0 &nbsp;&nbsp; ✓ x unchanged<br>
+  y_new = y + d·cos(0) = y + d &nbsp;&nbsp; ✓ y increases<br><br>
+  <strong>Self-check (θ = 90°, facing +x, straight ahead):</strong><br>
+  x_new = x + d·sin(90°) = x + d &nbsp;&nbsp; ✓ x increases<br>
+  y_new = y + d·cos(90°) = y + 0 &nbsp;&nbsp; ✓ y unchanged
+</div>
+
+<h2 id="p1-example">1.4 Worked Example</h2>
+<div class="callout t">
+  <div class="ctitle">📐 Given</div>
+  Wheel diameter = 0.07 m &nbsp;|&nbsp; Wheelbase L = 0.20 m &nbsp;|&nbsp; 360 TPR<br>
+  Start pose: (0, 0, 0°) — facing +y direction<br>
+  Left encoder: <strong>180 ticks</strong> &nbsp;|&nbsp; Right encoder: <strong>270 ticks</strong>
+</div>
+<div class="math">
+  <strong>Step 1: Ticks → Distance</strong><br>
+  dL = (180/360) × π × 0.07 = 0.5 × 0.2199 = <span class="hi">0.1100 m</span><br>
+  dR = (270/360) × π × 0.07 = 0.75 × 0.2199 = <span class="hi">0.1649 m</span><br><br>
+  <strong>Step 2: Center distance and rotation</strong><br>
+  d_center = (0.1649 + 0.1100) / 2 = <span class="hi">0.1375 m</span><br>
+  Δθ = (0.1649 − 0.1100) / 0.20 = 0.0549 / 0.20 = <span class="hi">0.2745 rad ≈ 15.7°</span><br><br>
+  <strong>Step 3: Update pose</strong><br>
+  midpoint heading = 0 + 0.2745/2 = 0.1373 rad<br>
+  x_new = 0 + 0.1375 × sin(0.1373) = 0.1375 × 0.1370 = <span class="eq">0.0188 m</span><br>
+  y_new = 0 + 0.1375 × cos(0.1373) = 0.1375 × 0.9906 = <span class="eq">0.1362 m</span><br>
+  θ_new = 0 + 0.2745 = <span class="eq">0.2745 rad ≈ 15.7°</span><br><br>
+  <strong>Result:</strong> Robot is at (0.019 m, 0.136 m), turned ~15.7° to the right of its starting heading.
+</div>
+
+<h2 id="p1-drift">1.5 Odometry Drift and Why We Need More Sensors</h2>
+<p>Odometry is an integration process — errors accumulate at every step. In typical indoor environments, position error grows at roughly <strong>1–5% of total distance</strong>. After 10 meters, that is 10–50 cm of error. Causes include:</p>
+<div class="tw"><table>
+  <thead><tr><th>Error Source</th><th>Mechanism</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr><td>Wheel slippage</td><td>Smooth floor / wet surface — wheel spins without moving robot</td><td>Encoder overcounts movement</td></tr>
+    <tr><td>Wheel size mismatch</td><td>Left wheel 0.5 mm larger than right</td><td>Robot curves even on straight command</td></tr>
+    <tr><td>Uneven surfaces</td><td>Bumps cause wheel to bounce or tilt</td><td>Vertical motion counted as horizontal</td></tr>
+    <tr><td>Encoder resolution</td><td>100 TPR encoder cannot detect &lt;3.6° rotation</td><td>Sub-tick motions are lost entirely</td></tr>
+  </tbody>
+</table></div>
+
+<p>The solution is <strong>sensor fusion</strong>: combine multiple independent sensors so each one compensates for the others' weaknesses. Here is a preview — all of these are covered in depth in Parts 3–5:</p>
+<div class="tw"><table>
+  <thead><tr><th>Sensor</th><th>Provides</th><th>Key Weakness</th><th>Covered In</th></tr></thead>
+  <tbody>
+    <tr><td>Wheel Encoders</td><td>Relative movement (odometry)</td><td>Drifts over distance</td><td>Part 1</td></tr>
+    <tr><td>IMU (Gyro + Accel)</td><td>Rotation rate + acceleration</td><td>Gyro drifts over time</td><td>Part 5</td></tr>
+    <tr><td>LiDAR</td><td>Distances to surrounding walls</td><td>Cannot correct position alone</td><td>Part 3</td></tr>
+    <tr><td>UWB / IPS</td><td>Absolute position in building</td><td>Needs fixed anchors installed</td><td>Part 4</td></tr>
+  </tbody>
+</table></div>
+<div class="callout g">
+  <div class="ctitle">💡 Quick Fusion Preview</div>
+  Suppose odometry says robot is at (4.2, 12.3) but UWB says (4.0, 12.0). A Kalman Filter (Part 5) computes a weighted average: if odometry has σ = 0.3 m and UWB has σ = 0.1 m, the filter trusts UWB 9× more (weights ∝ 1/σ²), giving a fused estimate near (4.02, 12.03) — better than either sensor alone.
+</div>
+
+<h2 id="p1-arduino">1.6 Arduino Code — Encoder Reading and Odometry</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left">
+      <span class="cb-icon">💾</span>
+      <span class="cb-label">Arduino C++ — Quadrature Encoder Odometry</span>
+      <span class="cb-tag ar">Arduino</span>
+    </div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang ar">Arduino C++</span></div>
+    <pre><code class="language-cpp">// ============================================================
+// Differential Drive Odometry on Arduino
+// Using quadrature encoders on both wheels
+// Angle convention: theta measured from y-axis (vertical)
+// theta=0 → robot faces +y → forward motion increases y
+// ============================================================
+
+// --- Pin Definitions ---
+#define ENC_LEFT_A   2    // Must be interrupt pin
+#define ENC_LEFT_B   4
+#define ENC_RIGHT_A  3    // Must be interrupt pin
+#define ENC_RIGHT_B  5
+
+// --- Robot Parameters ---
+const float WHEEL_DIAMETER  = 0.07;    // meters
+const float WHEEL_BASE      = 0.20;    // meters
+const int   TICKS_PER_REV   = 360;
+
+// --- Encoder Counters (volatile = modified inside ISR) ---
+volatile long ticksLeft  = 0;
+volatile long ticksRight = 0;
+long prevTicksLeft  = 0;
+long prevTicksRight = 0;
+
+// --- Robot Pose ---
+float x     = 0.0;   // meters
+float y     = 0.0;   // meters
+float theta = 0.0;   // radians (from y-axis, ccw = positive)
+
+// --- Interrupt Service Routines ---
+// Direction: if B is HIGH when A rises, wheel turns forward (+1)
+void ISR_Left()  { ticksLeft  += (digitalRead(ENC_LEFT_B)  == HIGH) ? 1 : -1; }
+void ISR_Right() { ticksRight += (digitalRead(ENC_RIGHT_B) == HIGH) ? 1 : -1; }
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(ENC_LEFT_A,  INPUT_PULLUP);
+  pinMode(ENC_LEFT_B,  INPUT_PULLUP);
+  pinMode(ENC_RIGHT_A, INPUT_PULLUP);
+  pinMode(ENC_RIGHT_B, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(ENC_LEFT_A),  ISR_Left,  RISING);
+  attachInterrupt(digitalPinToInterrupt(ENC_RIGHT_A), ISR_Right, RISING);
+}
+
+void loop() {
+  delay(50);  // Update every 50ms
+
+  // --- Compute tick deltas since last cycle ---
+  long dTicksL = ticksLeft  - prevTicksLeft;
+  long dTicksR = ticksRight - prevTicksRight;
+  prevTicksLeft  = ticksLeft;
+  prevTicksRight = ticksRight;
+
+  // --- Convert ticks to distance ---
+  float distPerTick = (PI * WHEEL_DIAMETER) / TICKS_PER_REV;
+  float dL = dTicksL * distPerTick;
+  float dR = dTicksR * distPerTick;
+
+  // --- Compute center distance and heading change ---
+  float d_center = (dR + dL) / 2.0;
+  float dTheta   = (dR - dL) / WHEEL_BASE;
+
+  // --- Update pose using midpoint rule (vertical-axis convention) ---
+  float midTheta = theta + dTheta / 2.0;
+  x     += d_center * sin(midTheta);   // sin for x (perpendicular to y-axis)
+  y     += d_center * cos(midTheta);   // cos for y (along y-axis)
+  theta += dTheta;
+
+  // --- Wrap theta to [-PI, PI] ---
+  while (theta >  PI) theta -= 2 * PI;
+  while (theta < -PI) theta += 2 * PI;
+
+  // --- Output pose ---
+  Serial.print("x=");       Serial.print(x, 4);
+  Serial.print(" m  y=");   Serial.print(y, 4);
+  Serial.print(" m  deg="); Serial.println(theta * 180.0 / PI, 2);
+}</code></pre>
+  </div>
+</div>
+
+<h2 id="p1-python">1.7 Python Code — Odometry Simulation and Visualization</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left">
+      <span class="cb-icon">🐍</span>
+      <span class="cb-label">Python — Odometry Simulation with matplotlib (Square Path)</span>
+      <span class="cb-tag py">Python</span>
+    </div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python</span></div>
+    <pre><code class="language-python"># ============================================================
+# Differential Drive Odometry — Python Simulation
+# Simulates a square path and plots true vs odometry path
+# Robotics and Intelligence Nigeria Ring
+# pip install numpy matplotlib
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+# --- Robot parameters ---
+WHEEL_DIAMETER = 0.07     # meters
+WHEEL_BASE     = 0.20     # meters
+TICKS_PER_REV  = 360
+
+def ticks_to_distance(ticks):
+    """Convert encoder ticks to distance in meters."""
+    return ticks * (np.pi * WHEEL_DIAMETER) / TICKS_PER_REV
+
+def update_pose(x, y, theta, ticks_left, ticks_right):
+    """
+    Update robot pose from encoder ticks.
+    Convention: theta measured from y-axis (vertical).
+    theta=0 means robot faces +y direction.
+    """
+    dL = ticks_to_distance(ticks_left)
+    dR = ticks_to_distance(ticks_right)
+
+    d_center = (dR + dL) / 2.0
+    d_theta  = (dR - dL) / WHEEL_BASE
+
+    # Midpoint rule — exact for constant-curvature arc
+    mid_theta = theta + d_theta / 2.0
+
+    x_new     = x + d_center * np.sin(mid_theta)
+    y_new     = y + d_center * np.cos(mid_theta)
+    theta_new = theta + d_theta
+
+    # Normalize theta to [-pi, pi]
+    theta_new = (theta_new + np.pi) % (2 * np.pi) - np.pi
+
+    return x_new, y_new, theta_new
+
+def simulate_path_with_noise(commands, noise_std=0.005):
+    """
+    Simulate executing a list of (ticks_left, ticks_right) commands.
+    Adds Gaussian noise to simulate real-world encoder imperfections.
+    Returns two paths: ideal (no noise) and noisy (with slip).
+    """
+    ideal_path = [(0.0, 0.0)]
+    noisy_path = [(0.0, 0.0)]
+
+    ix, iy, it = 0.0, 0.0, 0.0
+    nx, ny, nt = 0.0, 0.0, 0.0
+
+    for (tL, tR) in commands:
+        # Ideal path (no noise)
+        ix, iy, it = update_pose(ix, iy, it, tL, tR)
+        ideal_path.append((ix, iy))
+
+        # Noisy path (simulates wheel slip, diameter mismatch)
+        noise_L = np.random.normal(0, noise_std * abs(tL) + 1)
+        noise_R = np.random.normal(0, noise_std * abs(tR) + 1)
+        nx, ny, nt = update_pose(nx, ny, nt, tL + noise_L, tR + noise_R)
+        noisy_path.append((nx, ny))
+
+    return ideal_path, noisy_path
+
+# --- Build commands for a square path ---
+# Facing +y, side length 1 m
+
+def ticks_for_distance(d):
+    return int(d * TICKS_PER_REV / (np.pi * WHEEL_DIAMETER))
+
+def ticks_for_turn_90():
+    """Right-angle turn: one side of arc = (L/2) * (pi/2)"""
+    arc = (WHEEL_BASE / 2) * (np.pi / 2)
+    return int(arc * TICKS_PER_REV / (np.pi * WHEEL_DIAMETER))
+
+STEPS_PER_SIDE  = 20
+SIDE_TICKS      = ticks_for_distance(1.0) // STEPS_PER_SIDE
+TURN_TICKS      = ticks_for_turn_90() // 8   # 8 micro-steps per 90° turn
+
+commands = []
+for side in range(4):
+    # Drive forward 1m in STEPS_PER_SIDE steps
+    for _ in range(STEPS_PER_SIDE):
+        commands.append((SIDE_TICKS, SIDE_TICKS))
+    # Turn right 90° (left wheel forward, right wheel backward)
+    for _ in range(8):
+        commands.append((TURN_TICKS, -TURN_TICKS))
+
+# --- Run simulation 3 times to show drift variance ---
+np.random.seed(42)
+fig, axes = plt.subplots(1, 2, figsize=(14, 7))
+
+ax = axes[0]
+ideal_path, _ = simulate_path_with_noise(commands, noise_std=0)
+ix = [p[0] for p in ideal_path]
+iy = [p[1] for p in ideal_path]
+ax.plot(ix, iy, 'k-', linewidth=2.5, label='Ideal path', zorder=5)
+
+colors = ['#f87171', '#fb923c', '#fbbf24']
+for trial in range(3):
+    _, noisy = simulate_path_with_noise(commands, noise_std=0.008)
+    nx = [p[0] for p in noisy]
+    ny = [p[1] for p in noisy]
+    label = f'Odometry trial {trial+1} (noise σ=0.8%)'
+    ax.plot(nx, ny, '--', color=colors[trial], linewidth=1.5, alpha=0.85, label=label)
+
+ax.plot(0, 0, 'go', markersize=12, zorder=10, label='Start')
+ax.set_xlabel('x (meters)', fontsize=12)
+ax.set_ylabel('y (meters)', fontsize=12)
+ax.set_title('Differential Drive Odometry Drift\n(3 trials of same square path)', fontsize=13)
+ax.legend(fontsize=9)
+ax.grid(True, alpha=0.4)
+ax.set_aspect('equal')
+
+# --- Show final position error for many trials ---
+ax2 = axes[1]
+final_errors = []
+for _ in range(500):
+    _, noisy = simulate_path_with_noise(commands, noise_std=0.008)
+    err = np.sqrt((noisy[-1][0] - ideal_path[-1][0])**2 +
+                  (noisy[-1][1] - ideal_path[-1][1])**2)
+    final_errors.append(err * 100)   # in cm
+
+ax2.hist(final_errors, bins=30, color='#f59e0b', edgecolor='#92400e', alpha=0.85)
+ax2.axvline(np.mean(final_errors), color='white', linewidth=2, linestyle='--',
+            label=f'Mean error: {np.mean(final_errors):.1f} cm')
+ax2.set_xlabel('Final position error (cm)', fontsize=12)
+ax2.set_ylabel('Number of trials', fontsize=12)
+ax2.set_title('Distribution of Odometry Error\n(500 simulated square paths)', fontsize=13)
+ax2.legend(fontsize=10)
+ax2.grid(True, alpha=0.4)
+
+plt.tight_layout()
+plt.savefig('odometry_drift.png', dpi=150, bbox_inches='tight')
+plt.show()
+print(f"Mean final error: {np.mean(final_errors):.1f} cm")
+print(f"Max final error:  {np.max(final_errors):.1f} cm")
+print("Plot saved as odometry_drift.png")</code></pre>
+  </div>
+</div>
+<!-- ════════════════════════════════════════════════════ -->
+<!--  PART 2 — ACKERMANN                                 -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="part-header" id="p2-what">
+  <span class="part-badge t">Part 2</span>
+  <div class="part-title">Ackermann Steering Odometry<small>Design · Build · Kinematics · Full Derivation</small></div>
+</div>
+
+<h2>2.1 What Is Ackermann Steering?</h2>
+<p>Ackermann steering is the geometry used in all cars, trucks, and many wheeled robots. Instead of spinning wheels at different speeds to turn, the robot <strong>physically pivots the front wheels</strong> using a steering mechanism. The critical design principle:</p>
+<div class="callout">
+  <div class="ctitle">🔑 The Ackermann Principle</div>
+  When a four-wheeled vehicle turns, the inner and outer front wheels trace circles of different radii about the same center point. The inner wheel's circle is smaller, so it must turn to a <em>larger angle</em> than the outer wheel. If both wheels turn to the same angle, the tyres scrub sideways — causing wear, loss of traction, and inaccurate odometry.
+</div>
+<div class="diagram">          Turn Center (ICC)
+                *
+               /|
+              / |
+    [FL]↙   /  |   [FR]↗
+    inner  /   |    outer
+          /    |
+    =====[  CHASSIS  ]=====
+         |           |
+        [RL]        [RR]  ← rear wheels (driven)
+
+  δ_L (inner) &gt; δ_R (outer) — this is the Ackermann condition</div>
+
+<h2 id="p2-build">2.2 How to Build an Ackermann Robot — Complete Lab Guide</h2>
+<h3>Components List</h3>
+<div class="tw"><table>
+  <thead><tr><th>Category</th><th>Component</th><th>Spec / Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Chassis</td><td>Aluminum or acrylic plate</td><td>300×200 mm, 3–5 mm thick. Pre-drill all mounting holes.</td></tr>
+    <tr><td>Drive motors</td><td>2× DC gear motors</td><td>12V, 100–300 RPM. Rear wheels only.</td></tr>
+    <tr><td>Wheels</td><td>4× rubber wheels</td><td>65–90 mm diameter. Rear driven, front steered.</td></tr>
+    <tr><td>Steering servo</td><td>MG996R or S3003</td><td>Standard size. Controls both front wheels via tie rod.</td></tr>
+    <tr><td>Steering knuckles</td><td>×2 (3D-print or cut)</td><td>3 mm aluminum or PLA. See design below.</td></tr>
+    <tr><td>Kingpin bolts</td><td>×2 M4 or M5 bolts</td><td>With nylon washers for smooth pivot.</td></tr>
+    <tr><td>Tie rod</td><td>3–5 mm aluminum rod</td><td>~120 mm length. Rigid — no flex.</td></tr>
+    <tr><td>Tie rod ends</td><td>M3 clevises × 2</td><td>RC car parts. Allow pivot at each knuckle.</td></tr>
+    <tr><td>Steering sensor</td><td>10 kΩ potentiometer</td><td>Mounted on kingpin. Reads actual steering angle.</td></tr>
+    <tr><td>Encoders</td><td>2× quadrature, one per rear wheel</td><td>100–500 PPR. Mount on motor shaft.</td></tr>
+    <tr><td>Controller</td><td>Arduino Mega + L298N</td><td>Plus 7.4V LiPo. IMU optional but recommended.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Building the Front Steering Mechanism Step by Step</h3>
+<div class="steps">
+  <div class="step"><div class="sn">1</div><div class="sc">
+    <h4>Design and Make the Steering Knuckles</h4>
+    <p>Each knuckle needs three features: (1) a horizontal wheel axle hole, (2) a vertical kingpin pivot hole, and (3) a tie-rod arm extending inward at the <strong>Ackermann correction angle</strong>. Calculate this angle: arctan(T / 2L). For T=0.16 m, L=0.20 m → arctan(0.4) ≈ 21.8°. The tie-rod arm must point inward by this angle to ensure the inner wheel turns more than the outer. 3D-print from PLA or cut from 3 mm aluminum plate.</p>
+  </div></div>
+  <div class="step"><div class="sn">2</div><div class="sc">
+    <h4>Install the Kingpins</h4>
+    <p>Each kingpin is an M4 bolt that passes vertically through the chassis and through the top of the steering knuckle. The knuckle pivots freely around this bolt. Fit a thin nylon washer between the chassis underside and the knuckle top for smooth rotation. Secure with two nuts: inner nut for tension adjustment, outer nut as lock nut. Goal: zero wobble, but smooth free pivoting.</p>
+  </div></div>
+  <div class="step"><div class="sn">3</div><div class="sc">
+    <h4>Attach the Tie Rod</h4>
+    <p>Cut the aluminum rod to ~120 mm (for 160 mm track width). Thread M3 clevises onto both ends — lock with nuts. Connect the clevises to the holes on each knuckle's tie-rod arm. Test manually: pushing the rod left should turn both front wheels left, with the inner wheel turning to a larger angle than the outer. If both wheels turn to the same angle, re-check the Ackermann angle on your knuckles.</p>
+  </div></div>
+  <div class="step"><div class="sn">4</div><div class="sc">
+    <h4>Connect the Servo via Pushrod</h4>
+    <p>Mount the servo centered between the two front wheels on the chassis. Cut a 30–50 mm rigid pushrod (thick wire or small bolt). Attach one end to the servo horn and the other to a point on the tie rod or directly to one knuckle arm. When the servo rotates, the pushrod moves the tie rod, steering both front wheels simultaneously.</p>
+  </div></div>
+  <div class="step"><div class="sn t">5</div><div class="sc">
+    <h4>Add Potentiometer Feedback</h4>
+    <p>Mount a 10 kΩ potentiometer so its shaft is co-axial with one of the kingpin bolts. As the wheel steers left/right, the pot wiper rotates, giving an analog voltage proportional to the steering angle. Connect to Arduino A0. Calibrate: record the ADC value (0–1023) at full left, center, and full right. This gives you accurate real-time steering angle measurements independent of the servo command.</p>
+  </div></div>
+  <div class="step"><div class="sn g">6</div><div class="sc">
+    <h4>Build the Rear Drive</h4>
+    <p>Mount one gear motor per rear wheel using L-brackets or 3D-printed mounts. For simplest construction, use two independent motors (both commanded to the same speed for straight driving). Mount one encoder disc on each motor shaft (before the gearbox for higher resolution). Route all cables along the chassis using zip ties, ending at the Arduino Mega's interrupt and analog pins.</p>
+  </div></div>
+</div>
+
+<h2 id="p2-condition">2.3 The Ackermann Condition — Full Derivation</h2>
+<p>For all wheels to roll without scrubbing, they must all rotate about the same instantaneous center. Let T = track width, L = wheelbase:</p>
+<div class="math">
+  Inner front wheel radius from ICC: R_inner = R − T/2<br>
+  Outer front wheel radius from ICC: R_outer = R + T/2<br><br>
+  cot(δ_L) = R_inner / L = (R − T/2) / L<br>
+  cot(δ_R) = R_outer / L = (R + T/2) / L<br><br>
+  Subtracting:<br>
+  <div class="box"><span class="eq">cot(δ_R) − cot(δ_L) = T / L</span></div><br>
+  This is the Ackermann condition. Your steering geometry satisfies it if and only if<br>
+  the outer wheel turns less than the inner wheel by exactly T/L in cotangent space.
+</div>
+
+<h2 id="p2-derivation">2.4 Ackermann Kinematic Model — Full Derivation</h2>
+<p>We use the <strong>bicycle model</strong>: four wheels simplified to one front steered wheel and one rear driven wheel, both centered on the robot's centreline.</p>
+<div class="math">
+  <span class="lbl">Turning radius from rear axle center</span>
+  R = L / tan(δ)<br><br>
+  <span class="lbl">Angular velocity of robot body</span>
+  ω = v / R = v × tan(δ) / L<br><br>
+  <span class="lbl">Over time step dt</span>
+  d &nbsp;= v × dt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (distance traveled by rear wheel)<br>
+  dθ = (v/L) × tan(δ) × dt &nbsp; (heading change)<br><br>
+  <span class="lbl">Pose update (midpoint rule, vertical-axis convention)</span>
+  <div class="box">
+    d &nbsp;= ticks × (π × diameter) / (TPR)<br>
+    dθ = (v / L) × tan(δ) × dt<br><br>
+    x_new = x + d × sin(θ + dθ/2)<br>
+    y_new = y + d × cos(θ + dθ/2)<br>
+    θ_new = θ + dθ
+  </div>
+</div>
+
+<h2 id="p2-example">2.5 Worked Example — Ackermann</h2>
+<div class="callout t">
+  <div class="ctitle">📐 Given</div>
+  Wheelbase L = 0.30 m &nbsp;|&nbsp; Track T = 0.18 m<br>
+  Rear wheel diameter = 0.09 m &nbsp;|&nbsp; 400 TPR<br>
+  Start pose: (0, 0, 0°) facing +y &nbsp;|&nbsp; dt = 0.1 s<br>
+  Encoder ticks = 25 &nbsp;|&nbsp; Steering angle δ = +20° = 0.3491 rad (right)
+</div>
+<div class="math">
+  <strong>Step 1: Velocity and displacement</strong><br>
+  d = 25 × (π × 0.09) / 400 = 25 × 0.2827 / 400 = 0.01767 m<br>
+  v = 0.01767 / 0.1 = 0.1767 m/s<br><br>
+  <strong>Step 2: Heading change</strong><br>
+  dθ = (v/L) × tan(δ) × dt<br>
+  &nbsp;&nbsp;&nbsp;= (0.1767 / 0.30) × tan(20°) × 0.1<br>
+  &nbsp;&nbsp;&nbsp;= 0.5890 × 0.3640 × 0.1 = <span class="hi">0.02144 rad ≈ 1.23°</span><br><br>
+  <strong>Step 3: Update pose</strong><br>
+  midpoint heading = 0 + 0.02144/2 = 0.01072 rad<br>
+  x_new = 0 + 0.01767 × sin(0.01072) ≈ <span class="eq">0.000189 m</span><br>
+  y_new = 0 + 0.01767 × cos(0.01072) ≈ <span class="eq">0.01767 m</span><br>
+  θ_new = <span class="eq">0.02144 rad ≈ 1.23°</span><br><br>
+  <strong>Verify Ackermann condition:</strong><br>
+  cot(δ_R) − cot(δ_L) = T/L = 0.18/0.30 = 0.60<br>
+  For δ_R ≈ 18.5° → cot(18.5°) = 2.989<br>
+  cot(δ_L) = 2.989 − 0.60 = 2.389 → δ_L ≈ 22.7°<br>
+  ✓ Inner wheel turns 22.7°, outer wheel turns 18.5°
+</div>
+
+<h2 id="p2-holonomic">2.6 Holonomic vs. Non-Holonomic Robots</h2>
+<p>A robot is <strong>holonomic</strong> if it can move in any direction at any instant, regardless of its current heading. In 2D space, a robot has 3 degrees of freedom: x, y, and θ. A holonomic robot can change any of them independently.</p>
+<div class="callout r">
+  <div class="ctitle">⚙ Non-Holonomic Constraint (Differential Drive and Ackermann)</div>
+  ẋ·sin(θ) − ẏ·cos(θ) = 0 &nbsp;&nbsp; (no sideways velocity — the no-slip constraint)<br><br>
+  This means x and y cannot change independently of θ. To move sideways, you must first rotate. Like parallel parking a car — you cannot simply slide sideways.
+</div>
+
+<h3>Holonomic Mechanisms</h3>
+<div class="tw"><table>
+  <thead><tr><th>Mechanism</th><th>How It Achieves Holonomic Motion</th><th>Velocity Equations</th></tr></thead>
+  <tbody>
+    <tr><td>3-Wheel Omniwheel (120° apart)</td><td>Small free rollers at 90° to main wheel allow sideways slip without friction. Three motors combine to any 2D velocity + rotation.</td><td>v_i = −vx·sin(αᵢ) + vy·cos(αᵢ) + ω·R where αᵢ = 0°, 120°, 240°</td></tr>
+    <tr><td>4-Wheel Mecanum</td><td>Rollers at 45° to wheel axis generate diagonal thrust. Four independent motors produce any combination of translation and rotation.</td><td>Full 4×3 mixing matrix; forward/strafe/rotate fully decoupled</td></tr>
+    <tr><td>Spherical Drive</td><td>Single driven sphere — free motion in all directions. Rare in practice.</td><td>No fixed axis — omnidirectional by geometry</td></tr>
+  </tbody>
+</table></div>
+
+<div class="tw"><table>
+  <thead><tr><th>Property</th><th>Holonomic (Omni/Mecanum)</th><th>Non-Holonomic (Diff/Ackermann)</th></tr></thead>
+  <tbody>
+    <tr><td>Manoeuvrability</td><td>Full — any direction instantly</td><td>Limited — must rotate to change direction</td></tr>
+    <tr><td>Turning in place</td><td>Yes, instantly and without moving</td><td>Diff drive: yes. Ackermann: no.</td></tr>
+    <tr><td>Parallel parking</td><td>Trivial — just slide sideways</td><td>Complex multi-step manoeuvre</td></tr>
+    <tr><td>Load capacity</td><td>Lower — rollers bear weight at angle</td><td>Higher — full wheel-ground contact</td></tr>
+    <tr><td>Rough terrain</td><td>Poor — rollers disengage on bumps</td><td>Better — solid wheel contact</td></tr>
+    <tr><td>Odometry accuracy</td><td>Complex — multiple slip axes</td><td>Simpler — one dominant direction per wheel</td></tr>
+    <tr><td>Cost</td><td>Higher — specialised wheels</td><td>Lower — standard wheels</td></tr>
+    <tr><td>Best for</td><td>Warehouse AGVs, tight indoor spaces</td><td>Outdoor robots, fast or heavy robots</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="p2-arduino">2.7 Arduino Code — Ackermann Odometry with Potentiometer</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left">
+      <span class="cb-icon">💾</span>
+      <span class="cb-label">Arduino C++ — Ackermann Odometry (Encoder + Pot Steering Sensor)</span>
+      <span class="cb-tag ar">Arduino</span>
+    </div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang ar">Arduino C++</span></div>
+    <pre><code class="language-cpp">// ============================================================
+// Ackermann Steering Odometry on Arduino
+// Rear wheel encoder (quadrature) + potentiometer for steering angle
+// Vertical-axis convention: theta=0 faces +y
+// ============================================================
+
+#include &lt;Servo.h&gt;
+
+// --- Pins ---
+#define ENC_REAR_A   2    // Interrupt pin
+#define ENC_REAR_B   4
+#define STEER_POT    A0   // Potentiometer wiper
+#define STEER_SERVO  9    // Servo signal
+
+// --- Robot Parameters ---
+const float WHEEL_DIAMETER = 0.09;   // meters
+const float WHEELBASE      = 0.30;   // meters (front-to-rear axle distance)
+const int   TICKS_PER_REV  = 400;
+const float MAX_STEER_DEG  = 30.0;   // physical max steering angle
+
+// --- Potentiometer Calibration ---
+// Measure these values with a multimeter or Serial monitor while steering
+const int POT_FULL_LEFT  = 200;   // ADC value at max left steer
+const int POT_CENTER     = 512;   // ADC value with wheels straight
+const int POT_FULL_RIGHT = 820;   // ADC value at max right steer
+
+// --- Encoder State ---
+volatile long rearTicks = 0;
+long prevRearTicks = 0;
+
+// --- Pose ---
+float x = 0.0, y = 0.0, theta = 0.0;
+
+unsigned long lastTimeMs = 0;
+Servo steeringServo;
+
+// ISR for rear encoder
+void ISR_Rear() {
+  rearTicks += (digitalRead(ENC_REAR_B) == HIGH) ? 1 : -1;
+}
+
+float readSteeringAngleDeg() {
+  int raw = analogRead(STEER_POT);
+  float deg;
+  if (raw &lt;= POT_CENTER) {
+    // Left of center → negative angle
+    deg = -MAX_STEER_DEG * (float)(POT_CENTER - raw) / (POT_CENTER - POT_FULL_LEFT);
+  } else {
+    // Right of center → positive angle
+    deg = MAX_STEER_DEG * (float)(raw - POT_CENTER) / (POT_FULL_RIGHT - POT_CENTER);
+  }
+  // Clamp to safe range
+  return constrain(deg, -MAX_STEER_DEG, MAX_STEER_DEG);
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Ackermann Odometry — Robotics & Intelligence Nigeria Ring");
+
+  pinMode(ENC_REAR_A, INPUT_PULLUP);
+  pinMode(ENC_REAR_B, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(ENC_REAR_A), ISR_Rear, RISING);
+
+  steeringServo.attach(STEER_SERVO);
+  steeringServo.write(90);  // Center position = 90° on servo
+
+  lastTimeMs = millis();
+  Serial.println("Ready. Waiting for motion...");
+}
+
+void loop() {
+  unsigned long now = millis();
+  float dt = (now - lastTimeMs) / 1000.0;   // seconds
+  if (dt &lt; 0.05) return;   // Update at 20 Hz max
+  lastTimeMs = now;
+
+  // --- Read encoder ticks since last cycle ---
+  long dTicks = rearTicks - prevRearTicks;
+  prevRearTicks = rearTicks;
+
+  // --- Read steering angle from potentiometer ---
+  float steer_deg = readSteeringAngleDeg();
+  float steer_rad = steer_deg * PI / 180.0;
+
+  // --- Compute distance and velocity ---
+  float d = dTicks * (PI * WHEEL_DIAMETER) / TICKS_PER_REV;
+  float v = d / dt;   // m/s
+
+  // --- Compute heading change ---
+  float dTheta = (v / WHEELBASE) * tan(steer_rad) * dt;
+  // Alternative exact form: dTheta = d * tan(steer_rad) / WHEELBASE
+
+  // --- Update pose (midpoint rule, vertical-axis convention) ---
+  float midTheta = theta + dTheta / 2.0;
+  x     += d * sin(midTheta);
+  y     += d * cos(midTheta);
+  theta += dTheta;
+
+  // Normalize theta to [-PI, PI]
+  while (theta >  PI) theta -= 2.0 * PI;
+  while (theta < -PI) theta += 2.0 * PI;
+
+  // --- Print pose ---
+  if (abs(dTicks) &gt; 0 || abs(steer_deg) &gt; 1.0) {
+    Serial.print("x=");      Serial.print(x, 4);
+    Serial.print(" y=");     Serial.print(y, 4);
+    Serial.print(" th=");    Serial.print(theta * 180.0 / PI, 2);
+    Serial.print("° steer="); Serial.print(steer_deg, 1);
+    Serial.print("° v=");    Serial.print(v, 3);
+    Serial.println("m/s");
+  }
+}
+
+// ── Optional: Steering control function ──────────────────
+// Call this to command the servo to a target steering angle
+void setSteeringAngle(float target_deg) {
+  target_deg = constrain(target_deg, -MAX_STEER_DEG, MAX_STEER_DEG);
+  // Map [-30, +30] degrees to [60, 120] servo microseconds range
+  int servo_pos = (int)map((long)(target_deg * 10), -300, 300, 60, 120);
+  steeringServo.write(servo_pos);
+}</code></pre>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  PART 3 — LIDAR                                     -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="part-header" id="p3-physics">
+  <span class="part-badge g">Part 3</span>
+  <div class="part-title">LiDAR-Based SLAM<small>RPLiDAR · YLiDAR · ICP · Occupancy Grids · Full Code</small></div>
+</div>
+
+<h2>3.1 Physics of LiDAR</h2>
+<p><strong>LiDAR</strong> — Light Detection and Ranging — fires a laser pulse, times how long it takes to bounce back off an obstacle, and computes distance from the speed of light:</p>
+<div class="math">
+  distance = (c × t_flight) / 2 &nbsp;&nbsp;&nbsp; c = 3 × 10⁸ m/s<br><br>
+  <strong>Example:</strong> t_flight = 10 ns = 10 × 10⁻⁹ s<br>
+  distance = (3×10⁸ × 10×10⁻⁹) / 2 = 3/2 = <span class="hi">1.5 meters</span><br><br>
+  Division by 2 because the pulse must travel <em>to</em> the obstacle AND <em>back</em>.
+</div>
+<p>A 2D spinning LiDAR fires continuously while rotating a mirror through 360°, producing one (angle, distance) pair per degree — 360 readings per scan, once every ~100–200 ms.</p>
+
+<h2 id="p3-hardware">3.2 RPLiDAR and YLiDAR — Hardware Details</h2>
+<div class="tw"><table>
+  <thead><tr><th>Sensor</th><th>Range</th><th>Resolution</th><th>Scan Rate</th><th>Install</th></tr></thead>
+  <tbody>
+    <tr><td>RPLiDAR A1M8</td><td>0.15–12 m</td><td>1°</td><td>5.5 Hz</td><td>pip install rplidar-roboticia</td></tr>
+    <tr><td>RPLiDAR A2M8</td><td>0.15–18 m</td><td>0.9°</td><td>10 Hz</td><td>pip install rplidar-roboticia</td></tr>
+    <tr><td>YDLIDAR X4</td><td>0.12–10 m</td><td>0.5°</td><td>6–12 Hz</td><td>pip install ydlidar</td></tr>
+    <tr><td>YDLIDAR G4</td><td>0.28–16 m</td><td>0.33°</td><td>9 Hz</td><td>pip install ydlidar</td></tr>
+  </tbody>
+</table></div>
+<div class="callout t">
+  <div class="ctitle">🔌 Connection Notes</div>
+  Both sensors connect via USB-to-Serial adapter. On Linux: <code>/dev/ttyUSB0</code>. On Windows: check Device Manager for COM port (e.g., <code>COM3</code>). The RPLiDAR adapter board powers the spinning motor automatically. For YLiDAR, the motor is integrated — just plug in USB and the scan starts.
+</div>
+
+<h2 id="p3-3d">3.3 3D LiDAR — Brief Introduction</h2>
+<p>2D LiDARs give a single horizontal slice. <strong>3D LiDARs</strong> fire multiple vertical beams simultaneously, producing a full 3D point cloud. Use 3D LiDAR when the robot must navigate stairs, detect obstacles at different heights, or map multi-level environments.</p>
+<div class="tw"><table>
+  <thead><tr><th>Sensor</th><th>Beams</th><th>Range</th><th>Typical Use</th></tr></thead>
+  <tbody>
+    <tr><td>Velodyne VLP-16</td><td>16, ±15° vert.</td><td>100 m</td><td>Autonomous vehicles, outdoor mapping</td></tr>
+    <tr><td>Ouster OS1-32</td><td>32</td><td>120 m</td><td>High-resolution 3D mapping</td></tr>
+    <tr><td>Intel RealSense L515</td><td>—</td><td>0.25–9 m</td><td>Indoor short-range, affordable</td></tr>
+    <tr><td>RPLiDAR S2</td><td>16</td><td>25 m</td><td>Budget 3D, step up from A-series</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="p3-grid">3.4 Occupancy Grid Maps</h2>
+<p>An <strong>occupancy grid</strong> divides the environment into a 2D matrix of cells (typically 5 cm × 5 cm). Each cell stores the probability that it is occupied by an obstacle. We use <strong>log-odds</strong> for numerically stable additive updates:</p>
+<div class="math">
+  P(occupied) → stored as log-odds L = log(P / (1−P))<br><br>
+  Update occupied cell:  L ← L + L_OCC &nbsp;&nbsp; (e.g., +0.9)<br>
+  Update free cell:      L ← L + L_FREE &nbsp; (e.g., −0.4)<br><br>
+  Convert back: P = e^L / (1 + e^L) = sigmoid(L)<br><br>
+  Cells start at L=0 (P=0.5, unknown).<br>
+  A cell hit repeatedly: L → +5 (P → 0.993, very likely occupied)<br>
+  A beam passes through repeatedly: L → −5 (P → 0.007, very likely free)
+</div>
+<p><strong>Bresenham's Line Algorithm</strong> determines which cells a LiDAR beam passes through on its way to the endpoint. All traversed cells are marked free; only the endpoint cell is marked occupied.</p>
+
+<h2 id="p3-icp">3.5 ICP — Iterative Closest Point</h2>
+<p>ICP finds the rotation R and translation t that best aligns two point clouds. It is the core of scan matching in LiDAR SLAM — used to estimate how the robot moved between consecutive scans.</p>
+<div class="steps">
+  <div class="step"><div class="sn">1</div><div class="sc"><h4>Initialize</h4><p>Use the odometry estimate as the initial transformation guess. Apply it to the source scan before starting iterations.</p></div></div>
+  <div class="step"><div class="sn">2</div><div class="sc"><h4>Find Nearest Correspondences</h4><p>For every point in the source scan, find the closest point in the target scan using a KD-tree (O(log N) per query — much faster than brute-force O(N)).</p></div></div>
+  <div class="step"><div class="sn">3</div><div class="sc"><h4>Compute Optimal Transform (SVD)</h4><p>Center both point sets at their centroids. Compute covariance H = Σ(s_i' × t_j'ᵀ). SVD decompose: H = UΣVᵀ. Rotation: R = V×Uᵀ. Translation: t = t̄ − R×s̄. This gives the transformation that minimises Σ||R·sᵢ + t − tⱼ||².</p></div></div>
+  <div class="step"><div class="sn">4</div><div class="sc"><h4>Apply and Accumulate</h4><p>Apply R and t to the source scan. Accumulate the total transformation across iterations.</p></div></div>
+  <div class="step"><div class="sn t">5</div><div class="sc"><h4>Check Convergence</h4><p>Compute MSE = mean of squared distances between corresponding points. If MSE &lt; ε (typically 0.001 m²) or improvement is below tolerance — stop. Otherwise go to Step 2.</p></div></div>
+</div>
+
+<h2 id="p3-rpcode">3.6 RPLiDAR Python Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — RPLiDAR Live Scan Visualizer + Single Scan to Array</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · RPLiDAR</span></div>
+    <pre><code class="language-python"># ============================================================
+# RPLiDAR A1/A2 — Live Scan Visualizer
+# pip install rplidar-roboticia matplotlib numpy
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from rplidar import RPLidar
+
+PORT     = '/dev/ttyUSB0'  # Linux | Windows: 'COM3'
+MIN_DIST = 150              # mm — ignore readings closer than this
+MAX_DIST = 6000             # mm — ignore readings beyond this
+
+lidar = RPLidar(PORT)
+lidar.start_motor()
+
+fig = plt.figure(figsize=(8, 8))
+ax  = fig.add_subplot(111, projection='polar')
+ax.set_ylim(0, MAX_DIST)
+ax.set_title("RPLiDAR Real-Time Scan (distance in mm)")
+line, = ax.plot([], [], 'b.', markersize=2)
+lidar_gen = lidar.iter_scans()
+
+def update_scan(frame):
+    try:
+        scan = next(lidar_gen)
+        angles, dists = [], []
+        for (quality, angle, distance) in scan:
+            if quality > 0 and MIN_DIST < distance < MAX_DIST:
+                angles.append(np.radians(angle))
+                dists.append(distance)
+        line.set_data(angles, dists)
+    except StopIteration:
+        pass
+    return line,
+
+ani = animation.FuncAnimation(fig, update_scan, interval=100, blit=True)
+plt.tight_layout()
+plt.show()
+
+lidar.stop()
+lidar.stop_motor()
+lidar.disconnect()
+
+# ============================================================
+# Helper: Get a single scan as a NumPy array
+# Use this as a building block in your SLAM system
+# ============================================================
+
+def get_single_scan(port='/dev/ttyUSB0', min_quality=5):
+    """
+    Get one complete 360-degree scan from RPLiDAR.
+    Returns (angles_rad, distances_m) as numpy arrays.
+    Uses vertical-axis convention: angle=0 is robot forward (+y).
+    """
+    lidar = RPLidar(port)
+    lidar.start_motor()
+
+    angles, dists = [], []
+    scan_count = 0
+
+    for scan in lidar.iter_scans():
+        scan_count += 1
+        if scan_count < 3:   # Skip first 2 scans (hardware warm-up noise)
+            continue
+        for (quality, angle, distance) in scan:
+            if quality >= min_quality and distance > 150:
+                angles.append(np.radians(angle))
+                dists.append(distance / 1000.0)   # mm → meters
+        break   # Take exactly one good scan
+
+    lidar.stop()
+    lidar.stop_motor()
+    lidar.disconnect()
+    return np.array(angles), np.array(dists)
+
+
+def scan_to_cartesian(angles_rad, dists_m):
+    """
+    Convert polar scan (angle_rad, dist_m) to Cartesian (x, y).
+    Vertical-axis convention: angle=0 is forward (+y direction).
+    x = dist * sin(angle)   (lateral / left-right)
+    y = dist * cos(angle)   (forward / backward)
+    """
+    x = dists_m * np.sin(angles_rad)
+    y = dists_m * np.cos(angles_rad)
+    return x, y
+
+
+if __name__ == '__main__':
+    angles, dists = get_single_scan()
+    x, y = scan_to_cartesian(angles, dists)
+
+    plt.figure(figsize=(8, 8))
+    plt.scatter(x, y, s=1, c='dodgerblue', alpha=0.6)
+    plt.plot(0, 0, 'ro', markersize=10, label='Robot position')
+    plt.xlabel('x (m)');  plt.ylabel('y (m)')
+    plt.title('RPLiDAR Single Scan — Cartesian View\n(Vertical-axis convention)')
+    plt.legend();  plt.grid(True);  plt.axis('equal')
+    plt.tight_layout()
+    plt.savefig('rplidar_scan.png', dpi=150)
+    plt.show()
+    print(f"Scan captured: {len(angles)} points")</code></pre>
+  </div>
+</div>
+
+<h2 id="p3-ylcode">3.7 YLiDAR Python Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — YLiDAR SDK Method + Direct Serial Protocol Method</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · YLiDAR</span></div>
+    <pre><code class="language-python"># ============================================================
+# YLiDAR X4 / G4 — Method 1: Using Official YDLIDAR SDK
+# pip install ydlidar
+# ============================================================
+
+import ydlidar
+import numpy as np
+import matplotlib.pyplot as plt
+
+def read_ydlidar_sdk(port='/dev/ttyUSB0', num_scans=1):
+    """Read scans from YDLIDAR using official Python SDK."""
+    ydlidar.os_init()
+    laser = ydlidar.CYdLidar()
+
+    # Configuration for YDLIDAR X4
+    laser.setlidaropt(ydlidar.LidarPropSerialPort,     port)
+    laser.setlidaropt(ydlidar.LidarPropSerialBaudrate, 115200)
+    laser.setlidaropt(ydlidar.LidarPropLidarType,      ydlidar.TYPE_TRIANGLE)
+    laser.setlidaropt(ydlidar.LidarPropScanFrequency,  10.0)
+    laser.setlidaropt(ydlidar.LidarPropSampleRate,     5)
+    laser.setlidaropt(ydlidar.LidarPropMaxAngle,       180.0)
+    laser.setlidaropt(ydlidar.LidarPropMinAngle,      -180.0)
+    laser.setlidaropt(ydlidar.LidarPropMaxRange,       10.0)
+    laser.setlidaropt(ydlidar.LidarPropMinRange,       0.12)
+    laser.setlidaropt(ydlidar.LidarPropIntenstiy,      False)
+
+    if not laser.initialize():
+        raise RuntimeError("Failed to initialize YDLIDAR")
+    if not laser.turnOn():
+        raise RuntimeError("Failed to start YDLIDAR scan")
+
+    all_scans = []
+    scan = ydlidar.LaserScan()
+
+    for i in range(num_scans + 2):   # Skip first 2 scans (warm-up)
+        r = laser.doProcessSimple(scan)
+        if r and i >= 2:
+            angles = [p.angle for p in scan.points if 0.12 < p.range < 10.0]
+            dists  = [p.range  for p in scan.points if 0.12 < p.range < 10.0]
+            all_scans.append((np.array(angles), np.array(dists)))
+            print(f"Scan {i-1}: {len(angles)} valid points")
+
+    laser.turnOff()
+    laser.disconnecting()
+    return all_scans
+
+
+# ============================================================
+# YLiDAR X4 — Method 2: Direct Serial Protocol (no SDK needed)
+# Useful if SDK installation fails or not available
+# pip install pyserial
+# ============================================================
+
+import serial
+import struct
+
+def read_ydlidar_serial(port='/dev/ttyUSB0', num_scans=1):
+    """
+    Read YDLIDAR X4 data directly via serial.
+    Protocol: 0xAA 0x55 header followed by scan packets.
+    Each packet has: type, sample_qty, start_angle, end_angle, checksum, data[]
+    """
+    ser = serial.Serial(port, 115200, timeout=1)
+    ser.write(b'\xA5\x60')   # Start scan command
+
+    all_angles = []
+    all_dists  = []
+    scans_done = 0
+
+    print(f"Reading {num_scans} scan(s) from YDLIDAR X4...")
+
+    while scans_done < num_scans:
+        # Search for packet header: 0xAA 0x55
+        b = ser.read(1)
+        if b != b'\xAA':
+            continue
+        b = ser.read(1)
+        if b != b'\x55':
+            continue
+
+        # Read packet header fields
+        packet_type = struct.unpack('B', ser.read(1))[0]
+        sample_qty  = struct.unpack('B', ser.read(1))[0]
+        start_raw   = struct.unpack('<H', ser.read(2))[0]
+        end_raw     = struct.unpack('<H', ser.read(2))[0]
+        checksum    = struct.unpack('<H', ser.read(2))[0]
+
+        start_angle = (start_raw >> 1) / 64.0   # degrees
+        end_angle   = (end_raw   >> 1) / 64.0
+
+        # Read distance samples
+        samples = []
+        for _ in range(sample_qty):
+            d_raw = struct.unpack('<H', ser.read(2))[0]
+            dist_m = (d_raw >> 2) / 1000.0
+            samples.append(dist_m)
+
+        # Distribute angles linearly across samples
+        if end_angle < start_angle:
+            end_angle += 360.0
+        n = max(sample_qty - 1, 1)
+        step = (end_angle - start_angle) / n
+
+        for i, dist in enumerate(samples):
+            ang = (start_angle + i * step) % 360.0
+            if dist > 0.12:
+                all_angles.append(np.radians(ang))
+                all_dists.append(dist)
+
+        # A new full scan starts when bit 0 of packet_type is set
+        if packet_type & 0x01:
+            scans_done += 1
+            print(f"Scan {scans_done} complete: {len(all_angles)} points so far")
+
+    ser.write(b'\xA5\x65')   # Stop scan command
+    ser.close()
+
+    return np.array(all_angles), np.array(all_dists)
+
+
+# --- Demo ---
+if __name__ == '__main__':
+    import sys
+    method = 'serial'   # Change to 'sdk' if YDLIDAR SDK is installed
+
+    if method == 'sdk':
+        scans = read_ydlidar_sdk()
+        angles, dists = scans[0] if scans else (np.array([]), np.array([]))
+    else:
+        angles, dists = read_ydlidar_serial(num_scans=1)
+
+    if len(angles) > 0:
+        x = dists * np.sin(angles)
+        y = dists * np.cos(angles)
+        plt.figure(figsize=(8, 8))
+        plt.scatter(x, y, s=1, c='lime', alpha=0.7)
+        plt.plot(0, 0, 'ro', markersize=10, label='Robot')
+        plt.xlabel('x (m)'); plt.ylabel('y (m)')
+        plt.title('YDLIDAR Scan — Cartesian View')
+        plt.legend(); plt.grid(True); plt.axis('equal')
+        plt.savefig('ydlidar_scan.png', dpi=150)
+        plt.show()
+    else:
+        print("No scan data received. Check port and connection.")</code></pre>
+  </div>
+</div>
+
+<h2 id="p3-gridcode">3.8 Occupancy Grid Builder Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — Full Occupancy Grid Builder (Bresenham + Log-Odds + RPLiDAR)</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · Occupancy Grid</span></div>
+    <pre><code class="language-python"># ============================================================
+# Occupancy Grid Map Builder with Log-Odds Updates
+# Uses RPLiDAR scans + robot pose (from odometry or EKF)
+# Robotics and Intelligence Nigeria Ring
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from rplidar import RPLidar
+
+# --- Grid configuration ---
+MAP_SIZE_M  = 10.0    # Physical size: 10m × 10m
+RESOLUTION  = 0.05    # Each cell = 5cm × 5cm
+GRID_CELLS  = int(MAP_SIZE_M / RESOLUTION)   # = 200 × 200 cells
+ORIGIN      = GRID_CELLS // 2               # Robot starts at grid center
+
+# --- Log-odds update values ---
+L_OCC  =  0.9    # Added to occupied cell log-odds
+L_FREE = -0.4    # Added to free cell log-odds
+L_MIN  = -5.0    # Minimum log-odds (very confident: free)
+L_MAX  =  5.0    # Maximum log-odds (very confident: occupied)
+
+# --- Initialize grid: all cells unknown (L=0 → P=0.5) ---
+log_odds_grid = np.zeros((GRID_CELLS, GRID_CELLS), dtype=np.float32)
+
+
+def world_to_grid(wx, wy):
+    """Convert world coordinates (meters) to grid cell indices."""
+    gx = int(wx / RESOLUTION) + ORIGIN
+    gy = int(wy / RESOLUTION) + ORIGIN
+    return (np.clip(gx, 0, GRID_CELLS-1),
+            np.clip(gy, 0, GRID_CELLS-1))
+
+
+def bresenham(x0, y0, x1, y1):
+    """
+    Bresenham's line algorithm.
+    Returns list of (x, y) grid cell indices along the line from (x0,y0) to (x1,y1).
+    Used to find which cells a LiDAR beam passes through.
+    """
+    cells = []
+    dx, dy = abs(x1-x0), abs(y1-y0)
+    sx = 1 if x0 < x1 else -1
+    sy = 1 if y0 < y1 else -1
+    err = dx - dy
+
+    while True:
+        cells.append((x0, y0))
+        if x0 == x1 and y0 == y1:
+            break
+        e2 = 2 * err
+        if e2 > -dy:
+            err -= dy
+            x0  += sx
+        if e2 < dx:
+            err += dx
+            y0  += sy
+    return cells
+
+
+def update_map(robot_x, robot_y, robot_theta, scan_angles, scan_dists):
+    """
+    Update the occupancy grid given robot pose and a LiDAR scan.
+
+    Parameters:
+        robot_x, robot_y:  Robot position in world coordinates (meters)
+        robot_theta:       Robot heading from y-axis (vertical-axis convention)
+        scan_angles:       Array of scan angles in radians (LiDAR frame)
+        scan_dists:        Array of scan distances in meters
+    """
+    global log_odds_grid
+
+    rx_g, ry_g = world_to_grid(robot_x, robot_y)
+
+    for angle, dist in zip(scan_angles, scan_dists):
+        if dist < 0.15 or dist > 8.0:
+            continue   # Ignore out-of-range readings
+
+        # Convert LiDAR angle to world frame (add robot heading)
+        # angle=0 in LiDAR frame = robot's forward direction
+        world_angle = angle + robot_theta
+
+        # Endpoint of LiDAR beam in world coordinates
+        # Vertical-axis convention: sin for x, cos for y
+        end_x = robot_x + dist * np.sin(world_angle)
+        end_y = robot_y + dist * np.cos(world_angle)
+        ex_g, ey_g = world_to_grid(end_x, end_y)
+
+        # All cells along the beam (except endpoint) are FREE
+        free_cells = bresenham(rx_g, ry_g, ex_g, ey_g)
+        for (cx, cy) in free_cells[:-1]:
+            if 0 <= cx < GRID_CELLS and 0 <= cy < GRID_CELLS:
+                log_odds_grid[cy, cx] = max(L_MIN,
+                                            log_odds_grid[cy, cx] + L_FREE)
+
+        # Endpoint cell is OCCUPIED
+        if 0 <= ex_g < GRID_CELLS and 0 <= ey_g < GRID_CELLS:
+            log_odds_grid[ey_g, ex_g] = min(L_MAX,
+                                             log_odds_grid[ey_g, ex_g] + L_OCC)
+
+
+def get_probability_map():
+    """Convert log-odds grid to probability map [0, 1] using sigmoid."""
+    return 1.0 / (1.0 + np.exp(-log_odds_grid))
+
+
+# --- Simulate a few poses, then run the map builder ---
+if __name__ == '__main__':
+    PORT = '/dev/ttyUSB0'
+    lidar = RPLidar(PORT)
+    lidar.start_motor()
+
+    # Simulated robot poses — replace with real odometry or EKF output
+    robot_poses = [
+        (0.0, 0.0, 0.0),
+        (0.0, 0.3, 0.0),
+        (0.0, 0.6, 0.0),
+        (0.0, 0.9, 0.0),
+        (0.05, 1.1, 0.05),
+    ]
+
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.set_title("Building Occupancy Grid Map with RPLiDAR")
+
+    pose_idx  = 0
+    scan_gen  = lidar.iter_scans()
+
+    try:
+        for scan in scan_gen:
+            if pose_idx >= len(robot_poses):
+                break
+
+            rx, ry, rth = robot_poses[pose_idx]
+            pose_idx += 1
+
+            # Parse scan
+            angles, dists = [], []
+            for (q, angle, dist) in scan:
+                if q > 5 and 150 < dist < 8000:
+                    angles.append(np.radians(angle))
+                    dists.append(dist / 1000.0)
+
+            # Update map
+            update_map(rx, ry, rth, np.array(angles), np.array(dists))
+
+            # Visualize current map
+            prob_map = get_probability_map()
+            ax.clear()
+            ax.imshow(1 - prob_map, cmap='gray', origin='lower',
+                      extent=[-MAP_SIZE_M/2, MAP_SIZE_M/2,
+                              -MAP_SIZE_M/2, MAP_SIZE_M/2])
+            ax.plot(rx, ry, 'ro', markersize=8, label='Robot')
+            ax.set_title(f"Occupancy Grid  —  Pose: ({rx:.2f}, {ry:.2f}, {np.degrees(rth):.1f}°)")
+            ax.legend()
+            plt.pause(0.15)
+
+    except KeyboardInterrupt:
+        print("Stopped by user.")
+
+    lidar.stop()
+    lidar.stop_motor()
+    lidar.disconnect()
+
+    # Save final map
+    plt.savefig('occupancy_map_final.png', dpi=150)
+    plt.show()
+    print("Map saved as occupancy_map_final.png")</code></pre>
+  </div>
+</div>
+
+<h2 id="p3-icpcode">3.9 ICP — Full Implementation</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — ICP from Scratch (SVD, KD-Tree, Convergence Plot)</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · ICP</span></div>
+    <pre><code class="language-python"># ============================================================
+# ICP — Iterative Closest Point, full implementation
+# Scan matching for LiDAR SLAM
+# Robotics and Intelligence Nigeria Ring
+# pip install numpy scipy matplotlib
+# ============================================================
+
+import numpy as np
+from scipy.spatial import KDTree
+import matplotlib.pyplot as plt
+
+
+def apply_transform_2d(points, dx, dy, dtheta):
+    """Apply 2D rigid transformation to Nx2 point array."""
+    c, s = np.cos(dtheta), np.sin(dtheta)
+    R = np.array([[c, -s], [s, c]])
+    return (R @ points.T).T + np.array([dx, dy])
+
+
+def icp(source, target, max_iterations=50, tolerance=1e-4, max_dist=0.5):
+    """
+    Iterative Closest Point scan matching.
+
+    Parameters:
+        source:         Nx2 array of (x,y) points — current LiDAR scan
+        target:         Mx2 array of (x,y) points — reference / map scan
+        max_iterations: Maximum ICP iterations before stopping
+        tolerance:      Stop when MSE improvement per iteration &lt; tolerance
+        max_dist:       Reject correspondence pairs farther apart than this (m)
+
+    Returns:
+        total_dx, total_dy, total_theta: Best-fit transformation
+        mse_history:  List of MSE values per iteration (for convergence plot)
+    """
+    total_dx, total_dy, total_theta = 0.0, 0.0, 0.0
+    current = source.copy()
+    mse_history = []
+    prev_mse = np.inf
+
+    # Build KD-tree once on the target for fast nearest-neighbour search
+    tree = KDTree(target)
+
+    for iteration in range(max_iterations):
+
+        # STEP 2: Find nearest-neighbour correspondences
+        distances, indices = tree.query(current)
+        valid = distances < max_dist
+
+        if valid.sum() < 10:
+            print(f"WARNING: Only {valid.sum()} valid pairs. Stopping early.")
+            break
+
+        src_pts = current[valid]
+        tgt_pts = target[indices[valid]]
+
+        # STEP 3a: Compute centroids
+        sc = src_pts.mean(axis=0)
+        tc = tgt_pts.mean(axis=0)
+
+        # STEP 3b: Centre both point sets
+        src_c = src_pts - sc
+        tgt_c = tgt_pts - tc
+
+        # STEP 3c: Covariance matrix H (2×2)
+        H = src_c.T @ tgt_c
+
+        # STEP 3d: SVD — H = U × Σ × Vᵀ
+        U, S, Vt = np.linalg.svd(H)
+
+        # STEP 3e: Rotation matrix R
+        # Handle reflection (det must be +1, not -1)
+        d = np.linalg.det(Vt.T @ U.T)
+        D = np.diag([1.0, 1.0 if d > 0 else -1.0])
+        R = Vt.T @ D @ U.T
+
+        # Extract rotation angle from 2D rotation matrix
+        dtheta = np.arctan2(R[1, 0], R[0, 0])
+
+        # STEP 3f: Translation
+        t = tc - R @ sc
+        dx, dy = t[0], t[1]
+
+        # STEP 4: Apply transformation to current source
+        current = apply_transform_2d(current, dx, dy, dtheta)
+
+        # Accumulate total transformation (accounting for already-applied rotation)
+        c_acc, s_acc = np.cos(total_theta), np.sin(total_theta)
+        total_dx    = c_acc * dx - s_acc * dy + total_dx
+        total_dy    = s_acc * dx + c_acc * dy + total_dy
+        total_theta += dtheta
+
+        # STEP 5: Check convergence
+        mse = float(np.mean(distances[valid] ** 2))
+        mse_history.append(mse)
+
+        if abs(prev_mse - mse) < tolerance:
+            print(f"ICP converged at iteration {iteration+1}  MSE={mse:.6f} m²")
+            break
+        prev_mse = mse
+
+    return total_dx, total_dy, total_theta, mse_history
+
+
+# ── Demo: Align two simulated square-room scans ────────────
+if __name__ == '__main__':
+    np.random.seed(42)
+
+    def room_scan(offset_x=0.0, offset_y=0.0, offset_theta=0.0, noise=0.01):
+        """Simulate a LiDAR scan of a 4m×4m square room from a given offset."""
+        angles = np.linspace(0, 2*np.pi, 360, endpoint=False)
+        pts = []
+        for a in angles:
+            # Distance to nearest wall of 4m×4m room centred at origin
+            # Approximate: min distance to 4 walls
+            d_walls = []
+            for wall_dist, wall_angle in [(2.0, 0), (2.0, np.pi/2),
+                                           (2.0, np.pi), (2.0, 3*np.pi/2)]:
+                # Project beam onto each wall normal
+                projection = abs(np.cos(a - wall_angle))
+                if projection > 0.01:
+                    d_walls.append(wall_dist / projection)
+            d = min(d_walls) + np.random.normal(0, noise)
+            d = max(0.1, d)
+            # Vertical-axis convention: x=sin, y=cos
+            px = d * np.sin(a) + offset_x + np.random.normal(0, noise*0.5)
+            py = d * np.cos(a) + offset_y + np.random.normal(0, noise*0.5)
+            pts.append([px, py])
+        return np.array(pts)
+
+    # Reference scan (robot at origin)
+    target_scan = room_scan(noise=0.01)
+
+    # Source scan (robot moved 0.2m forward, 0.1m sideways, turned 8°)
+    TRUE_DX, TRUE_DY, TRUE_DTHETA = 0.2, 0.1, np.radians(8)
+    source_scan = room_scan(offset_x=TRUE_DX, offset_y=TRUE_DY,
+                             offset_theta=TRUE_DTHETA, noise=0.01)
+
+    print("Running ICP...")
+    est_dx, est_dy, est_dtheta, mse_hist = icp(
+        source_scan, target_scan, max_iterations=50, tolerance=1e-5
+    )
+
+    aligned_scan = apply_transform_2d(source_scan, est_dx, est_dy, est_dtheta)
+
+    print(f"\nTrue  movement: dx={TRUE_DX:.4f}m, dy={TRUE_DY:.4f}m, "
+          f"dθ={np.degrees(TRUE_DTHETA):.2f}°")
+    print(f"ICP  estimated: dx={est_dx:.4f}m, dy={est_dy:.4f}m, "
+          f"dθ={np.degrees(est_dtheta):.2f}°")
+    err = np.sqrt((est_dx-TRUE_DX)**2 + (est_dy-TRUE_DY)**2)
+    print(f"Position error: {err*100:.1f} cm")
+    print(f"Angle error:    {abs(np.degrees(est_dtheta-TRUE_DTHETA)):.2f}°")
+
+    # Plot results
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 6))
+
+    ax1.scatter(target_scan[:,0], target_scan[:,1], c='royalblue', s=2,
+                alpha=0.5, label='Target scan (reference)')
+    ax1.scatter(source_scan[:,0], source_scan[:,1], c='tomato', s=2,
+                alpha=0.5, label='Source scan (before ICP)')
+    ax1.scatter(aligned_scan[:,0], aligned_scan[:,1], c='limegreen', s=2,
+                alpha=0.5, label='Source scan (after ICP)')
+    ax1.set_aspect('equal')
+    ax1.legend(fontsize=9)
+    ax1.set_title('ICP Scan Matching')
+    ax1.grid(True, alpha=0.3)
+
+    ax2.semilogy(mse_hist, 'b-o', markersize=5)
+    ax2.set_xlabel('ICP Iteration')
+    ax2.set_ylabel('Mean Squared Error (m²)')
+    ax2.set_title(f'ICP Convergence ({len(mse_hist)} iterations)')
+    ax2.grid(True)
+
+    plt.tight_layout()
+    plt.savefig('icp_result.png', dpi=150)
+    plt.show()</code></pre>
+  </div>
+</div>
+
+<h2 id="p3-ros">3.10 ROS / Gazebo (Optional Second Approach)</h2>
+<p>While this course focuses on direct coding for deep understanding, ROS provides mature ready-made SLAM packages. Use direct coding first, then explore ROS for deployment on real systems.</p>
+<div class="tw"><table>
+  <thead><tr><th>ROS Package</th><th>Algorithm</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>gmapping</td><td>Particle filter SLAM</td><td>Works directly with RPLiDAR ROS driver</td></tr>
+    <tr><td>cartographer</td><td>Graph-based SLAM (Google)</td><td>2D and 3D, excellent accuracy</td></tr>
+    <tr><td>hector_slam</td><td>LiDAR only (no odometry needed)</td><td>Good for robots without reliable encoders</td></tr>
+    <tr><td>slam_toolbox</td><td>Modern lifelong SLAM</td><td>Actively maintained, recommended for new projects</td></tr>
+  </tbody>
+</table></div>
+<!-- ════════════════════════════════════════════════════ -->
+<!--  PART 4 — INDOOR POSITIONING                        -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="part-header" id="p4-uwb">
+  <span class="part-badge r">Part 4</span>
+  <div class="part-title">Indoor Positioning Systems<small>UWB · Wi-Fi Fingerprinting · ArUco Markers · Full Code</small></div>
+</div>
+
+<h2>4.1 Why Not GPS Indoors?</h2>
+<p>GPS works by receiving time-stamped signals from 4+ satellites. Indoors, buildings absorb and reflect these signals — accuracy drops to 10–50 m or fails entirely. Indoor Positioning Systems (IPS) use signals that work reliably inside buildings.</p>
+
+<h2>4.2 UWB — Ultra-Wideband Positioning</h2>
+<p>UWB sends extremely short radio pulses (nanosecond-wide) across a wide frequency band (3.1–10.6 GHz). The key measurement is <strong>Time of Flight (ToF)</strong>. Because the pulses are so short, even nanosecond timing differences give centimetre-level accuracy.</p>
+<p><strong>Two-Way Ranging (TWR)</strong> eliminates the need for synchronised clocks:</p>
+<div class="math">
+  Anchor A ──[T1: send]──→ Tag B<br>
+  Anchor A ←──[T3: reply]── Tag B  (T2 = receive time, T3 = reply send time)<br>
+  Anchor A receives reply at T4<br><br>
+  t_flight = [(T4 − T1) − (T3 − T2)] / 2<br>
+  distance = c × t_flight = 3×10⁸ m/s × t_flight<br><br>
+  <strong>Example:</strong> t_flight = 5 ns → distance = <span class="hi">1.5 m</span>
+</div>
+<p><strong>Common UWB hardware for labs:</strong> Decawave DWM1000, Decawave DWM1001, Pozyx positioning kit (complete kit with Arduino library), MDEK1001 development kit.</p>
+
+<h2 id="p4-trilat">4.3 Trilateration — Full Derivation</h2>
+<p>With 3 anchors at known positions and measured distances, the robot is at the intersection of 3 circles:</p>
+<div class="math">
+  (x−x₁)² + (y−y₁)² = d₁²  &nbsp; ...[1]<br>
+  (x−x₂)² + (y−y₂)² = d₂²  &nbsp; ...[2]<br>
+  (x−x₃)² + (y−y₃)² = d₃²  &nbsp; ...[3]<br><br>
+  <span class="lbl">Linearize: subtract [1] from [2]</span>
+  Expand both equations, subtract:<br>
+  −2x·x₂ + x₂² − (−2x·x₁ + x₁²) − 2y·y₂ + y₂² + 2y·y₁ − y₁² = d₁² − d₂²<br>
+  → 2(x₂−x₁)·x + 2(y₂−y₁)·y = d₁²−d₂² + x₂²−x₁² + y₂²−y₁²<br><br>
+  <span class="lbl">Similarly subtract [1] from [3]</span>
+  2(x₃−x₁)·x + 2(y₃−y₁)·y = d₁²−d₃² + x₃²−x₁² + y₃²−y₁²<br><br>
+  <span class="lbl">Linear system Ax = b</span>
+  <div class="box">
+    A = |2(x₂−x₁)  2(y₂−y₁)|  &nbsp;&nbsp; b = |d₁²−d₂²+x₂²−x₁²+y₂²−y₁²|<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;|2(x₃−x₁)  2(y₃−y₁)|  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|d₁²−d₃²+x₃²−x₁²+y₃²−y₁²|<br><br>
+    3 anchors: x = A⁻¹·b &nbsp;&nbsp; (exact solution)<br>
+    N anchors: x = (AᵀA)⁻¹·Aᵀ·b &nbsp; (least squares)
+  </div>
+</div>
+
+<h2 id="p4-uwbcode">4.4 UWB Python Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — UWB Trilateration (Least Squares, N Anchors, Visualization)</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · UWB</span></div>
+    <pre><code class="language-python"># ============================================================
+# UWB Indoor Positioning — N-Anchor Trilateration
+# Works for both 3 anchors (exact) and N anchors (least squares)
+# Robotics and Intelligence Nigeria Ring
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+
+
+def trilaterate(anchors, distances):
+    """
+    Compute 2D robot position from N anchors and distances.
+    Uses least-squares for N >= 3 anchors (minimum: 3).
+
+    Parameters:
+        anchors:   Nx2 array [[x1,y1], [x2,y2], ...] — anchor positions (m)
+        distances: N-element array [d1, d2, ...] — measured distances (m)
+
+    Returns:
+        position:  [x, y] estimated robot position (m)
+        residuals: fitting error vector
+    """
+    anchors   = np.array(anchors,   dtype=float)
+    distances = np.array(distances, dtype=float)
+    n = len(anchors)
+
+    if n < 3:
+        raise ValueError("Need at least 3 anchors for 2D positioning")
+
+    # Use first anchor as reference
+    x1, y1 = anchors[0];  d1 = distances[0]
+
+    A_rows, b_rows = [], []
+    for i in range(1, n):
+        xi, yi = anchors[i];  di = distances[i]
+        A_rows.append([2*(xi-x1), 2*(yi-y1)])
+        b_rows.append(d1**2 - di**2 + xi**2 - x1**2 + yi**2 - y1**2)
+
+    A = np.array(A_rows)   # (n-1) × 2
+    b = np.array(b_rows)   # (n-1,)
+
+    # Least squares: minimise ||Ax - b||²
+    pos, residuals, _, _ = np.linalg.lstsq(A, b, rcond=None)
+    return pos, residuals
+
+
+def simulate_uwb(true_pos, anchors, noise_std=0.05):
+    """Simulate UWB range measurements with Gaussian noise."""
+    true_pos = np.array(true_pos)
+    dists = []
+    for a in np.array(anchors):
+        d_true = np.linalg.norm(true_pos - a)
+        dists.append(max(0.05, d_true + np.random.normal(0, noise_std)))
+    return dists
+
+
+def run_position_tracking(true_path, anchors, noise_std=0.07, n_trials=1):
+    """
+    Simulate robot moving along a path, computing UWB position at each step.
+    Returns estimated path and errors.
+    """
+    est_path = []
+    errors   = []
+
+    for true_pos in true_path:
+        # Average over multiple measurements to reduce noise
+        estimates = []
+        for _ in range(n_trials):
+            dists = simulate_uwb(true_pos, anchors, noise_std)
+            pos, _ = trilaterate(anchors, dists)
+            estimates.append(pos)
+
+        est_pos = np.mean(estimates, axis=0)
+        est_path.append(est_pos)
+        err = np.linalg.norm(np.array(true_pos) - est_pos)
+        errors.append(err)
+
+    return np.array(est_path), np.array(errors)
+
+
+# --- Main demo ---
+np.random.seed(42)
+
+# Anchor positions (surveyed at installation — measure carefully!)
+anchors = np.array([
+    [0.0, 0.0],   # A1: room origin corner
+    [6.0, 0.0],   # A2: 6m along x-axis
+    [6.0, 4.0],   # A3: far corner
+    [0.0, 4.0],   # A4: 4th corner (extra → better accuracy)
+])
+
+# Simulate robot path (L-shape)
+true_path = (
+    [[0.5 + i*0.15, 1.0] for i in range(20)] +   # horizontal segment
+    [[3.5, 1.0 + i*0.15] for i in range(20)]      # vertical segment
+)
+
+# Estimate positions
+est_path, errors = run_position_tracking(true_path, anchors, noise_std=0.06, n_trials=3)
+
+print(f"UWB Trilateration Results:")
+print(f"  Mean error:   {errors.mean()*100:.1f} cm")
+print(f"  Max error:    {errors.max()*100:.1f} cm")
+print(f"  95th pct:     {np.percentile(errors, 95)*100:.1f} cm")
+
+# Visualization
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 6))
+
+ax1.plot([p[0] for p in true_path], [p[1] for p in true_path],
+         'k-', linewidth=2.5, label='True path')
+ax1.plot(est_path[:,0], est_path[:,1],
+         'r--o', markersize=4, linewidth=1.5, alpha=0.8, label='UWB estimated')
+
+for i, (ax, ay) in enumerate(anchors):
+    ax1.plot(ax, ay, 'b^', markersize=12)
+    ax1.annotate(f'A{i+1}', (ax, ay), textcoords='offset points',
+                 xytext=(6, 6), color='dodgerblue', fontsize=10)
+
+# Draw coverage circles
+for (ax_pos, ay_pos), d, color in zip(anchors,
+    simulate_uwb(true_path[0], anchors), ['blue','red','green','purple']):
+    circle = plt.Circle((ax_pos, ay_pos), d, fill=False,
+                         color=color, alpha=0.2, linestyle='--')
+    ax1.add_patch(circle)
+
+ax1.set_xlim(-0.5, 6.5);  ax1.set_ylim(-0.5, 4.5)
+ax1.set_xlabel('x (m)');   ax1.set_ylabel('y (m)')
+ax1.set_title(f'UWB Trilateration Path\nMean error: {errors.mean()*100:.1f} cm')
+ax1.legend();  ax1.grid(True, alpha=0.3);  ax1.set_aspect('equal')
+
+ax2.plot(errors * 100, 'b-', linewidth=1.5)
+ax2.axhline(errors.mean()*100, color='r', linestyle='--',
+            label=f'Mean: {errors.mean()*100:.1f} cm')
+ax2.set_xlabel('Step');  ax2.set_ylabel('Position error (cm)')
+ax2.set_title('UWB Error Along Path');  ax2.legend();  ax2.grid(True)
+
+plt.tight_layout()
+plt.savefig('uwb_trilateration.png', dpi=150)
+plt.show()</code></pre>
+  </div>
+</div>
+
+<h2 id="p4-pozyx">4.5 Pozyx Arduino Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">💾</span><span class="cb-label">Arduino C++ — Pozyx UWB Positioning with 4 Anchors</span><span class="cb-tag ar">Arduino</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang ar">Arduino C++ · Pozyx</span></div>
+    <pre><code class="language-cpp">// ============================================================
+// UWB Positioning with Pozyx Kit
+// Requires: Pozyx library (Arduino Library Manager)
+// Hardware: Pozyx shield on Arduino + 3–4 Pozyx anchors
+// ============================================================
+
+#include &lt;Pozyx.h&gt;
+#include &lt;Pozyx_definitions.h&gt;
+#include &lt;Wire.h&gt;
+
+// --- Anchor Configuration ---
+// Set these to YOUR anchor hardware IDs (printed on anchor labels)
+// and measured (x, y, z) positions in millimetres from room origin
+#define NUM_ANCHORS 4
+
+uint16_t anchor_ids[NUM_ANCHORS] = {
+  0x6951,   // Anchor 1 ID (hex, on label)
+  0x695A,   // Anchor 2 ID
+  0x6963,   // Anchor 3 ID
+  0x6974    // Anchor 4 ID
+};
+
+// Anchor positions in mm (measure carefully with tape measure!)
+coordinates_t anchor_coords[NUM_ANCHORS] = {
+  {    0,    0, 1500},   // A1: origin corner, 1.5m high on wall
+  { 6000,    0, 1500},   // A2: 6m along x wall
+  { 6000, 4000, 1500},   // A3: far corner
+  {    0, 4000, 1500}    // A4: 4th corner
+};
+
+void setup() {
+  Serial.begin(115200);
+
+  if (Pozyx.begin() == POZYX_FAILURE) {
+    Serial.println("ERROR: Cannot connect to Pozyx device!");
+    Serial.println("Check I2C connections and power supply.");
+    while (true) { delay(100); }
+  }
+
+  Serial.println("Pozyx connected. Configuring anchors...");
+
+  // Add each anchor to the Pozyx device list
+  for (int i = 0; i < NUM_ANCHORS; i++) {
+    device_coordinates_t anchor;
+    anchor.network_id = anchor_ids[i];
+    anchor.flag       = 0x1;   // 0x1 = this is an anchor
+    anchor.pos.x      = anchor_coords[i].x;
+    anchor.pos.y      = anchor_coords[i].y;
+    anchor.pos.z      = anchor_coords[i].z;
+
+    int status = Pozyx.addDevice(anchor);
+    if (status == POZYX_FAILURE) {
+      Serial.print("ERROR adding anchor 0x");
+      Serial.println(anchor_ids[i], HEX);
+    } else {
+      Serial.print("Added anchor 0x");  Serial.print(anchor_ids[i], HEX);
+      Serial.print(" at ("); Serial.print(anchor.pos.x);
+      Serial.print(","); Serial.print(anchor.pos.y); Serial.println(")mm");
+    }
+  }
+
+  // Set positioning algorithm to UWB only (no IMU fusion)
+  Pozyx.setPositionAlgorithm(POZYX_POS_ALG_UWB_ONLY);
+
+  Serial.println("\nConfiguration complete. Starting positioning loop...");
+  Serial.println("Format: x(m) y(m) | A1_dist A2_dist A3_dist A4_dist (mm)");
+}
+
+void loop() {
+  coordinates_t position;
+
+  // Perform 2D positioning (algorithm uses the anchors configured in setup)
+  int status = Pozyx.doPositioning(&amp;position, POZYX_2D);
+
+  if (status == POZYX_SUCCESS) {
+    // Convert mm to meters for output
+    float x_m = position.x / 1000.0f;
+    float y_m = position.y / 1000.0f;
+
+    Serial.print("POS ");
+    Serial.print(x_m, 4);  Serial.print(" ");
+    Serial.print(y_m, 4);  Serial.print(" | ");
+
+    // Print raw distances to each anchor
+    for (int i = 0; i < NUM_ANCHORS; i++) {
+      uint32_t dist_mm;
+      int d_status = Pozyx.getDeviceRangeInfo(anchor_ids[i], &amp;dist_mm);
+      if (d_status == POZYX_SUCCESS) {
+        Serial.print("A"); Serial.print(i+1);
+        Serial.print(":"); Serial.print(dist_mm);
+        if (i < NUM_ANCHORS-1) Serial.print(" ");
+      }
+    }
+    Serial.println(" mm");
+
+  } else {
+    Serial.println("POSITIONING FAILED — check anchor visibility");
+  }
+
+  delay(100);  // 10 Hz update rate
+}</code></pre>
+  </div>
+</div>
+
+<h2 id="p4-wifi">4.6 Wi-Fi Fingerprinting</h2>
+<p>Every Wi-Fi access point broadcasts a unique MAC address (BSSID). The received signal strength (RSSI in dBm) at each location forms a unique signature — a <strong>fingerprint</strong>. The offline phase surveys the building; the online phase matches live RSSI to the database.</p>
+
+<div class="tw"><table>
+  <thead><tr><th>Phase</th><th>Activity</th><th>Output</th></tr></thead>
+  <tbody>
+    <tr><td>Offline Survey</td><td>Walk to each reference point, record RSSI from every visible AP</td><td>JSON fingerprint database</td></tr>
+    <tr><td>Online Positioning</td><td>Measure current RSSI, compute Euclidean distance to each database entry in RSSI space</td><td>Best-matching location label</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="p4-wificode">4.7 Wi-Fi Fingerprinting Python Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — Full Wi-Fi Fingerprinting Class (Survey + KNN Locate)</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · Wi-Fi IPS</span></div>
+    <pre><code class="language-python"># ============================================================
+# Wi-Fi Fingerprinting Indoor Positioning System
+# pip install pywifi comtypes  (Windows)
+# sudo pip install pywifi       (Linux with wpa_supplicant)
+# Robotics and Intelligence Nigeria Ring
+# ============================================================
+
+import numpy as np
+import json
+import time
+from pathlib import Path
+
+try:
+    import pywifi
+    WIFI_AVAILABLE = True
+except ImportError:
+    WIFI_AVAILABLE = False
+    print("pywifi not found — running in simulation mode")
+
+
+class WiFiFingerprinter:
+    """
+    Wi-Fi fingerprint indoor positioning system.
+
+    Workflow:
+    1. Call collect_fingerprint(label) at each known location during survey
+    2. Call locate() at runtime to estimate current position
+    """
+
+    def __init__(self, db_file='wifi_fingerprint_db.json'):
+        self.db_file  = db_file
+        self.database = {}   # {location: {bssid: avg_rssi_dbm}}
+
+        if WIFI_AVAILABLE:
+            self.wifi      = pywifi.PyWiFi()
+            self.iface     = self.wifi.interfaces()[0]
+        self.load_database()
+
+    # ── Scanning ─────────────────────────────────────────────
+    def scan_wifi(self, num_samples=5):
+        """
+        Perform Wi-Fi scan and return averaged RSSI for each BSSID.
+        Multiple samples reduce noise from signal fluctuations.
+        Returns: {bssid_string: avg_rssi_dbm}
+        """
+        if not WIFI_AVAILABLE:
+            return self._simulate_scan()
+
+        accumulated = {}
+        counts      = {}
+
+        for _ in range(num_samples):
+            self.iface.scan()
+            time.sleep(0.5)   # Allow scan to complete
+            results = self.iface.scan_results()
+
+            for ap in results:
+                bssid = ap.bssid
+                rssi  = ap.signal   # dBm, typically -30 to -90
+                accumulated[bssid] = accumulated.get(bssid, 0) + rssi
+                counts[bssid]      = counts.get(bssid, 0) + 1
+
+        # Return averaged values
+        return {b: accumulated[b] / counts[b] for b in accumulated}
+
+    def _simulate_scan(self):
+        """Simulation fallback — returns fake RSSI values with noise."""
+        return {
+            'AA:BB:CC:DD:EE:01': -45 + np.random.normal(0, 3),
+            'AA:BB:CC:DD:EE:02': -62 + np.random.normal(0, 3),
+            'AA:BB:CC:DD:EE:03': -78 + np.random.normal(0, 3),
+            'AA:BB:CC:DD:EE:04': -88 + np.random.normal(0, 4),
+            'AA:BB:CC:DD:EE:05': -70 + np.random.normal(0, 5),
+        }
+
+    # ── Offline Phase: Survey ─────────────────────────────────
+    def collect_fingerprint(self, location_label, num_samples=10):
+        """
+        Collect and store Wi-Fi fingerprint at a known location.
+        Stand still while calling this — movement during scan adds error.
+
+        Parameters:
+            location_label: descriptive name, e.g. 'Lab Entrance'
+            num_samples:    number of scan repetitions to average
+        """
+        print(f"\nCollecting fingerprint for: '{location_label}'")
+        print(f"Stay completely still. Taking {num_samples} samples...")
+
+        scan_data = self.scan_wifi(num_samples=num_samples)
+
+        if location_label not in self.database:
+            self.database[location_label] = {}
+
+        # Running average: new measurement blended with stored value
+        for bssid, rssi in scan_data.items():
+            if bssid in self.database[location_label]:
+                old = self.database[location_label][bssid]
+                self.database[location_label][bssid] = (old + rssi) / 2.0
+            else:
+                self.database[location_label][bssid] = rssi
+
+        self.save_database()
+        print(f"Saved: {len(scan_data)} APs recorded for '{location_label}'")
+        return scan_data
+
+    # ── Online Phase: Locate ──────────────────────────────────
+    def locate(self, k_neighbors=3):
+        """
+        Estimate current location by KNN matching in RSSI space.
+
+        Parameters:
+            k_neighbors: number of top candidates to report
+
+        Returns:
+            best_location: string label of best-match location
+            confidence:    score 0–1 (higher = more confident)
+            all_results:   sorted list of (location, distance, confidence)
+        """
+        if not self.database:
+            raise RuntimeError("Database is empty! Run collect_fingerprint() first.")
+
+        current_scan = self.scan_wifi()
+
+        # Build a consistent feature vector using ALL known BSSIDs
+        all_bssids = sorted(set(
+            bssid for loc in self.database.values() for bssid in loc
+        ))
+        NO_SIGNAL = -100.0   # Value for unseen APs (very weak)
+
+        def make_vector(scan_dict):
+            return np.array([scan_dict.get(b, NO_SIGNAL) for b in all_bssids])
+
+        current_vec = make_vector(current_scan)
+
+        # Compute Euclidean distance in RSSI space to each stored fingerprint
+        results = []
+        for location, loc_data in self.database.items():
+            db_vec = make_vector(loc_data)
+            dist   = np.linalg.norm(current_vec - db_vec)
+            conf   = 1.0 / (1.0 + dist / 10.0)   # Normalised confidence
+            results.append((location, dist, conf))
+
+        results.sort(key=lambda x: x[1])   # Sort by distance (ascending)
+
+        print(f"\n{'─'*50}")
+        print(f"{'Wi-Fi Location Estimates':^50}")
+        print(f"{'─'*50}")
+        for loc, dist, conf in results[:k_neighbors]:
+            bar = '█' * int(conf * 20) + '░' * (20 - int(conf * 20))
+            print(f"  {loc:<25} {bar} {conf:.2f}")
+
+        best_loc, _, best_conf = results[0]
+        print(f"\n→ Best match: '{best_loc}'  (confidence: {best_conf:.3f})")
+        return best_loc, best_conf, results
+
+    # ── Persistence ───────────────────────────────────────────
+    def save_database(self):
+        with open(self.db_file, 'w') as f:
+            json.dump(self.database, f, indent=2)
+
+    def load_database(self):
+        if Path(self.db_file).exists():
+            with open(self.db_file, 'r') as f:
+                self.database = json.load(f)
+            print(f"Loaded fingerprint DB: {len(self.database)} locations")
+        else:
+            print("No fingerprint database found. Run collect_fingerprint() first.")
+
+
+# --- Demo: Simulate survey + online positioning ---
+if __name__ == '__main__':
+    fp = WiFiFingerprinter()
+
+    # Simulate 3 reference locations with distinct RSSI signatures
+    location_sigs = {
+        'Lab Entrance':   {'AA:BB:CC:DD:EE:01': -42, 'AA:BB:CC:DD:EE:02': -75, 'AA:BB:CC:DD:EE:03': -88},
+        'Lab Center':     {'AA:BB:CC:DD:EE:01': -55, 'AA:BB:CC:DD:EE:02': -60, 'AA:BB:CC:DD:EE:03': -70},
+        'Lab Far Corner': {'AA:BB:CC:DD:EE:01': -80, 'AA:BB:CC:DD:EE:02': -45, 'AA:BB:CC:DD:EE:03': -58},
+        'Corridor':       {'AA:BB:CC:DD:EE:01': -65, 'AA:BB:CC:DD:EE:02': -52, 'AA:BB:CC:DD:EE:03': -62},
+    }
+
+    # Build the database (offline phase simulation)
+    for loc, sig in location_sigs.items():
+        fp.database[loc] = {k: v + np.random.normal(0, 1.5) for k, v in sig.items()}
+    fp.save_database()
+
+    print("\n" + "="*50)
+    print("DATABASE BUILT. Simulating online positioning...")
+    print("="*50)
+
+    # Simulate being at 'Lab Center' with noisy scan
+    fp._simulate_scan = lambda: {
+        k: v + np.random.normal(0, 4)
+        for k, v in location_sigs['Lab Center'].items()
+    }
+
+    best, confidence, all_res = fp.locate()
+    print(f"\nCorrect location: 'Lab Center'")
+    print(f"Predicted:        '{best}'")
+    print(f"Match: {'✓ CORRECT' if best == 'Lab Center' else '✗ WRONG'}")</code></pre>
+  </div>
+</div>
+
+<h2 id="p4-aruco">4.8 ArUco Marker Positioning</h2>
+<p>ArUco markers are printed black-and-white square patterns that cameras can detect with sub-centimetre accuracy. Place them on walls at known positions for very high-accuracy indoor positioning.</p>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — ArUco Marker Detection and Pose Estimation</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · OpenCV ArUco</span></div>
+    <pre><code class="language-python"># ============================================================
+# ArUco Marker Indoor Positioning
+# pip install opencv-contrib-python numpy
+# Print 6x6 ArUco markers, measure their world positions
+# ============================================================
+
+import cv2
+import numpy as np
+
+# --- Camera calibration matrices ---
+# These MUST be obtained by calibrating YOUR specific camera
+# (Use OpenCV chessboard calibration — takes ~5 minutes)
+# Below are example values — DO NOT USE THESE for real navigation
+CAMERA_MATRIX = np.array([
+    [600.0,   0.0, 320.0],
+    [  0.0, 600.0, 240.0],
+    [  0.0,   0.0,   1.0]
+], dtype=np.float64)
+
+DIST_COEFFS = np.zeros((5, 1), dtype=np.float64)  # Assume no distortion (simplified)
+
+# --- Known marker world positions (measure these in your lab) ---
+# Format: {marker_id: (world_x_m, world_y_m, world_theta_rad)}
+# World frame uses same vertical-axis convention as the rest of these notes
+MARKER_WORLD_POSITIONS = {
+    0:  (0.0,  0.0,  0.0),      # Marker 0 at room origin, facing forward
+    1:  (3.0,  0.0,  0.0),      # Marker 1 at (3m, 0m)
+    2:  (0.0,  3.0,  0.0),      # Marker 2 at (0m, 3m)
+    5:  (3.0,  3.0,  0.0),      # Marker 5 at (3m, 3m)
+    10: (1.5,  1.5,  0.0),      # Marker 10 at room center
+}
+
+MARKER_SIZE_M = 0.15   # Physical size of printed markers in meters
+
+
+def setup_aruco():
+    """Initialize ArUco dictionary and detector parameters."""
+    aruco_dict   = cv2.aruco.Dictionary_get(cv2.aruco.DICT_6X6_250)
+    aruco_params = cv2.aruco.DetectorParameters_create()
+    # Increase border bits for better detection in poor lighting
+    aruco_params.adaptiveThreshWinSizeMin  = 3
+    aruco_params.adaptiveThreshWinSizeMax  = 53
+    aruco_params.adaptiveThreshWinSizeStep = 4
+    return aruco_dict, aruco_params
+
+
+def detect_and_estimate_pose(frame, camera_matrix, dist_coeffs, marker_size):
+    """
+    Detect ArUco markers in frame and estimate camera pose relative to each.
+
+    Returns:
+        detections: list of (marker_id, tvec, rvec)
+                   tvec = translation [x,y,z] in meters from marker to camera
+                   rvec = rotation vector (Rodrigues notation)
+        annotated_frame: frame with markers and axes drawn
+    """
+    aruco_dict, params = setup_aruco()
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    corners, ids, rejected = cv2.aruco.detectMarkers(
+        gray, aruco_dict, parameters=params
+    )
+
+    detections = []
+    annotated  = frame.copy()
+
+    if ids is not None and len(ids) > 0:
+        # Estimate pose for each detected marker
+        rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
+            corners, marker_size, camera_matrix, dist_coeffs
+        )
+
+        for i, marker_id in enumerate(ids.flatten()):
+            tvec = tvecs[i][0]   # (x, y, z) translation in meters
+            rvec = rvecs[i][0]   # rotation vector
+
+            detections.append((int(marker_id), tvec, rvec))
+
+            # Draw axis and marker outline on frame
+            cv2.aruco.drawAxis(annotated, camera_matrix, dist_coeffs,
+                               rvec, tvec, marker_size * 0.5)
+
+        cv2.aruco.drawDetectedMarkers(annotated, corners, ids)
+
+    return detections, annotated
+
+
+def estimate_robot_position(detections, marker_world_pos, camera_height=0.15):
+    """
+    Convert ArUco detections to robot world position.
+    Uses multiple markers and averages for better accuracy.
+
+    Parameters:
+        detections:       List of (marker_id, tvec, rvec) from detect_and_estimate_pose
+        marker_world_pos: Dict {id: (wx, wy, wtheta)} — known marker world positions
+        camera_height:    Height of camera above robot base (meters)
+
+    Returns:
+        estimated (x, y) position or None if no known markers detected
+    """
+    estimates = []
+
+    for (marker_id, tvec, rvec) in detections:
+        if marker_id not in marker_world_pos:
+            continue
+
+        mx, my, mtheta = marker_world_pos[marker_id]
+
+        # tvec is [right, down, forward] in marker frame
+        # In robot's vertical-axis convention:
+        # Robot x = marker_x - tvec[0] * cos(mtheta) + tvec[2] * sin(mtheta)
+        # Robot y = marker_y - tvec[0] * sin(mtheta) - tvec[2] * cos(mtheta)
+        robot_x = mx - tvec[0] * np.cos(mtheta) + tvec[2] * np.sin(mtheta)
+        robot_y = my - tvec[0] * np.sin(mtheta) - tvec[2] * np.cos(mtheta)
+
+        estimates.append([robot_x, robot_y])
+        print(f"  Marker {marker_id:3d}: robot at ({robot_x:.3f}, {robot_y:.3f})")
+
+    if not estimates:
+        return None
+
+    # Average all estimates (each marker gives an independent estimate)
+    avg = np.mean(estimates, axis=0)
+    return float(avg[0]), float(avg[1])
+
+
+# --- Live positioning demo ---
+if __name__ == '__main__':
+    cap = cv2.VideoCapture(0)   # Open default webcam (0)
+
+    if not cap.isOpened():
+        print("Cannot open camera. Check USB webcam is connected.")
+        exit()
+
+    print("ArUco positioning running. Press 'q' to quit.")
+    print("Print markers from: https://chev.me/arucogen/  (DICT_6X6_250)")
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        detections, annotated = detect_and_estimate_pose(
+            frame, CAMERA_MATRIX, DIST_COEFFS, MARKER_SIZE_M
+        )
+
+        if detections:
+            pos = estimate_robot_position(detections, MARKER_WORLD_POSITIONS)
+            if pos:
+                x, y = pos
+                cv2.putText(annotated, f"Robot: ({x:.2f}m, {y:.2f}m)",
+                            (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8,
+                            (0, 255, 0), 2)
+
+        cv2.imshow('ArUco Indoor Positioning', annotated)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()</code></pre>
+  </div>
+</div>
+
+<h2 id="p4-compare">4.9 Technology Comparison</h2>
+<div class="tw"><table>
+  <thead><tr><th>Technology</th><th>Accuracy</th><th>Infrastructure</th><th>Cost</th><th>Best For</th></tr></thead>
+  <tbody>
+    <tr><td>UWB (Pozyx, Decawave)</td><td>10–30 cm</td><td>Anchors every 10–15 m</td><td>$$</td><td>High-precision robot navigation</td></tr>
+    <tr><td>Wi-Fi Fingerprinting</td><td>1–5 m</td><td>Existing Wi-Fi APs</td><td>Free</td><td>Room-level localisation</td></tr>
+    <tr><td>BLE Beacons</td><td>1–3 m</td><td>Beacons every 3–5 m</td><td>$</td><td>Asset tracking, mobile devices</td></tr>
+    <tr><td>RFID</td><td>&lt;0.5 m (near reader)</td><td>RFID readers at checkpoints</td><td>$</td><td>Checkpoint-based navigation</td></tr>
+    <tr><td>ArUco Markers + Camera</td><td>1–5 cm</td><td>Printed markers on walls</td><td>Free</td><td>Very high accuracy indoor</td></tr>
+    <tr><td>Magnetic Field Mapping</td><td>1–2 m</td><td>No infrastructure</td><td>Free</td><td>Passive — no transmitters needed</td></tr>
+  </tbody>
+</table></div>
+
+<!-- ════════════════════════════════════════════════════ -->
+<!--  PART 5 — KALMAN FILTER                             -->
+<!-- ════════════════════════════════════════════════════ -->
+<div class="part-header" id="p5-prob">
+  <span class="part-badge p">Part 5</span>
+  <div class="part-title">Kalman Filtering &amp; Sensor Fusion<small>KF Theory · EKF · Full Python Implementation</small></div>
+</div>
+
+<h2>5.1 The Problem — Noisy Sensors, Imperfect Motion</h2>
+<p>Every sensor lies — randomly. Every motion model has imperfections. Given multiple noisy information sources, the <strong>Kalman Filter</strong> gives the single mathematically optimal answer: <em>what is the best possible estimate of the robot's true state?</em></p>
+<div class="callout g">
+  <div class="ctitle">🏆 Why Kalman is Optimal</div>
+  For systems with Gaussian noise, it is mathematically proven that no other linear estimator can achieve a lower mean-square error. The Kalman Filter was invented by Rudolf Kálmán in 1960 and guided the Apollo lunar landing.
+</div>
+
+<h2>5.2 Probability Prerequisite</h2>
+<p>Sensor noise follows a <strong>Gaussian (Normal) distribution</strong>. A sensor with noise σ = 0.08 m means ~68% of readings fall within ±0.08 m of the true value, and ~95% fall within ±0.16 m.</p>
+<p>When tracking both x and y simultaneously, we need a <strong>covariance matrix P</strong>:</p>
+<div class="math">
+  P = | σ_xx  σ_xy |<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;| σ_yx  σ_yy |<br><br>
+  σ_xx = variance of x (uncertainty squared)<br>
+  σ_yy = variance of y<br>
+  σ_xy = how much x and y errors are correlated (usually 0 if independent)
+</div>
+
+<h2 id="p5-model">5.3 The Kalman Filter System Model</h2>
+<div class="math">
+  <span class="lbl">State Transition Model (motion model)</span>
+  x_k = A × x_{k-1} + B × u_k + w_k<br>
+  w_k ~ N(0, Q) — process noise<br><br>
+  <span class="lbl">Measurement Model</span>
+  z_k = H × x_k + v_k<br>
+  v_k ~ N(0, R) — measurement noise<br><br>
+  A = state transition matrix (how state evolves without input)<br>
+  B = control input matrix &nbsp;&nbsp; u_k = control input (motor command)<br>
+  H = observation matrix (which part of state does sensor measure?)<br>
+  Q = process noise covariance &nbsp;&nbsp; R = measurement noise covariance
+</div>
+<p><strong>Example for 1D robot (position + velocity):</strong></p>
+<div class="math">
+  A = |1  dt|  &nbsp; x_k = |pos_k| = |pos + vel×dt|<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;|0   1|  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|vel_k|   |vel          |<br><br>
+  H = [1  0] &nbsp; (UWB measures position only, not velocity)
+</div>
+
+<h2 id="p5-predict">5.4 PREDICT Step</h2>
+<div class="math">
+  <div class="box">
+    Predicted state:<br>
+    x̂_{k|k-1} = A × x̂_{k-1|k-1} + B × u_k<br><br>
+    Predicted covariance:<br>
+    P_{k|k-1} = A × P_{k-1|k-1} × Aᵀ + Q
+  </div><br>
+  After predict: P grows — process noise Q is added.<br>
+  We become less certain the further we predict ahead without a measurement.
+</div>
+
+<h2 id="p5-update">5.5 UPDATE Step</h2>
+<div class="math">
+  Innovation (how far off is the measurement from prediction?):<br>
+  ỹ_k = z_k − H × x̂_{k|k-1}<br><br>
+  Innovation covariance:<br>
+  S_k = H × P_{k|k-1} × Hᵀ + R<br><br>
+  <div class="box">
+    Kalman Gain:<br>
+    K_k = P_{k|k-1} × Hᵀ × S_k⁻¹<br><br>
+    Updated state:<br>
+    x̂_{k|k} = x̂_{k|k-1} + K_k × ỹ_k<br><br>
+    Updated covariance:<br>
+    P_{k|k} = (I − K_k × H) × P_{k|k-1}
+  </div>
+</div>
+
+<h2 id="p5-gain">5.6 Kalman Gain Intuition</h2>
+<div class="callout">
+  <div class="ctitle">💡 Understanding K</div>
+  K = 0 → ignore the measurement entirely. Trust prediction only.<br>
+  K = 1 → trust the measurement completely. Ignore prediction.<br>
+  K = 0.5 → equal weight to both.<br><br>
+  K is computed automatically as: K = P / (P + R)<br>
+  Large P (uncertain prediction) + small R (accurate sensor) → K near 1 → trust sensor<br>
+  Small P (confident prediction) + large R (noisy sensor) → K near 0 → trust prediction<br><br>
+  After the update, P always decreases — incorporating a measurement always reduces uncertainty.
+</div>
+
+<h2 id="p5-worked">5.7 Fully Worked 2-Cycle Example</h2>
+<div class="callout t">
+  <div class="ctitle">📐 Setup</div>
+  1D robot on a line. State: x = [position, velocity]ᵀ<br>
+  dt = 0.1 s &nbsp;|&nbsp; Q = diag([0.01, 0.1]) &nbsp;|&nbsp; R = [0.25] (UWB, σ = 0.5 m)<br>
+  H = [1, 0] — measures position only<br>
+  Initial: x̂₀ = [0, 0], P₀ = diag([1.0, 0.1])
+</div>
+<div class="math">
+  ─── CYCLE 1 (t = 0.1 s) ───<br><br>
+  PREDICT (acceleration command u = 0.5 m/s²):<br>
+  x̂_{1|0} = A×[0,0]ᵀ + B×0.5 = [0.0025, 0.05]ᵀ<br>
+  P_{1|0}[0,0] ≈ 1.011 m² &nbsp; (grew slightly due to Q)<br><br>
+  UWB measurement: z = 0.08 m<br><br>
+  UPDATE:<br>
+  Innovation:  ỹ = 0.08 − [1,0]×[0.0025,0.05]ᵀ = 0.08 − 0.0025 = 0.0775<br>
+  S &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= P_{1|0}[0,0] + R = 1.011 + 0.25 = 1.261<br>
+  K₀ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 1.011 / 1.261 = <span class="hi">0.802</span> (trust UWB heavily — P was large)<br><br>
+  x̂_{1|1}[0] = 0.0025 + 0.802 × 0.0775 = <span class="eq">0.0647 m</span><br>
+  P_{1|1}[0,0] = (1 − 0.802) × 1.011 = <span class="hi">0.200 m²</span> (was 1.011 → −80%!)<br><br>
+  ─── CYCLE 2 (t = 0.2 s) ───<br><br>
+  PREDICT:<br>
+  x̂_{2|1}[0] ≈ 0.0647 + 0.05×0.1 + 0.0025 = 0.0722 m<br>
+  P_{2|1}[0,0] ≈ 0.200 + 0.01 = 0.210 m²<br><br>
+  UWB measurement: z = 0.15 m<br><br>
+  UPDATE:<br>
+  K₀ = 0.210 / (0.210 + 0.25) = <span class="hi">0.456</span> (lower than Cycle 1 — more confident now)<br>
+  x̂_{2|2}[0] = 0.0722 + 0.456 × (0.15 − 0.0722) = <span class="eq">0.108 m</span><br>
+  P_{2|2}[0,0] = (1 − 0.456) × 0.210 = <span class="hi">0.114 m²</span> (was 0.210 → −46%)<br><br>
+  After just 2 cycles, uncertainty dropped from 1.0 m² to 0.114 m² — 89% reduction!
+</div>
+
+<h2 id="p5-ekf">5.8 Extended Kalman Filter (EKF)</h2>
+<p>The standard KF requires <em>linear</em> models. Robot kinematics involve sin and cos — which are nonlinear. The <strong>EKF</strong> linearises the nonlinear functions at each timestep using <strong>Jacobian matrices</strong> (the matrix of all first-order partial derivatives).</p>
+<p>For our differential drive robot, state x = [x, y, θ]ᵀ:</p>
+<div class="math">
+  <span class="lbl">Nonlinear motion function f(x, u)</span>
+  f = | x + d × sin(θ + Δθ/2) |<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;| y + d × cos(θ + Δθ/2) |<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;| θ + Δθ                |<br><br>
+  <span class="lbl">Jacobian F = ∂f/∂x (replaces matrix A in the EKF predict step)</span>
+  F = | 1  0   d × cos(θ + Δθ/2)  |<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;| 0  1  −d × sin(θ + Δθ/2) |<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;| 0  0   1                   |<br><br>
+  <span class="lbl">EKF Predict: use F instead of A</span>
+  P_{k|k-1} = F × P × Fᵀ + Q &nbsp;&nbsp; (same structure, different matrix)
+</div>
+
+<h2 id="p5-kfcode">5.9 Full 2D Kalman Filter Code</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — 2D Kalman Filter Class with Odometry + UWB Fusion Simulation</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · Kalman Filter</span></div>
+    <pre><code class="language-python"># ============================================================
+# 2D Kalman Filter — Position + Velocity State
+# Fuses wheel encoder odometry with UWB positioning
+# Robotics and Intelligence Nigeria Ring
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+class KalmanFilter2D:
+    """
+    Kalman Filter for 2D robot tracking.
+    State: [x, y, vx, vy] — position and velocity in 2D.
+    Vertical-axis convention throughout.
+    """
+
+    def __init__(self, dt=0.1, process_noise=0.01, meas_noise=0.1):
+        self.dt = dt
+        self.n  = 4   # State dimension: [x, y, vx, vy]
+
+        # State transition matrix A
+        # x_new = x + vx*dt,  y_new = y + vy*dt,  v unchanged
+        self.A = np.array([
+            [1, 0, dt,  0],
+            [0, 1,  0, dt],
+            [0, 0,  1,  0],
+            [0, 0,  0,  1]
+        ])
+
+        # Observation matrix H — UWB measures x and y only
+        self.H = np.array([
+            [1, 0, 0, 0],
+            [0, 1, 0, 0]
+        ])
+
+        # Process noise Q — how much we trust the motion model
+        q = process_noise
+        self.Q = np.diag([q, q, q*10, q*10])
+
+        # Measurement noise R — how noisy the UWB sensor is
+        r = meas_noise
+        self.R = np.diag([r, r])
+
+        # Initial state and covariance
+        self.x = np.zeros((self.n, 1))
+        self.P = np.eye(self.n) * 1.0   # Start with high uncertainty
+
+    def predict_from_odometry(self, odometry_dx, odometry_dy):
+        """
+        Predict step driven by wheel odometry displacement.
+        odometry_dx, odometry_dy: estimated displacement in meters this step.
+        """
+        # Update state: position += odometry, velocity = odometry/dt
+        self.x[0] += odometry_dx
+        self.x[1] += odometry_dy
+        self.x[2]  = odometry_dx / self.dt
+        self.x[3]  = odometry_dy / self.dt
+
+        # Covariance grows with process noise
+        self.P = self.A @ self.P @ self.A.T + self.Q
+
+    def update_from_uwb(self, uwb_x, uwb_y):
+        """
+        Update step: incorporate UWB position measurement.
+        Returns the Kalman gain (useful for analysis).
+        """
+        z = np.array([[uwb_x], [uwb_y]])
+
+        # Innovation: difference between measurement and prediction
+        innovation = z - self.H @ self.x
+
+        # Innovation covariance
+        S = self.H @ self.P @ self.H.T + self.R
+
+        # Kalman Gain
+        K = self.P @ self.H.T @ np.linalg.inv(S)
+
+        # Update state and covariance (Joseph form for numerical stability)
+        self.x = self.x + K @ innovation
+        I_KH   = np.eye(self.n) - K @ self.H
+        self.P = I_KH @ self.P @ I_KH.T + K @ self.R @ K.T
+
+        return K
+
+    def get_position(self):
+        return float(self.x[0]), float(self.x[1])
+
+    def get_std(self):
+        return float(np.sqrt(self.P[0,0])), float(np.sqrt(self.P[1,1]))
+
+
+def simulate_fusion(n_steps=100, uwb_every_n=5):
+    """
+    Simulate robot on a curved path, fusing odometry + UWB.
+    Compares odometry-only vs Kalman-filtered estimates.
+    """
+    np.random.seed(42)
+    dt   = 0.1
+    kf   = KalmanFilter2D(dt=dt, process_noise=0.005, meas_noise=0.04)
+
+    true_x, true_y           = [0.0], [0.0]
+    odom_x, odom_y           = [0.0], [0.0]
+    kf_x_list, kf_y_list     = [0.0], [0.0]
+    uwb_x_list, uwb_y_list   = [], []
+    kf_std_x                 = [1.0]
+
+    ox, oy = 0.0, 0.0   # Odometry accumulated position
+
+    for t in range(n_steps):
+        t_sec = t * dt
+
+        # True path: sinusoidal curve
+        tx = 0.4 * np.sin(t_sec * 0.6)
+        ty = 0.12 * t_sec ** 1.1
+
+        prev_tx = true_x[-1] if len(true_x) > 1 else 0.0
+        prev_ty = true_y[-1] if len(true_y) > 1 else 0.0
+
+        dx_true = tx - prev_tx
+        dy_true = ty - prev_ty
+
+        true_x.append(tx)
+        true_y.append(ty)
+
+        # Odometry: true motion + wheel slip noise
+        dx_odom = dx_true + np.random.normal(0, 0.008)
+        dy_odom = dy_true + np.random.normal(0, 0.006)
+        ox += dx_odom
+        oy += dy_odom
+        odom_x.append(ox)
+        odom_y.append(oy)
+
+        # KF Predict from odometry
+        kf.predict_from_odometry(dx_odom, dy_odom)
+
+        # KF Update from UWB every uwb_every_n steps
+        if t % uwb_every_n == 0:
+            uwb_meas_x = tx + np.random.normal(0, 0.07)
+            uwb_meas_y = ty + np.random.normal(0, 0.07)
+            uwb_x_list.append(uwb_meas_x)
+            uwb_y_list.append(uwb_meas_y)
+            kf.update_from_uwb(uwb_meas_x, uwb_meas_y)
+
+        kfx, kfy = kf.get_position()
+        sx, _    = kf.get_std()
+        kf_x_list.append(kfx)
+        kf_y_list.append(kfy)
+        kf_std_x.append(sx)
+
+    # Compute RMSE
+    n = min(len(odom_x), len(true_x))
+    odom_err = np.sqrt(np.mean(
+        [(odom_x[i]-true_x[i])**2 + (odom_y[i]-true_y[i])**2
+         for i in range(n)]
+    ))
+    kf_err = np.sqrt(np.mean(
+        [(kf_x_list[i]-true_x[i])**2 + (kf_y_list[i]-true_y[i])**2
+         for i in range(n)]
+    ))
+
+    print(f"\nKalman Filter Sensor Fusion Results:")
+    print(f"  Odometry-only RMSE:     {odom_err*100:.1f} cm")
+    print(f"  Kalman Filter RMSE:     {kf_err*100:.1f} cm")
+    print(f"  Improvement:            {(1-kf_err/odom_err)*100:.0f}%")
+
+    # Plot
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+
+    ax1 = axes[0]
+    ax1.plot(true_x, true_y,     'k-',  lw=2.5, label='True path', zorder=5)
+    ax1.plot(odom_x, odom_y,     'r--', lw=1.5, alpha=0.7,
+             label=f'Odometry (RMSE={odom_err*100:.1f}cm)')
+    ax1.scatter(uwb_x_list, uwb_y_list, s=30, c='green', alpha=0.5,
+                zorder=4, label='UWB measurements')
+    ax1.plot(kf_x_list, kf_y_list, 'b-', lw=2,
+             label=f'Kalman fusion (RMSE={kf_err*100:.1f}cm)')
+    ax1.set_xlabel('x (m)');  ax1.set_ylabel('y (m)')
+    ax1.set_title('Sensor Fusion: Odometry + UWB via Kalman Filter')
+    ax1.legend(fontsize=9);  ax1.grid(True, alpha=0.3);  ax1.set_aspect('equal')
+
+    ax2 = axes[1]
+    ax2.plot(kf_std_x, 'b-', lw=1.5, label='KF position std (m)')
+    for t_mark in range(0, n_steps, uwb_every_n):
+        ax2.axvline(t_mark, color='green', alpha=0.3, linewidth=0.8)
+    ax2.set_xlabel('Time step');  ax2.set_ylabel('Position std (m)')
+    ax2.set_title('KF Uncertainty Over Time\n(green = UWB measurement received)')
+    ax2.legend();  ax2.grid(True)
+
+    plt.tight_layout()
+    plt.savefig('kalman_fusion.png', dpi=150)
+    plt.show()
+
+
+if __name__ == '__main__':
+    simulate_fusion(n_steps=100, uwb_every_n=5)</code></pre>
+  </div>
+</div>
+
+<h2 id="p5-ekfcode">5.10 Full EKF Implementation and Simulation</h2>
+
+<div class="collapse-wrap">
+  <button class="collapse-btn" aria-expanded="false" onclick="toggle(this)">
+    <div class="cb-left"><span class="cb-icon">🐍</span><span class="cb-label">Python — Full EKF Class + Square Path Simulation with RMSE Comparison</span><span class="cb-tag py">Python</span></div>
+    <span class="cb-arrow">▼</span>
+  </button>
+  <div class="collapse-content">
+    <div class="code-header"><div class="code-dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div><span class="code-lang py">Python · Extended Kalman Filter</span></div>
+    <pre><code class="language-python"># ============================================================
+# Extended Kalman Filter — Full Robot Localization
+# State: [x, y, theta]  Vertical-axis convention (theta from y-axis)
+# Sensors: Wheel encoders (predict step) + UWB (update step)
+# Robotics and Intelligence Nigeria Ring
+# ============================================================
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+class RobotEKF:
+    """
+    EKF for a differential drive robot.
+    State vector: x = [x_pos, y_pos, theta]
+    theta is measured from the y-axis (vertical-axis convention).
+    theta=0 means the robot faces the +y direction.
+    """
+
+    def __init__(self, x0=0.0, y0=0.0, theta0=0.0):
+        # Initial state
+        self.x = np.array([[x0], [y0], [theta0]], dtype=float)
+
+        # Initial covariance — fairly uncertain at start
+        self.P = np.diag([0.1, 0.1, 0.05])
+
+        # Process noise covariance — how much we trust the odometry model
+        # Increase these values if your odometry has more slip/error
+        self.Q = np.diag([0.005, 0.005, 0.002])
+
+        # Measurement noise for UWB [sigma_x², sigma_y²]
+        self.R_uwb = np.diag([0.04, 0.04])   # sigma = 0.2 m each axis
+
+        # History for plotting
+        self.hist = [(x0, y0)]
+
+    # ── Predict step ──────────────────────────────────────────
+    def predict(self, d_left_m, d_right_m, wheel_base_m):
+        """
+        EKF Predict step using wheel encoder readings.
+
+        Parameters:
+            d_left_m:     Distance traveled by left wheel this timestep (m)
+            d_right_m:    Distance traveled by right wheel this timestep (m)
+            wheel_base_m: Distance between left and right wheels (m)
+        """
+        d      = (d_right_m + d_left_m) / 2.0
+        dtheta = (d_right_m - d_left_m) / wheel_base_m
+
+        x_val, y_val, theta = (float(self.x[0]),
+                                float(self.x[1]),
+                                float(self.x[2]))
+
+        mid_theta = theta + dtheta / 2.0
+
+        # ── Nonlinear motion model f(x, u) ──
+        x_new     = x_val + d * np.sin(mid_theta)
+        y_new     = y_val + d * np.cos(mid_theta)
+        theta_new = theta + dtheta
+
+        # Wrap theta to [-pi, pi]
+        theta_new = (theta_new + np.pi) % (2*np.pi) - np.pi
+
+        self.x = np.array([[x_new], [y_new], [theta_new]])
+
+        # ── Jacobian F = df/dx ──
+        # Partial derivatives of each state component with respect to [x, y, theta]
+        # f1 = x + d*sin(theta + dtheta/2) → df1/dtheta = d*cos(mid_theta)
+        # f2 = y + d*cos(theta + dtheta/2) → df2/dtheta = -d*sin(mid_theta)
+        # f3 = theta + dtheta              → df3/dtheta = 1
+        F = np.array([
+            [1, 0,  d * np.cos(mid_theta)],   # ∂x_new/∂[x, y, theta]
+            [0, 1, -d * np.sin(mid_theta)],   # ∂y_new/∂[x, y, theta]
+            [0, 0,  1                    ]    # ∂theta_new/∂[x, y, theta]
+        ])
+
+        # ── Covariance prediction ──
+        self.P = F @ self.P @ F.T + self.Q
+
+        self.hist.append((float(self.x[0]), float(self.x[1])))
+
+    # ── Update step — UWB ─────────────────────────────────────
+    def update_uwb(self, meas_x, meas_y):
+        """
+        EKF Update step with UWB position measurement.
+        Returns Kalman gain diagonal (for monitoring).
+        """
+        z = np.array([[meas_x], [meas_y]])
+
+        # Observation matrix H — UWB measures x and y directly (linear!)
+        H = np.array([[1, 0, 0],
+                      [0, 1, 0]])
+
+        # Innovation: difference between measurement and prediction
+        innovation = z - H @ self.x
+
+        # Innovation covariance
+        S = H @ self.P @ H.T + self.R_uwb
+
+        # Kalman Gain
+        K = self.P @ H.T @ np.linalg.inv(S)
+
+        # State update
+        self.x = self.x + K @ innovation
+
+        # Covariance update — Joseph form (numerically stable)
+        I_KH   = np.eye(3) - K @ H
+        self.P = I_KH @ self.P @ I_KH.T + K @ self.R_uwb @ K.T
+
+        return float(K[0, 0]), float(K[1, 1])
+
+    # ── Update step — LiDAR ICP ───────────────────────────────
+    def update_lidar_icp(self, icp_dx, icp_dy, icp_dtheta,
+                          icp_cov=None):
+        """
+        EKF Update with LiDAR ICP pose correction.
+        ICP gives a relative correction to the current pose estimate.
+
+        Parameters:
+            icp_dx, icp_dy, icp_dtheta: ICP-estimated correction
+            icp_cov: 3×3 ICP result covariance (defaults to conservative estimate)
+        """
+        if icp_cov is None:
+            icp_cov = np.diag([0.02, 0.02, 0.005])
+
+        # ICP corrects the state directly — H is identity
+        H   = np.eye(3)
+        z   = self.x + np.array([[icp_dx], [icp_dy], [icp_dtheta]])
+
+        S   = H @ self.P @ H.T + icp_cov
+        K   = self.P @ H.T @ np.linalg.inv(S)
+
+        self.x += K @ (z - H @ self.x)
+
+        I_KH   = np.eye(3) - K @ H
+        self.P = I_KH @ self.P @ I_KH.T + K @ icp_cov @ K.T
+
+    def get_pose(self):
+        return float(self.x[0]), float(self.x[1]), float(self.x[2])
+
+    def get_position_std(self):
+        return float(np.sqrt(self.P[0,0])), float(np.sqrt(self.P[1,1]))
+
+
+# ── Full simulation ────────────────────────────────────────
+def run_ekf_simulation():
+    np.random.seed(7)
+
+    WHEEL_BASE  = 0.20
+    WHEEL_DIAM  = 0.07
+    TPR         = 360
+    UWB_EVERY_N = 8
+
+    ekf = RobotEKF()
+
+    # Build commands for a partial square + curve
+    def ticks(d_m):
+        return int(d_m * TPR / (np.pi * WHEEL_DIAM))
+
+    def turn_ticks():
+        return int((WHEEL_BASE/2) * (np.pi/2) * TPR / (np.pi * WHEEL_DIAM))
+
+    commands = []
+    for _ in range(25):  commands.append((ticks(0.05), ticks(0.05)))  # straight
+    for _ in range(10):  commands.append((turn_ticks()//10, -(turn_ticks()//10)))  # right turn
+    for _ in range(25):  commands.append((ticks(0.05), ticks(0.05)))  # straight
+    for _ in range(10):  commands.append((turn_ticks()//10, -(turn_ticks()//10)))  # right turn
+    for _ in range(15):  commands.append((ticks(0.05), ticks(0.05)))  # partial straight
+
+    # True path (cumulative, with small noise)
+    true_path = [(0.0, 0.0)]
+    tx, ty, tt = 0.0, 0.0, 0.0
+    for (dL, dR) in commands:
+        true_dL = dL*(np.pi*WHEEL_DIAM)/TPR + np.random.normal(0, 0.001)
+        true_dR = dR*(np.pi*WHEEL_DIAM)/TPR + np.random.normal(0, 0.001)
+        d  = (true_dR + true_dL)/2
+        dt = (true_dR - true_dL)/WHEEL_BASE
+        mid = tt + dt/2
+        tx += d*np.sin(mid);  ty += d*np.cos(mid);  tt += dt
+        true_path.append((tx, ty))
+
+    # Odometry (noisier)
+    odom_path = [(0.0, 0.0)]
+    ox, oy, ot = 0.0, 0.0, 0.0
+    for (dL, dR) in commands:
+        odL = dL*(np.pi*WHEEL_DIAM)/TPR + np.random.normal(0, 0.004)
+        odR = dR*(np.pi*WHEEL_DIAM)/TPR + np.random.normal(0, 0.004)
+        d  = (odR + odL)/2
+        dt = (odR - odL)/WHEEL_BASE
+        mid = ot + dt/2
+        ox += d*np.sin(mid);  oy += d*np.cos(mid);  ot += dt
+        odom_path.append((ox, oy))
+
+    # EKF with UWB updates
+    ekf2 = RobotEKF()
+    for step, (dL, dR) in enumerate(commands):
+        dL_m = dL*(np.pi*WHEEL_DIAM)/TPR + np.random.normal(0, 0.004)
+        dR_m = dR*(np.pi*WHEEL_DIAM)/TPR + np.random.normal(0, 0.004)
+        ekf2.predict(dL_m, dR_m, WHEEL_BASE)
+
+        if step % UWB_EVERY_N == 0 and step < len(true_path):
+            true_step = true_path[min(step+1, len(true_path)-1)]
+            ux = true_step[0] + np.random.normal(0, 0.07)
+            uy = true_step[1] + np.random.normal(0, 0.07)
+            ekf2.update_uwb(ux, uy)
+
+    # Compute RMSE
+    n = min(len(odom_path), len(true_path), len(ekf2.hist))
+    odom_rmse = np.sqrt(np.mean(
+        [(odom_path[i][0]-true_path[i][0])**2+(odom_path[i][1]-true_path[i][1])**2
+         for i in range(n)]))
+    ekf_rmse = np.sqrt(np.mean(
+        [(ekf2.hist[i][0]-true_path[i][0])**2+(ekf2.hist[i][1]-true_path[i][1])**2
+         for i in range(n)]))
+
+    print(f"EKF Simulation Results:")
+    print(f"  Odometry RMSE:   {odom_rmse*100:.1f} cm")
+    print(f"  EKF RMSE:        {ekf_rmse*100:.1f} cm")
+    print(f"  Improvement:     {(1-ekf_rmse/odom_rmse)*100:.0f}%")
+
+    fig, ax = plt.subplots(figsize=(9, 8))
+    tx_list = [p[0] for p in true_path]
+    ty_list = [p[1] for p in true_path]
+    ox_list = [p[0] for p in odom_path]
+    oy_list = [p[1] for p in odom_path]
+    ex_list = [p[0] for p in ekf2.hist]
+    ey_list = [p[1] for p in ekf2.hist]
+
+    ax.plot(tx_list, ty_list, 'k-',  lw=2.5, label='True path', zorder=5)
+    ax.plot(ox_list, oy_list, 'r--', lw=1.5, alpha=0.7,
+            label=f'Odometry only (RMSE={odom_rmse*100:.1f}cm)')
+    ax.plot(ex_list, ey_list, 'b-',  lw=2,
+            label=f'EKF fusion (RMSE={ekf_rmse*100:.1f}cm)')
+    ax.plot(0, 0, 'go', ms=12, label='Start', zorder=10)
+
+    ax.set_xlabel('x (m)');  ax.set_ylabel('y (m)')
+    ax.set_title('EKF Robot Localization\nOdometry (encoders) + UWB Fusion\n'
+                 '(Vertical-axis θ convention — Robotics & Intelligence Nigeria Ring)')
+    ax.legend(fontsize=10);  ax.grid(True, alpha=0.3);  ax.set_aspect('equal')
+    plt.tight_layout()
+    plt.savefig('ekf_localization.png', dpi=150)
+    plt.show()
+
+
+if __name__ == '__main__':
+    run_ekf_simulation()</code></pre>
+  </div>
+</div>
+
+<h2 id="p5-arch">5.11 Complete Sensor Fusion Architecture</h2>
+<div class="fusion-diag">
+  <div style="font-family:'Exo 2',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:20px;">Complete SLAM Sensor Fusion Pipeline</div>
+  <div class="fusion-row">
+    <div class="fb fb-s">Left Wheel Encoder</div>
+    <div class="fa">┐</div>
+  </div>
+  <div class="fusion-row">
+    <div class="fb fb-s">Right Wheel Encoder</div>
+    <div class="fa">┤→</div>
+    <div class="fb fb-a">Odometry Model</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">EKF PREDICT</div>
+    <div class="fa">→</div>
+    <div class="fb fb-r">Predicted Pose (x̂, P)</div>
+  </div>
+  <div style="height:14px"></div>
+  <div class="fusion-row">
+    <div class="fb fb-s">RPLiDAR / YLiDAR</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">ICP Scan Match</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">EKF UPDATE #1</div>
+    <div class="fa">↓</div>
+  </div>
+  <div class="fusion-row">
+    <div class="fb fb-s">UWB Anchors</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">Trilateration</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">EKF UPDATE #2</div>
+    <div class="fa">↓</div>
+  </div>
+  <div class="fusion-row">
+    <div class="fb fb-s">Wi-Fi APs</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">Fingerprint KNN</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">EKF UPDATE #3</div>
+    <div class="fa">↓</div>
+  </div>
+  <div class="fusion-row">
+    <div class="fb fb-s">IMU (Gyro + Accel)</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">Integration</div>
+    <div class="fa">→</div>
+    <div class="fb fb-a">EKF UPDATE #4</div>
+    <div class="fa">↓</div>
+  </div>
+  <div style="height:14px;border-left:2px dashed var(--border);margin-left:250px"></div>
+  <div class="fusion-row" style="margin-left:250px">
+    <div class="fb fb-r" style="font-size:13px;padding:12px 20px">✓ Optimal Pose Estimate<br><small style="font-weight:400;font-size:11px">(x, y, θ) — minimum uncertainty</small></div>
+    <div class="fa">→</div>
+    <div class="fb fb-r">Occupancy Grid + Loop Closure</div>
+  </div>
+</div>
+
+<!-- REVIEW QUESTIONS -->
+<div class="part-header" id="review">
+  <span class="part-badge gr">✓</span>
+  <div class="part-title">Review Questions<small>10 Questions — All Parts</small></div>
+</div>
+
+<div class="questions">
+  <div class="question"><div class="qn">Q1</div><div class="qt">A differential drive robot: L = 0.22 m, wheel diameter 0.065 m, 400 TPR, start pose (0,0,0°). Left encoder = +150 ticks, right encoder = +240 ticks. Compute the new pose (x, y, θ) using the vertical-axis convention. Show every step.</div></div>
+  <div class="question"><div class="qn">Q2</div><div class="qt">Derive Δθ = (dR − dL)/L from first principles using the ICC arc geometry. Draw the diagram and show every algebraic step from the two arc-length equations.</div></div>
+  <div class="question"><div class="qn">Q3</div><div class="qt">Why do we use θ + Δθ/2 in the pose update instead of θ or θ + Δθ? Use a trigonometric identity to prove that the midpoint formula gives the exact arc result for constant-curvature motion.</div></div>
+  <div class="question"><div class="qn">Q4</div><div class="qt">An Ackermann robot: L = 0.35 m, T = 0.20 m, δ = 25°, v = 0.3 m/s, dt = 0.2 s. Starting from (0, 0, 0°), compute the new pose and verify the Ackermann condition (inner vs. outer wheel angle).</div></div>
+  <div class="question"><div class="qn">Q5</div><div class="qt">What is a holonomic robot? Give two concrete hardware examples with their wheel/roller geometry. Compare holonomic vs. non-holonomic in terms of manoeuvrability, rough terrain performance, load capacity, and cost.</div></div>
+  <div class="question"><div class="qn">Q6</div><div class="qt">Describe ICP step by step. What data structure makes nearest-neighbour search efficient, and what is its time complexity? What is the SVD used for in ICP, and what does the convergence criterion check?</div></div>
+  <div class="question"><div class="qn">Q7</div><div class="qt">A UWB system has 3 anchors at (0,0), (5,0), and (5,4). The robot measures distances 3.2 m, 2.8 m, and 2.1 m. Write out the full linear system Ax = b and solve for the estimated robot position.</div></div>
+  <div class="question"><div class="qn">Q8</div><div class="qt">In the Kalman Filter, if the measurement noise R is very large (sensor very noisy), what value does the Kalman Gain K approach? What does this mean for the state update? What about when R approaches zero?</div></div>
+  <div class="question"><div class="qn">Q9</div><div class="qt">Why can't we use the standard Kalman Filter for robot SLAM on a differential drive robot? What makes the EKF handle this differently? Write the 3×3 Jacobian matrix F for a differential drive robot using the vertical-axis convention.</div></div>
+  <div class="question"><div class="qn">Q10</div><div class="qt">From memory, sketch the complete EKF SLAM sensor fusion pipeline block diagram, labelling every sensor, every algorithm block, and every data flow arrow. Include at least three different sensor types.</div></div>
+</div>
+
+<!-- FURTHER READING -->
+<section id="reading">
+  <h2>Further Reading &amp; Resources</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Resource</th><th>Type</th><th>Focus</th></tr></thead>
+    <tbody>
+      <tr><td>Probabilistic Robotics — Thrun, Burgard, Fox</td><td>Textbook</td><td>Definitive SLAM and probabilistic localization reference</td></tr>
+      <tr><td>Introduction to Autonomous Mobile Robots — Siegwart et al.</td><td>Textbook</td><td>Complete coverage: kinematics, sensors, navigation</td></tr>
+      <tr><td>Cyrill Stachniss — SLAM Lectures (YouTube)</td><td>Video Series</td><td>Free university-level SLAM course, highly recommended</td></tr>
+      <tr><td>ROS documentation — docs.ros.org</td><td>Online Docs</td><td>gmapping, cartographer, slam_toolbox, RPLiDAR driver</td></tr>
+      <tr><td>Slamtec RPLiDAR SDK Docs</td><td>SDK</td><td>Protocol, Python driver API, example code</td></tr>
+      <tr><td>YDLIDAR SDK on GitHub</td><td>SDK</td><td>Python and C++ interfaces for YLiDAR X4/G4</td></tr>
+      <tr><td>Pozyx Documentation — pozyx.io</td><td>Hardware Docs</td><td>Arduino library, anchor configuration, trilateration</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout g" style="margin-top:32px">
+    <div class="ctitle">📌 Note from RINR</div>
+    These notes are a living document. As you build your robots and run experiments, note where the theory meets reality — wheel slip on tiles, LiDAR reflections on glass, UWB multipath in metal-heavy rooms — and bring those observations back to class. That is where the deepest learning happens.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>
+    <span class="fl">Robotics &amp; Intelligence Nigeria Ring</span> &nbsp;·&nbsp;
+    SLAM Complete Course Notes — Revised Edition &nbsp;·&nbsp;
+    Parts 1–5: Differential Drive · Ackermann · Holonomic · LiDAR · IPS · Kalman EKF · Sensor Fusion
+  </p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+// Syntax highlight
+document.addEventListener('DOMContentLoaded', () => { hljs.highlightAll(); });
+
+// Collapsible toggle
+function toggle(btn) {
+  const content = btn.nextElementSibling;
+  const expanded = btn.getAttribute('aria-expanded') === 'true';
+  btn.setAttribute('aria-expanded', !expanded);
+  content.classList.toggle('open', !expanded);
+}
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const pct = doc.scrollTop / (doc.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('prog').style.width = Math.min(pct, 100) + '%';
+});
+
+// Active sidebar link
+const links    = document.querySelectorAll('.sidebar-link');
+const sections = [];
+links.forEach(l => {
+  const id = l.getAttribute('href').slice(1);
+  const el = document.getElementById(id);
+  if (el) sections.push({ el, l });
+});
+
+function updateActive() {
+  const y = window.scrollY + 130;
+  let active = null;
+  for (const { el, l } of sections) {
+    if (el.getBoundingClientRect().top + window.scrollY <= y) active = l;
+  }
+  links.forEach(l => l.classList.remove('active'));
+  if (active) active.classList.add('active');
+}
+window.addEventListener('scroll', updateActive, { passive: true });
+updateActive();
+</script>
