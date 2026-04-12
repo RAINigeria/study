@@ -1766,5 +1766,244 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   });
 });
 </script>
+
+<style>
+.ra-fab {
+  position: fixed; bottom: 90px; right: 20px; z-index: 500;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #7B2D8B, #4a1256);
+  color: white; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(123,45,139,0.45);
+  font-size: 24px; transition: transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ra-fab:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(123,45,139,.55); }
+.ra-fab:active { transform: scale(.95); }
+.ra-fab.reading { background: linear-gradient(135deg, #E63946, #a01c26); }
+.ra-tooltip {
+  position: fixed; bottom: 156px; right: 14px; z-index: 499;
+  background: #1a1a2e; color: white; font-size: 11px; font-weight: 800;
+  padding: 5px 12px; border-radius: 20px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transform: translateY(6px);
+  transition: opacity .2s, transform .2s;
+  font-family: 'Nunito', sans-serif;
+}
+.ra-fab:hover ~ .ra-tooltip { opacity: 1; transform: translateY(0); }
+.ra-player {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 600;
+  background: #1a1a2e; border-top: 2px solid #7B2D8B;
+  padding: 10px 18px 14px; display: none; flex-direction: column; gap: 8px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.35);
+  font-family: 'Nunito', sans-serif;
+}
+.ra-player.visible { display: flex; }
+.ra-row1 { display: flex; align-items: center; gap: 12px; }
+.ra-info { flex: 1; min-width: 0; }
+.ra-section { color: #d4b0e8; font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ra-chunk  { color: rgba(255,255,255,.45); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.ra-ctrls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.ra-c {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: background .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ra-c.prev, .ra-c.next { background: rgba(255,255,255,.08); color: white; }
+.ra-c.prev:hover, .ra-c.next:hover { background: rgba(255,255,255,.18); }
+.ra-c.play { background: #7B2D8B; color: white; width: 42px; height: 42px; font-size: 17px; }
+.ra-c.play:hover { background: #9B3DAB; }
+.ra-c.play.paused { background: #2EC4B6; }
+.ra-c.stop { background: rgba(230,57,70,.18); color: #f08080; }
+.ra-c.stop:hover { background: rgba(230,57,70,.35); }
+.ra-row2 { display: flex; align-items: center; gap: 10px; }
+.ra-prog-bg { flex: 1; height: 4px; background: rgba(255,255,255,.1); border-radius: 4px; overflow: hidden; }
+.ra-prog-fill { height: 100%; background: linear-gradient(90deg, #7B2D8B, #2EC4B6); border-radius: 4px; transition: width .3s; width: 0%; }
+.ra-cnt { color: rgba(255,255,255,.35); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.ra-row3 { display: flex; align-items: center; gap: 7px; }
+.ra-spd-lbl { color: rgba(255,255,255,.35); font-size: 11px; font-weight: 700; }
+.ra-spd {
+  background: rgba(255,255,255,.07); border: none; color: rgba(255,255,255,.55);
+  font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 12px;
+  cursor: pointer; font-family: 'Nunito', sans-serif; transition: background .12s;
+}
+.ra-spd.on { background: #7B2D8B; color: white; }
+.ra-spd:hover { background: rgba(255,255,255,.16); }
+@media (min-width: 769px) {
+  .ra-fab { bottom: 32px; right: 32px; }
+  .ra-tooltip { bottom: 100px; right: 26px; }
+}
+</style>
+
+<button class="ra-fab" id="raFab" aria-label="Read page aloud">🔊</button>
+<div class="ra-tooltip" id="raTip">Read Aloud</div>
+
+<div class="ra-player" id="raPlayer">
+  <div class="ra-row1">
+    <div class="ra-info">
+      <div class="ra-section" id="raSec">Ready to read</div>
+      <div class="ra-chunk"  id="raCk">Tap 🔊 or press play to start</div>
+    </div>
+    <div class="ra-ctrls">
+      <button class="ra-c prev" id="raPrev">⏮</button>
+      <button class="ra-c play" id="raPlay">▶</button>
+      <button class="ra-c next" id="raNext">⏭</button>
+      <button class="ra-c stop" id="raStop">⏹</button>
+    </div>
+  </div>
+  <div class="ra-row2">
+    <div class="ra-prog-bg"><div class="ra-prog-fill" id="raFill"></div></div>
+    <div class="ra-cnt" id="raCnt">— / —</div>
+  </div>
+  <div class="ra-row3">
+    <div class="ra-spd-lbl">Speed:</div>
+    <button class="ra-spd" data-s="0.8">0.8×</button>
+    <button class="ra-spd on" data-s="1">1×</button>
+    <button class="ra-spd" data-s="1.2">1.2×</button>
+    <button class="ra-spd" data-s="1.5">1.5×</button>
+    <button class="ra-spd" data-s="2">2×</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  if(!window.speechSynthesis){ document.getElementById('raFab').style.display='none'; return; }
+  const SS=window.speechSynthesis;
+  const fab=document.getElementById('raFab');
+  const tip=document.getElementById('raTip');
+  const player=document.getElementById('raPlayer');
+  const playBtn=document.getElementById('raPlay');
+  const stopBtn=document.getElementById('raStop');
+  const prevBtn=document.getElementById('raPrev');
+  const nextBtn=document.getElementById('raNext');
+  const secEl=document.getElementById('raSec');
+  const ckEl=document.getElementById('raCk');
+  const fillEl=document.getElementById('raFill');
+  const cntEl=document.getElementById('raCnt');
+
+  let secs=[]; let si=0; let ci=0;
+  let playing=false; let paused=false; let spd=1;
+  let kv; // keepalive interval
+
+  function buildSecs(){
+    secs=[];
+    document.querySelectorAll('.section,.step-card,.voice-hero').forEach(el=>{
+      if(el.closest('.footnotes')||el.closest('nav')||el.closest('.ra-player')) return;
+      const titleEl=el.querySelector('.section-title,.step-head-title,h2,h3');
+      const title=titleEl?titleEl.textContent.trim():'Section';
+      const clone=el.cloneNode(true);
+      ['.code-block','.prompt-box','.sidebar','.app-topbar','.bottom-nav','script','style','.data-table','svg','.schol-ad-foot','.ra-player'].forEach(s=>{
+        clone.querySelectorAll(s).forEach(e=>e.remove());
+      });
+      const raw=(clone.innerText||clone.textContent||'').replace(/\s+/g,' ').trim();
+      if(raw.length<30) return;
+      const chunks=splitChunks(raw,230);
+      if(chunks.length) secs.push({title,chunks,el});
+    });
+  }
+
+  function splitChunks(text,max){
+    const parts=text.match(/[^.!?]+[.!?]+[\s]*/g)||[text];
+    const out=[]; let cur='';
+    parts.forEach(p=>{ if((cur+p).length>max&&cur){ out.push(cur.trim()); cur=p; } else cur+=p; });
+    if(cur.trim()) out.push(cur.trim());
+    return out;
+  }
+
+  function total(){ return secs.reduce((a,s)=>a+s.chunks.length,0); }
+  function done(){ return secs.slice(0,si).reduce((a,s)=>a+s.chunks.length,0)+ci; }
+
+  function updateUI(){
+    if(!secs.length) return;
+    const s=secs[si]||secs[secs.length-1];
+    secEl.textContent=s.title;
+    const ck=s.chunks[ci]||'';
+    ckEl.textContent=ck.length>70?ck.slice(0,70)+'…':ck;
+    const pct=total()>0?Math.round(done()/total()*100):0;
+    fillEl.style.width=pct+'%';
+    cntEl.textContent=(si+1)+' / '+secs.length;
+  }
+
+  function speakChunk(txt,cb){
+    SS.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.rate=spd; u.pitch=1;
+    u.lang='en-GB'; // clear British English — widely available, clear accent
+    u.onend=()=>{ if(cb) cb(); };
+    u.onerror=e=>{ if(e.error!=='interrupted'&&cb) cb(); };
+    SS.speak(u);
+  }
+
+  function readNext(){
+    if(!playing) return;
+    if(si>=secs.length){ stop(); return; }
+    const s=secs[si];
+    if(ci>=s.chunks.length){ si++; ci=0; if(si>=secs.length){ stop(); return; } if(ci===0) secs[si]&&secs[si].el&&secs[si].el.scrollIntoView({behavior:'smooth',block:'start'}); }
+    updateUI();
+    if(ci===0&&secs[si]&&secs[si].el) secs[si].el.scrollIntoView({behavior:'smooth',block:'start'});
+    speakChunk(secs[si].chunks[ci],()=>{ if(playing&&!paused){ ci++; readNext(); } });
+  }
+
+  function start(s,c){
+    buildSecs();
+    if(!secs.length){ alert('Nothing readable found on this page.'); return; }
+    si=s||0; ci=c||0;
+    playing=true; paused=false;
+    fab.classList.add('reading'); fab.textContent='🔇';
+    tip.textContent='Stop reading';
+    player.classList.add('visible');
+    playBtn.textContent='⏸'; playBtn.classList.remove('paused');
+    updateUI();
+    readNext();
+    kv=setInterval(()=>{ if(SS.speaking&&!SS.paused){ SS.pause(); SS.resume(); } },10000);
+  }
+
+  function pause(){
+    if(SS.speaking){ SS.pause(); paused=true; playBtn.textContent='▶'; playBtn.classList.add('paused'); }
+  }
+
+  function resume(){
+    if(SS.paused){ SS.resume(); paused=false; playBtn.textContent='⏸'; playBtn.classList.remove('paused'); }
+  }
+
+  function stop(){
+    SS.cancel(); playing=false; paused=false;
+    clearInterval(kv);
+    fab.classList.remove('reading'); fab.textContent='🔊';
+    tip.textContent='Read Aloud';
+    player.classList.remove('visible');
+    playBtn.textContent='▶'; playBtn.classList.remove('paused');
+    fillEl.style.width='0%'; cntEl.textContent='— / —';
+    secEl.textContent='Ready to read'; ckEl.textContent='Tap 🔊 or press play to start';
+  }
+
+  fab.addEventListener('click',()=>{
+    if(!playing&&!paused) start(0,0);
+    else if(playing&&!paused) pause();
+    else resume();
+  });
+  playBtn.addEventListener('click',()=>{
+    if(!playing) start(si,ci);
+    else if(paused) resume();
+    else pause();
+  });
+  stopBtn.addEventListener('click',stop);
+  prevBtn.addEventListener('click',()=>{
+    if(si>0){ SS.cancel(); si--; ci=0; if(playing) readNext(); else updateUI(); }
+  });
+  nextBtn.addEventListener('click',()=>{
+    if(si<secs.length-1){ SS.cancel(); si++; ci=0; if(playing) readNext(); else updateUI(); }
+  });
+  document.querySelectorAll('.ra-spd').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.ra-spd').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); spd=parseFloat(b.dataset.s);
+      if(playing&&!paused){ SS.cancel(); setTimeout(readNext,80); }
+    });
+  });
+  window.addEventListener('beforeunload',()=>SS.cancel());
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden&&playing) pause(); });
+})();
+</script>
 </body>
 </html>
