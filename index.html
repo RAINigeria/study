@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A1628">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>RAIN Training Manual</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --navy:       #0A1628;
+  --navy2:      #132040;
+  --navy3:      #1C2E50;
+  --blue:       #00AEEF;
+  --blue2:      #0080C0;
+  --blue-pale:  #E6F7FD;
+  --gold:       #F4A261;
+  --gold2:      #C9813A;
+  --gold-pale:  #FEF3E8;
+  --green:      #2EC4B6;
+  --green-pale: #E8FAF8;
+  --red:        #E63946;
+  --red-pale:   #FDEAEB;
+  --purple:     #7B2D8B;
+  --surface:    #F4F7FA;
+  --surface2:   #EAEFF5;
+  --card:       #FFFFFF;
+  --text:       #1A2332;
+  --text2:      #4A5568;
+  --text3:      #718096;
+  --border:     #DDE3EC;
+
+  /* App layout */
+  --topbar-h:   56px;
+  --bottomnav-h:64px;
+  --sidebar-w:  260px;
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+
+  /* Elevation shadows */
+  --el1: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --el2: 0 4px 12px rgba(0,0,0,0.10), 0 2px 4px rgba(0,0,0,0.06);
+  --el3: 0 10px 28px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+  --el4: 0 20px 48px rgba(0,0,0,0.16), 0 8px 16px rgba(0,0,0,0.08);
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html { font-size:16px; scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body { font-family:'Nunito',sans-serif; color:var(--text); background:var(--surface); overflow-x:hidden; }
+a { color:var(--blue); text-decoration:none; }
+img { max-width:100%; height:auto; display:block; }
+
+/* ═══════════════════════════════════════════════
+   MOBILE TOP APP BAR
+═══════════════════════════════════════════════ */
+.app-topbar {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:var(--topbar-h);
+  background:var(--navy);
+  display:flex; align-items:center; gap:12px;
+  padding:0 16px;
+  box-shadow:var(--el2);
+}
+.topbar-logo {
+  height:32px;
+  background:white;
+  border-radius:6px;
+  padding:2px 8px;
+  object-fit:contain;
+  flex-shrink:0;
+}
+.topbar-logo-fallback {
+  background:var(--blue);
+  color:white;
+  font-weight:900;
+  font-size:15px;
+  padding:4px 10px;
+  border-radius:6px;
+  letter-spacing:.5px;
+}
+.topbar-title {
+  flex:1;
+  color:white;
+  font-size:16px;
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.topbar-badge {
+  background:var(--gold);
+  color:var(--navy);
+  font-size:10px;
+  font-weight:900;
+  padding:3px 9px;
+  border-radius:20px;
+  white-space:nowrap;
+}
+
+/* ═══════════════════════════════════════════════
+   MOBILE BOTTOM NAV
+═══════════════════════════════════════════════ */
+.bottom-nav {
+  display:none;
+  position:fixed; bottom:0; left:0; right:0; z-index:200;
+  height:var(--bottomnav-h);
+  background:var(--navy);
+  box-shadow:0 -2px 16px rgba(0,0,0,0.2);
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.bottom-nav::-webkit-scrollbar { display:none; }
+.bottom-nav-inner {
+  display:flex;
+  align-items:stretch;
+  height:100%;
+  min-width:max-content;
+  padding:0 4px;
+}
+.bnav-item {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px;
+  padding:6px 14px;
+  min-width:72px;
+  color:rgba(255,255,255,0.5);
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+  border:none; background:none;
+  transition:color .15s;
+  text-decoration:none;
+  white-space:nowrap;
+}
+.bnav-item.active { color:var(--blue); }
+.bnav-item .bicon { font-size:20px; line-height:1; }
+.bnav-item .blabel { font-size:9px; text-transform:uppercase; letter-spacing:.5px; }
+
+/* ═══════════════════════════════════════════════
+   DESKTOP SIDEBAR
+═══════════════════════════════════════════════ */
+.desktop-shell { display:flex; min-height:100vh; }
+
+.sidebar {
+  width:var(--sidebar-w);
+  min-height:100vh;
+  background:var(--navy);
+  position:fixed;
+  top:0; left:0;
+  overflow-y:auto;
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,0.1) transparent;
+}
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.15); border-radius:4px; }
+
+.sidebar-head {
+  padding:20px 20px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  flex-shrink:0;
+}
+.sidebar-logo {
+  width:160px; max-width:100%;
+  border-radius:6px;
+  background:white;
+  padding:4px 8px;
+  object-fit:contain;
+  display:block;
+  margin-bottom:10px;
+}
+.sidebar-logo-fallback {
+  background:var(--blue);
+  color:white;
+  font-weight:900;
+  font-size:20px;
+  padding:5px 12px;
+  border-radius:6px;
+  display:inline-block;
+  margin-bottom:10px;
+}
+.sidebar-tagline {
+  color:rgba(255,255,255,0.4);
+  font-size:10px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  font-weight:700;
+}
+
+.nav-group-label {
+  padding:18px 20px 6px;
+  color:rgba(255,255,255,0.3);
+  font-size:9.5px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.nav-link {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 20px;
+  color:rgba(255,255,255,0.55);
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  border-left:3px solid transparent;
+  transition:all .15s;
+}
+.nav-link:hover, .nav-link.active {
+  background:rgba(255,255,255,0.06);
+  color:white;
+  border-left-color:var(--blue);
+}
+.nav-link .nav-num {
+  width:24px; height:24px;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800;
+  flex-shrink:0;
+}
+.nav-link .nav-icon { font-size:16px; flex-shrink:0; }
+
+.sidebar-foot {
+  margin-top:auto;
+  padding:16px 20px;
+  border-top:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.3);
+  font-size:10.5px;
+  line-height:1.7;
+}
+
+/* ═══════════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════════ */
+.main-content {
+  margin-left:var(--sidebar-w);
+  flex:1;
+  max-width:100%;
+}
+
+/* ═══════════════════════════════════════════════
+   HERO COVER
+═══════════════════════════════════════════════ */
+.hero {
+  background:var(--navy);
+  padding:40px 40px 48px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; top:-100px; right:-80px;
+  width:360px; height:360px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(0,174,239,.18) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero::after {
+  content:'';
+  position:absolute; bottom:-80px; left:160px;
+  width:260px; height:260px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(244,162,97,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-chip {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,174,239,.15);
+  border:1px solid rgba(0,174,239,.3);
+  color:var(--blue);
+  font-size:11px; font-weight:800;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:5px 14px; border-radius:20px;
+  margin-bottom:22px;
+}
+.hero h1 {
+  font-family:'Lora',serif;
+  font-size:clamp(28px,5vw,48px);
+  color:white; line-height:1.1;
+  margin-bottom:12px;
+}
+.hero h1 span { color:var(--gold); }
+.hero-sub {
+  color:rgba(255,255,255,.55);
+  font-size:clamp(14px,2.5vw,18px);
+  font-style:italic;
+  font-family:'Lora',serif;
+  margin-bottom:32px;
+}
+.hero-meta {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
+  max-width:700px;
+}
+.hero-meta-card {
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--radius-md);
+  padding:14px 18px;
+}
+.hero-meta-card .hmc-label {
+  color:rgba(255,255,255,.35);
+  font-size:9.5px; font-weight:800;
+  letter-spacing:1px; text-transform:uppercase;
+  margin-bottom:4px;
+}
+.hero-meta-card .hmc-val {
+  color:white; font-size:13px; font-weight:700; line-height:1.4;
+}
+.hero-presenter {
+  margin-top:28px;
+  display:flex; align-items:center; gap:14px;
+}
+.presenter-av {
+  width:52px; height:52px;
+  border-radius:50%;
+  background:white; padding:3px;
+  border:2px solid rgba(255,255,255,.2);
+  object-fit:contain; flex-shrink:0;
+}
+.presenter-av-fallback {
+  width:52px; height:52px;
+  border-radius:50%;
+  background:var(--blue);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:900; color:white;
+  border:2px solid rgba(255,255,255,.2);
+  flex-shrink:0;
+}
+.presenter-name { color:white; font-weight:800; font-size:15px; }
+.presenter-role { color:rgba(255,255,255,.45); font-size:11.5px; margin-top:2px; }
+
+/* ═══════════════════════════════════════════════
+   PAGE SECTIONS
+═══════════════════════════════════════════════ */
+.page-body { padding:24px 32px 40px; }
+.section { margin-bottom:56px; scroll-margin-top:72px; }
+.section-title {
+  font-family:'Lora',serif;
+  font-size:clamp(20px,3.5vw,30px);
+  color:var(--navy); margin-bottom:8px;
+}
+.section-desc {
+  color:var(--text2); font-size:15px; line-height:1.75;
+  margin-bottom:20px; max-width:780px;
+}
+
+/* ═══════════════════════════════════════════════
+   MODULE DIVIDER
+═══════════════════════════════════════════════ */
+.mod-divider {
+  display:flex; align-items:center; gap:14px;
+  margin:48px 0 28px;
+}
+.mod-divider::before, .mod-divider::after {
+  content:''; flex:1; height:1px; background:var(--border);
+}
+.mod-pill {
+  color:white; font-size:10px; font-weight:800;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:5px 16px; border-radius:20px; white-space:nowrap;
+}
+
+/* ═══════════════════════════════════════════════
+   CALLOUT BOXES
+═══════════════════════════════════════════════ */
+.callout {
+  display:flex; gap:13px; align-items:flex-start;
+  padding:15px 18px;
+  border-radius:var(--radius-md);
+  margin:16px 0;
+  font-size:14px; line-height:1.7;
+}
+.callout-icon { font-size:20px; flex-shrink:0; margin-top:1px; }
+.callout.info    { background:var(--blue-pale);  border-left:4px solid var(--blue); }
+.callout.tip     { background:var(--green-pale); border-left:4px solid var(--green); }
+.callout.warn    { background:var(--gold-pale);  border-left:4px solid var(--gold); }
+.callout.danger  { background:var(--red-pale);   border-left:4px solid var(--red); }
+.callout strong  { font-weight:800; }
+
+/* ═══════════════════════════════════════════════
+   STEP CARDS
+═══════════════════════════════════════════════ */
+.step-card {
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  margin-bottom:24px;
+  box-shadow:var(--el2);
+}
+.step-head {
+  display:flex; align-items:center; gap:14px;
+  padding:18px 24px;
+  color:white;
+}
+.step-num {
+  width:42px; height:42px;
+  border-radius:50%;
+  background:rgba(255,255,255,.2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:19px; font-weight:900; flex-shrink:0;
+}
+.step-head-text { flex:1; }
+.step-head-title { font-size:17px; font-weight:800; }
+.step-head-time {
+  background:rgba(255,255,255,.2);
+  font-size:11px; font-weight:700;
+  padding:3px 10px; border-radius:12px;
+  white-space:nowrap;
+}
+.step-body { background:var(--card); padding:24px; }
+
+/* ═══════════════════════════════════════════════
+   CLICK INSTRUCTIONS
+═══════════════════════════════════════════════ */
+.click-list { list-style:none; counter-reset:cl; }
+.click-list li {
+  counter-increment:cl;
+  display:flex; align-items:flex-start; gap:13px;
+  padding:11px 14px; border-radius:var(--radius-md);
+  margin-bottom:7px;
+  font-size:14px; line-height:1.65;
+  transition:background .15s;
+}
+.click-list li:hover { background:var(--surface); }
+.click-list li::before {
+  content:counter(cl);
+  min-width:28px; height:28px;
+  background:var(--navy); color:white;
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:800;
+  flex-shrink:0; margin-top:1px;
+}
+
+/* ═══════════════════════════════════════════════
+   UI CHIPS (click targets)
+═══════════════════════════════════════════════ */
+.chip {
+  display:inline-flex; align-items:center; gap:4px;
+  font-weight:800; font-size:12.5px;
+  padding:3px 10px; border-radius:6px;
+  white-space:nowrap;
+}
+.chip.blue   { background:var(--blue-pale);  border:1.5px solid var(--blue);   color:#005a80; }
+.chip.green  { background:var(--green-pale); border:1.5px solid var(--green);  color:#0a5a47; }
+.chip.gold   { background:var(--gold-pale);  border:1.5px solid var(--gold);   color:#8a5216; }
+.chip.red    { background:var(--red-pale);   border:1.5px solid var(--red);    color:#a01c26; }
+.chip.gmail  { background:#fce8e6; border:1.5px solid #db4437; color:#b31412; }
+
+/* Gmail badge */
+.gmail-badge {
+  display:inline-flex; align-items:center; gap:7px;
+  background:#fff; border:1.5px solid #ddd;
+  border-radius:8px; padding:8px 16px;
+  font-size:14px; font-weight:700; color:#3c4043;
+  box-shadow:var(--el1);
+  margin:10px 0;
+}
+.gmail-g {
+  width:22px; height:22px;
+  background:linear-gradient(135deg,#ea4335 25%,#fbbc04 25%,#fbbc04 50%,#34a853 50%,#34a853 75%,#4285f4 75%);
+  border-radius:50%;
+  font-size:13px; font-weight:900; color:white;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+/* ═══════════════════════════════════════════════
+   PROMPT BOX
+═══════════════════════════════════════════════ */
+.prompt-box {
+  background:#1a1a2e;
+  border-radius:var(--radius-md);
+  padding:18px 22px; margin:16px 0;
+  border-left:4px solid var(--blue);
+}
+.prompt-label {
+  color:var(--blue); font-size:10px; font-weight:800;
+  letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px;
+}
+.prompt-text {
+  color:#d4e0f0; font-size:13.5px; line-height:1.8; font-style:italic;
+}
+
+/* ═══════════════════════════════════════════════
+   CODE BLOCK
+═══════════════════════════════════════════════ */
+.code-block {
+  background:#0d1117; border-radius:var(--radius-md);
+  padding:18px 22px; margin:14px 0;
+  font-family:'Courier New',monospace;
+  font-size:13px; color:#e6edf3;
+  line-height:1.7; overflow-x:auto;
+}
+
+/* ═══════════════════════════════════════════════
+   ARCHITECTURE DIAGRAM CARD
+═══════════════════════════════════════════════ */
+.arch-card {
+  background:var(--card);
+  border-radius:var(--radius-lg);
+  padding:24px; margin:20px 0;
+  box-shadow:var(--el2);
+  overflow-x:auto;
+}
+.arch-label {
+  font-size:11px; font-weight:800;
+  color:var(--text3); letter-spacing:1px;
+  text-transform:uppercase; margin-bottom:14px;
+  display:flex; align-items:center; gap:6px;
+}
+.arch-label::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); flex-shrink:0; }
+
+/* ═══════════════════════════════════════════════
+   PILLARS GRID
+═══════════════════════════════════════════════ */
+.pillars { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:20px 0; }
+.pillar {
+  border-radius:var(--radius-lg);
+  padding:24px;
+  position:relative; overflow:hidden;
+  color:white;
+}
+.pillar::after {
+  content:'';
+  position:absolute; top:-24px; right:-24px;
+  width:80px; height:80px; border-radius:50%;
+  background:rgba(255,255,255,.08);
+}
+.pillar-num { font-size:38px; font-weight:900; opacity:.2; margin-bottom:6px; }
+.pillar-title { font-size:16px; font-weight:800; margin-bottom:8px; }
+.pillar-desc { font-size:13px; opacity:.8; line-height:1.65; }
+
+/* ═══════════════════════════════════════════════
+   EXPAND GRID
+═══════════════════════════════════════════════ */
+.expand-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:16px; }
+.expand-card {
+  background:var(--card);
+  border-radius:var(--radius-md);
+  padding:20px;
+  border-top:4px solid var(--blue);
+  box-shadow:var(--el1);
+}
+.expand-card .ec-icon { font-size:22px; margin-bottom:8px; }
+.expand-card .ec-title { font-weight:800; color:var(--navy); font-size:14px; margin-bottom:6px; }
+.expand-card .ec-body { font-size:13px; color:var(--text2); line-height:1.65; }
+
+/* ═══════════════════════════════════════════════
+   VOICE SECTION (special featured section)
+═══════════════════════════════════════════════ */
+.voice-hero {
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 60%,#1a3060 100%);
+  border-radius:var(--radius-xl);
+  padding:32px;
+  margin:28px 0;
+  color:white;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--el3);
+}
+.voice-hero::before {
+  content:'🎙';
+  position:absolute; right:24px; top:24px;
+  font-size:80px; opacity:.08;
+}
+.voice-hero-chip {
+  display:inline-block;
+  background:rgba(244,162,97,.2);
+  border:1px solid rgba(244,162,97,.4);
+  color:var(--gold);
+  font-size:10px; font-weight:800;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:4px 12px; border-radius:20px; margin-bottom:14px;
+}
+.voice-hero h3 {
+  font-family:'Lora',serif;
+  font-size:clamp(18px,3vw,26px);
+  margin-bottom:10px;
+}
+.voice-hero p { font-size:14px; color:rgba(255,255,255,.75); line-height:1.75; margin-bottom:16px; }
+
+.voice-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; margin-top:20px; }
+.voice-card {
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--radius-lg);
+  padding:20px;
+}
+.voice-card-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.voice-card-icon { font-size:28px; }
+.voice-card-name { font-size:15px; font-weight:800; }
+.voice-card-sub { font-size:11px; opacity:.5; margin-top:1px; }
+.voice-card.recommended { border-color:rgba(46,196,182,.4); background:rgba(46,196,182,.08); }
+.voice-card .rec-badge {
+  display:inline-block;
+  background:var(--green); color:white;
+  font-size:9px; font-weight:800;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:2px 8px; border-radius:12px; margin-bottom:10px;
+}
+.voice-steps { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.voice-steps li {
+  display:flex; gap:9px; align-items:flex-start;
+  font-size:13px; color:rgba(255,255,255,.8); line-height:1.6;
+}
+.voice-steps li .vs-num {
+  width:20px; height:20px; border-radius:50%;
+  background:rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:800; flex-shrink:0;
+}
+.voice-why {
+  background:rgba(46,196,182,.15);
+  border-radius:var(--radius-md);
+  padding:12px 16px; margin-top:12px;
+  font-size:12.5px; color:var(--green);
+  line-height:1.65;
+}
+.voice-warning {
+  background:rgba(230,57,70,.12);
+  border-radius:var(--radius-md);
+  padding:12px 16px; margin-top:12px;
+  font-size:12.5px; color:#f08080;
+  line-height:1.65;
+}
+
+/* ═══════════════════════════════════════════════
+   CLAUDE TOOLS SECTION
+═══════════════════════════════════════════════ */
+.claude-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:16px; }
+.claude-card {
+  background:var(--card);
+  border-radius:var(--radius-lg);
+  padding:22px;
+  box-shadow:var(--el2);
+  border-top:4px solid var(--purple);
+}
+.claude-card .cc-icon { font-size:28px; margin-bottom:10px; }
+.claude-card .cc-title { font-size:15px; font-weight:800; color:var(--navy); margin-bottom:6px; }
+.claude-card .cc-body { font-size:13px; color:var(--text2); line-height:1.65; }
+.claude-card .cc-tip {
+  margin-top:12px;
+  background:var(--surface);
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+  font-size:12px; color:var(--text3); line-height:1.6;
+  border-left:3px solid var(--purple);
+}
+
+/* ═══════════════════════════════════════════════
+   DATA TABLE
+═══════════════════════════════════════════════ */
+.data-table-wrap { overflow-x:auto; margin:16px 0; border-radius:var(--radius-md); box-shadow:var(--el1); }
+.data-table { width:100%; border-collapse:collapse; min-width:480px; }
+.data-table th {
+  background:var(--navy); color:white;
+  padding:12px 16px; text-align:left;
+  font-size:12px; font-weight:800; letter-spacing:.5px;
+}
+.data-table th:first-child { border-radius:var(--radius-md) 0 0 0; }
+.data-table th:last-child  { border-radius:0 var(--radius-md) 0 0; }
+.data-table td { padding:11px 16px; border-bottom:1px solid var(--border); font-size:13px; }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:var(--surface); }
+.data-table .free { color:#1a6b30; font-weight:700; }
+.data-table .paid { color:#a01c26; }
+
+/* ═══════════════════════════════════════════════
+   BROWSER MOCKUP
+═══════════════════════════════════════════════ */
+.browser-wrap { background:var(--surface2); border-radius:var(--radius-md); padding:14px; margin:18px 0; overflow-x:auto; }
+.browser-bar {
+  background:var(--surface);
+  border-radius:6px; padding:6px 12px;
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:12px;
+  font-size:11px; color:var(--text3);
+}
+.browser-dots { display:flex; gap:5px; }
+.browser-dots span { width:10px; height:10px; border-radius:50%; }
+
+/* ═══════════════════════════════════════════════
+   SCHOLARSHIP AD
+═══════════════════════════════════════════════ */
+.schol-ad {
+  border-radius:var(--radius-xl);
+  overflow:hidden;
+  box-shadow:var(--el4);
+  margin:48px 0;
+}
+.schol-ad-body {
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 50%,var(--navy) 100%);
+  padding:32px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:28px;
+  align-items:center;
+}
+.schol-ad-body img.schol-img {
+  width:240px; border-radius:var(--radius-md);
+  box-shadow:var(--el3);
+}
+.schol-tag {
+  color:var(--blue); font-size:10px; font-weight:800;
+  letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;
+}
+.schol-ad h3 {
+  font-family:'Lora',serif;
+  font-size:clamp(18px,3vw,24px);
+  color:white; line-height:1.2; margin-bottom:10px;
+}
+.schol-ad p { color:rgba(255,255,255,.6); font-size:13.5px; line-height:1.75; margin-bottom:20px; }
+.schol-btns { display:flex; gap:12px; flex-wrap:wrap; }
+.schol-btn-primary {
+  background:var(--blue); color:white;
+  font-weight:800; font-size:13px;
+  padding:11px 22px; border-radius:var(--radius-md);
+  text-decoration:none; display:inline-block;
+}
+.schol-btn-secondary {
+  background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.25);
+  color:white; font-weight:700; font-size:13px;
+  padding:11px 22px; border-radius:var(--radius-md);
+  text-decoration:none; display:inline-block;
+}
+.schol-ad-foot {
+  background:var(--blue);
+  padding:10px 32px;
+  text-align:center;
+  font-size:12px; font-weight:700; color:white;
+  letter-spacing:.5px;
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTNOTES
+═══════════════════════════════════════════════ */
+.footnotes {
+  border-top:2px solid var(--border);
+  padding-top:28px; margin-top:48px;
+}
+.footnotes h3 {
+  font-size:13px; font-weight:800; color:var(--text3);
+  letter-spacing:1px; text-transform:uppercase; margin-bottom:14px;
+}
+.fn { display:flex; gap:10px; font-size:12px; color:var(--text3); line-height:1.7; margin-bottom:8px; }
+.fn-num { color:var(--blue); font-weight:800; flex-shrink:0; }
+
+/* ═══════════════════════════════════════════════
+   MOBILE STYLES (≤768px) — ANDROID APP FEEL
+═══════════════════════════════════════════════ */
+@media (max-width:768px) {
+  .sidebar { display:none; }
+  .app-topbar { display:flex; }
+  .bottom-nav { display:block; }
+
+  .main-content {
+    margin-left:0;
+    padding-top:var(--topbar-h);
+    padding-bottom:calc(var(--bottomnav-h) + 16px);
+  }
+
+  .hero { padding:24px 18px 32px; }
+  .hero::before, .hero::after { display:none; }
+  .hero h1 { font-size:26px; }
+  .hero-sub { font-size:14px; }
+  .hero-meta { grid-template-columns:1fr 1fr; gap:10px; }
+  .hero-meta-card { padding:11px 14px; }
+  .hero-meta-card .hmc-val { font-size:12px; }
+  .hero-presenter { gap:12px; }
+
+  .page-body { padding:16px 16px 24px; }
+  .section { margin-bottom:40px; }
+  .section-title { font-size:20px; }
+
+  .step-card { border-radius:var(--radius-md); }
+  .step-head { padding:14px 18px; gap:12px; }
+  .step-head-title { font-size:15px; }
+  .step-body { padding:18px; }
+
+  .click-list li { padding:10px 12px; font-size:13.5px; }
+  .callout { font-size:13.5px; }
+
+  .pillars { grid-template-columns:1fr; }
+  .voice-cards { grid-template-columns:1fr; }
+  .claude-cards { grid-template-columns:1fr; }
+  .expand-grid { grid-template-columns:1fr 1fr; }
+
+  .schol-ad-body { grid-template-columns:1fr; gap:20px; }
+  .schol-ad-body img.schol-img { width:100%; max-width:300px; margin:0 auto; }
+
+  .data-table th, .data-table td { padding:10px 12px; }
+
+  /* Android material ripple feel */
+  .step-card, .callout, .click-list li, .expand-card {
+    -webkit-user-select:none; user-select:none;
+  }
+  .click-list li:active { background:var(--surface2); transform:scale(.99); }
+  .nav-link { font-size:14px; padding:13px 20px; }
+
+  .mod-divider { margin:36px 0 20px; }
+  .arch-card { padding:16px; }
+
+  /* Sticky section headers on mobile */
+  .mob-sticky-head {
+    position:sticky; top:var(--topbar-h);
+    background:var(--surface);
+    z-index:50;
+    padding:10px 16px;
+    margin:-16px -16px 16px;
+    border-bottom:1px solid var(--border);
+    font-size:12px; font-weight:800;
+    color:var(--text3); letter-spacing:1px;
+    text-transform:uppercase;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   DESKTOP STYLES (>768px)
+═══════════════════════════════════════════════ */
+@media (min-width:769px) {
+  .app-topbar { display:none; }
+  .bottom-nav { display:none; }
+  .main-content { margin-left:var(--sidebar-w); }
+  .mob-sticky-head { display:none; }
+
+  /* Window chrome feel on desktop */
+  .desktop-shell::before {
+    content:'';
+    display:block;
+    position:fixed; top:0; left:0; right:0;
+    height:3px;
+    background:linear-gradient(90deg,var(--blue),var(--green),var(--gold));
+    z-index:300;
+  }
+  .main-content { padding-top:3px; }
+
+  .hero { padding:52px 56px; }
+  .page-body { padding:32px 52px 56px; }
+
+  /* Hover states for desktop */
+  .click-list li:hover { background:var(--surface); cursor:pointer; }
+  .nav-link { transition:all .15s ease; }
+  .step-card { transition:box-shadow .2s; }
+  .step-card:hover { box-shadow:var(--el3); }
+  .expand-card:hover { box-shadow:var(--el2); transform:translateY(-2px); transition:all .2s; }
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRESS INDICATOR (mobile)
+═══════════════════════════════════════════════ */
+.progress-bar {
+  position:fixed; top:var(--topbar-h); left:0; right:0;
+  height:3px; z-index:199;
+  background:var(--border);
+}
+.progress-fill {
+  height:100%;
+  background:linear-gradient(90deg,var(--blue),var(--green));
+  width:0%;
+  transition:width .1s;
+}
+
+/* Active nav state highlight on desktop */
+.nav-link.active .nav-num { background:var(--blue); color:white; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     MOBILE TOP APP BAR
+══════════════════════════════════════════ -->
+<header class="app-topbar">
+  <img src="https://scholarship.rainigeria.com/static/rainlogo.jpg"
+       alt="RAIN" class="topbar-logo"
+       onerror="this.style.display='none';document.getElementById('tb-fb').style.display='inline-block'"/>
+  <span class="topbar-logo-fallback" id="tb-fb" style="display:none">RAIN</span>
+  <div class="topbar-title">AI Training Manual</div>
+  <div class="topbar-badge">Day 2</div>
+</header>
+
+<!-- ══════════════════════════════════════════
+     MOBILE PROGRESS BAR
+══════════════════════════════════════════ -->
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ══════════════════════════════════════════
+     MOBILE BOTTOM NAVIGATION
+══════════════════════════════════════════ -->
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a href="#hero"         class="bnav-item active"><div class="bicon">🏠</div><div class="blabel">Home</div></a>
+    <a href="#pillars"      class="bnav-item"><div class="bicon">⚙️</div><div class="blabel">Pillars</div></a>
+    <a href="#voice-section"class="bnav-item"><div class="bicon">🎙️</div><div class="blabel">Voice AI</div></a>
+    <a href="#step1"        class="bnav-item"><div class="bicon">🐙</div><div class="blabel">GitHub</div></a>
+    <a href="#step4"        class="bnav-item"><div class="bicon">🌐</div><div class="blabel">Website</div></a>
+    <a href="#step6"        class="bnav-item"><div class="bicon">🖥️</div><div class="blabel">Render</div></a>
+    <a href="#step9"        class="bnav-item"><div class="bicon">📧</div><div class="blabel">Email</div></a>
+    <a href="#step12"       class="bnav-item"><div class="bicon">🤖</div><div class="blabel">Claude AI</div></a>
+    <a href="#expand"       class="bnav-item"><div class="bicon">🚀</div><div class="blabel">Expand</div></a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     DESKTOP SHELL
+══════════════════════════════════════════ -->
+<div class="desktop-shell">
+
+<!-- DESKTOP SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-head">
+    <img src="https://scholarship.rainigeria.com/static/rainlogo.jpg"
+         alt="RAIN" class="sidebar-logo"
+         onerror="this.style.display='none';document.getElementById('sb-fb').style.display='inline-block'"/>
+    <div class="sidebar-logo-fallback" id="sb-fb" style="display:none">RAIN</div>
+    <div class="sidebar-tagline">Official Training Manual</div>
+  </div>
+
+  <div class="nav-group-label">Overview</div>
+  <a href="#hero"          class="nav-link active"><span class="nav-icon">🏠</span> Introduction</a>
+  <a href="#architecture"  class="nav-link"><span class="nav-icon">🏗️</span> System Architecture</a>
+  <a href="#pillars"       class="nav-link"><span class="nav-icon">⚙️</span> Three Pillars of Low-Data AI</a>
+  <a href="#voice-section" class="nav-link"><span class="nav-icon">🎙️</span> Voice-to-Text Workflow</a>
+  <a href="#claude-tools"  class="nav-link"><span class="nav-icon">🤖</span> Claude Features</a>
+
+  <div class="nav-group-label">Module 1 — GitHub</div>
+  <a href="#step1" class="nav-link"><div class="nav-num" style="background:#00AEEF">1</div> Create GitHub Account</a>
+  <a href="#step2" class="nav-link"><div class="nav-num" style="background:#00AEEF">2</div> Create Repository</a>
+  <a href="#step3" class="nav-link"><div class="nav-num" style="background:#00AEEF">3</div> Enable GitHub Pages</a>
+
+  <div class="nav-group-label">Module 2 — Website</div>
+  <a href="#step4" class="nav-link"><div class="nav-num" style="background:#2EC4B6">4</div> Build with AI</a>
+  <a href="#step5" class="nav-link"><div class="nav-num" style="background:#2EC4B6">5</div> Custom Domain</a>
+
+  <div class="nav-group-label">Module 3 — Backend</div>
+  <a href="#step6" class="nav-link"><div class="nav-num" style="background:#F4A261">6</div> Render Account</a>
+  <a href="#step7" class="nav-link"><div class="nav-num" style="background:#F4A261">7</div> Connect Render → GitHub</a>
+  <a href="#step8" class="nav-link"><div class="nav-num" style="background:#F4A261">8</div> Neon Database</a>
+
+  <div class="nav-group-label">Module 4 — Services</div>
+  <a href="#step9"  class="nav-link"><div class="nav-num" style="background:#7B2D8B">9</div> Mailtrap Email</a>
+  <a href="#step10" class="nav-link"><div class="nav-num" style="background:#7B2D8B">10</div> Flask Server</a>
+  <a href="#step11" class="nav-link"><div class="nav-num" style="background:#E63946">11</div> Paystack Payments</a>
+  <a href="#step12" class="nav-link"><div class="nav-num" style="background:#E63946">12</div> Claude API Marking</a>
+
+  <div class="nav-group-label">Appendix</div>
+  <a href="#expand"    class="nav-link"><span class="nav-icon">🚀</span> Expanding Further</a>
+  <a href="#footnotes" class="nav-link"><span class="nav-icon">📝</span> Footnotes & References</a>
+
+  <div class="sidebar-foot">
+    NCS National Summit on AI & Robotics<br>
+    Katsina · 15 April 2026<br><br>
+    © 2026 RAIN Nigeria<br>
+    scholarship.rainigeria.com
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+══════════════════════════════════════════ -->
+<div class="main-content">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-chip">🤖 RAIN — Official Training Manual</div>
+  <h1>Hands On AI<br>with <span>Low Data</span></h1>
+  <div class="hero-sub">Transfer Learning · Prompt Engineering · Synthetic Data</div>
+  <div class="hero-meta">
+    <div class="hero-meta-card">
+      <div class="hmc-label">Event</div>
+      <div class="hmc-val">NCS National Summit on AI & Robotics</div>
+    </div>
+    <div class="hero-meta-card">
+      <div class="hmc-label">Session</div>
+      <div class="hmc-val">Day 2 · Session 4 · Workshop</div>
+    </div>
+    <div class="hero-meta-card">
+      <div class="hmc-label">Date</div>
+      <div class="hmc-val">Wed 15 April 2026</div>
+    </div>
+    <div class="hero-meta-card">
+      <div class="hmc-label">Time</div>
+      <div class="hmc-val">12:00PM – 1:30PM</div>
+    </div>
+  </div>
+  <div class="hero-presenter">
+    <img src="https://scholarship.rainigeria.com/static/rainlogo.jpg"
+         alt="RAIN" class="presenter-av"
+         onerror="this.outerHTML='<div class=presenter-av-fallback>OA</div>'"/>
+    <div>
+      <div class="presenter-name">Dr. Olusola Ayoola MNCS</div>
+      <div class="presenter-role">CEO/Founder · Robotics and Artificial Intelligence Nigeria (RAIN) · Ibadan, Oyo State</div>
+    </div>
+  </div>
+</section>
+
+<div class="page-body">
+
+<!-- HOW TO USE -->
+<div class="section">
+  <div class="callout info">
+    <div class="callout-icon">📖</div>
+    <div><strong>How to use this manual:</strong> Every step is numbered. Every button to click is shown in a <span class="chip blue">blue chip</span>. Green chips are <span class="chip green">action buttons</span>. Gmail chips show <span class="chip gmail">Sign in with Google</span> buttons. Follow every step in order — do not skip ahead.</div>
+  </div>
+  <div class="callout warn">
+    <div class="callout-icon">⚠️</div>
+    <div><strong>Before you begin you need:</strong> A laptop or desktop computer, a Gmail address (Google account), and an internet connection. That is all. No coding experience required.</div>
+  </div>
+  <div class="callout tip">
+    <div class="callout-icon">📱</div>
+    <div><strong>On your phone?</strong> Use the bottom navigation bar to jump between sections. This manual is designed to work as a full app experience on Android phones and as a desktop application on laptops.</div>
+  </div>
+</div>
+
+<!-- VOICE TO TEXT SECTION -->
+<div class="section" id="voice-section">
+  <div class="mob-sticky-head">🎙 Voice-to-Text Workflow</div>
+  <div class="section-title">🎙️ Write Prompts Without Typing — Voice-to-Text Workflow</div>
+  <div class="section-desc">Writing long AI prompts can feel difficult, especially on a phone. The solution is voice-to-text. Here is the best way to do it — and why one method is strongly preferred over another.</div>
+
+  <div class="voice-hero">
+    <div class="voice-hero-chip">⭐ Pro Technique</div>
+    <h3>Speak Your Prompt — Then Paste It into Claude</h3>
+    <p>Instead of typing your prompt from scratch, simply speak it aloud into a voice-to-text tool. The tool converts your words into text. You copy that text and paste it into Claude. This is how professionals generate detailed prompts quickly — especially on a phone.</p>
+    <p>The key rule: speak in clear sentences as if you are dictating a letter. Tell the AI exactly what you want it to type, and say <strong>"type this word for word, no edits, no paraphrasing."</strong></p>
+
+    <div class="voice-cards">
+
+      <!-- Meta AI Card (Recommended) -->
+      <div class="voice-card recommended">
+        <div class="rec-badge">✅ Recommended</div>
+        <div class="voice-card-head">
+          <div class="voice-card-icon">💬</div>
+          <div>
+            <div class="voice-card-name">Meta AI on WhatsApp</div>
+            <div class="voice-card-sub">Free · Works on any Android phone</div>
+          </div>
+        </div>
+        <ol class="voice-steps">
+          <li><div class="vs-num">1</div> Open WhatsApp. Tap the Meta AI chat (the circle icon, or search @Meta AI).</li>
+          <li><div class="vs-num">2</div> Hold the microphone button on your keyboard and speak your prompt clearly. Keep each voice note <strong>under 5 minutes.</strong></li>
+          <li><div class="vs-num">3</div> Before sending, say: <em>"Please type out everything I just said, word for word, with no edits and no paraphrasing."</em></li>
+          <li><div class="vs-num">4</div> Meta AI will type out your exact words as text.</li>
+          <li><div class="vs-num">5</div> Copy the text. Open Claude (claude.ai). Paste and send.</li>
+        </ol>
+        <div class="voice-why">
+          ✅ <strong>Why WhatsApp?</strong> Your voice note is saved to WhatsApp even if you lose internet midway through recording. You can finish speaking, reconnect, and your audio is still there. Nothing is lost.
+        </div>
+      </div>
+
+      <!-- Claude Voice Card (Secondary) -->
+      <div class="voice-card">
+        <div class="voice-card-head">
+          <div class="voice-card-icon">🤖</div>
+          <div>
+            <div class="voice-card-name">Claude Voice (claude.ai)</div>
+            <div class="voice-card-sub">Available in the Claude app</div>
+          </div>
+        </div>
+        <ol class="voice-steps">
+          <li><div class="vs-num">1</div> Open claude.ai in your browser or the Claude app.</li>
+          <li><div class="vs-num">2</div> Tap the microphone icon in the message box.</li>
+          <li><div class="vs-num">3</div> Speak your prompt clearly. Claude transcribes it live.</li>
+          <li><div class="vs-num">4</div> Review the text and send.</li>
+        </ol>
+        <div class="voice-warning">
+          ⚠️ <strong>Network risk:</strong> If you lose internet while speaking in Claude, your voice recording is lost. Claude's voice input requires a continuous connection. If your network is intermittent, use Meta AI on WhatsApp instead.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Timing tip -->
+    <div class="callout warn" style="margin-top:20px;background:rgba(244,162,97,.15);border-left-color:var(--gold);">
+      <div class="callout-icon">⏱️</div>
+      <div style="color:rgba(255,255,255,.85)"><strong>Keep each voice note under 5 minutes.</strong> If your prompt is long, break it into parts. Record Part 1, get the text, then record Part 2. Combine both texts in Claude. Meta AI handles multiple voice notes in one conversation perfectly.</div>
+    </div>
+
+    <!-- What to say -->
+    <div style="margin-top:20px;">
+      <div style="color:rgba(255,255,255,.5);font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;">Example — what to say into WhatsApp</div>
+      <div class="prompt-box" style="border-left-color:var(--gold)">
+        <div class="prompt-label" style="color:var(--gold)">🎤 You say this (spoken aloud):</div>
+        <div class="prompt-text">"Meta AI, please type out exactly what I say now, word for word, no edits. Write me a complete Python Flask server that connects to a PostgreSQL database. It should have endpoints for student registration, login with session token, password reset, and a dashboard. Use environment variables for the database URL and JWT secret. Include full error handling. End of prompt."</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLAUDE TOOLS SECTION -->
+<div class="section" id="claude-tools">
+  <div class="mob-sticky-head">🤖 Claude Features You Should Know</div>
+  <div class="section-title">🤖 Claude Features That Will Help You Build Faster</div>
+  <div class="section-desc">Claude is not just a chat window. It has powerful features built specifically for developers and creators working on projects like this one.</div>
+
+  <div class="claude-cards">
+    <div class="claude-card">
+      <div class="cc-icon">📁</div>
+      <div class="cc-title">Claude Projects</div>
+      <div class="cc-body">Claude Projects lets you create a dedicated workspace for your training portal. Upload your code files, database schema, and any documents. Claude will remember the context of your entire project across all your conversations — no need to re-explain every time.</div>
+      <div class="cc-tip">💡 Create one Project called "Training Portal" and upload your app.py, requirements.txt, and any notes. Every conversation inside that project has full context.</div>
+    </div>
+    <div class="claude-card">
+      <div class="cc-icon">🔌</div>
+      <div class="cc-title">Claude API</div>
+      <div class="cc-body">The Claude API is what powers the automatic assignment marking we build in Step 12. It lets your server send text to Claude and receive a structured response — scores, grades, and feedback — automatically. No human clicks required.</div>
+      <div class="cc-tip">💡 The API costs approximately $3 per million input tokens. Marking 300 student essays costs roughly ₦150–₦400 total.</div>
+    </div>
+    <div class="claude-card">
+      <div class="cc-icon">🎤</div>
+      <div class="cc-title">Claude Voice Input</div>
+      <div class="cc-body">Claude supports voice input on mobile. But remember: if you lose internet while speaking, your recording is lost. For reliable voice-to-text, use Meta AI on WhatsApp first, then paste the text into Claude. See the Voice-to-Text section above.</div>
+      <div class="cc-tip">💡 Claude voice works best in a strong Wi-Fi environment. For fieldwork or intermittent data, always use WhatsApp + Meta AI.</div>
+    </div>
+    <div class="claude-card">
+      <div class="cc-icon">📤</div>
+      <div class="cc-title">Prompt Pasting Workflow</div>
+      <div class="cc-body">The most efficient workflow: speak into WhatsApp → get text from Meta AI → copy → paste into Claude. Claude has no character limit on pasted prompts. You can paste entire specifications, requirements documents, or lengthy instructions and Claude will follow them precisely.</div>
+      <div class="cc-tip">💡 You can also paste code Claude gave you, add "now add payment integration to this," and Claude will update the exact code you gave it.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEM ARCHITECTURE -->
+<div class="section" id="architecture">
+  <div class="mob-sticky-head">🏗 What You'll Build</div>
+  <div class="section-title">🏗️ The Complete System You Will Build</div>
+  <div class="section-desc">Here is everything you will have set up by the end of this session — a professional, AI-powered training management portal. Total monthly cost: ₦0 to ₦5,000.</div>
+
+  <div class="arch-card">
+    <div class="arch-label">Full System Architecture</div>
+    <svg width="100%" viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+        <marker id="arr-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="#2EC4B6" stroke-width="1.5" stroke-linecap="round"/>
+        </marker>
+      </defs>
+      <!-- GitHub -->
+      <rect x="20" y="160" width="140" height="80" rx="12" fill="#0d1117"/>
+      <text x="90" y="190" text-anchor="middle" fill="white" font-size="12" font-weight="700" font-family="Nunito,sans-serif">GitHub</text>
+      <text x="90" y="206" text-anchor="middle" fill="#8b949e" font-size="9" font-family="Nunito,sans-serif">Code Repository</text>
+      <text x="90" y="222" text-anchor="middle" fill="#58a6ff" font-size="9" font-family="Nunito,sans-serif">yourusername.github.io</text>
+      <!-- Arrow GitHub → Render -->
+      <line x1="162" y1="200" x2="248" y2="200" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="205" y="193" text-anchor="middle" fill="#64748b" font-size="9" font-family="Nunito,sans-serif">auto-deploy</text>
+      <!-- Render -->
+      <rect x="250" y="140" width="150" height="120" rx="12" fill="rgba(70,227,183,.12)" stroke="#46E3B7" stroke-width="1.5"/>
+      <text x="325" y="168" text-anchor="middle" fill="#0a5a47" font-size="12" font-weight="700" font-family="Nunito,sans-serif">Render</text>
+      <text x="325" y="184" text-anchor="middle" fill="#0a5a47" font-size="9" font-family="Nunito,sans-serif">Your Live Server</text>
+      <text x="325" y="200" text-anchor="middle" fill="#0a5a47" font-size="9" font-family="Nunito,sans-serif">Flask / Python</text>
+      <text x="325" y="216" text-anchor="middle" fill="#0a5a47" font-size="9" font-family="Nunito,sans-serif">Free Tier ✓</text>
+      <text x="325" y="232" text-anchor="middle" fill="#0a5a47" font-size="9" font-family="Nunito,sans-serif">yourapp.onrender.com</text>
+      <!-- Neon -->
+      <rect x="460" y="50" width="140" height="70" rx="12" fill="rgba(62,207,142,.12)" stroke="#3ecf8e" stroke-width="1.5"/>
+      <text x="530" y="78" text-anchor="middle" fill="#0a4a30" font-size="12" font-weight="700" font-family="Nunito,sans-serif">Neon Database</text>
+      <text x="530" y="94" text-anchor="middle" fill="#0a4a30" font-size="9" font-family="Nunito,sans-serif">PostgreSQL · Free</text>
+      <text x="530" y="108" text-anchor="middle" fill="#0a4a30" font-size="9" font-family="Nunito,sans-serif">Students · Grades · Courses</text>
+      <line x1="400" y1="175" x2="458" y2="95" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Mailtrap -->
+      <rect x="460" y="155" width="140" height="60" rx="12" fill="#fef3e8" stroke="#F4A261" stroke-width="1.5"/>
+      <text x="530" y="179" text-anchor="middle" fill="#8a5216" font-size="12" font-weight="700" font-family="Nunito,sans-serif">Mailtrap</text>
+      <text x="530" y="195" text-anchor="middle" fill="#8a5216" font-size="9" font-family="Nunito,sans-serif">Email Service · Free</text>
+      <text x="530" y="208" text-anchor="middle" fill="#8a5216" font-size="9" font-family="Nunito,sans-serif">Welcome · Reset · Alerts</text>
+      <line x1="400" y1="200" x2="458" y2="195" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Paystack -->
+      <rect x="460" y="250" width="140" height="60" rx="12" fill="#e8edf3" stroke="#0BA4DB" stroke-width="1.5"/>
+      <text x="530" y="274" text-anchor="middle" fill="#073060" font-size="12" font-weight="700" font-family="Nunito,sans-serif">Paystack</text>
+      <text x="530" y="290" text-anchor="middle" fill="#073060" font-size="9" font-family="Nunito,sans-serif">Nigerian Payments</text>
+      <text x="530" y="303" text-anchor="middle" fill="#073060" font-size="9" font-family="Nunito,sans-serif">Cards · USSD · Transfer</text>
+      <line x1="400" y1="230" x2="458" y2="270" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- Claude API -->
+      <rect x="460" y="345" width="140" height="60" rx="12" fill="#f3e8f6" stroke="#7B2D8B" stroke-width="1.5"/>
+      <text x="530" y="369" text-anchor="middle" fill="#4a0f5a" font-size="12" font-weight="700" font-family="Nunito,sans-serif">Claude API</text>
+      <text x="530" y="385" text-anchor="middle" fill="#4a0f5a" font-size="9" font-family="Nunito,sans-serif">AI Assignment Marking</text>
+      <text x="530" y="398" text-anchor="middle" fill="#4a0f5a" font-size="9" font-family="Nunito,sans-serif">Instant · Consistent</text>
+      <line x1="400" y1="240" x2="458" y2="360" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <!-- GitHub Pages -->
+      <rect x="20" y="290" width="140" height="70" rx="12" fill="#e6f7fd" stroke="#00AEEF" stroke-width="1.5"/>
+      <text x="90" y="318" text-anchor="middle" fill="#006fa6" font-size="12" font-weight="700" font-family="Nunito,sans-serif">GitHub Pages</text>
+      <text x="90" y="334" text-anchor="middle" fill="#006fa6" font-size="9" font-family="Nunito,sans-serif">Public Website · Free</text>
+      <text x="90" y="348" text-anchor="middle" fill="#006fa6" font-size="9" font-family="Nunito,sans-serif">HTML · CSS · JS</text>
+      <line x1="90" y1="240" x2="90" y2="288" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4 2"/>
+      <!-- Students -->
+      <rect x="620" y="165" width="120" height="60" rx="12" fill="#f0fdf4" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="680" y="189" text-anchor="middle" fill="#14532d" font-size="12" font-weight="700" font-family="Nunito,sans-serif">👩‍🎓 Students</text>
+      <text x="680" y="205" text-anchor="middle" fill="#14532d" font-size="9" font-family="Nunito,sans-serif">Submit · Pay · Get Grades</text>
+      <text x="680" y="218" text-anchor="middle" fill="#14532d" font-size="9" font-family="Nunito,sans-serif">Any browser · Any device</text>
+      <line x1="620" y1="195" x2="402" y2="195" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arr-g)"/>
+      <!-- Cost -->
+      <rect x="0" y="392" width="240" height="22" rx="6" fill="#0A1628"/>
+      <text x="120" y="407" text-anchor="middle" fill="white" font-size="9" font-weight="700" font-family="Nunito,sans-serif">💰 TOTAL MONTHLY COST: ₦0 – ₦5,000</text>
+    </svg>
+  </div>
+</div>
+
+<!-- THREE PILLARS -->
+<div class="section" id="pillars">
+  <div class="mob-sticky-head">⚙ Three Pillars of Low-Data AI</div>
+  <div class="section-title">⚙️ The Three Pillars of Low-Data AI</div>
+  <div class="section-desc">Before we build, you need to understand <em>why</em> this is possible with very little data. These three techniques make it work.</div>
+
+  <div class="pillars">
+    <div class="pillar" style="background:linear-gradient(135deg,#00AEEF,#0070b8)">
+      <div class="pillar-num">01</div>
+      <div class="pillar-title">Transfer Learning</div>
+      <div class="pillar-desc">Borrow a brain someone else already trained on millions of examples. Adapt it to your smaller, specific task in days — not years. Like hiring an expert doctor and teaching them your clinic's system.</div>
+    </div>
+    <div class="pillar" style="background:linear-gradient(135deg,#2EC4B6,#1a8a82)">
+      <div class="pillar-num">02</div>
+      <div class="pillar-title">Prompt Engineering</div>
+      <div class="pillar-desc">Get maximum intelligence from existing AI by writing precise instructions. A great prompt can replace months of model training. No code required. No data required. Just the right words.</div>
+    </div>
+    <div class="pillar" style="background:linear-gradient(135deg,#7B2D8B,#4a1256)">
+      <div class="pillar-num">03</div>
+      <div class="pillar-title">Synthetic Data</div>
+      <div class="pillar-desc">When you don't have enough real data — generate it with AI. Especially powerful in Africa where large labelled datasets for our languages, crops, and diseases rarely exist.</div>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-icon">💡</div>
+    <div><strong>Key insight:</strong> Together these three techniques mean you can build functional AI systems without a supercomputer, without millions of naira, and without a PhD. Everything in this workshop uses free or near-free tools.</div>
+  </div>
+</div>
+
+<!-- ─── MODULE 1: GITHUB ─── -->
+<div class="mod-divider"><div class="mod-pill" style="background:#00AEEF">Module 1 — GitHub Setup</div></div>
+
+<div class="step-card" id="step1">
+  <div class="step-head" style="background:linear-gradient(135deg,#00AEEF,#0070b8)">
+    <div class="step-num">1</div>
+    <div class="step-head-text"><div class="step-head-title">Create Your GitHub Account</div></div>
+    <div class="step-head-time">~5 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">GitHub is the home of your code and your free website hosting. Think of it as Google Drive, but for code. Everything you build goes here first.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div><strong>Sign up with Gmail.</strong> Use your Gmail account to create GitHub. This keeps everything connected and means fewer passwords to remember.</div>
+    </div>
+
+    <ol class="click-list">
+      <li>Open your browser and go to <strong>github.com</strong>. Press Enter.</li>
+      <li>Click <span class="chip blue">Sign up</span> in the top right corner.</li>
+      <li>On the sign-up page, look for the option: <div class="gmail-badge"><div class="gmail-g">G</div> Continue with Google</div> Click it. Sign in with your Gmail account.</li>
+      <li>GitHub will ask you to confirm your Google account. Click <span class="chip green">Continue</span>.</li>
+      <li>GitHub will ask "How many people will be using GitHub?" Select <span class="chip blue">Just me</span>.</li>
+      <li>It may ask your role. Select <span class="chip blue">Teacher</span> or <span class="chip blue">Student</span> to unlock free premium features for educators.<sup style="color:var(--blue)">[1]</sup></li>
+      <li>Select the <span class="chip blue">Free</span> plan. Click <span class="chip green">Continue for free</span>.</li>
+      <li>You are now inside GitHub. ✅</li>
+    </ol>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>Username tip:</strong> GitHub will create a username from your Gmail name. You can change it. Choose something professional — it will appear in your website URL. Example: <strong>rain-institute</strong> → becomes <em>rain-institute.github.io</em>. To change: click your profile picture → Settings → change username.</div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" id="step2">
+  <div class="step-head" style="background:linear-gradient(135deg,#0080c0,#005a8a)">
+    <div class="step-num">2</div>
+    <div class="step-head-text"><div class="step-head-title">Create Your Special Repository</div></div>
+    <div class="step-head-time">~5 mins</div>
+  </div>
+  <div class="step-body">
+    <div class="callout info">
+      <div class="callout-icon">ℹ️</div>
+      <div><strong>Two types of GitHub site — pick one:</strong>
+        <br><br>
+        <strong>Option A — User Site (1 per account):</strong> Name the repo exactly <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px">YOURUSERNAME.github.io</code>. Your site lives at <em>https://YOURUSERNAME.github.io</em>. You only get one of these.
+        <br><br>
+        <strong>Option B — Project Site (unlimited):</strong> Name the repo anything, e.g. <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px">ai-training</code>. Your site lives at <em>https://YOURUSERNAME.github.io/ai-training</em>. You can have as many as you like.
+        <br><br>
+        ✅ <strong>For a custom domain (like rain-institute.ng), both options work equally well.</strong> Choose Option A for your main institution website, Option B for sub-projects.
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <div class="callout-icon">🔴</div>
+      <div><strong>Critical for Option A:</strong> The repository name must be exactly <code style="background:#f0f0f0;padding:2px 7px;border-radius:4px">YOURUSERNAME.github.io</code>. Type it wrong and GitHub Pages will not activate automatically.</div>
+    </div>
+
+    <ol class="click-list">
+      <li>Inside GitHub, click the <span class="chip blue">+</span> icon in the top-right corner.</li>
+      <li>Click <span class="chip blue">New repository</span> from the dropdown.</li>
+      <li>In the <strong>Repository name</strong> box, type your chosen name (see options above).</li>
+      <li>You should see a green message: <em>"✓ [name] is available."</em></li>
+      <li>Select <span class="chip blue">Public</span>. Required for free GitHub Pages hosting.</li>
+      <li>Tick <span class="chip blue">Add a README file</span>.</li>
+      <li>Click <span class="chip green">Create repository</span>. ✅</li>
+    </ol>
+  </div>
+</div>
+
+<div class="step-card" id="step3">
+  <div class="step-head" style="background:linear-gradient(135deg,#004a70,#002e48)">
+    <div class="step-num">3</div>
+    <div class="step-head-text"><div class="step-head-title">Enable GitHub Pages — Your Free Website</div></div>
+    <div class="step-head-time">~3 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">GitHub Pages turns your repository into a live website — automatically, for free, forever.</p>
+    <ol class="click-list">
+      <li>Inside your repository, click the <span class="chip blue">Settings</span> tab (top row of tabs).</li>
+      <li>In the left sidebar, scroll down and click <span class="chip blue">Pages</span>.</li>
+      <li>Under <strong>Build and deployment → Source</strong>, select <span class="chip blue">Deploy from a branch</span>.</li>
+      <li>Under <strong>Branch</strong>, select <span class="chip blue">main</span> and <span class="chip blue">/ (root)</span>. Click <span class="chip green">Save</span>.</li>
+      <li>Wait 1–2 minutes. A green box will appear: <em>"Your site is live at https://YOURUSERNAME.github.io"</em></li>
+      <li>Click that link. Your website is live! 🌍</li>
+    </ol>
+    <div class="callout tip">
+      <div class="callout-icon">💡</div>
+      <div>If the green box doesn't appear immediately, wait 2 full minutes and refresh the page. Do not click Save multiple times.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODULE 2: WEBSITE ─── -->
+<div class="mod-divider"><div class="mod-pill" style="background:#2EC4B6">Module 2 — Building Your Website</div></div>
+
+<div class="step-card" id="step4">
+  <div class="step-head" style="background:linear-gradient(135deg,#2EC4B6,#1a8a82)">
+    <div class="step-num">4</div>
+    <div class="step-head-text"><div class="step-head-title">Build Your Training Portal Using AI</div></div>
+    <div class="step-head-time">~15 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">You will speak or type your requirements to Claude, get the HTML code, and upload it to GitHub. Your website is live within minutes.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">🎙️</div>
+      <div><strong>Use voice-to-text here!</strong> This prompt is long. Instead of typing it, speak it into WhatsApp → get the text from Meta AI → copy → paste into Claude. See the Voice-to-Text section above for full instructions.</div>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">📋 Paste this into Claude (after editing your institute name)</div>
+      <div class="prompt-text">Write me a complete, professional HTML page for a training institute called [REPLACE WITH YOUR INSTITUTE NAME]. Include: a navigation bar with links to Home, Courses, About, and Contact. A large hero section with a headline and an "Enroll Now" button. A section showing three course cards — AI Fundamentals, Data Science, and Robotics. A footer with contact information. Put all CSS inside the same file. Make it fully responsive for mobile phones. Use a professional navy blue and gold colour scheme. Include hover effects on buttons and cards. Make it look like a real Nigerian educational institution.</div>
+    </div>
+
+    <ol class="click-list">
+      <li>Go to <strong>claude.ai</strong>. Log in with your Gmail account: <div class="gmail-badge"><div class="gmail-g">G</div> Continue with Google</div></li>
+      <li>Paste the prompt above (with your institute name). Press Enter.</li>
+      <li>Claude generates HTML code. Click <span class="chip blue">Copy</span> at the top of the code block.</li>
+      <li>Go back to GitHub → your repository → click <span class="chip blue">Add file</span> → <span class="chip blue">Create new file</span>.</li>
+      <li>Name the file: <strong>index.html</strong></li>
+      <li>Paste the code into the text area. Click <span class="chip green">Commit changes</span> → <span class="chip green">Commit changes</span> again.</li>
+      <li>Wait 1–2 minutes. Visit <strong>https://YOURUSERNAME.github.io</strong> to see your website live! ✅</li>
+    </ol>
+  </div>
+</div>
+
+<div class="step-card" id="step5">
+  <div class="step-head" style="background:linear-gradient(135deg,#1a8a82,#0d5e5a)">
+    <div class="step-num">5</div>
+    <div class="step-head-text"><div class="step-head-title">Attach a Custom Domain Name</div></div>
+    <div class="step-head-time">~15 mins + DNS wait</div>
+  </div>
+  <div class="step-body">
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <tr><th>Platform</th><th>Domain Types</th><th>Price (approx.)</th></tr>
+        <tr><td>Whogohost</td><td>.com.ng, .ng, .com</td><td class="free">₦3,000–₦7,000/yr</td></tr>
+        <tr><td>QServers</td><td>.com.ng Nigerian domains</td><td class="free">₦2,500–₦5,000/yr</td></tr>
+        <tr><td>Go45</td><td>.com.ng, .ng</td><td class="free">₦3,000–₦6,000/yr</td></tr>
+        <tr><td>Remita.ng</td><td>Nigerian domains</td><td class="free">₦2,000–₦5,000/yr</td></tr>
+        <tr><td>Namecheap</td><td>.com international</td><td class="paid">$8–$12/yr</td></tr>
+        <tr><td>GoDaddy</td><td>.com international</td><td class="paid">$10–$15/yr</td></tr>
+      </table>
+    </div>
+
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin:16px 0 8px;font-weight:700;">Part A — Add DNS Records to Your Domain Registrar</p>
+    <p style="color:var(--text2);font-size:13.5px;line-height:1.75;margin-bottom:12px;">You must add <strong>all four</strong> A records plus the CNAME. Adding all four A records gives your site redundancy — if one of GitHub's servers goes down, traffic automatically moves to another.<sup style="color:var(--blue)">[2]</sup></p>
+
+    <div class="data-table-wrap">
+      <table class="data-table">
+        <tr><th>Type</th><th>Host / Name</th><th>Value</th></tr>
+        <tr><td>A</td><td>@</td><td>185.199.108.153</td></tr>
+        <tr><td>A</td><td>@</td><td>185.199.109.153</td></tr>
+        <tr><td>A</td><td>@</td><td>185.199.110.153</td></tr>
+        <tr><td>A</td><td>@</td><td>185.199.111.153</td></tr>
+        <tr><td>CNAME</td><td>www</td><td>YOURUSERNAME.github.io</td></tr>
+      </table>
+    </div>
+
+    <ol class="click-list">
+      <li>Buy your domain from any registrar above. Log into its dashboard.</li>
+      <li>Find <span class="chip blue">DNS Management</span> or <span class="chip blue">Manage DNS</span> for your domain.</li>
+      <li>Add all <strong>four A records</strong> (one at a time) and the <strong>CNAME record</strong> exactly as shown in the table above. Save each one.</li>
+    </ol>
+
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin:16px 0 8px;font-weight:700;">Part B — Link the Domain in GitHub</p>
+    <ol class="click-list">
+      <li>In GitHub → your repository → <span class="chip blue">Settings</span> → <span class="chip blue">Pages</span>.</li>
+      <li>Under <strong>Custom domain</strong>, type your domain name (e.g. <em>rain-institute.ng</em>). Click <span class="chip green">Save</span>.</li>
+      <li>Once GitHub verifies it, tick <span class="chip green">Enforce HTTPS</span>. This gives your site the padlock security icon.</li>
+    </ol>
+
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin:16px 0 8px;font-weight:700;">Part C — Create the CNAME File in Your Repository</p>
+    <div class="callout danger">
+      <div class="callout-icon">🔴</div>
+      <div><strong>Important:</strong> You must create a file named <strong>CNAME</strong> (capital letters, no extension) inside your repository. Without this file, your custom domain link breaks every time you redeploy or push new code.</div>
+    </div>
+    <ol class="click-list">
+      <li>In your repository, click <span class="chip blue">Add file</span> → <span class="chip blue">Create new file</span>.</li>
+      <li>In the filename box, type exactly: <strong>CNAME</strong> (all capitals, no .txt or any extension).</li>
+      <li>In the content area, type only your domain name on one line, e.g: <code style="background:#f0f0f0;padding:2px 7px;border-radius:4px">rain-institute.ng</code></li>
+      <li>Click <span class="chip green">Commit changes</span>. Your domain link is now permanently saved. ✅</li>
+    </ol>
+
+    <div class="callout warn">
+      <div class="callout-icon">⏱️</div>
+      <div><strong>DNS propagation time:</strong> After adding DNS records, your domain may take anywhere from <strong>30 minutes to 24 hours</strong> to go fully live — depending on your registrar and internet providers. This is normal. Do not panic if it is not immediate. Check again the next morning if needed.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODULE 3: BACKEND ─── -->
+<div class="mod-divider"><div class="mod-pill" style="background:#F4A261">Module 3 — Backend Server</div></div>
+
+<div class="step-card" id="step6">
+  <div class="step-head" style="background:linear-gradient(135deg,#F4A261,#c07a3a)">
+    <div class="step-num">6</div>
+    <div class="step-head-text"><div class="step-head-title">Create Your Render Account — Free Server</div></div>
+    <div class="step-head-time">~5 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">Render hosts your server for free and automatically re-deploys it every time you update your code on GitHub.<sup style="color:var(--blue)">[3]</sup></p>
+
+    <ol class="click-list">
+      <li>Go to <strong>render.com</strong>.</li>
+      <li>Click <span class="chip green">Get Started for Free</span>.</li>
+      <li>Click <span class="chip gmail">Continue with Google</span>. Sign in with your Gmail. This connects Render to your Google account — no new password needed.</li>
+      <li>Render may ask to also connect your GitHub. Click <span class="chip green">Connect GitHub</span>. Authorise it.</li>
+      <li>You are inside the Render dashboard. It will look empty — that is correct. ✅</li>
+    </ol>
+
+    <div class="callout warn">
+      <div class="callout-icon">⏱️</div>
+      <div><strong>Free tier note:</strong> On Render's free plan, your server sleeps after 15 minutes of no activity. The first request after sleep takes ~30 seconds to respond. For a live training institute with regular use, upgrade to Starter at $7/month to keep it always-on.</div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" id="step7">
+  <div class="step-head" style="background:linear-gradient(135deg,#c07a3a,#8a5216)">
+    <div class="step-num">7</div>
+    <div class="step-head-text"><div class="step-head-title">Connect Render to GitHub — Auto-Deploy</div></div>
+    <div class="step-head-time">~10 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">Once connected, every code push to GitHub automatically updates your live server. No manual uploading ever again.</p>
+
+    <div class="callout warn">
+      <div class="callout-icon">⚠️</div>
+      <div><strong>Before this step:</strong> Create a second GitHub repository called <strong>training-portal-backend</strong>. Set it to <span class="chip blue">Private</span>. This is where your server code will live — separate from your public website.</div>
+    </div>
+
+    <ol class="click-list">
+      <li>In Render dashboard, click <span class="chip green">New +</span> → <span class="chip blue">Web Service</span>.</li>
+      <li>Under "Connect a repository," find <strong>training-portal-backend</strong>. Click <span class="chip green">Connect</span>.</li>
+      <li><strong>Name:</strong> type <strong>training-portal-api</strong></li>
+      <li><strong>Region:</strong> select <span class="chip blue">Frankfurt (EU Central)</span> — closest to Nigeria for fastest response times.</li>
+      <li><strong>Environment:</strong> select <span class="chip blue">Python 3</span></li>
+      <li><strong>Build Command:</strong> type <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px">pip install -r requirements.txt</code></li>
+      <li><strong>Start Command:</strong> type <code style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:12px">python app.py</code></li>
+      <li>Scroll down, select <span class="chip blue">Free</span> plan.</li>
+      <li>Click <span class="chip green">Create Web Service</span>. Deployment takes 2–5 minutes the first time.</li>
+      <li>Once live, you see a green <strong>"Live"</strong> badge and a URL like <em>training-portal-api.onrender.com</em>. ✅</li>
+    </ol>
+
+    <div class="callout danger">
+      <div class="callout-icon">🔴</div>
+      <div><strong>Environment Variables (Secrets):</strong> Never put passwords in your code. In Render → your service → left sidebar → <span class="chip blue">Environment</span> → <span class="chip green">Add Environment Variable</span> for each secret. We will add these as we go.</div>
+    </div>
+  </div>
+</div>
+
+<div class="step-card" id="step8">
+  <div class="step-head" style="background:linear-gradient(135deg,#3ecf8e,#1a8a5a)">
+    <div class="step-num">8</div>
+    <div class="step-head-text"><div class="step-head-title">Set Up Your Database with Neon</div></div>
+    <div class="step-head-time">~8 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">Neon provides a free PostgreSQL database where all your student records, assignments, and grades are stored.<sup style="color:var(--blue)">[4]</sup></p>
+    <ol class="click-list">
+      <li>Go to <strong>neon.tech</strong>. Click <span class="chip green">Sign Up Free</span>.</li>
+      <li>Click <span class="chip gmail">Continue with Google</span>. Sign in with Gmail.</li>
+      <li>Project name: type <strong>training-portal</strong>. Click <span class="chip green">Create project</span>.</li>
+      <li>Neon shows a <strong>Connection string</strong> starting with <code style="font-size:11px;background:#f0f0f0;padding:1px 5px;border-radius:3px">postgresql://</code>. Click <span class="chip blue">Copy</span>.</li>
+      <li>In Render → your service → <span class="chip blue">Environment</span> → <span class="chip green">Add Environment Variable</span>:</li>
+      <li>Key: <strong>DATABASE_URL</strong> · Value: paste the connection string. Click <span class="chip green">Save Changes</span>. ✅</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ─── MODULE 4: SERVICES ─── -->
+<div class="mod-divider"><div class="mod-pill" style="background:#7B2D8B">Module 4 — Services & AI Marking</div></div>
+
+<div class="step-card" id="step9">
+  <div class="step-head" style="background:linear-gradient(135deg,#7B2D8B,#4a1256)">
+    <div class="step-num">9</div>
+    <div class="step-head-text"><div class="step-head-title">Add Email with Mailtrap</div></div>
+    <div class="step-head-time">~5 mins</div>
+  </div>
+  <div class="step-body">
+    <ol class="click-list">
+      <li>Go to <strong>mailtrap.io</strong>. Click <span class="chip green">Sign Up Free</span>.</li>
+      <li>Click <span class="chip gmail">Sign up with Google</span>. Use Gmail.</li>
+      <li>After logging in: left sidebar → <span class="chip blue">Email Sending</span> → <span class="chip blue">SMTP/API Settings</span>.</li>
+      <li>You will see: Host, Port, Username, Password. Copy each one.</li>
+      <li>In Render → Environment, add these four variables:
+        <div class="code-block" style="margin-top:10px">MAIL_HOST = smtp.mailtrap.io
+MAIL_PORT = 587
+MAIL_USER = (your Mailtrap username)
+MAIL_PASS = (your Mailtrap password)</div>
+      </li>
+      <li>Click <span class="chip green">Save Changes</span>. ✅</li>
+    </ol>
+  </div>
+</div>
+
+<div class="step-card" id="step10">
+  <div class="step-head" style="background:linear-gradient(135deg,#5a2070,#361240)">
+    <div class="step-num">10</div>
+    <div class="step-head-text"><div class="step-head-title">Build Your Server Using AI Prompt Engineering</div></div>
+    <div class="step-head-time">~20 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">You will speak or type this prompt to Claude, get the Python server code, and upload it to GitHub. Render auto-deploys it.</p>
+
+    <div class="callout info">
+      <div class="callout-icon">🎙️</div>
+      <div><strong>Speak this prompt!</strong> This is a long prompt — perfect for voice-to-text. Open WhatsApp → Meta AI → hold microphone → speak the prompt below. Tell Meta AI: "type this word for word, no edits." Then paste the text into Claude.</div>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">📋 Server Code Prompt — Speak or Paste into Claude</div>
+      <div class="prompt-text">Write me a complete Python Flask web server for a training management system. Use PostgreSQL with psycopg2. The server must have these endpoints: POST /api/register — accepts email, password, full name. Creates a student account. Sends a welcome email. POST /api/login — accepts email and password. Returns a JWT token if valid. POST /api/forgot-password — accepts email. Generates a reset token and sends a reset email. GET /api/dashboard — requires JWT token in the Authorization header. Returns student profile and enrolled courses. GET /api/courses — returns all available courses as JSON. Use environment variables for DATABASE_URL, JWT_SECRET, MAIL_HOST, MAIL_PORT, MAIL_USER, and MAIL_PASS. Include full error handling. Run on port 5000. Also give me a requirements dot txt file listing all dependencies.</div>
+    </div>
+
+    <ol class="click-list">
+      <li>Paste the prompt into Claude. Claude generates two files: <strong>app.py</strong> and <strong>requirements.txt</strong>.</li>
+      <li>In your <strong>training-portal-backend</strong> GitHub repository: click <span class="chip blue">Add file</span> → <span class="chip blue">Create new file</span>.</li>
+      <li>Name it <strong>app.py</strong>. Paste the server code. Click <span class="chip green">Commit changes</span>.</li>
+      <li>Create another file. Name it <strong>requirements.txt</strong>. Paste that content. Click <span class="chip green">Commit changes</span>.</li>
+      <li>In Render → Environment → Add: <strong>JWT_SECRET</strong> = any long random string of letters and numbers. Click <span class="chip green">Save Changes</span>.</li>
+      <li>Render auto-detects the new code and re-deploys. Watch the Logs tab — look for <em>"Server running on port 5000"</em>. ✅</li>
+    </ol>
+  </div>
+</div>
+
+<div class="step-card" id="step11">
+  <div class="step-head" style="background:linear-gradient(135deg,#E63946,#a01c26)">
+    <div class="step-num">11</div>
+    <div class="step-head-text"><div class="step-head-title">Add Nigerian Payments with Paystack</div></div>
+    <div class="step-head-time">~10 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">Paystack accepts cards, bank transfers, USSD, and mobile money. A personal Gmail account is sufficient to start receiving payments.<sup style="color:var(--blue)">[5]</sup></p>
+    <ol class="click-list">
+      <li>Go to <strong>paystack.com</strong>. Click <span class="chip green">Create a Free Account</span>.</li>
+      <li>Sign up using your Gmail address. Verify your email.</li>
+      <li>Inside the Paystack dashboard: <span class="chip blue">Settings</span> → <span class="chip blue">API Keys & Webhooks</span>.</li>
+      <li>Copy your <strong>Test Secret Key</strong> (starts with <code>sk_test_</code>).</li>
+      <li>In Render → Environment: Key <strong>PAYSTACK_SECRET_KEY</strong> · Value: paste your key. Click <span class="chip green">Save Changes</span>.</li>
+      <li>Ask Claude to add payment to your server: <em>"Add a Paystack payment endpoint POST /api/enroll to my Flask server. Accept course_id and JWT token. Create a Paystack transaction for the course fee. Return the payment URL."</em></li>
+    </ol>
+  </div>
+</div>
+
+<div class="step-card" id="step12">
+  <div class="step-head" style="background:linear-gradient(135deg,#4a1256,#7B2D8B)">
+    <div class="step-num">12</div>
+    <div class="step-head-text"><div class="step-head-title">🤖 AI Assignment Marking with Claude API</div></div>
+    <div class="step-head-time">~20 mins</div>
+  </div>
+  <div class="step-body">
+    <p style="color:var(--text2);font-size:14px;line-height:1.75;margin-bottom:16px;">This is the centrepiece. A student submits an essay. Your server sends it to Claude with a grading rubric. Claude returns a score and written feedback in seconds. 300 essays marked in under 10 minutes.</p>
+
+    <ol class="click-list">
+      <li>Go to <strong>console.anthropic.com</strong>. Click <span class="chip gmail">Continue with Google</span>. Sign in with Gmail.</li>
+      <li>Click <span class="chip blue">API Keys</span> in the left sidebar. Click <span class="chip green">Create Key</span>.</li>
+      <li>Name your key <strong>training-portal</strong>. Copy the key immediately — it starts with <code>sk-ant-</code>. <strong>Save it — Anthropic shows it only once.</strong></li>
+      <li>In Render → Environment: Key <strong>CLAUDE_API_KEY</strong> · Value: paste your key. Click <span class="chip green">Save Changes</span>.</li>
+    </ol>
+
+    <div class="prompt-box">
+      <div class="prompt-label">📋 Ask Claude to add AI marking to your server</div>
+      <div class="prompt-text">Add an assignment marking endpoint to my Flask server. POST /api/submit-assignment — accepts assignment_id, student JWT token, and essay_text. Call the Anthropic Claude API using model claude-sonnet-4-20250514 with this system prompt: You are a university lecturer at a Nigerian institution. Mark this student essay fairly. Return ONLY valid JSON with fields: content_score (0 to 10), argument_score (0 to 10), language_score (0 to 10), total_score (sum out of 30), grade (A B C D or F), and feedback (two to three sentences of constructive comments for the student directly. Save the result to the database. Return the score and feedback to the student. Handle API errors gracefully.</div>
+    </div>
+
+    <div class="callout tip">
+      <div class="callout-icon">💰</div>
+      <div><strong>Claude API cost:</strong> Marking 300 student essays costs approximately ₦150–₦400 total. Significantly cheaper than any human marking arrangement at scale.<sup style="color:var(--blue)">[6]</sup></div>
+    </div>
+
+    <div class="code-block">
+<span style="color:#8b949e">// Sample response from Claude API:</span>
+{
+  <span style="color:#a5d6ff">"content_score"</span>: 8,
+  <span style="color:#a5d6ff">"argument_score"</span>: 6,
+  <span style="color:#a5d6ff">"language_score"</span>: 7,
+  <span style="color:#a5d6ff">"total_score"</span>: 21,
+  <span style="color:#a5d6ff">"grade"</span>: <span style="color:#79c0ff">"B"</span>,
+  <span style="color:#a5d6ff">"feedback"</span>: <span style="color:#79c0ff">"Your analysis of AI in Nigerian 
+  agriculture is strong. Strengthen your 
+  argument with specific Nigerian examples 
+  like Farmcrowdy. Grammar is generally 
+  clear — watch your sentence structure."</span>
+}
+    </div>
+  </div>
+</div>
+
+<!-- EXPAND -->
+<div class="section" id="expand">
+  <div class="mob-sticky-head">🚀 Expanding Further</div>
+  <div class="section-title">🚀 What to Build Next</div>
+  <div class="section-desc">Your portal is now functional. Here is what to build next, in order of impact:</div>
+  <div class="expand-grid">
+    <div class="expand-card" style="border-top-color:#00AEEF">
+      <div class="ec-icon">📊</div>
+      <div class="ec-title">Adaptive Learning Paths</div>
+      <div class="ec-body">Based on quiz scores, AI recommends the next module for each student's level. No two students follow the same path.</div>
+    </div>
+    <div class="expand-card" style="border-top-color:#2EC4B6">
+      <div class="ec-icon">📋</div>
+      <div class="ec-title">QR Attendance</div>
+      <div class="ec-body">Students scan a QR code to check in. AI flags students below 70% attendance before it is too late.</div>
+    </div>
+    <div class="expand-card" style="border-top-color:#F4A261">
+      <div class="ec-icon">🔍</div>
+      <div class="ec-title">Plagiarism Detection</div>
+      <div class="ec-body">Before grading, AI checks each essay against all previous submissions and flags similarity above 70%.</div>
+    </div>
+    <div class="expand-card" style="border-top-color:#7B2D8B">
+      <div class="ec-icon">💰</div>
+      <div class="ec-title">Fee Tracking Dashboard</div>
+      <div class="ec-body">Live dashboard showing paid vs outstanding. Automated WhatsApp or SMS reminders to those with unpaid fees.</div>
+    </div>
+    <div class="expand-card" style="border-top-color:#E63946">
+      <div class="ec-icon">📝</div>
+      <div class="ec-title">WAEC/JAMB Practice</div>
+      <div class="ec-body">AI generates unlimited practice questions in any subject. Marks answers instantly. Explains every wrong answer.</div>
+    </div>
+    <div class="expand-card" style="border-top-color:#264653">
+      <div class="ec-icon">📈</div>
+      <div class="ec-title">Analytics Dashboard</div>
+      <div class="ec-body">Department-level charts showing cohort trends, at-risk groups, and course completion rates. Exportable as PDF.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHOLARSHIP AD -->
+<div class="schol-ad">
+  <div class="schol-ad-body">
+    <div>
+      <img src="https://scholarship.rainigeria.com/static/rainlogo.jpg"
+           alt="RAIN"
+           style="height:44px;background:white;padding:3px 8px;border-radius:6px;object-fit:contain;margin-bottom:14px;"
+           onerror="this.style.display='none'"/>
+      <div class="schol-tag">RAIN Nigeria — Scholarship Programme</div>
+      <h3>Invest in Your AI Future.<br>Scholarships Now Open.</h3>
+      <p>RAIN offers funded training programmes in Artificial Intelligence, Robotics, and Data Science for Nigerian students, educators, and professionals. Applications are open to individuals and institutions across all 36 states.</p>
+      <div class="schol-btns">
+        <a href="https://scholarship.rainigeria.com" target="_blank" class="schol-btn-primary">Apply Now →</a>
+        <a href="https://scholarship.rainigeria.com" target="_blank" class="schol-btn-secondary">Learn More</a>
+      </div>
+    </div>
+    <img src="https://scholarship.rainigeria.com/static/schimag.jpg"
+         alt="RAIN Scholarship"
+         class="schol-img"
+         onerror="this.style.display='none'"/>
+  </div>
+  <div class="schol-ad-foot">scholarship.rainigeria.com &nbsp;|&nbsp; Robotics and Artificial Intelligence Nigeria &nbsp;|&nbsp; Ibadan, Oyo State</div>
+</div>
+
+<!-- FOOTNOTES -->
+<div class="footnotes" id="footnotes">
+  <h3>Footnotes & References</h3>
+  <div class="fn"><div class="fn-num">[1]</div><div>GitHub Education offers verified educators and students free GitHub Pro, including GitHub Codespaces and advanced tools. Apply at education.github.com with an institutional email. Source: education.github.com</div></div>
+  <div class="fn"><div class="fn-num">[2]</div><div>GitHub's four A record IP addresses for apex domain configuration: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153. Adding all four provides redundancy. Source: docs.github.com/pages/configuring-a-custom-domain</div></div>
+  <div class="fn"><div class="fn-num">[3]</div><div>Render's free tier provides 750 compute hours/month, 100GB bandwidth, and automatic TLS certificates. Free services sleep after 15 minutes of inactivity with ~30s cold start. Starter plan at $7/month removes this. Source: render.com/pricing</div></div>
+  <div class="fn"><div class="fn-num">[4]</div><div>Neon free tier: 0.5GB storage, 1 project, 10 branches, 191.9 compute hours/month. PostgreSQL is open-source with 35+ years of development. Source: neon.tech/pricing</div></div>
+  <div class="fn"><div class="fn-num">[5]</div><div>Paystack founded in Lagos 2015, acquired by Stripe 2020. Processes payments for 200,000+ Nigerian businesses. Fee: 1.5% local cards (capped at ₦2,000), 3.9% + ₦100 international. No monthly fees. Source: paystack.com/pricing</div></div>
+  <div class="fn"><div class="fn-num">[6]</div><div>Claude Sonnet API pricing as of April 2026: $3.00 per million input tokens, $15.00 per million output tokens. A 500-word essay (~700 tokens) with 200-token feedback response costs approximately $0.000003 per student. 300 students total: ~$0.09 (under ₦150). Source: anthropic.com/pricing</div></div>
+  <div class="fn"><div class="fn-num">[7]</div><div>This manual was produced by RAIN (Robotics and Artificial Intelligence Nigeria) for the 5th National Summit on AI & Robotics, organised by the Nigeria Computer Society (NCS), Katsina, April 2026. All platform references are independent; RAIN receives no commercial consideration from mentions made.</div></div>
+
+  <div style="margin-top:28px;padding:22px;background:var(--navy);border-radius:var(--radius-lg);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+    <img src="https://scholarship.rainigeria.com/static/rainlogo.jpg"
+         alt="RAIN"
+         style="height:44px;background:white;padding:3px 8px;border-radius:6px;object-fit:contain;"
+         onerror="this.outerHTML='<div style=background:var(--blue);color:white;font-weight:900;font-size:18px;padding:5px 12px;border-radius:6px>RAIN</div>'"/>
+    <div>
+      <div style="font-weight:800;font-size:15px;color:white;">Robotics and Artificial Intelligence Nigeria</div>
+      <div style="color:rgba(255,255,255,.4);font-size:12px;margin-top:2px;">Training Manual · NCS National Summit · Katsina · April 2026 · Dr. Olusola Ayoola MNCS</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page-body -->
+</div><!-- end main-content -->
+</div><!-- end desktop-shell -->
+
+<script>
+// Progress bar
+const fill = document.getElementById('progressFill');
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  fill.style.width = (scrolled / total * 100) + '%';
+});
+
+// Active nav link highlighting (desktop sidebar)
+const sections = document.querySelectorAll('[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const bnavItems = document.querySelectorAll('.bnav-item');
+
+function updateNav() {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(n => {
+    n.classList.remove('active');
+    if (n.getAttribute('href') === '#' + current) n.classList.add('active');
+  });
+  bnavItems.forEach(n => {
+    n.classList.remove('active');
+    if (n.getAttribute('href') === '#' + current) n.classList.add('active');
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+// Smooth scroll for all anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      const isMobile = window.innerWidth <= 768;
+      const offset = isMobile ? 70 : 20;
+      window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+
+<style>
+.ra-fab {
+  position: fixed; bottom: 90px; right: 20px; z-index: 500;
+  width: 56px; height: 56px; border-radius: 50%;
+  background: linear-gradient(135deg, #7B2D8B, #4a1256);
+  color: white; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(123,45,139,0.45);
+  font-size: 24px; transition: transform .15s, box-shadow .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ra-fab:hover { transform: scale(1.08); box-shadow: 0 6px 22px rgba(123,45,139,.55); }
+.ra-fab:active { transform: scale(.95); }
+.ra-fab.reading { background: linear-gradient(135deg, #E63946, #a01c26); }
+.ra-tooltip {
+  position: fixed; bottom: 156px; right: 14px; z-index: 499;
+  background: #1a1a2e; color: white; font-size: 11px; font-weight: 800;
+  padding: 5px 12px; border-radius: 20px; white-space: nowrap;
+  opacity: 0; pointer-events: none; transform: translateY(6px);
+  transition: opacity .2s, transform .2s;
+  font-family: 'Nunito', sans-serif;
+}
+.ra-fab:hover ~ .ra-tooltip { opacity: 1; transform: translateY(0); }
+.ra-player {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 600;
+  background: #1a1a2e; border-top: 2px solid #7B2D8B;
+  padding: 10px 18px 14px; display: none; flex-direction: column; gap: 8px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.35);
+  font-family: 'Nunito', sans-serif;
+}
+.ra-player.visible { display: flex; }
+.ra-row1 { display: flex; align-items: center; gap: 12px; }
+.ra-info { flex: 1; min-width: 0; }
+.ra-section { color: #d4b0e8; font-size: 12px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ra-chunk  { color: rgba(255,255,255,.45); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.ra-ctrls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.ra-c {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; transition: background .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.ra-c.prev, .ra-c.next { background: rgba(255,255,255,.08); color: white; }
+.ra-c.prev:hover, .ra-c.next:hover { background: rgba(255,255,255,.18); }
+.ra-c.play { background: #7B2D8B; color: white; width: 42px; height: 42px; font-size: 17px; }
+.ra-c.play:hover { background: #9B3DAB; }
+.ra-c.play.paused { background: #2EC4B6; }
+.ra-c.stop { background: rgba(230,57,70,.18); color: #f08080; }
+.ra-c.stop:hover { background: rgba(230,57,70,.35); }
+.ra-row2 { display: flex; align-items: center; gap: 10px; }
+.ra-prog-bg { flex: 1; height: 4px; background: rgba(255,255,255,.1); border-radius: 4px; overflow: hidden; }
+.ra-prog-fill { height: 100%; background: linear-gradient(90deg, #7B2D8B, #2EC4B6); border-radius: 4px; transition: width .3s; width: 0%; }
+.ra-cnt { color: rgba(255,255,255,.35); font-size: 11px; font-weight: 700; white-space: nowrap; }
+.ra-row3 { display: flex; align-items: center; gap: 7px; }
+.ra-spd-lbl { color: rgba(255,255,255,.35); font-size: 11px; font-weight: 700; }
+.ra-spd {
+  background: rgba(255,255,255,.07); border: none; color: rgba(255,255,255,.55);
+  font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 12px;
+  cursor: pointer; font-family: 'Nunito', sans-serif; transition: background .12s;
+}
+.ra-spd.on { background: #7B2D8B; color: white; }
+.ra-spd:hover { background: rgba(255,255,255,.16); }
+@media (min-width: 769px) {
+  .ra-fab { bottom: 32px; right: 32px; }
+  .ra-tooltip { bottom: 100px; right: 26px; }
+}
+</style>
+
+<button class="ra-fab" id="raFab" aria-label="Read page aloud">🔊</button>
+<div class="ra-tooltip" id="raTip">Read Aloud</div>
+
+<div class="ra-player" id="raPlayer">
+  <div class="ra-row1">
+    <div class="ra-info">
+      <div class="ra-section" id="raSec">Ready to read</div>
+      <div class="ra-chunk"  id="raCk">Tap 🔊 or press play to start</div>
+    </div>
+    <div class="ra-ctrls">
+      <button class="ra-c prev" id="raPrev">⏮</button>
+      <button class="ra-c play" id="raPlay">▶</button>
+      <button class="ra-c next" id="raNext">⏭</button>
+      <button class="ra-c stop" id="raStop">⏹</button>
+    </div>
+  </div>
+  <div class="ra-row2">
+    <div class="ra-prog-bg"><div class="ra-prog-fill" id="raFill"></div></div>
+    <div class="ra-cnt" id="raCnt">— / —</div>
+  </div>
+  <div class="ra-row3">
+    <div class="ra-spd-lbl">Speed:</div>
+    <button class="ra-spd" data-s="0.8">0.8×</button>
+    <button class="ra-spd on" data-s="1">1×</button>
+    <button class="ra-spd" data-s="1.2">1.2×</button>
+    <button class="ra-spd" data-s="1.5">1.5×</button>
+    <button class="ra-spd" data-s="2">2×</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  if(!window.speechSynthesis){ document.getElementById('raFab').style.display='none'; return; }
+  const SS=window.speechSynthesis;
+  const fab=document.getElementById('raFab');
+  const tip=document.getElementById('raTip');
+  const player=document.getElementById('raPlayer');
+  const playBtn=document.getElementById('raPlay');
+  const stopBtn=document.getElementById('raStop');
+  const prevBtn=document.getElementById('raPrev');
+  const nextBtn=document.getElementById('raNext');
+  const secEl=document.getElementById('raSec');
+  const ckEl=document.getElementById('raCk');
+  const fillEl=document.getElementById('raFill');
+  const cntEl=document.getElementById('raCnt');
+
+  let secs=[]; let si=0; let ci=0;
+  let playing=false; let paused=false; let spd=1;
+  let kv; // keepalive interval
+
+  function buildSecs(){
+    secs=[];
+    document.querySelectorAll('.section,.step-card,.voice-hero').forEach(el=>{
+      if(el.closest('.footnotes')||el.closest('nav')||el.closest('.ra-player')) return;
+      const titleEl=el.querySelector('.section-title,.step-head-title,h2,h3');
+      const title=titleEl?titleEl.textContent.trim():'Section';
+      const clone=el.cloneNode(true);
+      ['.code-block','.prompt-box','.sidebar','.app-topbar','.bottom-nav','script','style','.data-table','svg','.schol-ad-foot','.ra-player'].forEach(s=>{
+        clone.querySelectorAll(s).forEach(e=>e.remove());
+      });
+      const raw=(clone.innerText||clone.textContent||'').replace(/\s+/g,' ').trim();
+      if(raw.length<30) return;
+      const chunks=splitChunks(raw,230);
+      if(chunks.length) secs.push({title,chunks,el});
+    });
+  }
+
+  function splitChunks(text,max){
+    const parts=text.match(/[^.!?]+[.!?]+[\s]*/g)||[text];
+    const out=[]; let cur='';
+    parts.forEach(p=>{ if((cur+p).length>max&&cur){ out.push(cur.trim()); cur=p; } else cur+=p; });
+    if(cur.trim()) out.push(cur.trim());
+    return out;
+  }
+
+  function total(){ return secs.reduce((a,s)=>a+s.chunks.length,0); }
+  function done(){ return secs.slice(0,si).reduce((a,s)=>a+s.chunks.length,0)+ci; }
+
+  function updateUI(){
+    if(!secs.length) return;
+    const s=secs[si]||secs[secs.length-1];
+    secEl.textContent=s.title;
+    const ck=s.chunks[ci]||'';
+    ckEl.textContent=ck.length>70?ck.slice(0,70)+'…':ck;
+    const pct=total()>0?Math.round(done()/total()*100):0;
+    fillEl.style.width=pct+'%';
+    cntEl.textContent=(si+1)+' / '+secs.length;
+  }
+
+  function speakChunk(txt,cb){
+    SS.cancel();
+    const u=new SpeechSynthesisUtterance(txt);
+    u.rate=spd; u.pitch=1;
+    u.lang='en-GB'; // clear British English — widely available, clear accent
+    u.onend=()=>{ if(cb) cb(); };
+    u.onerror=e=>{ if(e.error!=='interrupted'&&cb) cb(); };
+    SS.speak(u);
+  }
+
+  function readNext(){
+    if(!playing) return;
+    if(si>=secs.length){ stop(); return; }
+    const s=secs[si];
+    if(ci>=s.chunks.length){ si++; ci=0; if(si>=secs.length){ stop(); return; } if(ci===0) secs[si]&&secs[si].el&&secs[si].el.scrollIntoView({behavior:'smooth',block:'start'}); }
+    updateUI();
+    if(ci===0&&secs[si]&&secs[si].el) secs[si].el.scrollIntoView({behavior:'smooth',block:'start'});
+    speakChunk(secs[si].chunks[ci],()=>{ if(playing&&!paused){ ci++; readNext(); } });
+  }
+
+  function start(s,c){
+    buildSecs();
+    if(!secs.length){ alert('Nothing readable found on this page.'); return; }
+    si=s||0; ci=c||0;
+    playing=true; paused=false;
+    fab.classList.add('reading'); fab.textContent='🔇';
+    tip.textContent='Stop reading';
+    player.classList.add('visible');
+    playBtn.textContent='⏸'; playBtn.classList.remove('paused');
+    updateUI();
+    readNext();
+    kv=setInterval(()=>{ if(SS.speaking&&!SS.paused){ SS.pause(); SS.resume(); } },10000);
+  }
+
+  function pause(){
+    if(SS.speaking){ SS.pause(); paused=true; playBtn.textContent='▶'; playBtn.classList.add('paused'); }
+  }
+
+  function resume(){
+    if(SS.paused){ SS.resume(); paused=false; playBtn.textContent='⏸'; playBtn.classList.remove('paused'); }
+  }
+
+  function stop(){
+    SS.cancel(); playing=false; paused=false;
+    clearInterval(kv);
+    fab.classList.remove('reading'); fab.textContent='🔊';
+    tip.textContent='Read Aloud';
+    player.classList.remove('visible');
+    playBtn.textContent='▶'; playBtn.classList.remove('paused');
+    fillEl.style.width='0%'; cntEl.textContent='— / —';
+    secEl.textContent='Ready to read'; ckEl.textContent='Tap 🔊 or press play to start';
+  }
+
+  fab.addEventListener('click',()=>{
+    if(!playing&&!paused) start(0,0);
+    else if(playing&&!paused) pause();
+    else resume();
+  });
+  playBtn.addEventListener('click',()=>{
+    if(!playing) start(si,ci);
+    else if(paused) resume();
+    else pause();
+  });
+  stopBtn.addEventListener('click',stop);
+  prevBtn.addEventListener('click',()=>{
+    if(si>0){ SS.cancel(); si--; ci=0; if(playing) readNext(); else updateUI(); }
+  });
+  nextBtn.addEventListener('click',()=>{
+    if(si<secs.length-1){ SS.cancel(); si++; ci=0; if(playing) readNext(); else updateUI(); }
+  });
+  document.querySelectorAll('.ra-spd').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.ra-spd').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on'); spd=parseFloat(b.dataset.s);
+      if(playing&&!paused){ SS.cancel(); setTimeout(readNext,80); }
+    });
+  });
+  window.addEventListener('beforeunload',()=>SS.cancel());
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden&&playing) pause(); });
+})();
+</script>
+</body>
+</html>
