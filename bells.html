@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="theme-color" content="#0a0f1e"/>
+<title>CEN 510 — Special Topics in Computer Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --warn: #f59e0b;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --heading: #f8fafc;
+    --card: #141c2e;
+    --glow: 0 0 20px rgba(0,212,255,0.15);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,15,30,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    max-width: 768px;
+    margin: 0 auto;
+  }
+  .header-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .progress-ring-wrap { display: flex; align-items: center; gap: 8px; }
+  .progress-label { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; }
+  .progress-ring { transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+  .ring-fill { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round;
+    stroke-dasharray: 88; stroke-dashoffset: 88; transition: stroke-dashoffset 0.5s ease; }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    padding: 48px 20px 36px;
+    text-align: center;
+    overflow: hidden;
+    max-width: 768px;
+    margin: 0 auto;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%; transform: translateX(-50%);
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--heading);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .info-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+  }
+  .info-card .val { font-size: 16px; font-weight: 700; color: var(--heading); }
+  .info-card .lbl { font-size: 10px; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+
+  /* ── TIME BANNER ── */
+  .time-banner {
+    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.05));
+    border: 1px solid rgba(245,158,11,0.35);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 20px 24px;
+    max-width: 728px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .time-icon { font-size: 24px; flex-shrink: 0; }
+  .time-text strong { display: block; color: var(--warn); font-size: 13px; font-weight: 700; }
+  .time-text span { color: var(--muted); font-size: 12px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 0 20px;
+    margin-bottom: 12px;
+    max-width: 768px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── CHAPTER CARDS ── */
+  .chapters { padding: 0 16px; max-width: 768px; margin: 0 auto 80px; }
+
+  .chapter-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .chapter-card.open { border-color: var(--accent); box-shadow: var(--glow); }
+  .chapter-card.done { border-color: rgba(16,185,129,0.4); }
+  .chapter-card.done .ch-num { color: var(--accent3); border-color: var(--accent3); }
+
+  .ch-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+  }
+  .ch-header:active { background: rgba(255,255,255,0.02); }
+
+  .ch-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 3px 7px;
+    flex-shrink: 0;
+    min-width: 48px;
+    text-align: center;
+  }
+  .ch-meta { flex: 1; min-width: 0; }
+  .ch-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ch-time {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .ch-arrow {
+    font-size: 18px;
+    color: var(--muted);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+  }
+  .chapter-card.open .ch-arrow { transform: rotate(180deg); color: var(--accent); }
+
+  .ch-done-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .chapter-card.done .ch-done-btn {
+    background: var(--accent3);
+    border-color: var(--accent3);
+    color: #000;
+  }
+
+  /* ── CHAPTER BODY ── */
+  .ch-body {
+    display: none;
+    padding: 0 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .chapter-card.open .ch-body { display: block; }
+
+  .ch-tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 14px 0 12px;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 100px;
+    border: 1px solid;
+  }
+  .tag-arch { color: #60a5fa; border-color: rgba(96,165,250,0.35); background: rgba(96,165,250,0.07); }
+  .tag-sec  { color: #f87171; border-color: rgba(248,113,113,0.35); background: rgba(248,113,113,0.07); }
+  .tag-ai   { color: #a78bfa; border-color: rgba(167,139,250,0.35); background: rgba(167,139,250,0.07); }
+  .tag-edge { color: #34d399; border-color: rgba(52,211,153,0.35); background: rgba(52,211,153,0.07); }
+  .tag-quantum { color: #fbbf24; border-color: rgba(251,191,36,0.35); background: rgba(251,191,36,0.07); }
+  .tag-rt   { color: #fb923c; border-color: rgba(251,146,60,0.35); background: rgba(251,146,60,0.07); }
+  .tag-sys  { color: #22d3ee; border-color: rgba(34,211,238,0.35); background: rgba(34,211,238,0.07); }
+
+  .summary-block {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .summary-block h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .summary-block p { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+  .key-concepts h4 {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .concept-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .concept-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .concept-list li::before {
+    content: '▸';
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+    font-size: 11px;
+  }
+  .concept-list li strong { color: var(--heading); font-weight: 600; }
+
+  .assessment-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 14px;
+    font-size: 12px;
+  }
+  .assessment-row .a-icon { font-size: 16px; }
+  .assessment-row strong { color: #a78bfa; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(10,15,30,0.97);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 10px 20px calc(10px + env(safe-area-inset-bottom));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 200;
+  }
+  .progress-bar-wrap { flex: 1; margin: 0 16px; }
+  .progress-bar-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 100px;
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+  .progress-count {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .nav-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+  /* ── SEPARATOR ── */
+  .week-group-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    text-transform: uppercase;
+    padding: 6px 4px 8px;
+    margin-top: 8px;
+    border-bottom: 1px solid rgba(124,58,237,0.2);
+    margin-bottom: 8px;
+  }
+
+  /* ── PILLAR PILL ── */
+  .pillar {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .pillar-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (min-width: 480px) {
+    .hero h1 { font-size: 34px; }
+    .info-strip { grid-template-columns: 1fr 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- STICKY HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-title">CEN 510 // COMP. ENG.</div>
+    <div class="progress-ring-wrap">
+      <span class="progress-label" id="headerCount">0/16</span>
+      <svg class="progress-ring" width="32" height="32" viewBox="0 0 32 32">
+        <circle class="ring-bg" cx="16" cy="16" r="14"/>
+        <circle class="ring-fill" id="ringFill" cx="16" cy="16" r="14"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">GRADUATE LEVEL · 2 UNITS</div>
+  <h1>Special Topics in<br/><span>Computer Eng.</span></h1>
+  <p class="hero-sub">CEN 510 · 16 Chapters · Optimised for rapid study</p>
+  <div class="info-strip">
+    <div class="info-card"><div class="val">16</div><div class="lbl">CHAPTERS</div></div>
+    <div class="info-card"><div class="val">4h</div><div class="lbl">TARGET</div></div>
+    <div class="info-card"><div class="val">~15m</div><div class="lbl">PER WEEK</div></div>
+  </div>
+</div>
+
+<!-- TIME BANNER -->
+<div class="time-banner">
+  <div class="time-icon">⚡</div>
+  <div class="time-text">
+    <strong>4-Hour Speed Study Mode</strong>
+    <span>Each chapter is condensed to ~15 minutes. Tap ✓ as you finish each one. Focus on the KEY CONCEPTS.</span>
+  </div>
+</div>
+
+<!-- CHAPTERS -->
+<div class="section-label">// COURSE CHAPTERS</div>
+<div class="chapters" id="chaptersContainer">
+
+  <!-- ─── PILLAR 1 ─── -->
+  <div class="week-group-label">▸ Pillar I — Foundations & Architecture (Wks 1–3)</div>
+
+  <!-- CH 1 -->
+  <div class="chapter-card" id="ch1">
+    <div class="ch-header" onclick="toggle(1)">
+      <div class="ch-num">WK 01</div>
+      <div class="ch-meta">
+        <div class="ch-title">Course Intro & Modern Computing Landscape</div>
+        <div class="ch-time">⏱ ~12 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,1)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-arch">Architecture</span>
+        <span class="tag tag-sys">Foundations</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Modern computing is hitting physical walls. <strong>Dennard Scaling</strong> — the rule that shrinking transistors kept power density constant — broke around 2004. Today, processors can't simply clock faster without melting. This created the <strong>power wall</strong> and the phenomenon of <strong>dark silicon</strong>: chips where large portions must stay powered off to prevent overheating. The <strong>memory wall</strong> is a separate bottleneck — CPUs process data far faster than memory can supply it. These constraints forced the industry toward heterogeneous and specialised computing. This course explores how the field responded.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Dennard Scaling:</strong> As transistors shrink, power density stays constant. Broke ~2004 — now smaller = hotter.</div></li>
+          <li><div><strong>Dark Silicon:</strong> Only a fraction of a chip can operate at full power simultaneously due to thermal limits.</div></li>
+          <li><div><strong>Memory Wall:</strong> CPU speed scales faster than DRAM bandwidth — data starvation is the real bottleneck.</div></li>
+          <li><div><strong>Amdahl's Law:</strong> Speedup from parallelism is limited by the serial portion of a program.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Assessment:</strong> No assessment this week. Read Hennessy & Patterson Turing Lecture 2019.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 2 -->
+  <div class="chapter-card" id="ch2">
+    <div class="ch-header" onclick="toggle(2)">
+      <div class="ch-num">WK 02</div>
+      <div class="ch-meta">
+        <div class="ch-title">Advances in Computer Architecture I</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,2)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-arch">Architecture</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Modern processor design has evolved dramatically post-Dennard. <strong>Chiplet architectures</strong> break monolithic chips into smaller dies connected via high-speed fabric (AMD's Infinity Fabric, Intel's EMIB), improving yield and enabling heterogeneous integration. <strong>3D stacking</strong> (HBM memory stacked on logic) dramatically cuts the memory wall by bringing DRAM within millimetres of the processor. <strong>RISC-V</strong>, an open-source ISA, is disrupting proprietary processor design — it's now used in embedded, server, and AI chips worldwide. The key insight: modern advances are about packaging, interconnects, and openness, not just raw transistor counts.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Chiplets:</strong> Small dies manufactured separately and integrated into one package — better yield, heterogeneous mix.</div></li>
+          <li><div><strong>HBM (High Bandwidth Memory):</strong> DRAM stacked vertically in a package with the processor, massive bandwidth improvement.</div></li>
+          <li><div><strong>RISC-V:</strong> Open ISA — anyone can build a compliant processor without licensing fees. Disruptive to ARM/x86.</div></li>
+          <li><div><strong>Processing-in-Memory (PIM):</strong> Moving compute logic into/near memory arrays to eliminate data movement bottlenecks.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 1</strong> due end of week — covers Weeks 1–2 foundational concepts.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 3 -->
+  <div class="chapter-card" id="ch3">
+    <div class="ch-header" onclick="toggle(3)">
+      <div class="ch-num">WK 03</div>
+      <div class="ch-meta">
+        <div class="ch-title">Advances in Computer Architecture II</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,3)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-arch">Architecture</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>This week deepens architectural analysis. The <strong>Roofline Model</strong> is a critical tool — it plots achieved performance against arithmetic intensity to reveal whether a workload is compute-bound or memory-bandwidth-bound. <strong>Out-of-order execution</strong> and <strong>speculative execution</strong> are the two mechanisms that extract ILP (Instruction-Level Parallelism) from sequential code — but they also create security vulnerabilities (covered in Week 8). <strong>Domain-specific architectures (DSAs)</strong> like Google's TPU show that custom silicon designed for one workload class can beat general-purpose CPUs by 100x in performance-per-watt. The "New Golden Age" thesis: specialisation is the path forward.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Roofline Model:</strong> Visual tool — x-axis = arithmetic intensity (FLOP/byte), y-axis = performance. Reveals bottleneck.</div></li>
+          <li><div><strong>Speculative Execution:</strong> CPU predicts branches and executes ahead — rolls back on wrong prediction.</div></li>
+          <li><div><strong>Domain-Specific Architecture:</strong> Custom hardware for one task class (e.g., TPU for matrix multiply) — major efficiency gain.</div></li>
+          <li><div><strong>ILP (Instruction-Level Parallelism):</strong> Executing multiple independent instructions simultaneously within a single core.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📋</span><div><strong>Assignment 1 Due:</strong> Architecture Analysis Report — select a recent processor and analyse its microarchitectural innovations.</div></div>
+    </div>
+  </div>
+
+  <!-- ─── PILLAR 2 ─── -->
+  <div class="week-group-label">▸ Pillar II — Accelerators & Edge (Wks 4–7)</div>
+
+  <!-- CH 4 -->
+  <div class="chapter-card" id="ch4">
+    <div class="ch-header" onclick="toggle(4)">
+      <div class="ch-num">WK 04</div>
+      <div class="ch-meta">
+        <div class="ch-title">Heterogeneous Computing & Accelerators</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,4)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-arch">Architecture</span>
+        <span class="tag tag-ai">AI/ML</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Heterogeneous computing means combining different processor types (CPU + GPU + FPGA + ASIC) in one system, each handling the workloads it's best suited for. <strong>GPUs</strong> use SIMT (Single Instruction Multiple Threads) execution — thousands of simple cores execute the same instruction on different data simultaneously. This is ideal for matrix operations. <strong>FPGAs</strong> are reprogrammable hardware — you define logic circuits at runtime. Microsoft Catapult used FPGAs to accelerate Bing search ranking at data-center scale. <strong>ASICs</strong> are fixed-function chips — maximum efficiency, zero flexibility. The programmer's job is to correctly map workload characteristics to the right hardware substrate.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>SIMT:</strong> GPU model — threads grouped in warps (32), all execute the same instruction. Divergence kills performance.</div></li>
+          <li><div><strong>Memory Coalescing:</strong> GPU threads in a warp accessing contiguous memory are served in one transaction — critical for performance.</div></li>
+          <li><div><strong>FPGA (Field-Programmable Gate Array):</strong> Reconfigurable logic fabric — can be reprogrammed for different algorithms.</div></li>
+          <li><div><strong>Systolic Array:</strong> Grid of processors passing data in rhythm — used in Google TPU for matrix multiply.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 2</strong> due end of week — covers heterogeneous computing concepts.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 5 -->
+  <div class="chapter-card" id="ch5">
+    <div class="ch-header" onclick="toggle(5)">
+      <div class="ch-num">WK 05</div>
+      <div class="ch-meta">
+        <div class="ch-title">GPU Architecture & Deep Learning Hardware</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,5)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-arch">Architecture</span>
+        <span class="tag tag-ai">AI/ML</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Modern AI workloads are dominated by matrix multiplications and attention mechanisms. Google's <strong>TPU (Tensor Processing Unit)</strong> uses a systolic array to multiply matrices at 100+ TOPS efficiency. NVIDIA's <strong>Tensor Cores</strong> (introduced in Volta) perform mixed-precision (FP16/BF16/INT8) matrix multiply in a single clock — enabling the current LLM training revolution. The <strong>memory bandwidth problem</strong> is central here: training large transformers is bottlenecked by how fast weights can be loaded, not compute throughput. <strong>NVLink</strong> and <strong>NVSwitch</strong> create high-bandwidth GPU interconnects to treat multiple GPUs as one logical accelerator. Knowing this explains why H100 clusters cost what they do.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Tensor Core:</strong> Specialised compute unit in NVIDIA GPUs — performs D = A×B + C in mixed precision per clock.</div></li>
+          <li><div><strong>TPU Systolic Array:</strong> 2D grid of MAC units — data flows through like a wave, no memory access during compute.</div></li>
+          <li><div><strong>Flash Attention:</strong> Memory-efficient attention algorithm — reduces HBM reads by computing in SRAM tiles.</div></li>
+          <li><div><strong>NVLink:</strong> NVIDIA's high-bandwidth GPU-to-GPU interconnect — up to 900 GB/s bidirectional in H100 SXM.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 2 Due:</strong> CUDA matrix multiplication optimisation lab — naive → shared memory → coalesced access.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 6 -->
+  <div class="chapter-card" id="ch6">
+    <div class="ch-header" onclick="toggle(6)">
+      <div class="ch-num">WK 06</div>
+      <div class="ch-meta">
+        <div class="ch-title">Edge Computing & Embedded Systems</div>
+        <div class="ch-time">⏱ ~14 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,6)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-edge">Edge/IoT</span>
+        <span class="tag tag-ai">AI/ML</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p><strong>Edge computing</strong> moves computation from the cloud to devices near data sources — reducing latency, bandwidth costs, and privacy risk. The motivation: a self-driving car cannot afford 100ms round-trips to the cloud. <strong>TinyML</strong> deploys quantised neural networks on microcontrollers (ARM Cortex-M) consuming milliwatts. <strong>Federated Learning</strong> trains models across distributed edge devices without centralising raw data — each device trains locally, only gradient updates are shared. Key challenge: edge devices are resource-constrained (limited RAM, no GPU, battery-powered). Solutions involve model compression: quantisation, pruning, knowledge distillation, and hardware-aware neural architecture search.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>TinyML:</strong> Deploying ML models on microcontrollers — INT8 quantised models under 1MB, sub-mW inference.</div></li>
+          <li><div><strong>Federated Learning:</strong> Train locally, share only gradients — preserves data privacy, reduces bandwidth.</div></li>
+          <li><div><strong>Quantisation:</strong> Reducing weight precision (FP32 → INT8) — 4x memory reduction with minimal accuracy loss.</div></li>
+          <li><div><strong>Fog Computing:</strong> Intermediate layer between edge and cloud — aggregates edge data before cloud offload.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📋</span><div><strong>Midterm Project Proposal Due:</strong> Submit 1-page abstract + bibliography for your research/design project.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 7 -->
+  <div class="chapter-card" id="ch7">
+    <div class="ch-header" onclick="toggle(7)">
+      <div class="ch-num">WK 07</div>
+      <div class="ch-meta">
+        <div class="ch-title">Internet of Things (IoT) Systems Design</div>
+        <div class="ch-time">⏱ ~14 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,7)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-edge">Edge/IoT</span>
+        <span class="tag tag-sys">Systems</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>IoT systems connect physical sensors and actuators to the digital world at massive scale. Two dominant protocols define IoT communication: <strong>MQTT</strong> (publish-subscribe, low overhead, TCP-based — used for smart home, industrial sensors) and <strong>CoAP</strong> (request-response, UDP-based — designed for constrained devices, similar to HTTP but lightweight). The <strong>Matter protocol</strong> (backed by Apple, Google, Amazon) is the new unified smart-home standard. IoT systems face the "triple constraint": low power, low cost, and wireless connectivity. <strong>LoRaWAN</strong> enables long-range, ultra-low-power sensor networks. Security is the critical unsolved challenge — most deployed IoT devices have no update mechanism and run outdated firmware.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>MQTT:</strong> Lightweight pub/sub protocol for IoT — broker-based, minimal overhead, runs over TCP/443.</div></li>
+          <li><div><strong>CoAP:</strong> Constrained Application Protocol — RESTful, UDP-based, for devices too small for HTTP.</div></li>
+          <li><div><strong>LoRaWAN:</strong> Long-Range Wide Area Network — km-range, sub-mW operation, ideal for agricultural/industrial sensors.</div></li>
+          <li><div><strong>Matter:</strong> Universal smart-home connectivity standard — runs over IP (Wi-Fi/Thread), supported by all major platforms.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 3</strong> due end of week — covers Weeks 6–7 edge and IoT content.</div></div>
+    </div>
+  </div>
+
+  <!-- ─── PILLAR 3 ─── -->
+  <div class="week-group-label">▸ Pillar III — Security & Real-Time (Wks 8–10)</div>
+
+  <!-- CH 8 -->
+  <div class="chapter-card" id="ch8">
+    <div class="ch-header" onclick="toggle(8)">
+      <div class="ch-num">WK 08</div>
+      <div class="ch-meta">
+        <div class="ch-title">Hardware Security & Trusted Computing</div>
+        <div class="ch-time">⏱ ~16 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,8)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-sec">Security</span>
+        <span class="tag tag-arch">Architecture</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p><strong>Spectre</strong> exploits speculative execution: the CPU predicts a branch, speculatively executes code that shouldn't run, and although the result is rolled back, the cache state is not — an attacker can measure cache timing to infer what data was accessed across privilege boundaries. <strong>Meltdown</strong> collapsed kernel-user isolation entirely via out-of-order execution. Mitigations (KPTI, Retpoline) impose 5–30% performance penalties. <strong>Intel SGX (Software Guard Extensions)</strong> creates hardware-encrypted "enclaves" — isolated regions where even the OS cannot read your code/data. <strong>TPM 2.0</strong> provides a hardware root of trust: secure key storage, platform attestation, and sealed secrets that unlock only on a specific, verified platform configuration.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Spectre:</strong> Exploits speculative execution — poisons branch predictor to leak cross-privilege data via cache side-channel.</div></li>
+          <li><div><strong>Meltdown:</strong> Out-of-order execution reads kernel memory before privilege check — cache encodes the secret.</div></li>
+          <li><div><strong>Flush+Reload:</strong> Side-channel technique — flush a cache line, wait for victim, time reload to infer victim's access.</div></li>
+          <li><div><strong>SGX Enclave:</strong> Encrypted, isolated code+data region — CPU verifies integrity, OS/hypervisor cannot inspect.</div></li>
+          <li><div><strong>TPM 2.0:</strong> Trusted Platform Module — hardware chip for key storage, measured boot, and remote attestation.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 3 Due:</strong> Hardware security case study — analyse Flush+Reload, Rowhammer, or Spectre PoC in sandboxed environment.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 9 -->
+  <div class="chapter-card" id="ch9">
+    <div class="ch-header" onclick="toggle(9)">
+      <div class="ch-num">WK 09</div>
+      <div class="ch-meta">
+        <div class="ch-title">Secure Enclaves & Side-Channel Attacks</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,9)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-sec">Security</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Side-channel attacks extract secrets by measuring physical or temporal by-products of computation — not the computation itself. <strong>Power analysis</strong> (Simple/Differential) correlates power consumption with cryptographic operations to extract AES keys from smart cards. <strong>EM (Electromagnetic) attacks</strong> use near-field probes — effective even without physical contact with the device. <strong>Rowhammer</strong> is a DRAM vulnerability: repeatedly accessing a row causes bit flips in adjacent rows due to electrical crosstalk — this can flip a security-critical bit (e.g., a page table entry) without ever "accessing" the target. SGX has been broken by Foreshadow, Plundervolt, and SGAxe — demonstrating that hardware security requires constant adversarial evaluation.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Differential Power Analysis (DPA):</strong> Statistical analysis of power traces — extracts crypto keys from embedded devices.</div></li>
+          <li><div><strong>Rowhammer:</strong> Bit flips in DRAM from repeated row access — can escalate privileges or escape sandboxes.</div></li>
+          <li><div><strong>Foreshadow:</strong> L1 terminal fault — breaks SGX enclave isolation using speculative execution on page-not-present entries.</div></li>
+          <li><div><strong>Countermeasures:</strong> Masking (randomise power profile), shielding (EM), ECC memory (Rowhammer), microcode patches (Spectre class).</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 4</strong> due end of week — covers security topics Weeks 8–9.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 10 -->
+  <div class="chapter-card" id="ch10">
+    <div class="ch-header" onclick="toggle(10)">
+      <div class="ch-num">WK 10</div>
+      <div class="ch-meta">
+        <div class="ch-title">Real-Time Systems & RTOS</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,10)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-rt">Real-Time</span>
+        <span class="tag tag-sys">Systems</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Real-time systems must respond to events within strict time deadlines — missing a deadline is a system failure, not just poor performance. <strong>Hard real-time</strong> systems (aircraft flight control, ABS brakes) tolerate zero deadline misses. <strong>Soft real-time</strong> (video streaming) tolerates occasional misses. The <strong>Liu & Layland (1973)</strong> paper established Rate Monotonic Scheduling (RMS): assign higher priority to higher-frequency tasks. RMS is optimal for fixed-priority scheduling and is provably schedulable if CPU utilisation ≤ 69%. <strong>EDF (Earliest Deadline First)</strong> is optimal for dynamic priority but harder to implement. <strong>FreeRTOS</strong> and <strong>Zephyr</strong> are dominant open-source RTOS platforms for embedded real-time systems.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Hard vs Soft Real-Time:</strong> Hard = deadline miss = system failure. Soft = deadline miss = degraded quality.</div></li>
+          <li><div><strong>Rate Monotonic Scheduling (RMS):</strong> Higher frequency = higher priority. Optimal fixed-priority. Bound: U ≤ n(2^(1/n) - 1) → ~69%.</div></li>
+          <li><div><strong>EDF:</strong> Earliest Deadline First — dynamically assigns priority. Optimal — can utilise 100% CPU.</div></li>
+          <li><div><strong>Priority Inversion:</strong> Low-priority task holds resource needed by high-priority task. Solution: Priority Inheritance Protocol.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">🎓</span><div><strong>MIDTERM EXAM</strong> — Week 10. Covers all content Weeks 1–9. Closed-book, 2 hours.</div></div>
+    </div>
+  </div>
+
+  <!-- ─── PILLAR 4 ─── -->
+  <div class="week-group-label">▸ Pillar IV — Quantum & Neuromorphic (Wks 11–12)</div>
+
+  <!-- CH 11 -->
+  <div class="chapter-card" id="ch11">
+    <div class="ch-header" onclick="toggle(11)">
+      <div class="ch-num">WK 11</div>
+      <div class="ch-meta">
+        <div class="ch-title">Quantum Computing Fundamentals</div>
+        <div class="ch-time">⏱ ~16 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,11)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-quantum">Quantum</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Classical bits are 0 or 1. <strong>Qubits</strong> exist in superposition — a weighted combination of both until measured. <strong>Entanglement</strong> correlates qubits such that measuring one instantly determines the other — useful for certain algorithms but not for faster-than-light communication. <strong>Grover's Algorithm</strong> provides quadratic speedup (O(√N) vs O(N)) for searching unsorted databases — practical for cryptographic brute-force resistance evaluation. <strong>Shor's Algorithm</strong> factors integers in polynomial time — it would break RSA-2048 with a large fault-tolerant quantum computer. Today's <strong>NISQ devices</strong> (50–1000 noisy qubits) can't run Shor at cryptographic scale yet. <strong>Quantum error correction</strong> requires ~1000 physical qubits per logical qubit — we need millions of physical qubits for real impact.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Superposition:</strong> Qubit = α|0⟩ + β|1⟩ where |α|² + |β|² = 1. Measurement collapses to 0 or 1 probabilistically.</div></li>
+          <li><div><strong>Grover's Algorithm:</strong> O(√N) search — quadratic speedup. Doubles effective key length against brute-force.</div></li>
+          <li><div><strong>Shor's Algorithm:</strong> Polynomial-time factorisation — threatens RSA/ECC. Requires fault-tolerant QC to execute.</div></li>
+          <li><div><strong>Decoherence:</strong> Environmental noise destroys quantum state. T1/T2 times measure how long qubits survive.</div></li>
+          <li><div><strong>NISQ:</strong> Noisy Intermediate-Scale Quantum — current era. VQE and QAOA are near-term practical algorithms.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 4 Due:</strong> Quantum circuit design using Qiskit — Grover's algorithm + VQE simulation.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 12 -->
+  <div class="chapter-card" id="ch12">
+    <div class="ch-header" onclick="toggle(12)">
+      <div class="ch-num">WK 12</div>
+      <div class="ch-meta">
+        <div class="ch-title">Neuromorphic & Brain-Inspired Computing</div>
+        <div class="ch-time">⏱ ~14 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,12)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-quantum">Neuromorphic</span>
+        <span class="tag tag-ai">AI/ML</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>The human brain computes at ~20 watts — far more efficiently than any silicon system. <strong>Neuromorphic computing</strong> mimics biological neural computation using <strong>Spiking Neural Networks (SNNs)</strong>: neurons fire discrete spikes in time, not continuous activations. This temporal sparsity means most neurons are idle most of the time — huge energy savings. <strong>Intel Loihi 2</strong> implements 1M neurons on-chip with programmable learning rules — it learns in real time without a training phase. <strong>IBM TrueNorth</strong> has 4096 cores emulating 1M neurons at 65mW. The key challenge: training SNNs is hard because spike functions are non-differentiable (can't use backpropagation directly). <strong>Surrogate gradient</strong> methods and ANN-to-SNN conversion are current solutions.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>Spiking Neural Network (SNN):</strong> Neurons communicate via discrete spike events — sparse, event-driven, low energy.</div></li>
+          <li><div><strong>Spike-Timing-Dependent Plasticity (STDP):</strong> Biological learning rule — synaptic strength depends on relative spike timing of pre/post neurons.</div></li>
+          <li><div><strong>Intel Loihi 2:</strong> 1M neurons, on-chip learning, programmable. Used for robotics, sparse coding, optimisation problems.</div></li>
+          <li><div><strong>Memristors:</strong> Resistive memory devices that can store synaptic weights in analog — key for in-memory SNN compute.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 5</strong> due end of week — covers Weeks 11–12 quantum and neuromorphic content.</div></div>
+    </div>
+  </div>
+
+  <!-- ─── PILLAR 5+6 ─── -->
+  <div class="week-group-label">▸ Pillar V & VI — AI Systems & Autonomous Engineering (Wks 13–16)</div>
+
+  <!-- CH 13 -->
+  <div class="chapter-card" id="ch13">
+    <div class="ch-header" onclick="toggle(13)">
+      <div class="ch-num">WK 13</div>
+      <div class="ch-meta">
+        <div class="ch-title">AI/ML System Integration</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,13)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-ai">AI/ML</span>
+        <span class="tag tag-arch">Architecture</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Deploying AI is a systems engineering problem, not just a modelling problem. <strong>LLM inference</strong> is memory-bandwidth bound — the KV-cache for large context windows demands hundreds of GB of HBM. <strong>Quantisation</strong> (INT4/INT8) reduces memory footprint 4–8x with < 1% accuracy loss using techniques like GPTQ and AWQ. <strong>Model pruning</strong> removes redundant weights — structured pruning creates hardware-friendly sparse patterns; unstructured pruning achieves higher sparsity but needs sparse compute support. <strong>AI compilers</strong> (TVM, MLIR, XLA) bridge high-level model graphs to hardware-specific instruction sets — operator fusion, tiling, and layout optimisation are key techniques. <strong>LoRA (Low-Rank Adaptation)</strong> enables fine-tuning of billion-parameter models on a single GPU by updating only a small rank-decomposition matrix.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>KV-Cache:</strong> Stores key/value projections from past tokens — avoids recomputation, but grows linearly with context length.</div></li>
+          <li><div><strong>Quantisation (INT4/INT8):</strong> Maps FP32 weights to low-bit integers — reduces memory, increases throughput, minimal quality loss.</div></li>
+          <li><div><strong>Operator Fusion:</strong> Compiler combines adjacent ops (e.g., MatMul + ReLU) into one kernel — eliminates intermediate memory reads.</div></li>
+          <li><div><strong>LoRA:</strong> Fine-tuning via W = W₀ + BA where B,A are low-rank matrices — trains 0.1% of parameters.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 5 Due:</strong> TinyML deployment — train and quantise a model, deploy on Arduino/RPi, measure accuracy vs. power.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 14 -->
+  <div class="chapter-card" id="ch14">
+    <div class="ch-header" onclick="toggle(14)">
+      <div class="ch-num">WK 14</div>
+      <div class="ch-meta">
+        <div class="ch-title">Autonomous Systems & Cyber-Physical Systems</div>
+        <div class="ch-time">⏱ ~15 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,14)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-sys">Systems</span>
+        <span class="tag tag-rt">Real-Time</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p><strong>Cyber-Physical Systems (CPS)</strong> integrate computation, communication, and physical processes — autonomous vehicles, surgical robots, smart grids. The key challenge: physical processes are continuous and uncertain; digital systems are discrete and deterministic. <strong>ROS 2 (Robot Operating System)</strong> provides middleware for autonomous systems with DDS-based real-time communication. <strong>AUTOSAR</strong> is the automotive equivalent — a layered software architecture for vehicle ECUs. <strong>Time-Sensitive Networking (TSN)</strong> extends Ethernet with deterministic timing guarantees — critical for control loops that can't tolerate jitter. <strong>Digital twins</strong> create real-time simulation counterparts of physical systems, enabling predictive maintenance and "what-if" scenario testing without physical risk. Formal verification ensures software correctness before deployment in safety-critical systems.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>CPS:</strong> Tight integration of computation with physical dynamics — correctness depends on timing, not just logic.</div></li>
+          <li><div><strong>ROS 2 + DDS:</strong> Robot middleware — nodes communicate via publish/subscribe over Data Distribution Service (real-time capable).</div></li>
+          <li><div><strong>TSN (IEEE 802.1):</strong> Deterministic Ethernet — time-aware shapers guarantee maximum latency for control traffic.</div></li>
+          <li><div><strong>Digital Twin:</strong> Live simulation counterpart of a physical system — fed by real sensor data, used for monitoring and optimisation.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📋</span><div><strong>Draft Project Report Due</strong> — Full draft for peer review and instructor feedback.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 15 -->
+  <div class="chapter-card" id="ch15">
+    <div class="ch-header" onclick="toggle(15)">
+      <div class="ch-num">WK 15</div>
+      <div class="ch-meta">
+        <div class="ch-title">5G, Network Slicing & Systems Integration</div>
+        <div class="ch-time">⏱ ~13 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,15)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-sys">Systems</span>
+        <span class="tag tag-edge">Edge/IoT</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p><strong>5G</strong> is not just faster 4G — it's a new architecture. The key innovations: <strong>mmWave spectrum</strong> (24–100 GHz) for extreme bandwidth but short range; <strong>Massive MIMO</strong> (hundreds of antennas) for spatial multiplexing; and ultra-low latency (< 1ms air interface) enabling real-time control applications. <strong>Network Slicing</strong> uses software-defined networking (SDN) and network function virtualisation (NFV) to carve logically isolated networks from shared physical infrastructure — a slice for IoT sensors, a slice for autonomous vehicles, a slice for broadband, each with different QoS guarantees. The <strong>O-RAN Alliance</strong> is driving open, disaggregated radio access networks — separating radio hardware from software, enabling AI-driven network management. This connects 5G directly to edge computing: the base station becomes an edge compute node.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Key Concepts to Know</h4>
+        <ul class="concept-list">
+          <li><div><strong>5G NR Three Pillars:</strong> eMBB (enhanced Mobile Broadband), URLLC (Ultra-Reliable Low-Latency), mMTC (Massive Machine Type Comms).</div></li>
+          <li><div><strong>Network Slicing:</strong> Virtual isolated networks over shared infrastructure — each with tailored SLA, QoS, and isolation.</div></li>
+          <li><div><strong>Massive MIMO:</strong> 64–256 antenna arrays — beamforming to individual users, dramatically increases spectral efficiency.</div></li>
+          <li><div><strong>O-RAN:</strong> Open Radio Access Network — disaggregates RU/DU/CU, enables AI-driven xApp controllers for optimisation.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 6</strong> due end of week — covers Weeks 13–15 AI systems and networking content.</div></div>
+    </div>
+  </div>
+
+  <!-- CH 16 -->
+  <div class="chapter-card" id="ch16">
+    <div class="ch-header" onclick="toggle(16)">
+      <div class="ch-num">WK 16</div>
+      <div class="ch-meta">
+        <div class="ch-title">Project Presentations & Course Review</div>
+        <div class="ch-time">⏱ ~10 min read</div>
+      </div>
+      <button class="ch-done-btn" onclick="markDone(event,16)" aria-label="Mark done">✓</button>
+      <div class="ch-arrow">⌄</div>
+    </div>
+    <div class="ch-body">
+      <div class="ch-tag-row">
+        <span class="tag tag-sys">Review</span>
+      </div>
+      <div class="summary-block">
+        <h4>📖 4-Hour Summary</h4>
+        <p>Final week — synthesis and consolidation. The six pillars of the course converge: (1) Architecture innovation — chiplets, HBM, RISC-V, PIM; (2) Accelerators — GPU/TPU/FPGA heterogeneous systems; (3) Edge & IoT — TinyML, federated learning, MQTT/Matter; (4) Security — Spectre/Meltdown class, SGX, TPM, side-channels; (5) Quantum & Neuromorphic — NISQ algorithms, SNN, Loihi; (6) AI/CPS Integration — LLM inference optimisation, ROS 2, 5G network slicing. The unifying theme: as general-purpose scaling ends, specialisation, security-consciousness, and cross-layer co-design define the next decade of computer engineering. Your project should demonstrate one frontier concept applied to a real engineering problem.</p>
+      </div>
+      <div class="key-concepts">
+        <h4>🔑 Big Picture Themes (Exam / Viva Ready)</h4>
+        <ul class="concept-list">
+          <li><div><strong>End of Scaling:</strong> Physical limits → specialisation, heterogeneity, co-design across all layers.</div></li>
+          <li><div><strong>Security by Design:</strong> Every layer (silicon to network) has an attack surface — must be designed in, not bolted on.</div></li>
+          <li><div><strong>Data-Centric Computing:</strong> Move compute to data (PIM, edge, in-network compute) — bandwidth > raw FLOPS.</div></li>
+          <li><div><strong>Post-Classical Paradigms:</strong> Quantum + neuromorphic are not replacements — they're accelerators for specific problem classes.</div></li>
+        </ul>
+      </div>
+      <div class="assessment-row"><span class="a-icon">🏁</span><div><strong>FINAL PROJECT DUE</strong> — Presentation (15 min + Q&A) + Final Report submitted.</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAVIGATION BAR -->
+<div class="bottom-bar">
+  <button class="nav-btn" onclick="expandAll()">Expand All</button>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-count" id="progressCount">0 of 16 chapters completed</div>
+  </div>
+  <button class="nav-btn" onclick="collapseAll()">Close All</button>
+</div>
+
+<script>
+  const TOTAL = 16;
+  let done = new Set();
+  let open = new Set();
+
+  function toggle(n) {
+    const card = document.getElementById('ch' + n);
+    if (open.has(n)) {
+      card.classList.remove('open');
+      open.delete(n);
+    } else {
+      card.classList.add('open');
+      open.add(n);
+    }
+  }
+
+  function markDone(e, n) {
+    e.stopPropagation();
+    const card = document.getElementById('ch' + n);
+    if (done.has(n)) {
+      done.delete(n);
+      card.classList.remove('done');
+    } else {
+      done.add(n);
+      card.classList.add('done');
+      // Auto-close and open next
+      card.classList.remove('open');
+      open.delete(n);
+      if (n < TOTAL) {
+        setTimeout(() => {
+          const next = document.getElementById('ch' + (n + 1));
+          next.classList.add('open');
+          open.add(n + 1);
+          next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+      }
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const count = done.size;
+    const pct = (count / TOTAL) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = count + ' of ' + TOTAL + ' chapters completed';
+    document.getElementById('headerCount').textContent = count + '/' + TOTAL;
+    // Ring
+    const circumference = 88;
+    const offset = circumference - (pct / 100) * circumference;
+    document.getElementById('ringFill').style.strokeDashoffset = offset;
+  }
+
+  function expandAll() {
+    for (let i = 1; i <= TOTAL; i++) {
+      document.getElementById('ch' + i).classList.add('open');
+      open.add(i);
+    }
+  }
+
+  function collapseAll() {
+    for (let i = 1; i <= TOTAL; i++) {
+      document.getElementById('ch' + i).classList.remove('open');
+    }
+    open.clear();
+  }
+
+  // Open first chapter on load
+  window.addEventListener('load', () => {
+    toggle(1);
+  });
+</script>
+</body>
+</html>
