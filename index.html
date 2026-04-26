@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='rainlogo.jpg') }}">
+  <link rel="icon" type="image/jpeg" href="https://exams.rainigeria.com/static/rainlogo.jpg">
 
   <style>
   :root{
@@ -102,7 +102,7 @@
     padding:0 calc(5vw + var(--sal)) calc(72px + var(--sab)) calc(5vw + var(--sal));
   }
   .hero-bg{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,11,15,.2) 0%,rgba(10,11,15,.65) 55%,var(--ink) 100%);z-index:1;}
-  .hero-img{position:absolute;inset:0;background-image:url("{{ url_for('static', filename='rain_hero.jpg') }}");background-size:cover;background-position:center top;z-index:0;}
+  .hero-img{position:absolute;inset:0;background-image:url("https://exams.rainigeria.com/static/rain_hero.jpg");background-size:cover;background-position:center top;z-index:0;}
   @media(min-width:768px) and (prefers-reduced-motion:no-preference){
     .hero-img{animation:heroScale 14s ease-in-out infinite alternate;}
     @keyframes heroScale{from{transform:scale(1.02);}to{transform:scale(1.07);}}
@@ -281,10 +281,10 @@
     <div class="modal-title">Access Your Portal</div>
     <div class="modal-sub">Where would you like to go?</div>
     <div class="modal-lbl">Current Students / Staff / Alumni</div>
-    <a href="{{ url_for('login') }}" class="btn btn-gold" style="width:100%;justify-content:center;margin-bottom:4px;">🎓 LMS Login →</a>
+    <a href="https://exams.rainigeria.com/login" class="btn btn-gold" style="width:100%;justify-content:center;margin-bottom:4px;">🎓 LMS Login →</a>
     <div class="modal-div"></div>
     <div class="modal-lbl">Track Admission Application</div>
-    <a href="{{ url_for('admission.admission_portal_login') }}" class="btn btn-outline-gold" style="width:100%;justify-content:center;margin-bottom:4px;">📋 Admission Portal →</a>
+    <a href="https://exams.rainigeria.com/admission.admission_portal_login" class="btn btn-outline-gold" style="width:100%;justify-content:center;margin-bottom:4px;">📋 Admission Portal →</a>
     <div class="modal-div"></div>
     <div class="modal-lbl">Track Scholarship Application</div>
     <a href="https://scholarship.rainigeria.com" target="_blank" rel="noopener" class="btn btn-ghost" style="width:100%;justify-content:center;">🏆 Scholarship Portal →</a>
@@ -293,11 +293,11 @@
 
 <!-- ══ MOBILE MENU ══ -->
 <div class="mob-menu" id="mobMenu">
-  <a href="{{ url_for('login') }}" style="color:var(--gold);" onclick="closeMob()">🎓 LMS Login</a>
-  <a href="{{ url_for('admission.admission_apply') }}" onclick="closeMob()">Apply for Admission</a>
-  <a href="{{ url_for('login') }}" onclick="closeMob()">Alumni Login</a>
+  <a href="https://exams.rainigeria.com/login" style="color:var(--gold);" onclick="closeMob()">🎓 LMS Login</a>
+  <a href="https://exams.rainigeria.com/admission.admission_apply" onclick="closeMob()">Apply for Admission</a>
+  <a href="https://exams.rainigeria.com/login" onclick="closeMob()">Alumni Login</a>
   <a href="#programmes" onclick="closeMob()">Programmes</a>
-  <a href="{{ url_for('rain_partnership') }}" onclick="closeMob()">Degree Pathway</a>
+  <a href="https://exams.rainigeria.com/rain_partnership" onclick="closeMob()">Degree Pathway</a>
   <a href="https://scholarship.rainigeria.com" target="_blank" rel="noopener">🏆 Scholarship</a>
   <a href="https://metaaideveloperacademy.rainigeria.com" target="_blank" rel="noopener" style="color:var(--blue);">Meta AI Academy ↗</a>
 </div>
@@ -306,24 +306,24 @@
 <div class="alert-bar" role="banner">
   <span class="adot" aria-hidden="true"></span>
   🎓 <strong>2026 Admission is Now Open</strong> — Spaces are limited.
-  <a href="{{ url_for('admission.admission_apply') }}">Apply Now →</a>
+  <a href="https://exams.rainigeria.com/admission.admission_apply">Apply Now →</a>
 </div>
 
 <!-- ══ NAV ══ -->
 <nav role="navigation">
   <a href="#home" class="nav-brand" aria-label="RAIN Home">
-    <img src="{{ url_for('static', filename='rainlogo.jpg') }}" alt="RAIN" width="30" height="30" onerror="this.style.display='none'">
+    <img src="https://exams.rainigeria.com/static/rainlogo.jpg" alt="RAIN" width="30" height="30" onerror="this.style.display='none'">
     <span class="nav-brand-text">R<em>A</em>IN</span>
   </a>
   <ul class="nav-links" role="list">
     <li><a href="#programmes">Programmes</a></li>
-    <li><a href="{{ url_for('rain_partnership') }}">Degree Pathway</a></li>
+    <li><a href="https://exams.rainigeria.com/rain_partnership">Degree Pathway</a></li>
     <li><a href="https://scholarship.rainigeria.com" target="_blank" rel="noopener">Scholarship</a></li>
     <li><a href="https://metaaideveloperacademy.rainigeria.com" target="_blank" rel="noopener" style="color:var(--blue);">Meta AI Academy</a></li>
   </ul>
   <div class="nav-cta">
     <button class="btn btn-ghost" onclick="openModal()">Login</button>
-    <a href="{{ url_for('admission.admission_apply') }}" class="btn btn-gold">Apply Now</a>
+    <a href="https://exams.rainigeria.com/admission.admission_apply" class="btn btn-gold">Apply Now</a>
   </div>
   <button class="nav-burger" id="burger" onclick="toggleMob()" aria-label="Open menu" aria-expanded="false">
     <span></span><span></span><span></span>
@@ -343,8 +343,8 @@
       industry certifications, and a pathway to an accredited B.Sc. degree.
     </p>
     <div class="hero-actions">
-      <a href="{{ url_for('login') }}" class="btn btn-gold btn-lg">🎓 Student / Alumni Login</a>
-      <a href="{{ url_for('admission.admission_apply') }}" class="btn btn-ghost btn-lg">Apply for Admission →</a>
+      <a href="https://exams.rainigeria.com/login" class="btn btn-gold btn-lg">🎓 Student / Alumni Login</a>
+      <a href="https://exams.rainigeria.com/admission.admission_apply" class="btn btn-ghost btn-lg">Apply for Admission →</a>
     </div>
   </div>
 </section>
@@ -353,25 +353,25 @@
 <section style="background:var(--ink2);" id="portals">
   <div class="section-label reveal">Where Do You Want to Go?</div>
   <div class="portal-grid">
-    <a href="{{ url_for('login') }}" class="portal-card primary reveal reveal-d1">
+    <a href="https://exams.rainigeria.com/login" class="portal-card primary reveal reveal-d1">
       <div class="portal-icon">💻</div>
       <div class="portal-title">Student LMS Login</div>
       <div class="portal-desc">Current RAIN trainee? Access your courses, exams, results, and materials.</div>
       <div class="portal-link">Login to LMS →</div>
     </a>
-    <a href="{{ url_for('admission.admission_apply') }}" class="portal-card primary reveal reveal-d2">
+    <a href="https://exams.rainigeria.com/admission.admission_apply" class="portal-card primary reveal reveal-d2">
       <div class="portal-icon">🎓</div>
       <div class="portal-title">Apply for Admission <span style="font-size:.6rem;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:var(--green);padding:2px 6px;border-radius:100px;font-weight:700;margin-left:4px;">Open</span></div>
       <div class="portal-desc">2026 admission is open. Apply now for AIML, RDA, or our short courses.</div>
       <div class="portal-link">Start Application →</div>
     </a>
-    <a href="{{ url_for('login') }}" class="portal-card reveal reveal-d3">
+    <a href="https://exams.rainigeria.com/login" class="portal-card reveal reveal-d3">
       <div class="portal-icon">🏅</div>
       <div class="portal-title">Alumni Login</div>
       <div class="portal-desc">RAIN graduate? Access your transcripts, certifications, and alumni network.</div>
       <div class="portal-link">Alumni Login →</div>
     </a>
-    <a href="{{ url_for('admission.admission_portal_login') }}" class="portal-card reveal reveal-d1">
+    <a href="https://exams.rainigeria.com/admission.admission_portal_login" class="portal-card reveal reveal-d1">
       <div class="portal-icon">📋</div>
       <div class="portal-title">Track My Admission</div>
       <div class="portal-desc">Already applied? Log in with your email and admission code to track your offer.</div>
@@ -400,7 +400,7 @@
 
   <!-- AIML + RDA featured -->
   <div class="featured-grid">
-    <a href="{{ url_for('admission.admission_apply') }}" class="prog-featured reveal reveal-d1">
+    <a href="https://exams.rainigeria.com/admission.admission_apply" class="prog-featured reveal reveal-d1">
       <div class="prog-featured-tag">⭐ Flagship Programme</div>
       <div class="prog-featured-code">AIML</div>
       <div class="prog-featured-title">Artificial Intelligence &amp; Machine Learning</div>
@@ -410,7 +410,7 @@
         <span class="prog-featured-fee">₦7,700,000</span>
       </div>
     </a>
-    <a href="{{ url_for('admission.admission_apply') }}" class="prog-featured reveal reveal-d2">
+    <a href="https://exams.rainigeria.com/admission.admission_apply" class="prog-featured reveal reveal-d2">
       <div class="prog-featured-tag">⭐ Flagship Programme</div>
       <div class="prog-featured-code">RDA</div>
       <div class="prog-featured-title">Robot Development &amp; Automation</div>
@@ -430,7 +430,7 @@
       ('ESIOT','Embedded Systems & IoT','12–16 weeks','₦3,000,000'),
       ('MLAI','Machine Learning / Intro to AI','12–16 weeks','₦3,000,000'),
     ] %}
-    <a href="{{ url_for('admission.admission_apply') }}" class="prog-card-sm reveal">
+    <a href="https://exams.rainigeria.com/admission.admission_apply" class="prog-card-sm reveal">
       <div class="prog-sm-tag">{% if code == 'Combined' %}Full Programme{% else %}Short Course{% endif %}</div>
       <div class="prog-sm-title">{{ title }}</div>
       <div class="prog-sm-meta">
@@ -442,7 +442,7 @@
   </div>
 
   <div style="margin-top:24px;" class="reveal">
-    <a href="{{ url_for('admission.admission_apply') }}" class="btn btn-gold btn-lg">Apply for Any Programme →</a>
+    <a href="https://exams.rainigeria.com/admission.admission_apply" class="btn btn-gold btn-lg">Apply for Any Programme →</a>
   </div>
 </section>
 
@@ -450,7 +450,7 @@
 <div class="photo-strip" aria-hidden="true">
   {% for fname, cap in [('rain_photo1.jpg','The Lab'),('rain_photo2.jpg','Training'),('rain_photo3.jpg','Projects'),('rain_photo4.jpg','Campus')] %}
   <div class="photo-strip-item">
-    <img src="{{ url_for('static', filename=fname) }}" alt="{{ cap }}" loading="lazy" onerror="this.parentElement.style.background='var(--ink3)'">
+    <img src="https://exams.rainigeria.com/static', filename=fname) }}" alt="{{ cap }}" loading="lazy" onerror="this.parentElement.style.background='var(--ink3)'">
     <div class="photo-strip-cap">{{ cap }}</div>
   </div>
   {% endfor %}
@@ -478,7 +478,7 @@
       </div>
     </div>
     <div class="partnership-link">
-      <a href="{{ url_for('rain_partnership') }}" class="btn btn-gold btn-lg">Read the Full Story →</a>
+      <a href="https://exams.rainigeria.com/rain_partnership" class="btn btn-gold btn-lg">Read the Full Story →</a>
     </div>
   </div>
 </section>
@@ -524,7 +524,7 @@
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
-      <img src="{{ url_for('static', filename='rainlogo.jpg') }}" alt="RAIN" width="34" height="34" loading="lazy" onerror="this.style.display='none'">
+      <img src="https://exams.rainigeria.com/static/rainlogo.jpg" alt="RAIN" width="34" height="34" loading="lazy" onerror="this.style.display='none'">
       <div class="footer-brand-name">R<em>A</em>IN</div>
       <p class="footer-desc">
         Robotics and Artificial Intelligence Nigeria — Africa's premier AI and robotics training institution.
@@ -533,17 +533,17 @@
     </div>
     <div class="footer-col">
       <h4>Programmes</h4>
-      <a href="{{ url_for('admission.admission_apply') }}">AIML — Flagship</a>
-      <a href="{{ url_for('admission.admission_apply') }}">RDA — Flagship</a>
-      <a href="{{ url_for('admission.admission_apply') }}">Combined AIML + RDA</a>
-      <a href="{{ url_for('admission.admission_apply') }}">Short Courses (DSP, ESIOT, MLAI)</a>
-      <a href="{{ url_for('rain_partnership') }}">B.Sc. Degree Pathway</a>
+      <a href="https://exams.rainigeria.com/admission.admission_apply">AIML — Flagship</a>
+      <a href="https://exams.rainigeria.com/admission.admission_apply">RDA — Flagship</a>
+      <a href="https://exams.rainigeria.com/admission.admission_apply">Combined AIML + RDA</a>
+      <a href="https://exams.rainigeria.com/admission.admission_apply">Short Courses (DSP, ESIOT, MLAI)</a>
+      <a href="https://exams.rainigeria.com/rain_partnership">B.Sc. Degree Pathway</a>
     </div>
     <div class="footer-col">
       <h4>Portals</h4>
-      <a href="{{ url_for('login') }}">Student / Alumni Login</a>
-      <a href="{{ url_for('admission.admission_apply') }}">Apply for Admission</a>
-      <a href="{{ url_for('admission.admission_portal_login') }}">Admission Portal</a>
+      <a href="https://exams.rainigeria.com/login">Student / Alumni Login</a>
+      <a href="https://exams.rainigeria.com/admission.admission_apply">Apply for Admission</a>
+      <a href="https://exams.rainigeria.com/admission.admission_portal_login">Admission Portal</a>
       <a href="https://scholarship.rainigeria.com" target="_blank" rel="noopener">Scholarship Portal</a>
       <a href="https://metaaideveloperacademy.rainigeria.com" target="_blank" rel="noopener">Meta AI Academy</a>
       <a href="/showcase">Student Showcase</a>
