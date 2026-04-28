@@ -1,1387 +1,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<meta name="theme-color" content="#0a0f1e"/>
-<title>CEN 510 — Teach It in 2 Hours</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
-<style>
-:root {
-  --bg: #0a0f1e;
-  --surface: #111827;
-  --surface2: #1a2235;
-  --border: #1f2d45;
-  --accent: #00d4ff;
-  --accent2: #7c3aed;
-  --accent3: #10b981;
-  --warn: #f59e0b;
-  --danger: #ef4444;
-  --text: #e2e8f0;
-  --muted: #64748b;
-  --heading: #f8fafc;
-  --card: #141c2e;
-  --glow: 0 0 24px rgba(0,212,255,0.13);
-  --radius: 14px;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:'Sora',sans-serif;font-size:15px;line-height:1.75;overflow-x:hidden;}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>In a World of Robotics and Automation, Physics is Everything — Dr. Olusola Ayoola</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ── HEADER ── */
-.site-header{position:sticky;top:0;z-index:100;background:rgba(10,15,30,0.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 16px;}
-.header-inner{display:flex;align-items:center;justify-content:space-between;height:56px;max-width:768px;margin:0 auto;}
-.header-title{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:.05em;}
-.ring-wrap{display:flex;align-items:center;gap:8px;}
-.ring-label{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;}
-.progress-ring{transform:rotate(-90deg);}
-.ring-bg{fill:none;stroke:var(--border);stroke-width:3;}
-.ring-fill{fill:none;stroke:var(--accent);stroke-width:3;stroke-linecap:round;stroke-dasharray:88;stroke-dashoffset:88;transition:stroke-dashoffset .5s ease;}
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #f9f7f4;
+      color: #1a1a1a;
+      padding: 3rem 1rem;
+    }
 
-/* ── HERO ── */
-.hero{padding:40px 20px 28px;text-align:center;max-width:768px;margin:0 auto;position:relative;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:320px;height:320px;background:radial-gradient(circle,rgba(0,212,255,.07) 0%,transparent 70%);pointer-events:none;}
-.hero-badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--accent);font-family:'Space Mono',monospace;font-size:10px;padding:4px 14px;border-radius:100px;letter-spacing:.1em;margin-bottom:14px;}
-.hero h1{font-size:26px;font-weight:800;color:var(--heading);line-height:1.2;margin-bottom:8px;}
-.hero h1 span{color:var(--accent);}
-.hero-sub{color:var(--muted);font-size:12px;margin-bottom:20px;}
-.info-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:0;}
-.info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 6px;}
-.info-card .val{font-size:18px;font-weight:800;color:var(--heading);}
-.info-card .lbl{font-size:9px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px;}
+    .page {
+      max-width: 740px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 4rem 5rem;
+      border: 1px solid #e0ddd8;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
 
-/* ── ALERT BANNER ── */
-.alert-banner{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(239,68,68,.05));border:1px solid rgba(239,68,68,.35);border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin:16px 20px;max-width:728px;margin-left:auto;margin-right:auto;}
-.alert-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
-.alert-text strong{display:block;color:#f87171;font-size:13px;font-weight:700;margin-bottom:3px;}
-.alert-text span{color:var(--muted);font-size:12px;line-height:1.6;}
+    .header {
+      border-bottom: 2px solid #1a1a1a;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+    }
 
-/* ── SECTION LABEL ── */
-.section-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;padding:0 20px;margin-bottom:10px;max-width:768px;margin-left:auto;margin-right:auto;}
+    .conference-tag {
+      font-family: Arial, sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #777;
+      margin-bottom: 1rem;
+    }
 
-/* ── PILLAR DIVIDER ── */
-.pillar-divider{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.18em;color:var(--accent2);text-transform:uppercase;padding:5px 4px 7px;margin:6px 0 8px;border-bottom:1px solid rgba(124,58,237,.2);}
+    .speech-title {
+      font-size: 26px;
+      font-weight: bold;
+      font-style: italic;
+      line-height: 1.35;
+      color: #0e0e0e;
+      margin-bottom: 1.2rem;
+    }
 
-/* ── CHAPTERS WRAPPER ── */
-.chapters{padding:0 16px;max-width:768px;margin:0 auto 100px;}
+    .meta {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      color: #555;
+      line-height: 1.7;
+    }
 
-/* ── CHAPTER CARD ── */
-.chapter-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;transition:border-color .25s,box-shadow .25s;}
-.chapter-card.open{border-color:var(--accent);box-shadow:var(--glow);}
-.chapter-card.done{border-color:rgba(16,185,129,.4);}
-.chapter-card.done .ch-num{color:var(--accent3);border-color:var(--accent3);}
+    .meta strong {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
 
-.ch-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;user-select:none;-webkit-user-select:none;}
-.ch-header:active{background:rgba(255,255,255,.02);}
+    .section-label {
+      font-family: Arial, sans-serif;
+      font-size: 9.5px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin: 2.8rem 0 0.6rem;
+    }
 
-.ch-num{font-family:'Space Mono',monospace;font-size:10px;font-weight:700;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:3px 6px;flex-shrink:0;min-width:46px;text-align:center;}
-.ch-meta{flex:1;min-width:0;}
-.ch-title{font-size:13px;font-weight:700;color:var(--heading);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ch-time{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px;}
-.ch-arrow{font-size:18px;color:var(--muted);transition:transform .3s;flex-shrink:0;}
-.chapter-card.open .ch-arrow{transform:rotate(180deg);color:var(--accent);}
-.ch-done-btn{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:transparent;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;}
-.chapter-card.done .ch-done-btn{background:var(--accent3);border-color:var(--accent3);color:#000;}
+    p {
+      font-size: 15.5px;
+      line-height: 1.9;
+      margin-bottom: 1.15rem;
+      text-align: justify;
+    }
 
-/* ── CHAPTER BODY ── */
-.ch-body{display:none;padding:0 16px 22px;border-top:1px solid var(--border);}
-.chapter-card.open .ch-body{display:block;}
+    em {
+      font-style: italic;
+    }
 
-/* Tags */
-.ch-tag-row{display:flex;flex-wrap:wrap;gap:6px;padding:12px 0 10px;}
-.tag{font-family:'Space Mono',monospace;font-size:9px;padding:3px 8px;border-radius:100px;border:1px solid;}
-.tag-arch{color:#60a5fa;border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.07);}
-.tag-sec{color:#f87171;border-color:rgba(248,113,113,.35);background:rgba(248,113,113,.07);}
-.tag-ai{color:#a78bfa;border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07);}
-.tag-edge{color:#34d399;border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.07);}
-.tag-quantum{color:#fbbf24;border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.07);}
-.tag-rt{color:#fb923c;border-color:rgba(251,146,60,.35);background:rgba(251,146,60,.07);}
-.tag-sys{color:#22d3ee;border-color:rgba(34,211,238,.35);background:rgba(34,211,238,.07);}
+    hr.divider {
+      border: none;
+      border-top: 1px solid #e5e2dc;
+      margin: 2.4rem 0 0;
+    }
 
-/* What This Chapter Is About */
-.what-block{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
-.what-block .block-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
-.what-block p{font-size:13px;color:var(--text);line-height:1.75;}
+    .protocol {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      font-style: italic;
+      color: #555;
+      border-left: 3px solid #c9b99a;
+      padding: 0.6rem 1rem;
+      margin-bottom: 2rem;
+      background: #faf8f5;
+    }
 
-/* Summary */
-.summary-block{background:var(--surface2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:14px;}
-.summary-block .block-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
-.summary-block p{font-size:13px;color:var(--text);line-height:1.75;}
-.summary-block p+p{margin-top:10px;}
+    .footer {
+      margin-top: 3.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e0ddd8;
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+    }
 
-/* Terms */
-.terms-block{margin-bottom:14px;}
-.terms-block .block-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px;}
-.term-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
-.term-name{font-size:13px;font-weight:700;color:var(--heading);margin-bottom:4px;}
-.term-analogy{font-size:11px;color:var(--accent);font-style:italic;margin-bottom:5px;}
-.term-explain{font-size:12px;color:var(--text);line-height:1.7;}
-
-/* Teach It Box */
-.teach-block{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(124,58,237,.05));border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
-.teach-block .block-label{font-family:'Space Mono',monospace;font-size:9px;color:#a78bfa;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
-.teach-block p{font-size:13px;color:var(--text);line-height:1.75;}
-.teach-block ul{margin-top:8px;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:7px;}
-.teach-block ul li{font-size:13px;color:var(--text);padding-left:18px;position:relative;line-height:1.65;}
-.teach-block ul li::before{content:'→';position:absolute;left:0;color:#a78bfa;font-size:11px;top:2px;}
-
-/* Assessment */
-.assessment-row{display:flex;align-items:flex-start;gap:10px;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25);border-radius:8px;padding:10px 14px;margin-top:4px;font-size:12px;}
-.assessment-row .a-icon{font-size:16px;flex-shrink:0;}
-.assessment-row div{line-height:1.6;}
-.assessment-row strong{color:var(--warn);}
-
-/* ── BOTTOM BAR ── */
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(10,15,30,0.97);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;justify-content:space-between;z-index:200;}
-.progress-bar-wrap{flex:1;margin:0 12px;}
-.progress-bar-track{height:4px;background:var(--border);border-radius:100px;overflow:hidden;}
-.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:100px;width:0%;transition:width .5s ease;}
-.progress-count{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);text-align:center;margin-top:4px;}
-.nav-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Sora',sans-serif;font-size:11px;font-weight:600;padding:7px 12px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap;}
-.nav-btn:active{background:var(--accent);color:#000;border-color:var(--accent);}
-
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-
-@media(min-width:480px){.hero h1{font-size:32px;}.term-explain{font-size:13px;}}
-</style>
+    @media print {
+      body { background: white; padding: 0; }
+      .page { box-shadow: none; border: none; padding: 2.5cm 2.5cm; }
+    }
+  </style>
 </head>
 <body>
+  <div class="page">
 
-<!-- HEADER -->
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-title">CEN 510 // 2-HOUR TEACH</div>
-    <div class="ring-wrap">
-      <span class="ring-label" id="headerCount">0/16</span>
-      <svg class="progress-ring" width="32" height="32" viewBox="0 0 32 32">
-        <circle class="ring-bg" cx="16" cy="16" r="14"/>
-        <circle class="ring-fill" id="ringFill" cx="16" cy="16" r="14"/>
-      </svg>
+    <div class="header">
+      <div class="conference-tag">Plenary Address &nbsp;·&nbsp; 47th Annual Convention of the Nigerian Institute of Physics &nbsp;·&nbsp; May 2026</div>
+      <div class="speech-title">"In a World of Robotics and Automation,<br>Physics is Everything"</div>
+      <div class="meta">
+        <strong>Dr Olusola Sayeed Ayoola, PhD.</strong><br>
+        Chief Executive Officer, Robotics and Artificial Intelligence Nigeria (RAIN)<br>
+        Lead City University, Ibadan, Oyo State
+      </div>
     </div>
+
+    <!-- ABSTRACT -->
+    <div class="section-label">Abstract</div>
+    <div style="background:#faf8f5; border-left: 3px solid #c9b99a; padding: 1rem 1.2rem; margin-bottom: 2rem; font-size: 14.5px; line-height: 1.85; color: #333; text-align: justify;">
+      The accelerating rise of robotics and automation across global industries is not simply a technological phenomenon — it is a physics imperative. This address argues that the foundational laws of physics are not merely academic background to engineering; they are the active, indispensable scaffold upon which every functional robotic system is built. Drawing on domains ranging from autonomous vehicles and humanoid robots to underwater systems, industrial robot arms, drones, and smart IoT environments, the address demonstrates how classical and modern physics — mechanics, thermodynamics, wave theory, materials science, and electromagnetism — govern the design, performance, and reliability of these systems. The address further examines the reciprocal relationship between physics and technology: how artificial intelligence, machine learning, quantum computing, and advanced data systems are in turn accelerating physical discovery. In conclusion, a call is made to the Nigerian Institute of Physics and the broader African scientific community to embrace a methodology of <em>smart physics</em> — taking research beyond the controlled laboratory into real-world, real-time conditions — and to direct this expertise deliberately toward Nigeria's most urgent national challenges in agriculture, security, energy, and industrialisation.
+    </div>
+
+    <!-- OPENING -->
+    <div class="protocol">PROTOCOL</div>
+
+    <p>It is a profound honour to stand before you today at this landmark gathering of Nigeria's finest minds.</p>
+
+    <hr class="divider">
+    <div class="section-label">Opening</div>
+
+    <p>When I was in high school, Physics was my favourite subject. I remember the class on linear expansivity — how temperature could cause a measurable change in the length of an object. I remember our lesson on resistivity, and how it too could shift with temperature. These principles, among many others, taught me something early in life that I have never forgotten: this world is governed by laws that will stand the test of time.</p>
+
+    <p>And if the world is governed by laws, then searching and researching for more of those laws — more facts, more theories about how our universe operates — will grant us ever greater opportunities to achieve what might otherwise seem unimaginable.</p>
+
+    <hr class="divider">
+    <div class="section-label">Physics as the foundation of civilisation</div>
+
+    <p>From the buoyancy that made sea travel possible, to the discovery of the steam engine, to the harnessing of electricity, and right through to satellite communication — mankind owes an extraordinary debt to the early discoverers of the laws of physics. We owe it to the founding fathers of this noble profession. Every ship that sails, every bulb that lights a room, every voice that travels across a continent through wireless signal — all of it traces back to someone asking a bold question about how the physical world works, and refusing to stop until they found the answer.</p>
+
+    <p>Back in high school, we were taught Newton's First Law of Motion: that a body will remain in a state of rest or uniform motion unless acted upon by an external resultant force. That is true of physics. But I have come to believe it is even more profoundly true of nations and of peoples who are seeking change. For a nation to attain technological advancement, its thinkers and its doers must seek fresh ideas, fresh insights, and the courage to apply external force to old ways of doing things. That, distinguished guests, is precisely the job I bring to this conference today.</p>
+
+    <hr class="divider">
+    <div class="section-label">The title</div>
+
+    <p>My address is titled: <em>In a world of robotics and automation, Physics is Everything.</em></p>
+
+    <p>Let me paint you a picture. Imagine a football pitch. On one side, you have the very best human players the world has ever produced — Messi, Ronaldo, the legends of the game. On the other side, you have robots. Now, it does not matter how gifted, how experienced, or how passionate Messi and his teammates are. The robots will calculate the velocity of the ball, the optimal kick force, the angle and trajectory needed to beat every obstacle between them and the post. They will factor in friction, temperature, air resistance, and surface conditions — all in real time, all in milliseconds. And they will score.</p>
+
+    <p>But here is the critical point: for us to build robots that perform at that level, we must get our physics right. Because in a world of robotics, where we are dealing with physical objects controlled by the laws of nature, <em>physics is everything.</em></p>
+
+    <hr class="divider">
+    <div class="section-label">Why the world is calling for automation</div>
+
+    <p>The world today is asking for less human involvement in day-to-day operations — cleaning, cooking, manufacturing, bottling, packaging, delivery of goods, driving, and increasingly, even healthcare. The generation of today wants everything fast, easy, and reliable. People are becoming more introverted. They want to relate less with individuals who may judge them, and more with systems that are consistent, tireless, and impartial. They want to be served by artificial intelligence — by cashiers, doctors, and government systems devoid of human sentiment and personality bias.</p>
+
+    <p>What this tells us, indirectly, is that humanity is calling for the world to operate itself. Society is reaching back to physics in search of self-aware physical objects guided by natural laws and acting in our interest, regardless of our own inadequacies. This is the very essence of robotics and automation.</p>
+
+    <p>And the need has never been more urgent. The COVID-19 pandemic of 2019–2020 was a testament to how fragile our human-dependent systems truly are. From sanitiser-spraying drones to robot-assisted clinics, from intelligent self-operating ventilators to self-driving vehicles enforcing social distancing across our cities — robotics evolved during that crisis from a manufacturing tool into a societal necessity. The world woke up. We cannot afford to go back to sleep.</p>
+
+    <hr class="divider">
+    <div class="section-label">Where physics lives inside robotics</div>
+
+    <p>Let me now walk you through the domains where physics is not merely relevant — it is indispensable.</p>
+
+    <p><strong>Autonomous vehicles.</strong> The most significant challenge facing self-driving cars is detection and response. Can the vehicle determine, quickly and accurately, that an obstacle lies ahead? Can it estimate speed and calculate precisely how to decelerate in order to stop safely at the right distance? This is classical physics — speed, acceleration, time, and force. But detecting the obstacle in the first place — whether through optical sensors, LiDAR, or infrared — that too is physics. And yet the problem does not end there. When weather changes, visibility drops, optical sensors degrade, and infrared readings become unreliable. Road surfaces become slippery; friction coefficients vary. For self-driving vehicles to truly work at scale, we need advanced physics. We need smarter sensor science, improved understanding of material interactions with light and energy waves, and the ability to fuse data from multiple sources in real time. The discovery of graphene, for instance, has already revolutionised how we think about materials in electronics and sensor design. This is what smart physics looks like in the real world.</p>
+
+    <p><strong>Humanoid robots.</strong> When we design a robot that walks, reaches, lifts, and balances like a human being, the kinematics of every joint must be precisely calculated. The distribution of torque, the centre of gravity across varying postures, the dynamic stabilisation of a bipedal structure in motion — all of this draws on classical mechanics, rigid body dynamics, and control theory. A humanoid robot is not just a machine. It is a walking, breathing physics problem.</p>
+
+    <p><strong>Underwater robots.</strong> Here, acoustic positioning using sonar and sound wave propagation replaces optical sensing. Wireless signal transmission through water presents unique challenges because electromagnetic waves behave very differently underwater than in air. Power delivery to untethered subaquatic systems is a frontier problem in physics. Getting an underwater robot to navigate, communicate, and operate reliably in deep-sea conditions demands mastery of wave mechanics, pressure physics, and materials science.</p>
+
+    <p><strong>Robot arms and industrial systems.</strong> In manufacturing, the precision of a robotic arm depends on torque calculation, moment of inertia, and materials science. The choice of end-effector material, the tolerances in motion, the response to load — all governed by physics. The reliability of an industrial robot is ultimately a statement about how well its designers understood the physical world.</p>
+
+    <p><strong>Drones.</strong> Whether fixed-wing or multi-rotor, drone flight is applied aerodynamics. Lift, drag, thrust, and weight are in constant negotiation with every gust of wind and every change in altitude. Navigation requires an understanding of GPS signal physics, inertial measurement, and increasingly, computer vision. For a delivery drone to arrive at your doorstep safely, physics must have been solved many times over.</p>
+
+    <p><strong>Smart homes and the Internet of Things.</strong> The physics of smart metering, remote sensing, wireless connectivity, battery energy storage, and power management underpins every smart home system. When the power goes out, a truly smart system must still be active — which means energy storage, charge-discharge physics, and thermal management are all at play. IoT is not just about software. Every sensor node, every signal, every edge device is a physics instrument.</p>
+
+    <hr class="divider">
+    <div class="section-label">Technology advancing physics in return</div>
+
+    <p>Now, it would be incomplete to speak only of how physics enables technology. The relationship is reciprocal, and I think it is important that we acknowledge this.</p>
+
+    <p>Technology has given physics gifts that would have seemed miraculous to our predecessors. The ability to process vast amounts of experimental data using artificial intelligence and machine learning has accelerated discovery in ways we are only beginning to understand. High-performance computing has made it possible to simulate physical systems — from molecular interactions to cosmic dynamics — at levels of fidelity that no laboratory alone could achieve. Space exploration has given us data from planetary bodies and cosmic environments that are rewriting our understanding of gravity, radiation, and the nature of matter itself.</p>
+
+    <p>Virtual reality is enabling new modes of laboratory simulation. Wearable technology and IoT sensors are generating real-world, real-time data streams that dwarf what any controlled experiment could produce. Quantum computing is beginning to unlock new computational paradigms that will further accelerate physical modelling. And collaborative platforms for cross-border data sharing are enabling the kind of global scientific conversation that can take us, together, much further than any of us could go alone.</p>
+
+    <p>All of this tells us one thing clearly: the era of the isolated laboratory experiment, conducted under tightly controlled conditions and then published months later, is giving way to something more dynamic, more continuous, and more powerful. We are entering the age of smart physics.</p>
+
+    <hr class="divider">
+    <div class="section-label">The call to action</div>
+
+    <p>And so I come now to my charge — not just to this distinguished audience of physicists, but to the Nigerian Institute of Physics as an institution, and to Nigeria as a nation with both the need and the potential to lead.</p>
+
+    <p>Smart physics is not a slogan. It is a methodology. It means making our laboratories smarter — equipping them with the sensors, computing tools, and data management systems that allow us to gather richer, more accurate data. It means moving our research beyond controlled indoor environments and into the field, into real-world conditions, into living systems that cannot be paused for our convenience. It means conducting experiments while the system is running, not shutting down operations just to take a reading.</p>
+
+    <p>It means collaboration — genuine, open, cross-institutional collaboration. Sharing data, sharing resources, and building repositories of Nigerian and African physical science knowledge that can stand alongside the best in the world.</p>
+
+    <p>And crucially, it means applying physics in service of our most pressing national challenges. How can smart physics improve agricultural yield — from precision irrigation to soil sensing? How can it strengthen border and community security — from acoustic intrusion detection to drone surveillance systems? How can it support industrialisation and improve our management of energy resources? These are not theoretical questions. They are urgent national imperatives, and physics is the language in which their solutions will be written.</p>
+
+    <hr class="divider">
+    <div class="section-label">Conclusion</div>
+
+    <p>Distinguished ladies and gentlemen, technological advancement is not an end in itself. It is a means — a means to feed more people, to protect more lives, to build a stronger, more self-reliant nation. Physics is the foundation beneath all of it.</p>
+
+    <p>We began this journey when someone noticed that heat could change the length of a metal rod. We continued it when someone asked why an apple falls downward and not upward. We will take the next leap when Nigerian physicists — in this room and beyond — apply the full power of their expertise to the robotics and automation challenges of our time.</p>
+
+    <p>In a world of robotics and automation, physics is not background knowledge. Physics is not an academic exercise. <em>Physics is everything.</em></p>
+
+    <p><strong>Thank you.</strong></p>
+
+    <div class="footer">
+      Dr Olusola Sayeed Ayoola, PhD. &nbsp;·&nbsp; CEO, Robotics and Artificial Intelligence Nigeria (RAIN) &nbsp;·&nbsp; NIP 47th Annual Convention, May 2026
+    </div>
+
   </div>
-</header>
-
-<!-- HERO -->
-<div class="hero">
-  <div class="hero-badge">GRADUATE LEVEL · 2 UNITS</div>
-  <h1>CEN 510<br/><span>Teach It in 2 Hours</span></h1>
-  <p class="hero-sub">16 chapters · plain English · everything explained simply</p>
-  <div class="info-strip">
-    <div class="info-card"><div class="val">16</div><div class="lbl">CHAPTERS</div></div>
-    <div class="info-card"><div class="val">2hrs</div><div class="lbl">TOTAL</div></div>
-    <div class="info-card"><div class="val">~7min</div><div class="lbl">PER CHAP</div></div>
-  </div>
-</div>
-
-<!-- ALERT -->
-<div class="alert-banner">
-  <div class="alert-icon">👨‍🏫</div>
-  <div class="alert-text">
-    <strong>Everything is explained from scratch — no prior knowledge assumed</strong>
-    <span>Every technical term has a plain-English definition and a real-world analogy. If you can understand the analogy, you can teach the concept. Tap ✓ when done — the next chapter opens automatically.</span>
-  </div>
-</div>
-
-<!-- CHAPTERS -->
-<div class="section-label">// COURSE CHAPTERS — TAP TO OPEN</div>
-<div class="chapters" id="chaptersContainer">
-
-  <!-- ══════════════════════════════════════ -->
-  <div class="pillar-divider">▸ PILLAR I — FOUNDATIONS OF MODERN COMPUTING (Weeks 1–3)</div>
-
-  <!-- ═══ CHAPTER 1 ═══ -->
-  <div class="chapter-card" id="ch1">
-    <div class="ch-header" onclick="toggle(1)">
-      <div class="ch-num">WK 01</div>
-      <div class="ch-meta">
-        <div class="ch-title">Course Intro & Why Old Computing Stopped Working</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,1)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-arch">Foundations</span><span class="tag tag-sys">History</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>For 50 years, computers got faster automatically — engineers just made transistors smaller and everything sped up. Around 2004, that stopped working. This chapter explains <em>why</em> it stopped and what engineers are doing about it. This is the "why" behind everything else in the course.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Imagine a highway. For decades, we kept adding lanes (more transistors) and cars automatically went faster. Then we hit a problem: the highway started catching fire because we added too many cars. That is literally what happened to computer chips — they got so hot they could not run safely.</p>
-        <p>This is called the <strong>Power Wall</strong>. To deal with it, chip designers had to turn off parts of the chip to stop overheating. A chip where large sections are intentionally switched off is called a chip with <strong>Dark Silicon</strong> — silicon that exists but cannot be used.</p>
-        <p>There is a second problem: even when the processor is fast, it sits around waiting for data from memory, because memory is much slower. This gap between processor speed and memory speed is called the <strong>Memory Wall</strong>. The whole course is about creative solutions to these two walls.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Dennard Scaling</div>
-          <div class="term-analogy">💡 Analogy: Making a smaller car engine that uses the same fuel as before</div>
-          <div class="term-explain">A rule from 1974 that said: if you shrink a transistor, it uses proportionally less power, so you can add more transistors without using more electricity. This worked beautifully for 30 years. Around 2004, it broke — smaller transistors started leaking electricity like a cracked pipe, generating heat instead of doing useful work.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Power Wall</div>
-          <div class="term-analogy">💡 Analogy: A room with so many light bulbs it catches fire</div>
-          <div class="term-explain">When chips got too dense, they generated more heat than cooling systems could remove. You cannot run a chip at full speed when it is overheating — so chips hit a speed ceiling. This is the Power Wall: chips cannot simply run faster because they would melt.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Dark Silicon</div>
-          <div class="term-analogy">💡 Analogy: A skyscraper where you can only turn on lights in a few floors at a time or the electrical system fails</div>
-          <div class="term-explain">Because of the Power Wall, modern chips cannot power all their transistors simultaneously. Large portions of the chip are kept switched off (dark) to manage heat. We are building chips with billions of transistors but only using a fraction at any moment. This is wasteful but currently unavoidable.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Memory Wall</div>
-          <div class="term-analogy">💡 Analogy: A genius professor who can think 100 times faster than anyone can hand him paper</div>
-          <div class="term-explain">Modern processors can do billions of operations per second, but RAM (memory) can only supply data a fraction of that speed. The processor spends most of its time doing nothing — just waiting for data. This waiting is the Memory Wall, and it is arguably a bigger problem than processor speed today.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Amdahl's Law</div>
-          <div class="term-analogy">💡 Analogy: You speed up 90% of a road trip by flying, but you still have to drive the last 10% — total time savings are limited</div>
-          <div class="term-explain">If 10% of a program cannot be parallelised (run simultaneously), then no matter how many processors you add, you can never make the program more than 10 times faster. It is a mathematical ceiling on parallel speedup. Named after Gene Amdahl who proved this in 1967.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Open with: "For 50 years computers got faster for free — today they don't. Why?" (1 min)</li>
-          <li>Explain Dennard Scaling broke → Power Wall → Dark Silicon using the highway/fire analogy (3 min)</li>
-          <li>Explain the Memory Wall using the fast professor waiting for paper (2 min)</li>
-          <li>Close with: "Everything else in this course is how engineers are solving these two problems" (1 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>No assessment this week.</strong> Reading: Hennessy & Patterson Turing Lecture 2019.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 2 ═══ -->
-  <div class="chapter-card" id="ch2">
-    <div class="ch-header" onclick="toggle(2)">
-      <div class="ch-num">WK 02</div>
-      <div class="ch-meta">
-        <div class="ch-title">New Ways to Build Processors (Architecture I)</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,2)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-arch">Architecture</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Since we cannot make individual processors faster, engineers got creative about how processors are built and connected. This chapter covers three major innovations: building chips from small pieces (chiplets), stacking memory on top of the processor, and a free open-source processor design anyone can use.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Think of old chips like baking one giant cake. If one part burns, you throw the whole cake away — very wasteful. The new approach — <strong>Chiplets</strong> — is like assembling a cake from smaller pieces baked separately. Each piece is cheaper to make, and if one fails, you replace just that piece. AMD uses this for their Ryzen processors and it is why they became competitive with Intel.</p>
-        <p>The second innovation is <strong>HBM (High Bandwidth Memory)</strong> — instead of putting memory far away on a circuit board, engineers physically stack memory chips directly on top of the processor like floors of a building. Data travels a tiny distance instead of a long journey across the board. This solves a big chunk of the Memory Wall problem.</p>
-        <p>The third big development is <strong>RISC-V</strong> — an open, free instruction set (the language a processor speaks) that anyone can use without paying licensing fees to companies like Intel or ARM. Universities, startups, and entire countries (China, India) are building processors using RISC-V.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Chiplets</div>
-          <div class="term-analogy">💡 Analogy: Building a LEGO city from separate pre-made modules instead of carving it from one block of stone</div>
-          <div class="term-explain">Instead of manufacturing one giant chip that is hard and expensive to make correctly, engineers build several smaller chips (chiplets) and connect them in one package. Each chiplet does a specific job — one handles calculations, one handles memory, one handles I/O. This approach is cheaper, more flexible, and easier to manufacture at high quality.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">HBM — High Bandwidth Memory</div>
-          <div class="term-analogy">💡 Analogy: Instead of your filing cabinet being across the room, it is built into your desk — you can grab files 100x faster</div>
-          <div class="term-explain">Traditional memory (RAM) is located on separate chips connected by long wires on a circuit board. HBM stacks memory dies (layers) vertically, right beside or on top of the processor chip. Because data travels micrometres instead of centimetres, you get enormously more data throughput — critical for AI and graphics workloads that are starved for data.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">RISC-V (pronounced "risk five")</div>
-          <div class="term-analogy">💡 Analogy: Like the Linux of processor design — free, open-source, anyone can build their own version</div>
-          <div class="term-explain">Every processor speaks a language called an Instruction Set Architecture (ISA). Intel has x86, ARM has their ISA — and you pay to use them. RISC-V is a free, open ISA. Universities can teach using it, startups can build chips on it, and governments can design national processors without depending on foreign companies. It is simple, clean, and increasingly powerful.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Processing-in-Memory (PIM)</div>
-          <div class="term-analogy">💡 Analogy: Instead of bringing ingredients from the farm to the kitchen, you cook at the farm</div>
-          <div class="term-explain">Rather than moving data from memory to the processor for calculation, PIM puts simple calculation circuits inside the memory itself. This eliminates the data journey entirely. It is especially useful for AI and database workloads where data movement is the dominant cost in time and energy.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Chiplets: "We stopped making one big chip — we assemble from parts." LEGO analogy. AMD Ryzen example. (3 min)</li>
-          <li>HBM: "We moved memory to sit right on top of the processor." Filing cabinet analogy. (2 min)</li>
-          <li>RISC-V: "There is now a free, open-source processor language anyone can use." Linux comparison. (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 1</strong> due end of week — Weeks 1–2 content.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 3 ═══ -->
-  <div class="chapter-card" id="ch3">
-    <div class="ch-header" onclick="toggle(3)">
-      <div class="ch-num">WK 03</div>
-      <div class="ch-meta">
-        <div class="ch-title">How Processors Actually Think (Architecture II)</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,3)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-arch">Architecture</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>This chapter goes inside the processor to understand how it executes instructions so efficiently — and why those same techniques accidentally created massive security holes (which you cover in Week 8). It also introduces the idea of building a custom chip for one specific job instead of a general one.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Modern processors are much smarter than they look. When they encounter an "if/else" decision in your code, instead of waiting to find out which direction the program goes, they <em>guess</em> and start running ahead. This is called <strong>Speculative Execution</strong>. If the guess is right — great, no time wasted. If wrong, they undo the work and take the correct path. This makes processors dramatically faster.</p>
-        <p>The <strong>Roofline Model</strong> is a tool engineers use to diagnose whether a program is being slowed down by the processor being too slow (compute-bound) or by memory being too slow (memory-bound). Think of it as a doctor's diagnostic test — before fixing a performance problem, you identify which type it is.</p>
-        <p>Finally, this week introduces <strong>Domain-Specific Architectures</strong> — chips built for exactly one type of job. Google's chip for AI (the TPU) can do AI calculations 100x more efficiently than a general processor because every part of it is designed just for that task, nothing wasted on flexibility.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Speculative Execution</div>
-          <div class="term-analogy">💡 Analogy: A chef who starts preparing both steak AND chicken while a customer is still deciding, then throws away the one not ordered</div>
-          <div class="term-explain">When a processor hits an "if-then" branch in code, it predicts which path will be taken and starts executing instructions along that path before knowing the answer. If right, no time is lost. If wrong, it discards the speculative work and retries. Modern CPUs guess correctly about 95% of the time, making programs run dramatically faster. However — this creates a famous security problem covered in Week 8.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Out-of-Order Execution</div>
-          <div class="term-analogy">💡 Analogy: A restaurant kitchen that starts cooking your dessert while your main course is still finishing, instead of waiting</div>
-          <div class="term-explain">Processors do not wait for one instruction to fully complete before starting the next if the next instruction does not depend on the first. They identify independent instructions and run them simultaneously or in a different order. The result appears correct to the program, but throughput is dramatically higher.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Roofline Model</div>
-          <div class="term-analogy">💡 Analogy: A doctor measuring both your heart rate AND blood pressure — two different ceilings, one is always the limit</div>
-          <div class="term-explain">A simple visual tool that plots a program's performance against two ceilings: the maximum computation speed (compute roof) and the maximum data delivery speed from memory (memory bandwidth roof). Your program will always be limited by whichever ceiling it hits first. This tells engineers whether to buy a faster processor or more memory bandwidth to improve performance.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Domain-Specific Architecture (DSA)</div>
-          <div class="term-analogy">💡 Analogy: A specialist surgeon vs. a general practitioner — the specialist is 100x better at one thing because they do nothing else</div>
-          <div class="term-explain">A chip designed to do exactly one category of tasks extremely well, sacrificing flexibility. Google's TPU only does the matrix mathematics needed for AI — but it does it 100x more efficiently per watt than a general CPU. As general-purpose scaling ends, building specialised chips is how engineers keep improving performance. This is called the "New Golden Age" of computer architecture.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Speculative execution: Chef preparing two meals analogy. "This is how CPUs stay fast — and also how they got hacked." (3 min)</li>
-          <li>Roofline Model: Doctor diagnostic analogy — "is the problem compute or memory?" (2 min)</li>
-          <li>DSA: Specialist surgeon analogy. "Google built a chip only for AI — 100x better." (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📋</span><div><strong>Assignment 1 Due:</strong> Architecture analysis report on a recent processor.</div></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════ -->
-  <div class="pillar-divider">▸ PILLAR II — ACCELERATORS & EDGE COMPUTING (Weeks 4–7)</div>
-
-  <!-- ═══ CHAPTER 4 ═══ -->
-  <div class="chapter-card" id="ch4">
-    <div class="ch-header" onclick="toggle(4)">
-      <div class="ch-num">WK 04</div>
-      <div class="ch-meta">
-        <div class="ch-title">Using Many Different Chips Together (Heterogeneous Computing)</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,4)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-arch">Architecture</span><span class="tag tag-ai">AI/ML</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Since one type of processor cannot do everything efficiently, modern systems combine different types — a CPU for general tasks, a GPU for parallel tasks, an FPGA for custom logic. This chapter explains what each type is, what it is best at, and how they work together.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Think of a construction site. You would not use a hammer to pour concrete or a cement mixer to drive nails. Different tools for different jobs — that is heterogeneous computing. A <strong>CPU</strong> (Central Processing Unit) is the general-purpose processor — very fast at sequential tasks, smart, but limited in how many things it can do at once. A <strong>GPU</strong> (Graphics Processing Unit) was originally built for video games but turns out to be perfect for AI — it has thousands of simple cores that all do the same operation on different data simultaneously. A <strong>FPGA</strong> is a chip you can reprogram — like a blank circuit board that becomes whatever circuit you want. This makes it perfect when the task is known but you need flexibility to update it later.</p>
-        <p>The key insight: no single chip type wins at everything. Modern AI systems use all three simultaneously — a CPU orchestrates everything, a GPU runs the AI model, and FPGAs might handle network processing.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">CPU (Central Processing Unit)</div>
-          <div class="term-analogy">💡 Analogy: A brilliant professor who can only teach one student at a time, but teaches anything</div>
-          <div class="term-explain">The main processor in any computer. It has a small number of very powerful cores (usually 4–64) that execute instructions one after another at extremely high speed. Excellent for complex logic, running operating systems, and any task that has many sequential steps that depend on each other. Not good at doing millions of identical simple tasks simultaneously.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">GPU (Graphics Processing Unit)</div>
-          <div class="term-analogy">💡 Analogy: 10,000 students all doing simple arithmetic simultaneously — perfect for AI and graphics</div>
-          <div class="term-explain">Originally designed to draw video game pixels (each pixel needs the same colour calculation), GPUs have thousands of simple cores that can all do the same operation on different data simultaneously. This is called SIMT — Single Instruction, Multiple Threads. It turns out AI training is exactly this pattern: apply the same mathematical operation to millions of numbers. This is why NVIDIA became the most valuable chip company in the world.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">FPGA (Field-Programmable Gate Array)</div>
-          <div class="term-analogy">💡 Analogy: A blank circuit board that turns into whatever circuit you program it to be — like programmable hardware</div>
-          <div class="term-explain">An FPGA is a chip made of millions of tiny logic blocks that can be connected in any pattern by software. You literally define what circuit exists inside it. This means you can customise it for any task with hardware-level speed, but unlike an ASIC (fixed chip), you can reprogram it if requirements change. Microsoft uses FPGAs in data centres to accelerate specific tasks like search ranking and network processing.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">SIMT — Single Instruction, Multiple Threads</div>
-          <div class="term-analogy">💡 Analogy: An army marching in lockstep — everyone takes the same step at the same time, but each soldier is in a different position</div>
-          <div class="term-explain">The GPU execution model. All threads in a group (called a "warp" of 32 threads) execute the exact same instruction simultaneously, but each one operates on different data. This is how a GPU can do 10,000 AI calculations at once. The weakness: if threads need to do different things (branch divergence), half the GPU sits idle waiting for the other half.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Systolic Array</div>
-          <div class="term-analogy">💡 Analogy: An assembly line where every worker passes their result to the next worker in rhythm — like a mathematical conveyor belt</div>
-          <div class="term-explain">A grid of simple multiplication-accumulation units that pass data between each other in a fixed rhythm (like a heartbeat — "systolic" from "systole"). Data flows through the grid and gets multiplied and added as it goes, performing matrix multiplication efficiently. Google's TPU chip is built entirely around a 256×256 systolic array. Matrix multiplication is the core operation of all AI — that is why TPUs are so fast for AI.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Start: "Different jobs need different tools — construction site analogy." (1 min)</li>
-          <li>CPU: Brilliant professor who can only help one student. (1 min)</li>
-          <li>GPU: 10,000 students doing simple arithmetic simultaneously. Explain why AI loves this. (3 min)</li>
-          <li>FPGA: Blank circuit board you program into anything. Microsoft data centre example. (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 2</strong> due end of week — Weeks 3–4 content.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 5 ═══ -->
-  <div class="chapter-card" id="ch5">
-    <div class="ch-header" onclick="toggle(5)">
-      <div class="ch-num">WK 05</div>
-      <div class="ch-meta">
-        <div class="ch-title">GPU Chips & AI Hardware — How ChatGPT is Actually Run</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,5)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-arch">Architecture</span><span class="tag tag-ai">AI/ML</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>This chapter focuses on the specific hardware that runs AI — from NVIDIA's GPU Tensor Cores to Google's TPU chips. It explains why AI is so hardware-hungry, and what innovations make large language models like ChatGPT possible to run at scale.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Running ChatGPT or any large AI model requires enormous amounts of hardware. Here is why: AI models are made of billions of numbers (called weights or parameters). To generate one response, the system must load all those numbers from memory and multiply them together. The bottleneck is not computation speed — it is how fast you can move data from memory to the processor. This is why AI chips need special memory technology like HBM (from Chapter 2).</p>
-        <p>NVIDIA's <strong>Tensor Cores</strong> are special circuits inside their GPUs designed specifically for the matrix multiplications AI needs — they can do this operation in one clock cycle instead of many. Google's <strong>TPU</strong> goes further: the entire chip is a matrix multiplier with almost no flexibility for other tasks — but it is absurdly efficient for AI. When you use ChatGPT, your question is processed across a cluster of thousands of these chips connected by <strong>NVLink</strong>, NVIDIA's ultra-fast chip-to-chip connection, allowing thousands of GPUs to work as one giant computer.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Tensor Core</div>
-          <div class="term-analogy">💡 Analogy: A specialised calculator that does one specific complex calculation instantly instead of step-by-step</div>
-          <div class="term-explain">A special hardware unit inside NVIDIA GPUs (starting from the Volta generation in 2017) that performs "D = A×B + C" — a matrix multiply-accumulate — in a single clock cycle using reduced precision numbers (FP16 or BF16). Standard GPU cores would take many cycles for the same operation. Tensor Cores are why modern AI training is possible — they deliver 100s of TFLOPS on AI workloads.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">TPU — Tensor Processing Unit</div>
-          <div class="term-analogy">💡 Analogy: A factory production line that only makes one product — extremely fast and efficient, but cannot make anything else</div>
-          <div class="term-explain">Google's custom AI chip. Unlike a GPU which can do many things, a TPU is built purely for matrix multiplication (the core AI operation). It uses a large systolic array (explained in Ch.4) and dedicated high-bandwidth memory. TPUs power all of Google's AI services. They are so efficient that Google's TPU v4 can train large AI models 10x faster per dollar than GPU clusters.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">NVLink</div>
-          <div class="term-analogy">💡 Analogy: A private motorway between buildings versus a slow public road — data moves 10x faster between GPUs</div>
-          <div class="term-explain">NVIDIA's proprietary high-speed connection between GPU chips. Standard connections (PCIe) transfer data at around 64 GB/s between chips. NVLink in the H100 does 900 GB/s — over 14x faster. This matters because AI training requires constant sharing of gradient information between GPUs. With NVLink, thousands of GPUs can act as a single, coherent, enormous accelerator.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Memory Bandwidth (in AI context)</div>
-          <div class="term-analogy">💡 Analogy: A library where reading books is instant, but physically walking to the shelf takes most of your time</div>
-          <div class="term-explain">AI inference (running a model to get answers) is mostly memory-bandwidth-bound — the chip waits for model weights to arrive from memory. A 70-billion parameter AI model needs ~140 GB just to store the numbers. Getting all those numbers to the compute units fast enough is the primary engineering challenge. This is why AI chips use HBM memory and why memory capacity and bandwidth are listed on AI chip spec sheets, not just FLOPS.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"ChatGPT lives on thousands of chips — let me show you what those chips look like." (1 min)</li>
-          <li>Tensor Cores: Specialised calculator — one clock cycle for what used to take many. (2 min)</li>
-          <li>TPU: Factory that makes one product only — absurdly efficient. (2 min)</li>
-          <li>NVLink: Private motorway between GPUs. Why 1000 GPUs act as one giant computer. (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 2 Due:</strong> CUDA GPU programming optimisation lab.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 6 ═══ -->
-  <div class="chapter-card" id="ch6">
-    <div class="ch-header" onclick="toggle(6)">
-      <div class="ch-num">WK 06</div>
-      <div class="ch-meta">
-        <div class="ch-title">Computing at the Edge — Bringing AI to Your Phone & Sensors</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,6)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-edge">Edge/IoT</span><span class="tag tag-ai">AI/ML</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Not all computing can happen in a distant data centre. Sometimes data needs to be processed right where it is created — on a phone, a camera, a hospital sensor. This is called edge computing. This chapter explains why it matters, how AI fits into tiny devices, and a clever privacy-preserving way to train AI without sending your data anywhere.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Imagine a self-driving car that needs to identify a pedestrian and brake immediately. Sending that camera image to a server in Lagos, waiting for a response, and then braking — by then the accident has already happened. The computation must happen locally, instantly. That is <strong>Edge Computing</strong>: processing data at or near its source, not in a distant cloud.</p>
-        <p><strong>TinyML</strong> is the art of squeezing AI into impossibly small devices — microcontrollers with 256KB of RAM and no internet connection. Engineers compress models by converting precise numbers to simpler ones (quantisation) and cutting out unused parts (pruning) until the model fits. Your phone already does this: Siri, Google Assistant, and face unlock all run on-device AI chips.</p>
-        <p><strong>Federated Learning</strong> solves a critical privacy problem: how do you train an AI on sensitive medical data from a thousand hospitals without sending that data to one central server? Answer: the model goes to each hospital, trains locally on their private data, then only the <em>learned adjustments</em> (not the data) are sent back and averaged. Private data never leaves.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Edge Computing</div>
-          <div class="term-analogy">💡 Analogy: Processing fish at the harbour instead of shipping raw fish to a factory inland and back</div>
-          <div class="term-explain">Computing that happens close to where data is generated — on a device, a local gateway, or a nearby mini data centre — rather than sending all data to a faraway cloud. Reduces latency (waiting time), saves bandwidth costs, and allows operation even without internet. Essential for autonomous vehicles, industrial robots, remote sensing, and any real-time system.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">TinyML</div>
-          <div class="term-analogy">💡 Analogy: Fitting a full orchestra performance into a tiny music box — you have to cleverly compress everything down</div>
-          <div class="term-explain">Machine Learning deployed on microcontrollers — chips so small and cheap they are in light switches and thermostats. A TinyML model might use only 20KB of storage and run on a coin battery for a year. It achieves this through extreme compression: quantisation (turning 32-bit numbers into 8-bit numbers), pruning (removing unnecessary connections), and knowledge distillation (training a small model to mimic a big one).</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Quantisation</div>
-          <div class="term-analogy">💡 Analogy: Rounding prices to the nearest dollar instead of exact cents — a bit less precise, but the shopping still works fine</div>
-          <div class="term-explain">AI model weights are normally stored as 32-bit floating-point numbers (very precise). Quantisation converts them to 8-bit or even 4-bit integers (much less precise but 4–8x smaller). The model becomes dramatically smaller and faster, with only a tiny loss in accuracy. This is how a model too large for your phone becomes small enough to run on it.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Federated Learning</div>
-          <div class="term-analogy">💡 Analogy: Every hospital improves a shared medical textbook locally from their own patients, but never shares the patient records themselves — only their editorial suggestions</div>
-          <div class="term-explain">A way to train AI models across many devices or institutions without sharing the underlying private data. Each participant trains the model locally, computes the changes the training would make (gradients), and sends only those small changes to a central coordinator. The coordinator averages all changes and sends back the improved model. Private data never leaves each participant. Google uses this for keyboard autocomplete — your typing improves the model without Google seeing your messages.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Self-driving car scenario: "It cannot wait for the cloud." Introduce Edge Computing. (2 min)</li>
-          <li>TinyML: Music box analogy. "We compress AI until it fits on a chip smaller than your thumbnail." (2 min)</li>
-          <li>Federated Learning: Hospital analogy. "Private data never leaves, only the lessons learned." (3 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📋</span><div><strong>Midterm Project Proposal Due</strong> — 1-page abstract + bibliography.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 7 ═══ -->
-  <div class="chapter-card" id="ch7">
-    <div class="ch-header" onclick="toggle(7)">
-      <div class="ch-num">WK 07</div>
-      <div class="ch-meta">
-        <div class="ch-title">Internet of Things — Connecting Everything to Everything</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,7)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-edge">Edge/IoT</span><span class="tag tag-sys">Systems</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>The Internet of Things (IoT) is the network of physical objects — lights, locks, fridges, farm sensors, factory machines — that talk to each other and to the internet. This chapter covers the special communication protocols designed for tiny, battery-powered devices, and the emerging standard that is trying to unify all smart devices.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Billions of devices now connect to the internet — not computers or phones, but sensors, switches, meters, and machines. These devices are often tiny, battery-powered, and need to send small amounts of data occasionally. Normal internet protocols (like HTTP, what your browser uses) are too heavy for them — like using a lorry to deliver a single letter.</p>
-        <p><strong>MQTT</strong> was designed for exactly this: an extremely lightweight messaging protocol where devices publish messages to a central broker (a middleman server), and other devices subscribe to topics they care about. A temperature sensor publishes its reading; an air conditioner subscribes and reacts. Simple, fast, low energy.</p>
-        <p><strong>Matter</strong> is the new industry standard (backed by Apple, Google, Amazon, Samsung) to make all smart home devices speak the same language. Before Matter, a Samsung smart bulb could not talk to an Apple HomeKit system. Matter solves this: one protocol for all smart home devices.</p>
-        <p>Security is the IoT crisis: most IoT devices have default passwords never changed, no update mechanism, and run software years out of date. When millions of these devices were hijacked in 2016 (the Mirai botnet), they took down Twitter, Netflix, and PayPal across the USA.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">IoT — Internet of Things</div>
-          <div class="term-analogy">💡 Analogy: Giving every physical object in the world a voice so it can report its status and receive instructions</div>
-          <div class="term-explain">The network of physical devices embedded with sensors, software, and connectivity that allows them to collect and exchange data. Includes smart home devices, industrial sensors (factory temperature, vibration, pressure), medical monitoring devices, agricultural sensors, smart city infrastructure, and wearables. Estimated 15+ billion connected devices globally today, projected to reach 75 billion by 2030.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">MQTT — Message Queuing Telemetry Transport</div>
-          <div class="term-analogy">💡 Analogy: A notice board where devices post updates, and others read only the updates they care about — nobody talks directly to each other</div>
-          <div class="term-explain">A lightweight publish-subscribe messaging protocol designed in 1999 for oil pipeline monitoring where sensors had limited bandwidth. A central server called a "broker" receives messages from publishers (sensors) and forwards them to subscribers (controllers or apps) who have expressed interest. Uses minimal data per message — as low as 2 bytes header. Runs on top of TCP/IP. Standard protocol for most IoT systems and industrial automation.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">CoAP — Constrained Application Protocol</div>
-          <div class="term-analogy">💡 Analogy: A stripped-down text message version of the full internet web request system — for devices too small for the full thing</div>
-          <div class="term-explain">Where MQTT uses a broker for publish/subscribe, CoAP works more like web browsing (request/response) but designed for devices with only kilobytes of RAM. Uses UDP (not TCP) — which uses less overhead. Created specifically for "constrained" devices like microcontrollers. Often used in smart energy meters, building automation, and healthcare sensors where you need request/response behaviour without HTTP's overhead.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">LoRaWAN</div>
-          <div class="term-analogy">💡 Analogy: A very quiet radio whisper that travels kilometres — you cannot send much information but you can send it very far on a tiny battery</div>
-          <div class="term-explain">Long Range Wide Area Network. A wireless protocol that can transmit small amounts of data over distances of 2–15km using very low power — a single AA battery can last 5–10 years. Used for smart city sensors (parking, air quality), agricultural monitoring (soil moisture across vast farms), and utility metering in areas without cellular coverage. The tradeoff: extremely low data rate (only a few hundred bytes per second).</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Matter Protocol</div>
-          <div class="term-analogy">💡 Analogy: A universal power plug adapter — one standard that works everywhere, regardless of who made the device</div>
-          <div class="term-explain">An open-source smart home connectivity standard backed by the Connectivity Standards Alliance (Apple, Google, Amazon, Samsung, and 200+ others). Runs on IPv6 over Wi-Fi or Thread (a low-power mesh network protocol). A Matter-certified device can be set up and controlled by any Matter-compatible hub — Apple Home, Google Home, Amazon Alexa — regardless of brand. Released in 2022, now the de-facto smart home interoperability standard.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"Normal internet protocols are too heavy for tiny sensors — like using a lorry to deliver one letter." (1 min)</li>
-          <li>MQTT: Notice board analogy. Sensors post, controllers subscribe. (2 min)</li>
-          <li>LoRaWAN: "A whisper that travels 10km on a battery lasting 5 years — perfect for farm sensors." (2 min)</li>
-          <li>Matter: Universal plug adapter. "Finally all smart home devices speak one language." (1 min)</li>
-          <li>Security crisis: Mirai botnet — 2016 — took down Twitter from hacked cameras and routers. (1 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 3</strong> due end of week — Weeks 6–7 edge and IoT content.</div></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════ -->
-  <div class="pillar-divider">▸ PILLAR III — HARDWARE SECURITY & REAL-TIME SYSTEMS (Weeks 8–10)</div>
-
-  <!-- ═══ CHAPTER 8 ═══ -->
-  <div class="chapter-card" id="ch8">
-    <div class="ch-header" onclick="toggle(8)">
-      <div class="ch-num">WK 08</div>
-      <div class="ch-meta">
-        <div class="ch-title">When Hardware Gets Hacked — Spectre, Meltdown & Trusted Chips</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,8)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-sec">Security</span><span class="tag tag-arch">Architecture</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>In 2018, security researchers discovered that the same performance tricks that make CPUs fast (from Chapter 3 — speculative execution) also create catastrophic security holes. This chapter explains those attacks in plain English and covers the hardware solutions engineers built to restore trust.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Remember from Chapter 3: processors guess which way code will go and run ahead speculatively. Here is the problem. Even when the CPU realises it guessed wrong and "undoes" the speculative work — the data it touched has already been loaded into the cache (a small, fast memory). The cache state is a "footprint" that an attacker can detect by carefully timing how long memory reads take. <strong>Spectre</strong> exploits this to read data across security boundaries — one program can spy on data belonging to another program. <strong>Meltdown</strong> used the same principle to completely break the wall between the operating system kernel and normal programs, letting a regular program read kernel memory directly.</p>
-        <p>These attacks affected virtually every Intel, AMD, and ARM processor made in the past 20 years. The fixes — KPTI (kernel page table isolation) and Retpoline — work by essentially restricting the speculative execution that made CPUs so fast, costing up to 30% performance penalty.</p>
-        <p>The response: build <strong>Trusted Execution Environments (TEEs)</strong> — isolated, hardware-encrypted zones inside the CPU where even the operating system cannot read your code or data. Intel's version is called <strong>SGX (Software Guard Extensions)</strong>. Think of it as a private vault inside the CPU that even the bank manager (the OS) cannot open.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Spectre Attack</div>
-          <div class="term-analogy">💡 Analogy: You train a bank teller to automatically start pulling out money when they see someone in a mask — then you use that reaction to infer what is in the safe, even without opening it</div>
-          <div class="term-explain">Spectre tricks the CPU's branch predictor (its guessing mechanism) into speculatively reading secret data from memory. Even though the CPU cancels this read, the secret data was briefly loaded into the cache. The attacker then probes the cache timing to figure out what was read. Named "Spectre" because it is caused by speculative execution — a ghost of computation that should not have happened. Affects virtually all modern processors. Has many variants (Spectre v1, v2, v4, etc.), each slightly different.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Meltdown Attack</div>
-          <div class="term-analogy">💡 Analogy: A library rule says students cannot access the restricted section, but due to a loophole, they can briefly glimpse the books before being thrown out — and that glimpse is enough</div>
-          <div class="term-explain">Meltdown exploits the fact that processors perform memory accesses (including to restricted kernel memory) before checking whether they have permission. The permission check triggers an error and the access is cancelled — but the data was briefly in the cache. An attacker can read that cached data via timing. Meltdown completely broke user/kernel memory isolation. It was fully patched with KPTI, which adds an overhead of 5–30% performance loss on Intel chips.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Cache Side-Channel Attack</div>
-          <div class="term-analogy">💡 Analogy: You cannot see what someone is reading in the library, but by measuring how long they take to find a book, you can infer which shelf they went to</div>
-          <div class="term-explain">A technique that extracts secret information by measuring the time difference between cache hits (fast — data was already cached) and cache misses (slow — data had to be fetched from RAM). This timing difference is a "side channel" — information leaked through the physical implementation rather than through the program's intended behaviour. Flush+Reload is the most common variant: flush a cache line, wait for the victim to run, then time how fast you can reload it — fast means the victim loaded it for you.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Intel SGX — Software Guard Extensions</div>
-          <div class="term-analogy">💡 Analogy: A sealed vault inside the bank that even the bank manager cannot open — only the person who owns the vault knows what is inside</div>
-          <div class="term-explain">A CPU feature that creates encrypted, isolated regions of memory called "enclaves." Code and data inside an enclave are encrypted by hardware — even the operating system, hypervisor, or BIOS cannot read them. The processor decrypts data only inside its own processing units, never exposing plaintext outside the enclave boundary. Used for confidential cloud computing, digital rights management, secure key storage, and private AI inference. Has been compromised by several attacks (Foreshadow, SGAxe) demonstrating that hardware security requires constant vigilance.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">TPM — Trusted Platform Module</div>
-          <div class="term-analogy">💡 Analogy: A tamper-proof ID card that proves your computer is genuine and has not been tampered with — like a passport for your hardware</div>
-          <div class="term-explain">A dedicated security chip (or firmware implementation) on the motherboard that provides hardware-level cryptographic functions: secure key storage (private keys never leave the TPM), measured boot (records a hash of every software component at startup to detect tampering), and remote attestation (cryptographically proves to a remote server that the system is in a known-good state). Windows 11 requires TPM 2.0. Used in enterprise security, BitLocker encryption, and confidential computing.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"Remember Chapter 3's speculative execution? That trick backfired badly in 2018." (1 min)</li>
-          <li>Spectre: Bank teller analogy — trained reflex reveals secret without ever opening the safe. (2 min)</li>
-          <li>Meltdown: Library loophole analogy — brief glimpse before being thrown out is enough. (1 min)</li>
-          <li>SGX: Bank vault analogy — even the OS cannot see inside. "Used for private AI in the cloud." (2 min)</li>
-          <li>TPM: Passport for hardware — proves your computer is genuine. "Windows 11 requires this." (1 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 3 Due:</strong> Hardware security case study — Spectre/Meltdown/Rowhammer analysis.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 9 ═══ -->
-  <div class="chapter-card" id="ch9">
-    <div class="ch-header" onclick="toggle(9)">
-      <div class="ch-num">WK 09</div>
-      <div class="ch-meta">
-        <div class="ch-title">Spying Through Side Channels — Power, Signals & Memory Attacks</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,9)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-sec">Security</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Beyond cache timing attacks, hardware leaks information in other physical ways: through power consumption, electromagnetic radiation, and even by physically corrupting memory cells. This chapter covers these physical side-channel attacks and the hardware attack that can flip bits in RAM without ever "accessing" the target memory.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>When a computer performs a cryptographic operation, it uses more or less electricity depending on what data it is processing. This seems irrelevant — but attackers can record these tiny power variations using an oscilloscope and mathematically extract the secret encryption key. This is <strong>Power Analysis</strong>. Versions of it have been used to steal keys from bank cards, smart meters, and military devices.</p>
-        <p>Similarly, every electronic circuit radiates a tiny electromagnetic field that varies with its computation. With a sensitive antenna placed near a device, an attacker can capture this radiation and extract data — without touching the device at all. This is an <strong>Electromagnetic (EM) Side-Channel Attack</strong>.</p>
-        <p><strong>Rowhammer</strong> is in a category of its own. Modern RAM is so densely packed that repeatedly reading from one row causes electrical interference that flips bits in adjacent rows — corrupting data in memory you never accessed. Attackers have used this to flip a single bit in a page table (the map of who owns which memory) and escalate from a normal user to having full administrator access.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Power Analysis Attack</div>
-          <div class="term-analogy">💡 Analogy: Watching an electrician's power meter fluctuate as they work to figure out exactly what they are doing inside a sealed room</div>
-          <div class="term-explain">Measuring the power consumed by a device while it performs cryptographic operations to extract secret keys. In Simple Power Analysis (SPA), a single trace can reveal the key directly. In Differential Power Analysis (DPA), thousands of traces are statistically analysed to filter out noise. DPA can crack AES encryption on a smart card with off-the-shelf equipment costing a few hundred dollars. Countermeasures include "masking" (adding random noise to operations) and "balancing" (making all operations consume the same power).</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Electromagnetic (EM) Side-Channel Attack</div>
-          <div class="term-analogy">💡 Analogy: Holding a sensitive microphone outside a closed room and listening to what kind of work is happening inside from the sounds of machines</div>
-          <div class="term-explain">Every electronic circuit emits electromagnetic radiation correlated with its computations. Using a small antenna (near-field probe) placed close to a chip, attackers can capture these emissions and extract secret information — including encryption keys — without any physical contact with the circuit. EM attacks can sometimes work from centimetres away and can bypass shielding that protects against power analysis. Used against smart cards, embedded systems, and even processors.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Rowhammer Attack</div>
-          <div class="term-analogy">💡 Analogy: Slamming a drawer repeatedly until the vibrations cause items in the drawer above to fall and rearrange themselves — without ever opening that drawer</div>
-          <div class="term-explain">A hardware vulnerability in DRAM (standard RAM). DRAM cells are so close together that repeatedly accessing ("hammering") one row of memory cells causes electromagnetic interference that flips bits (0→1 or 1→0) in adjacent rows — without ever accessing those rows. This corrupts data that was never touched. If the flipped bit is in a security-critical location (like a page table entry, a privilege flag, or a cryptographic key), the attacker gains unauthorised access or privileges. Demonstrated in 2015; remains relevant in 2024.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Foreshadow / SGAxe (SGX Attacks)</div>
-          <div class="term-analogy">💡 Analogy: The bank vault we described in Chapter 8 turns out to have a ventilation shaft — it is still very secure, but not perfectly impenetrable</div>
-          <div class="term-explain">A series of attacks that broke Intel SGX enclaves using speculative execution (Foreshadow, 2018) or by exploiting the remote attestation process (SGAxe, 2020). These attacks showed that even hardware-level security mechanisms can be broken by adversarial research. The lesson for computer engineering: security must be continuously re-evaluated; no system should be assumed permanently secure. Intel issued microcode updates and redesigned subsequent processors to address these issues.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Power Analysis: Electrician power meter analogy. "Your chip's power consumption reveals your password." (2 min)</li>
-          <li>EM Attack: "Hold an antenna near a chip — no contact needed — and steal the key." (2 min)</li>
-          <li>Rowhammer: Slamming drawer analogy. "Bit flip one security flag and suddenly you're the administrator." (3 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 4</strong> due end of week — Weeks 8–9 security content.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 10 ═══ -->
-  <div class="chapter-card" id="ch10">
-    <div class="ch-header" onclick="toggle(10)">
-      <div class="ch-num">WK 10</div>
-      <div class="ch-meta">
-        <div class="ch-title">Real-Time Systems — When Missing a Deadline is Catastrophic</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,10)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-rt">Real-Time</span><span class="tag tag-sys">Systems</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Most software runs as fast as possible — but some software must complete tasks by precise deadlines, regardless of anything else. Aircraft flight control, anti-lock brakes, medical devices, and industrial robots are all real-time systems. This chapter covers the algorithms engineers use to schedule tasks with deadlines and guarantee they are always met.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Imagine air traffic control software. It must update aircraft positions every 100ms — not sometimes, not usually, but <em>always</em>, without exception. Missing that deadline could cost lives. This is a <strong>Hard Real-Time System</strong>. Compare this to video streaming, where occasionally dropping a frame looks bad but nobody dies — that is a <strong>Soft Real-Time System</strong>.</p>
-        <p>The fundamental challenge: a processor can only do one thing at a time, but has many tasks with different deadlines. How do you decide which task runs when? This is the scheduling problem. The landmark solution came in a 1973 paper by Liu & Layland: <strong>Rate Monotonic Scheduling (RMS)</strong>. The rule is beautifully simple: give higher priority to more frequently occurring tasks. If your brake system checks every 10ms and your instrument display updates every 100ms, the brake system always runs first. RMS can be mathematically proven to work as long as the processor is not overloaded beyond ~69% utilisation.</p>
-        <p><strong>Priority Inversion</strong> is the famous bug that cost NASA the Mars Pathfinder mission in 1997: a low-priority task held a resource needed by a high-priority task, which then waited, causing the spacecraft's computer to keep resetting. Fixed with the Priority Inheritance Protocol.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Hard Real-Time vs. Soft Real-Time</div>
-          <div class="term-analogy">💡 Analogy: Hard = airbag that MUST deploy within 30ms or it is useless / Soft = Netflix buffering slightly — annoying but not fatal</div>
-          <div class="term-explain">Hard real-time systems: missing a deadline constitutes a system failure, regardless of how small the miss. Every single deadline must be met. Used in aircraft fly-by-wire, ABS brakes, pacemakers, industrial robots. Soft real-time systems: occasional deadline misses degrade quality but do not cause failure. Used in audio/video streaming, game physics, keyboard input. The distinction drives completely different design philosophies and hardware choices.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Rate Monotonic Scheduling (RMS)</div>
-          <div class="term-analogy">💡 Analogy: At a hospital, the most frequently needed medication always gets priority in the pharmacy queue — simple rule, provably optimal</div>
-          <div class="term-explain">A fixed-priority scheduling algorithm: assign higher priority to tasks with shorter periods (higher frequency). Proved optimal for fixed-priority scheduling in 1973 by Liu and Layland. The schedulability test: sum all tasks' (execution_time / period) values — if this sum ≤ n × (2^(1/n) - 1), where n is the number of tasks, all deadlines are guaranteed. As n grows large, this approaches 69%. Simple, predictable, and widely used in RTOS implementations.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">EDF — Earliest Deadline First</div>
-          <div class="term-analogy">💡 Analogy: In a queue, whoever has the most urgent appointment next gets served first — priorities change dynamically throughout the day</div>
-          <div class="term-explain">A dynamic priority scheduling algorithm: at every moment, the task whose deadline is soonest gets the processor. Proved mathematically optimal — if any algorithm can schedule a set of tasks without missing deadlines, EDF can too. Can utilise up to 100% of CPU time (vs. ~69% for RMS). However, it is harder to implement in embedded systems because priorities change constantly and predicting worst-case behaviour is more complex.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Priority Inversion</div>
-          <div class="term-analogy">💡 Analogy: The president is waiting for a key from a junior clerk, who is stuck behind a medium-level manager in a queue — the president waits, blocked by someone with lower authority</div>
-          <div class="term-explain">A situation where a high-priority task is blocked waiting for a resource held by a low-priority task, while medium-priority tasks run freely. This effectively inverts priorities. Caused the Mars Pathfinder spacecraft to repeatedly reset in 1997 — fixed mid-mission by NASA engineers uploading new scheduling parameters. Solution: Priority Inheritance Protocol — when a low-priority task holds a resource needed by a high-priority task, the low-priority task temporarily inherits the high priority until it releases the resource.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Open with the airbag vs Netflix analogy — hard vs soft real-time. (1 min)</li>
-          <li>RMS: Hospital pharmacy analogy. "Most frequent task gets highest priority — mathematically proven correct." (3 min)</li>
-          <li>Priority Inversion: President and junior clerk analogy. "This bug crashed a Mars rover in 1997." (3 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">🎓</span><div><strong>MIDTERM EXAM</strong> this week — 2 hours, covers all content from Weeks 1–9.</div></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════ -->
-  <div class="pillar-divider">▸ PILLAR IV — QUANTUM & NEUROMORPHIC COMPUTING (Weeks 11–12)</div>
-
-  <!-- ═══ CHAPTER 11 ═══ -->
-  <div class="chapter-card" id="ch11">
-    <div class="ch-header" onclick="toggle(11)">
-      <div class="ch-num">WK 11</div>
-      <div class="ch-meta">
-        <div class="ch-title">Quantum Computing — The Computer That Breaks Encryption</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,11)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-quantum">Quantum</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Quantum computers are not just faster regular computers — they work on completely different physical principles. They can solve certain problems that classical computers would take millions of years to solve. This chapter explains how they work (without requiring physics knowledge), what they are good at, and why they are not replacing your laptop anytime soon.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>A regular computer bit is either 0 or 1 — like a light switch, either off or on. A quantum bit (qubit) is like a spinning coin: while it is spinning, it is both heads and tails simultaneously. Only when you stop it (measure it) does it "choose" one state. This is <strong>Superposition</strong>. A computer with 300 qubits in superposition can simultaneously represent 2^300 values — more than the number of atoms in the observable universe.</p>
-        <p><strong>Entanglement</strong> means two qubits are linked: measuring one instantly determines the other's state, no matter how far apart they are. This allows quantum algorithms to process vast numbers of possibilities simultaneously and use clever interference to cancel wrong answers and amplify correct ones.</p>
-        <p>The practical impact: <strong>Shor's Algorithm</strong> can factor large numbers in polynomial time. RSA encryption (which secures your bank account) relies on factoring being effectively impossible classically. A large enough quantum computer would break RSA. We are not there yet — today's quantum computers are noisy (errors everywhere) and small. But this has already triggered a global race to develop <strong>Post-Quantum Cryptography</strong> — new encryption algorithms that quantum computers cannot break.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Qubit (Quantum Bit)</div>
-          <div class="term-analogy">💡 Analogy: A spinning coin — simultaneously heads AND tails until it lands. The landing is the measurement.</div>
-          <div class="term-explain">The basic unit of quantum information. Unlike a classical bit (0 or 1), a qubit exists in a superposition of both 0 and 1 simultaneously — described mathematically as α|0⟩ + β|1⟩ where |α|² and |β|² are the probabilities of measuring 0 or 1 respectively. Physical implementations include superconducting circuits cooled to near absolute zero (IBM, Google), trapped ions (IonQ), and photons. Each physical implementation has different advantages in coherence time, gate fidelity, and scalability.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Superposition</div>
-          <div class="term-analogy">💡 Analogy: Searching a maze by sending a ghost that explores ALL paths simultaneously — the ghost collapses into one path only when it finds the exit</div>
-          <div class="term-explain">The quantum property that allows a qubit to be in multiple states simultaneously until measured. With n qubits in superposition, a quantum computer can represent 2^n states simultaneously. This is not the same as parallel computing (which uses multiple separate processors) — all 2^n states are encoded in the same physical system and processed together through quantum gates. The power comes from quantum interference: algorithms are designed to make wrong answers cancel each other out while correct answers reinforce.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Shor's Algorithm</div>
-          <div class="term-analogy">💡 Analogy: Finding the combination to a safe by using quantum interference to eliminate all wrong answers simultaneously, leaving only the right one</div>
-          <div class="term-explain">A quantum algorithm invented in 1994 by Peter Shor that can factor large integers in polynomial time O((log N)³). On a classical computer, factoring a 2048-bit number would take longer than the age of the universe. RSA public-key encryption relies on this difficulty — if you can factor easily, you can break RSA. A fault-tolerant quantum computer with ~4,000 logical qubits could factor RSA-2048 in hours. Current machines have 1,000+ noisy physical qubits, needing ~1,000 physical qubits per logical qubit — so millions of physical qubits still needed for real threat.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Decoherence</div>
-          <div class="term-analogy">💡 Analogy: Trying to balance a pencil perfectly on its tip — any vibration (from the environment) immediately topples it</div>
-          <div class="term-explain">The main engineering challenge in quantum computing. Qubits must maintain their fragile quantum state during computation, but any interaction with the environment (heat, vibration, electromagnetic noise, even a single stray photon) destroys the quantum state — the qubit "decoheres" and becomes a useless classical bit. Superconducting qubits must be cooled to 15 millikelvin (colder than outer space) to maintain coherence for microseconds to milliseconds. Quantum error correction codes can protect against decoherence but require many physical qubits per protected logical qubit.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">NISQ — Noisy Intermediate-Scale Quantum</div>
-          <div class="term-analogy">💡 Analogy: Early aeroplanes — they could fly short distances unreliably, not yet cross the Atlantic, but proving the concept was real</div>
-          <div class="term-explain">The current era of quantum computing, coined by physicist John Preskill in 2018. NISQ devices have 50–1,000 qubits but with significant noise (errors) and no error correction. They cannot run Shor's algorithm at useful scale. However, they can run "variational" algorithms (VQE for chemistry simulation, QAOA for optimisation) that work despite noise. The question researchers are investigating: is there any practical problem where NISQ devices outperform classical computers today?</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Spinning coin analogy — introduce qubit and superposition. "Not 0 or 1 — both at once until measured." (2 min)</li>
-          <li>Shor's Algorithm: "This algorithm would break every bank's encryption. We are 10–20 years away from that scale." (2 min)</li>
-          <li>Decoherence: Balancing pencil analogy. "This is why quantum computers run near absolute zero." (2 min)</li>
-          <li>NISQ: Early aeroplane analogy. "It works but we're still in the Wright Brothers phase." (1 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 4 Due:</strong> Quantum circuit design using IBM Qiskit — Grover's algorithm simulation.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 12 ═══ -->
-  <div class="chapter-card" id="ch12">
-    <div class="ch-header" onclick="toggle(12)">
-      <div class="ch-num">WK 12</div>
-      <div class="ch-meta">
-        <div class="ch-title">Brain-Inspired Computing — Teaching Silicon to Think Like Neurons</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,12)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-quantum">Neuromorphic</span><span class="tag tag-ai">AI/ML</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>The human brain can do what no supercomputer can, at 20 watts of power. Neuromorphic computing tries to mimic how the brain works — not with continuous signals like regular AI, but with discrete electrical spikes like real neurons. This chapter explains what makes brain-inspired hardware different and why it matters for energy-efficient AI.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Your brain has 86 billion neurons. At any moment, the vast majority are silent — only a tiny fraction fire at any given instant. This "sparsity" is why the brain uses only 20 watts while a data centre running a comparable AI model uses megawatts. The key difference: regular AI neurons send continuous signals (floating-point numbers) constantly. Biological neurons only fire occasional brief spikes — and only when they have something meaningful to communicate.</p>
-        <p><strong>Spiking Neural Networks (SNNs)</strong> mimic this: artificial neurons only fire discrete spikes, most of the time doing nothing (and consuming almost no power when silent). The challenge: since spikes are discrete (no gradient), you cannot use standard backpropagation to train them — this is an active research problem. Researchers use "surrogate gradients" (smooth approximations to spikes during training).</p>
-        <p><strong>Intel's Loihi 2</strong> chip implements 1 million neurons that can learn in real-time without a pre-training phase — like a biological brain learning on the fly. It is used for robotics, adaptive control, and pattern recognition at milliwatts of power. IBM's TrueNorth runs 1 million neurons at 65mW — for comparison, training GPT-4 consumed the equivalent power of thousands of homes for months.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Neuromorphic Computing</div>
-          <div class="term-analogy">💡 Analogy: Instead of building a faster calculator, building an artificial brain — circuits that work like neurons, not like arithmetic logic</div>
-          <div class="term-explain">A computing paradigm that directly mimics the structure and operation of biological neural systems. Neuromorphic chips use massively parallel, event-driven architectures where "neurons" communicate via discrete spikes only when needed. Because most neurons are silent most of the time, power consumption is proportional to activity — idle parts consume near-zero power. Pioneered by Carver Mead at Caltech in the late 1980s; now commercially available from Intel (Loihi), IBM (TrueNorth), and BrainScaleS (Heidelberg).</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Spiking Neural Network (SNN)</div>
-          <div class="term-analogy">💡 Analogy: Morse code vs. a phone call — Morse uses brief, sparse signals (dots and dashes) rather than continuous audio. Information is in the timing and pattern of spikes, not a continuous value.</div>
-          <div class="term-explain">An artificial neural network where neurons communicate through discrete spike events (binary pulse: fire or not fire) rather than continuous floating-point values. A neuron accumulates incoming spikes; when its "membrane potential" crosses a threshold, it fires a spike to its neighbours and resets. Information is encoded in the timing and rate of spikes. Enormously energy-efficient because computation only happens at spike events. Training SNNs is the main research challenge — standard backpropagation does not work on binary events.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">STDP — Spike-Timing-Dependent Plasticity</div>
-          <div class="term-analogy">💡 Analogy: If neuron A consistently fires just before neuron B causes it to fire, their connection strengthens — like learning by association ("neurons that fire together, wire together")</div>
-          <div class="term-explain">A biologically-inspired learning rule for SNNs: if a pre-synaptic neuron fires shortly before a post-synaptic neuron, the connection between them is strengthened (long-term potentiation). If the order is reversed, it is weakened. This "local" learning rule requires no global error signal — each synapse learns from only the timing of its neighbouring spikes. Intel's Loihi implements a programmable version of STDP for on-chip learning without needing to communicate with an external training system.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Memristors</div>
-          <div class="term-analogy">💡 Analogy: A water pipe whose diameter permanently changes based on how much water has flowed through it — it "remembers" its history</div>
-          <div class="term-explain">A two-terminal electronic component whose resistance changes based on the history of current that has flowed through it — and it retains that resistance when power is off (non-volatile). This makes memristors natural artificial synapses: resistance encodes synaptic weight, and applying a voltage adjusts it. Memristive crossbar arrays can perform matrix-vector multiplication (core AI operation) directly in the storage medium, at extremely low energy. Companies like Knowm and IBM are developing memristive neuromorphic chips for ultra-low-power AI inference.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"Your brain runs on 20 watts. A data centre running comparable AI uses megawatts. Why?" (1 min)</li>
-          <li>Sparsity: "Most neurons are silent. Only active neurons use power." (2 min)</li>
-          <li>SNNs: Morse code vs phone call analogy. "Spikes carry information through timing, not continuous values." (2 min)</li>
-          <li>Intel Loihi 2: "1 million neurons, learns in real time, milliwatts of power — used in robots." (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 5</strong> due end of week — Weeks 11–12 quantum and neuromorphic content.</div></div>
-    </div>
-  </div>
-
-  <!-- ══════════════════════════════════════ -->
-  <div class="pillar-divider">▸ PILLAR V & VI — AI SYSTEMS & AUTONOMOUS ENGINEERING (Weeks 13–16)</div>
-
-  <!-- ═══ CHAPTER 13 ═══ -->
-  <div class="chapter-card" id="ch13">
-    <div class="ch-header" onclick="toggle(13)">
-      <div class="ch-num">WK 13</div>
-      <div class="ch-meta">
-        <div class="ch-title">Making AI Run Fast & Cheap — Systems Engineering for AI Models</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,13)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-ai">AI/ML</span><span class="tag tag-arch">Architecture</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Building an AI model is only half the problem — making it run efficiently is the other half. This chapter covers the engineering techniques used to make large AI models (like GPT, Llama, Gemini) run faster, use less memory, and work on smaller devices. These are the techniques that make AI commercially viable.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>GPT-4 has over a trillion parameters (numbers). To run it, you need to load all those numbers from memory and multiply them in the right order. A single response might require trillions of arithmetic operations. Doing this efficiently requires engineering at every level — from how numbers are stored to how operations are scheduled on hardware.</p>
-        <p><strong>Quantisation</strong> (from Chapter 6) is the first tool: instead of storing each AI weight as a 32-bit number (like writing 3.14159265), you round it to an 8-bit or even 4-bit number (like writing 3). The model becomes 4–8x smaller and runs proportionally faster, with accuracy dropping by only 1–2%. This is how models that required 8 GPUs now fit on one.</p>
-        <p><strong>AI Compilers</strong> like TVM and XLA are software tools that take a model written in Python (TensorFlow, PyTorch) and translate it into highly optimised hardware instructions — fusing multiple operations together (so data never has to leave the fast cache), reordering operations for better memory access patterns, and generating code tailored to the specific chip being used. Think of them as translators between Python and machine code, but with aggressive optimisation steps in between.</p>
-        <p><strong>LoRA (Low-Rank Adaptation)</strong> is a revolutionary fine-tuning technique: instead of updating a 70-billion parameter model (which costs millions of dollars), you insert small "adapter" matrices alongside the existing weights and train only those. You train 0.1% of the parameters, get 90% of the performance improvement, and the cost drops from millions to hundreds of dollars.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">KV-Cache (Key-Value Cache)</div>
-          <div class="term-analogy">💡 Analogy: When writing a long document, you keep your previous sentences in front of you so you do not re-read the entire document every time you write a new sentence</div>
-          <div class="term-explain">In transformer-based AI models (like GPT), every new word generated needs to "attend" to all previous words. Without caching, this means re-computing the relationships between all words from scratch for every new word — extremely wasteful. The KV-cache stores the intermediate computation results (Key and Value matrices) for all previous tokens, so only the new token needs fresh computation. The problem: the KV-cache grows linearly with context length. A 128K-token context window might need gigabytes of cache — a major memory management challenge for deployment.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">AI Compiler (TVM, XLA, MLIR)</div>
-          <div class="term-analogy">💡 Analogy: An expert translator who not only translates your speech, but also reorganises your sentences to be maximally efficient in the new language</div>
-          <div class="term-explain">Software frameworks that take an AI model (defined in Python using PyTorch/TensorFlow) and compile it into optimised machine code for specific hardware (GPU, TPU, CPU, FPGA). Key optimisations: operator fusion (combining multiple operations like MatMul + GELU into one kernel, avoiding intermediate memory writes), memory planning (minimising peak memory usage), and hardware-aware tiling (splitting computations into blocks sized for cache efficiency). Without a good compiler, the same model can run 10x slower on the same hardware.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">LoRA — Low-Rank Adaptation</div>
-          <div class="term-analogy">💡 Analogy: Instead of re-painting an entire building, you stick post-it notes on specific walls that modify the appearance — much cheaper and reversible</div>
-          <div class="term-explain">A fine-tuning technique for large AI models. Rather than updating all model weights (billions of parameters, hugely expensive), LoRA inserts small pairs of matrices (B and A, where B×A approximates the change needed) alongside the frozen original weights. The product B×A has a much smaller number of parameters than the original weight matrix — this is the "low-rank" part. The model trains only B and A (often < 0.1% of original parameters) while the original weights are frozen. After fine-tuning, B×A can be merged back into the original weights. Used to fine-tune LLMs on consumer GPUs in hours instead of on supercomputers over weeks.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Operator Fusion</div>
-          <div class="term-analogy">💡 Analogy: Instead of cooking each ingredient separately and putting them on different plates before combining, you cook them together in one pot — fewer dishes, faster, less waste</div>
-          <div class="term-explain">A compiler optimisation that combines multiple adjacent AI operations (like matrix multiplication followed by a normalisation step followed by an activation function) into a single GPU kernel, rather than running them as separate steps. Each step normally writes its output to GPU memory and reads it back for the next step — this memory traffic is the bottleneck. By fusing them, intermediate results stay in the GPU's fast registers or shared memory, never touching slow HBM. Flash Attention is the famous example: fusing the entire multi-head attention mechanism reduces memory usage from O(N²) to O(N).</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"GPT-4 has a trillion parameters. Getting it to respond in seconds is serious engineering." (1 min)</li>
-          <li>Quantisation: Rounding 3.14159 to 3 — model becomes 4x smaller, barely less accurate. (2 min)</li>
-          <li>LoRA: Post-it note analogy — fine-tune 0.1% of parameters for 90% of the benefit. (2 min)</li>
-          <li>AI Compilers: Expert translator analogy — converts Python models to hardware-optimised code. (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">💻</span><div><strong>Assignment 5 Due:</strong> TinyML deployment — train, quantise, and deploy a model on a microcontroller.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 14 ═══ -->
-  <div class="chapter-card" id="ch14">
-    <div class="ch-header" onclick="toggle(14)">
-      <div class="ch-num">WK 14</div>
-      <div class="ch-meta">
-        <div class="ch-title">Self-Driving Cars & Robots — When Computers Control the Physical World</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,14)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-sys">Systems</span><span class="tag tag-rt">Real-Time</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>Cyber-Physical Systems (CPS) are systems where computation is tightly connected to the physical world — self-driving cars, industrial robots, surgical systems, smart grids. Errors are not just software bugs — they cause physical harm. This chapter covers the middleware, networking, and verification tools used to make these systems safe and reliable.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>A regular software bug causes an app to crash. A bug in a self-driving car causes a crash of a different kind. <strong>Cyber-Physical Systems</strong> are different from regular software because physical processes are continuous and uncertain, but computers are discrete and deterministic. Bridging this gap safely is the core challenge.</p>
-        <p><strong>ROS 2 (Robot Operating System 2)</strong> is the standard software framework for robotics. It provides a communication backbone where different components of a robot (camera processing, motor control, path planning) publish and subscribe to data topics — similar to MQTT from Chapter 7, but with real-time guarantees. Used by NASA rovers, surgical robots, autonomous vehicles, and warehouse robots.</p>
-        <p><strong>Time-Sensitive Networking (TSN)</strong> extends regular Ethernet (which was designed for "best effort" delivery — fast but unpredictable timing) with deterministic timing guarantees. In a car, brake-by-wire signals cannot be delayed by video streaming traffic — TSN uses time-aware traffic schedulers to guarantee that critical messages always arrive within microseconds, sharing the same cable as regular data traffic.</p>
-        <p>A <strong>Digital Twin</strong> is a live simulation that mirrors a real physical system in real time using sensor data. Engineers can test "what if the temperature sensor fails?" on the digital twin without risking the real system.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">Cyber-Physical System (CPS)</div>
-          <div class="term-analogy">💡 Analogy: A building's air conditioning that not only measures temperature but directly controls machinery based on those measurements — computation and physics are inseparable</div>
-          <div class="term-explain">A system where computer algorithms are tightly coupled with physical processes — not just monitoring but actively controlling. Examples: autonomous vehicles (perception → decision → actuation loop), smart grids (real-time power balancing across millions of nodes), surgical robots (sub-millimetre precision requiring real-time force feedback), and industrial process control. CPS design must account for physical dynamics (inertia, delays, noise), not just logic. Correctness depends on timing — the right answer at the wrong time is wrong.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">ROS 2 — Robot Operating System 2</div>
-          <div class="term-analogy">💡 Analogy: A telephone exchange for robot components — any part of the robot can talk to any other part without needing to know who else is listening</div>
-          <div class="term-explain">An open-source middleware framework (not actually an operating system) for building robotic systems. Components (nodes) communicate by publishing messages to named "topics" — a camera node publishes images, a detection node subscribes and publishes detected objects, a planner subscribes and publishes trajectories. Built on DDS (Data Distribution Service), which provides real-time, reliable, configurable Quality-of-Service communication. Used in industrial robots, autonomous vehicles (Apollo by Baidu), space applications (NASA JPL), and research robots worldwide.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">TSN — Time-Sensitive Networking (IEEE 802.1)</div>
-          <div class="term-analogy">💡 Analogy: A managed intersection where ambulances always get a green light even during heavy traffic — critical messages are never delayed by regular traffic</div>
-          <div class="term-explain">A set of IEEE 802.1 standards that add determinism to standard Ethernet. Regular Ethernet is "best effort" — it sends packets as fast as possible but gives no timing guarantees. TSN adds mechanisms: time synchronisation across all network devices (IEEE 802.1AS), traffic shaping (IEEE 802.1Qbv — time-aware shaper that gates different traffic classes at specific time slots), and frame preemption (IEEE 802.1Qbu — lets critical frames interrupt lower-priority frames mid-transmission). Used in automotive (AUTOSAR), industrial automation, professional audio/video, and 5G fronthaul networks.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Digital Twin</div>
-          <div class="term-analogy">💡 Analogy: A live, perfectly-synchronised virtual replica of a real aircraft engine — engineers can simulate failures and optimisations without touching the real engine</div>
-          <div class="term-explain">A real-time virtual model of a physical system, continuously updated with sensor data from the real system, that mirrors its current state and can predict future states. Initially developed by NASA for spacecraft monitoring; now used in manufacturing (Siemens), smart cities, wind farms, and hospitals. Enables predictive maintenance (detect failures before they happen), performance optimisation (test changes virtually before physical implementation), and operator training (simulate emergency scenarios). The twin is not a recording — it is a live simulation that diverges from the real system only when reality does something unexpected.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"Software bugs crash apps. CPS bugs crash cars. Physical consequences change everything." (1 min)</li>
-          <li>ROS 2: Telephone exchange analogy — camera publishes, brake control subscribes, all coordinated. (2 min)</li>
-          <li>TSN: Managed intersection analogy — "Brake signals always get the green light even when video is streaming on the same cable." (2 min)</li>
-          <li>Digital Twin: Virtual aircraft engine analogy — "Test failure scenarios without risk." (2 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📋</span><div><strong>Draft Project Report Due</strong> this week — full draft for peer review and instructor feedback.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 15 ═══ -->
-  <div class="chapter-card" id="ch15">
-    <div class="ch-header" onclick="toggle(15)">
-      <div class="ch-num">WK 15</div>
-      <div class="ch-meta">
-        <div class="ch-title">5G Networks — Not Just Faster Mobile, But a New Computing Platform</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,15)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-sys">Systems</span><span class="tag tag-edge">Edge/IoT</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>5G is much more than "faster 4G." It is a fundamentally new network architecture designed to serve radically different use cases simultaneously — from streaming 8K video to controlling remote surgery to connecting a billion IoT sensors. This chapter explains the key 5G innovations and how they connect back to edge computing and computer engineering.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Think of 4G as a single-lane toll road — it works, but everyone shares the same lane and the same rules. 5G is like redesigning the entire transport infrastructure: motorways for high-speed traffic, dedicated lanes for emergency vehicles, and special pathways for slow-moving heavy goods. The three pillars of 5G serve three completely different needs:</p>
-        <p>(1) <strong>eMBB</strong> (Enhanced Mobile Broadband) — very high throughput for your phone and home broadband, using mmWave radio (very high frequency, very high speed but short range — requires many small antennas). (2) <strong>URLLC</strong> (Ultra-Reliable Low-Latency Communications) — < 1ms latency and 99.9999% reliability for autonomous vehicles, remote surgery, and factory robots. (3) <strong>mMTC</strong> (Massive Machine-Type Communications) — millions of IoT sensors per square kilometre, each sending tiny amounts of data very infrequently.</p>
-        <p><strong>Network Slicing</strong> is the magic that makes this possible: using software, operators can carve the physical 5G infrastructure into multiple isolated virtual networks, each with different performance guarantees — one slice for hospitals (extreme reliability), one for broadband (high throughput), one for smart meters (low power, low data). From a computer engineering perspective, this is virtualisation applied to network infrastructure — the same concept as virtual machines, but for entire networks.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Key Terms — Explained Simply</div>
-
-        <div class="term-item">
-          <div class="term-name">5G Three Service Categories</div>
-          <div class="term-analogy">💡 Analogy: An airport with three completely different departure terminals — passenger flights, cargo planes, and private jets — each optimised for different needs on the same runway system</div>
-          <div class="term-explain">eMBB (Enhanced Mobile Broadband): High speed, high data rate — streaming, VR, fixed wireless broadband. Targets > 1 Gbps peak. Uses massive MIMO and millimetre-wave spectrum. URLLC (Ultra-Reliable Low-Latency Communications): Reliability 99.9999%, latency < 1ms. For autonomous vehicles, remote surgery, industrial automation. The latency requirement is so tight that edge computing (from Chapter 6) is necessary — the signal cannot travel to a distant data centre. mMTC (Massive Machine-Type Communications): Up to 1 million devices per km². Low power, low data rate, long battery life. For smart cities, agriculture, utilities.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Network Slicing</div>
-          <div class="term-analogy">💡 Analogy: One physical motorway system, but with different virtual "lanes" booked for different vehicles — ambulances always have a guaranteed lane, even during rush hour</div>
-          <div class="term-explain">A 5G feature that uses Software-Defined Networking (SDN) and Network Function Virtualisation (NFV) to create multiple isolated virtual networks on a shared physical infrastructure. Each slice has its own guaranteed bandwidth, latency, and reliability characteristics. A hospital operator can reserve a slice with 99.9999% reliability for medical devices; a gaming company can reserve a low-latency slice; a utility company can reserve a slice for millions of smart meters. Operators can create, resize, and destroy slices in software without touching hardware.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Massive MIMO</div>
-          <div class="term-analogy">💡 Analogy: Instead of a loudspeaker pointing everywhere, imagine 256 individually-steerable directional speakers — each aimed precisely at a different listener simultaneously</div>
-          <div class="term-explain">Multiple-Input Multiple-Output (MIMO) with 64–256 antenna elements at the base station (compared to 2–8 in 4G). Using beamforming — precise mathematical steering of radio signals by coordinating phase differences across all antennas — the base station can direct focused beams at individual users, dramatically increasing signal strength and spatial reuse. Multiple users can use the same frequency simultaneously as long as they are in different spatial directions. This is the primary reason 5G can serve so many users with high throughput in the same area.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">O-RAN — Open Radio Access Network</div>
-          <div class="term-analogy">💡 Analogy: Breaking apart a proprietary telephone exchange so anyone can build compatible equipment — like open-sourcing the entire mobile network infrastructure</div>
-          <div class="term-explain">A movement to disaggregate and open the interfaces of mobile network base stations, traditionally supplied as closed, proprietary systems from single vendors (Ericsson, Nokia, Huawei). O-RAN separates the Radio Unit (antenna hardware), Distributed Unit (real-time signal processing), and Central Unit (non-real-time functions) with open interfaces between them. This allows operators to mix vendors and enables software-defined intelligent controllers ("xApps") that use AI/ML to dynamically optimise network performance. Backed by a consortium of 300+ operators and vendors.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>"5G is not just faster 4G — it is three completely different networks on one infrastructure." Airport terminal analogy. (2 min)</li>
-          <li>Three pillars: eMBB (speed), URLLC (reliability, < 1ms — remote surgery!), mMTC (millions of sensors). (2 min)</li>
-          <li>Network Slicing: Motorway lane analogy — "guaranteed lanes for hospitals, games companies, utilities — in software." (2 min)</li>
-          <li>Connection back: "URLLC requires edge computing — the signal cannot travel far. 5G and edge are inseparable." (1 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">📝</span><div><strong>Quiz 6</strong> due end of week — Weeks 13–15 AI systems and networking content.</div></div>
-    </div>
-  </div>
-
-  <!-- ═══ CHAPTER 16 ═══ -->
-  <div class="chapter-card" id="ch16">
-    <div class="ch-header" onclick="toggle(16)">
-      <div class="ch-num">WK 16</div>
-      <div class="ch-meta">
-        <div class="ch-title">Bringing It All Together — The Big Picture & Project Presentations</div>
-        <div class="ch-time">⏱ ~7 min to teach</div>
-      </div>
-      <button class="ch-done-btn" onclick="markDone(event,16)">✓</button>
-      <div class="ch-arrow">⌄</div>
-    </div>
-    <div class="ch-body">
-      <div class="ch-tag-row"><span class="tag tag-sys">Review</span><span class="tag tag-arch">Synthesis</span></div>
-
-      <div class="what-block">
-        <div class="block-label">📌 What This Chapter Is About</div>
-        <p>The final chapter synthesises all six pillars of the course into a coherent narrative about where computer engineering is heading. Students present their projects and demonstrate that they can apply what they have learned to a real engineering problem. This chapter is your capstone — help students see how everything connects.</p>
-      </div>
-
-      <div class="summary-block">
-        <div class="block-label">📖 Your Teaching Summary (~7 min)</div>
-        <p>Step back and see the pattern across all 16 weeks. <strong>The single unifying theme:</strong> the era of free performance from transistor scaling is over. Every topic in this course is a different response to that ending.</p>
-        <p>Because we cannot make single cores faster (Ch.1–3), we build heterogeneous systems with specialised chips (Ch.4–5). Because cloud computing is too slow or expensive for everything, we push intelligence to the edge (Ch.6–7). Because our hardware optimisations created security vulnerabilities, we build trusted hardware (Ch.8–9). Because software timing matters as much as logic in physical systems, we engineer for real-time guarantees (Ch.10). Because classical computing will eventually hit quantum limitations, we research post-classical alternatives (Ch.11–12). Because AI models are the dominant workload, we optimise every layer for AI efficiency (Ch.13). Because computing is now inseparable from the physical world, we design systems that bridge computation and physics safely (Ch.14–15).</p>
-        <p>The engineering lesson: <strong>you cannot optimise one layer in isolation.</strong> A hardware security fix costs performance. A real-time constraint limits which AI models you can use. A network slicing policy affects edge computing feasibility. The best computer engineers think across all layers simultaneously — from silicon to application, from hardware to network.</p>
-      </div>
-
-      <div class="terms-block">
-        <div class="block-label">🔑 Big Picture Synthesis — The 6 Pillars and Their Connections</div>
-
-        <div class="term-item">
-          <div class="term-name">Why Architecture Matters to Security (Ch.2–3 → Ch.8–9)</div>
-          <div class="term-analogy">💡 The performance feature that made CPUs fast became the attack vector that made them vulnerable</div>
-          <div class="term-explain">Speculative execution (Chapter 3) was a performance breakthrough. It became the root cause of Spectre and Meltdown (Chapter 8). The Roofline Model (Chapter 3) explains why memory bandwidth is the bottleneck — and memory bandwidth is exactly what side-channel attackers exploit (Chapter 9). Architecture decisions made for performance have deep, unforeseen security consequences. This is why security must be designed in at the silicon level, not bolted on in software.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Why Edge Computing Needs Real-Time Systems (Ch.6 → Ch.10 → Ch.14)</div>
-          <div class="term-analogy">💡 Moving computation to the edge is only useful if the edge can meet the timing guarantees that physical systems require</div>
-          <div class="term-explain">Edge computing (Chapter 6) is motivated by latency requirements — you cannot send data to the cloud and back fast enough. But at the edge, systems must be real-time (Chapter 10) — missing a deadline in a robot or vehicle has physical consequences. ROS 2 and TSN (Chapter 14) provide the middleware and network infrastructure to meet those deadlines. TinyML (Chapter 6) must fit within the power and latency constraints set by real-time requirements. These topics are not separate — they form a continuous design chain.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">Why Quantum Matters to Security (Ch.11 → Ch.8)</div>
-          <div class="term-analogy">💡 A future technology (quantum computing) is reshaping how we design security systems today</div>
-          <div class="term-explain">Shor's Algorithm (Chapter 11) threatens RSA and ECC encryption (Chapter 8). Even though large-scale quantum computers do not exist yet, organisations are already migrating to post-quantum cryptography — new encryption algorithms designed to be secure against quantum attacks. The TPM 2.0 (Chapter 8) and secure enclaves need to be updated to use quantum-resistant algorithms. The threat is not immediate but the migration timeline is 10–20 years — and data encrypted today could be harvested now and decrypted later (harvest-now-decrypt-later attacks). This is why NIST standardised post-quantum cryptography algorithms in 2024.</div>
-        </div>
-
-        <div class="term-item">
-          <div class="term-name">The Next Decade of Computer Engineering</div>
-          <div class="term-analogy">💡 From a single-core world to a specialised, heterogeneous, edge-first, security-by-design, AI-everywhere world</div>
-          <div class="term-explain">The defining trends for the next 10 years: (1) Chiplets become the standard — heterogeneous integration replaces monolithic chips. (2) AI is embedded everywhere — from microcontrollers (TinyML) to data centre accelerators (TPUs, H100). (3) Quantum error correction progresses — practical advantage for specific problems (drug discovery, materials science, cryptography) becomes real. (4) Security is silicon-level — hardware roots of trust and TEEs become standard in all processors. (5) 5G + edge + AI converge — the base station becomes an edge AI node. (6) CPS safety standards mature — formal verification and digital twins become standard practice for safety-critical systems.</div>
-        </div>
-      </div>
-
-      <div class="teach-block">
-        <div class="block-label">🎓 How to Teach This in 7 Minutes</div>
-        <ul>
-          <li>Open with: "One sentence summary of the entire course: scaling ended, specialisation began." (1 min)</li>
-          <li>Walk through how each pillar responds to the scaling problem — 30 seconds per pillar. (3 min)</li>
-          <li>Show the cross-cutting connections: architecture → security, edge → real-time → CPS, quantum → cryptography. (2 min)</li>
-          <li>Close: "The best engineers think across all these layers simultaneously. That is what this course taught." (1 min)</li>
-        </ul>
-      </div>
-      <div class="assessment-row"><span class="a-icon">🏁</span><div><strong>FINAL PROJECT DUE</strong> — 15-min presentation + 5-min Q&A + Final written report submitted.</div></div>
-    </div>
-  </div>
-
-</div><!-- end .chapters -->
-
-<!-- BOTTOM BAR -->
-<div class="bottom-bar">
-  <button class="nav-btn" onclick="expandAll()">All Open</button>
-  <div class="progress-bar-wrap">
-    <div class="progress-bar-track">
-      <div class="progress-bar-fill" id="progressFill"></div>
-    </div>
-    <div class="progress-count" id="progressCount">0 of 16 chapters done</div>
-  </div>
-  <button class="nav-btn" onclick="collapseAll()">All Close</button>
-</div>
-
-<script>
-const TOTAL = 16;
-let done = new Set();
-let open = new Set();
-
-function toggle(n) {
-  const card = document.getElementById('ch' + n);
-  if (open.has(n)) {
-    card.classList.remove('open');
-    open.delete(n);
-  } else {
-    card.classList.add('open');
-    open.add(n);
-  }
-}
-
-function markDone(e, n) {
-  e.stopPropagation();
-  const card = document.getElementById('ch' + n);
-  if (done.has(n)) {
-    done.delete(n);
-    card.classList.remove('done');
-  } else {
-    done.add(n);
-    card.classList.add('done');
-    card.classList.remove('open');
-    open.delete(n);
-    if (n < TOTAL) {
-      setTimeout(() => {
-        const next = document.getElementById('ch' + (n + 1));
-        next.classList.add('open');
-        open.add(n + 1);
-        next.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 300);
-    }
-  }
-  updateProgress();
-}
-
-function updateProgress() {
-  const count = done.size;
-  const pct = (count / TOTAL) * 100;
-  document.getElementById('progressFill').style.width = pct + '%';
-  document.getElementById('progressCount').textContent = count + ' of ' + TOTAL + ' chapters done';
-  document.getElementById('headerCount').textContent = count + '/' + TOTAL;
-  const offset = 88 - (pct / 100) * 88;
-  document.getElementById('ringFill').style.strokeDashoffset = offset;
-}
-
-function expandAll() {
-  for (let i = 1; i <= TOTAL; i++) {
-    document.getElementById('ch' + i).classList.add('open');
-    open.add(i);
-  }
-}
-
-function collapseAll() {
-  for (let i = 1; i <= TOTAL; i++) {
-    document.getElementById('ch' + i).classList.remove('open');
-  }
-  open.clear();
-}
-
-// Open first chapter on load
-window.addEventListener('load', () => { toggle(1); });
-</script>
 </body>
 </html>
