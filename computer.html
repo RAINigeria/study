@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Special Topics in Computer Engineering — Class Notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #fff;
+  color: #111;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 16px;
+  line-height: 1.8;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* ── COVER ── */
+.cover {
+  text-align: center;
+  padding: 40px 0 32px;
+  border-bottom: 2px solid #111;
+  margin-bottom: 40px;
+}
+.cover h1 {
+  font-family: 'Merriweather', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.cover p {
+  font-size: 14px;
+  color: #444;
+}
+
+/* ── PILLAR HEADING ── */
+.pillar-heading {
+  font-family: 'Merriweather', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-top: 1px solid #bbb;
+  border-bottom: 1px solid #bbb;
+  padding: 8px 0;
+  margin: 36px 0 20px;
+  color: #333;
+}
+
+/* ── TOPIC ACCORDION ── */
+.topic {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0;
+}
+
+.topic-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.topic-header:active { opacity: 0.7; }
+
+.topic-title {
+  font-family: 'Merriweather', serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.topic-arrow {
+  font-size: 14px;
+  color: #888;
+  flex-shrink: 0;
+  margin-top: 3px;
+  transition: transform 0.25s;
+}
+.topic.open .topic-arrow { transform: rotate(180deg); }
+
+/* ── TOPIC BODY ── */
+.topic-body {
+  display: none;
+  padding: 0 0 24px;
+}
+.topic.open .topic-body { display: block; }
+
+/* Overview */
+.overview {
+  margin-bottom: 20px;
+}
+.overview p {
+  font-size: 15px;
+  line-height: 1.85;
+  margin-bottom: 12px;
+  color: #222;
+}
+.overview p strong { font-weight: 700; }
+.overview p em { font-style: italic; }
+
+/* Section label */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+  margin: 20px 0 14px;
+}
+
+/* Term blocks */
+.term {
+  margin-bottom: 16px;
+  padding-left: 14px;
+  border-left: 3px solid #111;
+}
+.term-name {
+  font-family: 'Merriweather', serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.term-analogy {
+  font-size: 13px;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 5px;
+  line-height: 1.6;
+}
+.term-explain {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #222;
+}
+
+/* Self-check */
+.selfcheck {
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-top: 20px;
+}
+.selfcheck .section-label { margin-top: 0; border-bottom-color: #ccc; }
+.selfcheck ol {
+  padding-left: 20px;
+  margin: 0;
+}
+.selfcheck ol li {
+  font-size: 14px;
+  line-height: 1.75;
+  margin-bottom: 8px;
+  color: #222;
+}
+.selfcheck ol li:last-child { margin-bottom: 0; }
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  body { font-size: 15px; padding: 20px 16px 60px; }
+  .cover h1 { font-size: 18px; }
+  .topic-title { font-size: 14px; }
+}
+
+@media print {
+  .topic-body { display: block !important; }
+  .topic-arrow { display: none; }
+  .topic { page-break-inside: avoid; }
+  .pillar-heading { page-break-before: always; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <h1>Special Topics in Computer Engineering<br/>Class Notes</h1>
+  <p>Graduate Level · Department of Computer Engineering</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="pillar-heading">Foundations of Modern Computing</div>
+
+<!-- TOPIC 1 -->
+<div class="topic" id="t1">
+  <div class="topic-header" onclick="toggle(1)">
+    <div class="topic-title">Why Old Computing Stopped Working — And What Came Next</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>For roughly fifty years, computers became faster automatically. Engineers made transistors smaller, crammed more onto a chip, and performance improved accordingly. This relationship — smaller transistors, lower power, faster chips — was described by a principle known as <strong>Dennard Scaling</strong>. Around 2004, Dennard Scaling broke down. Smaller transistors began leaking electricity rather than switching it cleanly, generating heat instead of performing useful work.</p>
+      <p>The consequence was the <strong>Power Wall</strong>: chips could no longer run faster simply by packing more transistors together, because the heat generated exceeded what cooling systems could manage. Designers responded by switching off large portions of the chip at any given moment to contain thermal output. Silicon that is physically present but cannot be powered on is called <strong>Dark Silicon</strong> — an expensive and wasteful situation that has become an unavoidable feature of modern chip design.</p>
+      <p>A separate and equally serious constraint is the <strong>Memory Wall</strong>. Processor speed has grown far faster than the speed at which memory can supply data. A modern processor may be capable of billions of operations per second but spends the majority of its time idle, simply waiting for data to arrive from RAM. The gap between what processors can do and how fast memory can feed them is arguably the dominant performance bottleneck in contemporary systems. Every major architectural innovation covered in these notes is, in some way, a response to one or both of these walls.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Dennard Scaling</div>
+      <div class="term-analogy">Think of it as making a smaller car engine that uses the same amount of fuel as before — useful only as long as the physics hold.</div>
+      <div class="term-explain">A 1974 observation stating that as transistor dimensions shrink, power density remains constant — meaning more transistors can be added without increasing total chip power consumption. This held for three decades and drove the reliable doubling of performance every two years. It failed around 2004 when leakage currents in shrinking transistors became too significant to ignore, causing power consumption to rise with density rather than staying flat.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Power Wall</div>
+      <div class="term-analogy">A room fitted with so many light bulbs that turning them all on simultaneously trips the fuse and starts a fire.</div>
+      <div class="term-explain">The thermal ceiling that prevents chips from operating all transistors simultaneously at full speed. Modern chips generate heat proportional to activity. When that heat exceeds what cooling can remove, the chip throttles itself or sustains damage. The Power Wall explains why processor clock speeds plateaued around 3–4 GHz in the mid-2000s and have not significantly risen since, despite transistor counts continuing to increase.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Dark Silicon</div>
+      <div class="term-analogy">A skyscraper whose fire regulations permit electricity only on a few floors at a time — the rest of the building exists but must remain dark.</div>
+      <div class="term-explain">The condition in which a significant fraction of a chip's transistors must remain unpowered at any moment to stay within thermal limits. Estimates suggest that on current chips, only 10–20% of transistors can be active simultaneously. Chip designers now build many specialised circuits — each handling a specific task — and rotate which ones are active, rather than running everything at once.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Memory Wall</div>
+      <div class="term-analogy">A professor capable of solving a thousand problems per hour, but forced to wait while an assistant retrieves one sheet of paper at a time.</div>
+      <div class="term-explain">The growing disparity between processor speed and memory bandwidth. Between 1980 and 2010, processor performance improved by a factor of roughly 60,000; memory latency improved by only a factor of 9. The result is that contemporary processors spend the majority of their execution time stalled, waiting for data from memory rather than performing computation. Addressing this gap — through faster memory, smarter caching, or moving computation closer to data — is central to modern system design.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Amdahl's Law</div>
+      <div class="term-analogy">Reducing 90% of a journey from four hours to nothing still leaves the remaining 10% — the total trip can never be reduced below that irreducible portion.</div>
+      <div class="term-explain">A mathematical relationship established in 1967 stating that the maximum achievable speedup from parallelism is limited by the fraction of a program that cannot be parallelised. If 10% of a program must execute sequentially, no number of parallel processors can make the whole program run more than ten times faster. Amdahl's Law is a fundamental constraint on parallel computing and explains why adding processors produces diminishing returns beyond a certain point.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>What physical phenomenon caused Dennard Scaling to break down, and approximately when did this occur?</li>
+        <li>Distinguish between the Power Wall and the Memory Wall. Which do you consider the more difficult engineering problem, and why?</li>
+        <li>If 15% of a program must run sequentially, what is the theoretical maximum speedup achievable regardless of how many processors are used?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 2 -->
+<div class="topic" id="t2">
+  <div class="topic-header" onclick="toggle(2)">
+    <div class="topic-title">New Approaches to Building Processors — Chiplets, Stacked Memory, and Open Hardware</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Since raw transistor scaling no longer delivers automatic performance gains, engineers have turned to architectural innovation in how chips are constructed and connected. Three developments are particularly significant: the move from monolithic chips to assembled chiplets, the physical relocation of memory to sit beside or atop the processor, and the emergence of a free and open processor instruction set that anyone can use without licensing fees.</p>
+      <p>The traditional approach to chip manufacturing — etching an entire processor as a single piece of silicon — becomes increasingly difficult and expensive as chips grow more complex. A single defect anywhere on a large chip renders it unusable. The <strong>chiplet</strong> strategy addresses this by building a processor from multiple smaller dies, each manufactured separately and then assembled into one package. Smaller dies have higher manufacturing yields. Different chiplets can be made using different manufacturing processes, each optimised for its specific function.</p>
+      <p>Memory has historically been the slowest part of a system because it sits physically distant from the processor, connected by relatively narrow buses. <strong>High Bandwidth Memory (HBM)</strong> inverts this by stacking memory dies vertically and placing them directly beside — or in some configurations, atop — the processor die. The distance data must travel shrinks from centimetres to micrometres, and the number of parallel connections between memory and processor increases dramatically. This directly attacks the Memory Wall.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Chiplets</div>
+      <div class="term-analogy">Assembling a city from prefabricated modular buildings, each optimised for its purpose, rather than constructing one enormous custom structure that fails entirely if any section has a flaw.</div>
+      <div class="term-explain">Small silicon dies, each implementing a defined portion of a processor's functionality, that are packaged together to function as a single integrated circuit. AMD's Ryzen and EPYC processors pioneered chiplet integration at consumer scale, connecting compute dies to I/O dies via a high-speed fabric. Intel's EMIB and TSMC's SoIC technologies enable chiplets from different processes — for instance, a compute die on a 3nm process alongside a memory controller on a 7nm process — to be combined cost-effectively. Chiplets also improve time-to-market since each die can be designed and verified independently.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">High Bandwidth Memory (HBM)</div>
+      <div class="term-analogy">Moving your filing cabinet from across the room into your desk drawer — the documents are instantly at hand rather than requiring a trip to retrieve them.</div>
+      <div class="term-explain">A memory technology in which DRAM dies are stacked vertically using through-silicon vias (TSVs) and placed in the same package as the processor, connected via a very wide interface — often thousands of parallel data lines. HBM3 delivers over 800 GB/s of bandwidth per stack, compared to approximately 50 GB/s for conventional DDR5. This makes HBM essential for AI accelerators and graphics processors where workloads are memory-bandwidth-bound. The tradeoff is cost and limited capacity per stack compared to conventional DRAM modules.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">RISC-V</div>
+      <div class="term-analogy">The Linux operating system applied to processor design — a complete, functional specification that anyone may use, modify, and build upon without paying licensing fees to any company.</div>
+      <div class="term-explain">An open-source Instruction Set Architecture (ISA) — the formal definition of the machine-language instructions a processor understands. Unlike x86 (proprietary to Intel and AMD) or ARM (licensed for royalties), RISC-V is maintained by a nonprofit consortium and freely available to anyone. Universities, startups, and governments worldwide are designing RISC-V processors. Its clean, modular design makes it particularly suited for embedded systems, custom accelerators, and security-critical applications where full transparency of the hardware specification is required.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Processing-in-Memory (PIM)</div>
+      <div class="term-analogy">Rather than transporting raw crops from a distant farm to a city kitchen for preparation, setting up a kitchen at the farm itself — the food is processed where it grows.</div>
+      <div class="term-explain">An architectural approach that places computation logic inside or immediately adjacent to memory arrays, eliminating the energy and time cost of moving data to a distant processor. Because data movement consumes far more energy than computation in many modern workloads, PIM can deliver significant efficiency gains for data-intensive tasks such as database filtering, AI inference, and genomic analysis. Samsung, SK Hynix, and UPMEM have produced commercial PIM products; the approach is considered one of the most promising responses to the Memory Wall.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Explain why manufacturing yield improves when a processor is built from smaller chiplets rather than as a single large die.</li>
+        <li>What physical change does HBM make to the relationship between memory and processor, and how does this address the Memory Wall?</li>
+        <li>What practical advantages does RISC-V offer to a university, a startup, and a national government respectively?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 3 -->
+<div class="topic" id="t3">
+  <div class="topic-header" onclick="toggle(3)">
+    <div class="topic-title">How Modern Processors Execute Instructions — Speculation, Ordering, and Specialisation</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Modern processors achieve performance far beyond what their clock speeds alone would suggest by executing instructions in a highly non-literal manner. Rather than reading instructions in sequence and completing each fully before beginning the next, contemporary processors exploit two principal techniques: they execute instructions <em>out of order</em> whenever independent operations can proceed simultaneously, and they execute instructions <em>speculatively</em> — guessing the outcome of conditional decisions and running ahead before the correct path is known. These techniques together extract enormous parallelism from programs that appear sequential.</p>
+      <p>Understanding these mechanisms matters not only for performance engineering but for security, as the same features that accelerate execution also create the conditions for a class of hardware attacks discussed later in these notes.</p>
+      <p>Separately, engineers have found that processors designed for one specific type of work — rather than all types — can outperform general-purpose designs by orders of magnitude. This concept of the <strong>Domain-Specific Architecture</strong> is considered by many researchers to define the current era of computer architecture.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Speculative Execution</div>
+      <div class="term-analogy">A chef who, while a customer deliberates between two dishes, begins preparing both — discarding the unchosen meal once the decision is made, having saved preparation time on the selected one.</div>
+      <div class="term-explain">When a processor encounters a conditional branch instruction, rather than waiting to determine which path the program will take, it predicts the likely outcome and begins executing instructions along the predicted path. If the prediction proves correct — which occurs roughly 95% of the time in well-optimised code — no time is wasted. If incorrect, the speculatively executed instructions are discarded and the correct path is taken. The performance gain is substantial. The security implication — that speculatively executed instructions leave traces in the processor's cache even when discarded — is the root cause of the Spectre class of vulnerabilities.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Out-of-Order Execution</div>
+      <div class="term-analogy">A kitchen preparing a three-course meal by beginning the dessert and main course simultaneously when they share no ingredients, rather than completing the starter entirely before touching anything else.</div>
+      <div class="term-explain">The processor's ability to identify instructions whose inputs are ready and execute them before preceding instructions whose inputs are still being computed. The processor tracks data dependencies between instructions, maintains a buffer of in-flight operations, and commits results in the original program order regardless of the actual execution sequence. This allows the processor to keep its execution units busy even when some instructions are stalled waiting for memory.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Roofline Model</div>
+      <div class="term-analogy">A physician who measures both heart rate and blood pressure — the patient's condition is constrained by whichever vital sign is furthest from normal, and the correct treatment depends on correctly identifying which one that is.</div>
+      <div class="term-explain">A visual performance model that characterises a program's efficiency relative to two hardware limits: the peak computational throughput (FLOPS roof) and the peak memory bandwidth (bandwidth roof). A program's arithmetic intensity — the ratio of floating-point operations performed to bytes of data transferred — determines which roof limits it. Programs with low arithmetic intensity are memory-bandwidth-bound; those with high arithmetic intensity are compute-bound. The Roofline Model is the standard diagnostic tool for guiding optimisation decisions.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Domain-Specific Architecture (DSA)</div>
+      <div class="term-analogy">A specialist surgeon who performs a single operation type with a precision and speed no general practitioner could match, precisely because all training and equipment are devoted to that one procedure.</div>
+      <div class="term-explain">A processor designed and optimised for a specific category of computation rather than for general-purpose use. By eliminating hardware that would support unneeded operations and dedicating transistors entirely to the target workload, a DSA can achieve orders-of-magnitude improvements in performance-per-watt for that workload. Google's Tensor Processing Unit (TPU), designed exclusively for the matrix arithmetic of neural network inference and training, is the most studied example. Hennessy and Patterson, in their 2017 Turing Lecture, identified DSAs as the primary path forward for sustained performance improvement in the post-scaling era.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Describe the sequence of events in speculative execution when the processor's branch prediction proves incorrect.</li>
+        <li>A program performs 2 floating-point operations for every byte of data it reads from memory. Using the Roofline Model concept, explain how you would determine whether optimising the algorithm or adding memory bandwidth would produce greater improvement.</li>
+        <li>Why does specialising a chip for one task produce such large efficiency gains compared to a general-purpose design?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="pillar-heading">Accelerators and Edge Computing</div>
+
+<!-- TOPIC 4 -->
+<div class="topic" id="t4">
+  <div class="topic-header" onclick="toggle(4)">
+    <div class="topic-title">Heterogeneous Computing — Using the Right Processor for Each Task</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>No single processor type is optimal for every workload. General-purpose central processors excel at sequential, logic-intensive tasks but are poorly suited to massive parallelism. Graphics processors are extraordinarily efficient at applying the same operation to millions of data elements simultaneously but are wasteful for complex, branching sequential code. Programmable logic devices can be configured to implement exactly the required circuit for a given task, delivering hardware-level efficiency without the inflexibility of a fixed chip. Modern computing systems increasingly combine all three, assigning each workload to the processor type for which it is best suited.</p>
+      <p>This approach — <strong>heterogeneous computing</strong> — is now standard in high-performance computing, cloud data centres, autonomous vehicles, and AI infrastructure. Understanding the characteristics, strengths, and limitations of each processor type is foundational to systems engineering at this level.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">CPU — Central Processing Unit</div>
+      <div class="term-analogy">A highly educated generalist who can tackle any intellectual problem but can only work with one student at a time — depth and flexibility at the cost of throughput.</div>
+      <div class="term-explain">The main processor in any general-purpose computing system. Modern CPUs contain a small number of powerful cores — typically 4 to 64 in consumer and server products — each capable of executing complex, branching instruction sequences at very high speed. CPUs include sophisticated branch predictors, out-of-order execution engines, and large caches to hide memory latency. They are optimal for operating system execution, database query processing, web servers, and any task requiring complex decision logic. They are poorly suited to workloads requiring millions of identical simple operations, such as pixel rendering or matrix multiplication.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">GPU — Graphics Processing Unit</div>
+      <div class="term-analogy">Ten thousand students each solving a simple arithmetic problem simultaneously — individually modest capability, collectively enormous throughput for identical repetitive tasks.</div>
+      <div class="term-explain">Originally designed to compute the colour of each pixel in a video game frame — a task requiring the same mathematical operations applied to millions of pixels in parallel — GPUs contain thousands of relatively simple compute cores operating in groups. The execution model, called SIMT (Single Instruction, Multiple Threads), executes the same instruction across an entire group of threads simultaneously, each operating on different data. This model is ideal for any workload with high data parallelism: neural network training, scientific simulation, image processing, and cryptocurrency mining. NVIDIA's dominance in AI hardware is a direct consequence of SIMT's suitability for the matrix operations that underlie all neural networks.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">FPGA — Field-Programmable Gate Array</div>
+      <div class="term-analogy">A blank circuit board whose internal wiring can be reconfigured in software — it becomes whatever specialised circuit the engineer programs into it, and can be reprogrammed as requirements change.</div>
+      <div class="term-explain">A chip containing millions of configurable logic blocks and programmable interconnects that can be connected in software to implement any digital circuit. Unlike a fixed processor that runs instructions, an FPGA <em>is</em> the circuit — computation happens through the physical arrangement of logic, not through instruction execution. This delivers hardware-level speed for a specific task, with the flexibility to reprogram for a different task later. Microsoft's Project Catapult deployed FPGAs across Bing's search data centres to accelerate specific algorithms, demonstrating that FPGAs at scale can match ASIC performance for well-defined tasks while retaining updatability.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">SIMT — Single Instruction, Multiple Threads</div>
+      <div class="term-analogy">A military formation in which every soldier executes the same drill movement simultaneously — each soldier is in a different position in the formation, but the instruction issued is identical for all.</div>
+      <div class="term-explain">The execution model of GPU computing. Threads are grouped into fixed-size units called warps (32 threads in NVIDIA GPUs). All threads in a warp execute the same instruction in the same clock cycle, each applied to different data. When a warp encounters a conditional branch where some threads would take one path and others the other, the GPU must execute both paths sequentially with portions of the warp disabled — a condition called branch divergence, which reduces throughput proportionally. Minimising branch divergence is the primary challenge in GPU programming.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Systolic Array</div>
+      <div class="term-analogy">An assembly line in which every worker performs a multiply-and-add on a value passed from the previous worker, then passes the result to the next — data flows through in rhythm, like a mathematical heartbeat.</div>
+      <div class="term-explain">A two-dimensional grid of identical processing elements, each performing a multiply-accumulate (MAC) operation and passing partial results to its neighbours in a fixed clock rhythm. Data flows through the array in waves: one matrix's values enter from one side, another's from an adjacent side, and the products accumulate as data traverses the grid. This architecture performs matrix multiplication — the core operation in all neural network inference and training — with extremely high hardware utilisation and minimal memory traffic. Google's TPU is built around a 256×256 systolic array capable of performing 65,536 MACs per clock cycle.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>For each of the following workloads, identify the most suitable processor type and justify your choice: (a) sorting a database of 10 billion records, (b) training a convolutional neural network, (c) implementing a custom network packet filtering algorithm that may need to be updated monthly.</li>
+        <li>What is branch divergence in GPU computing and why does it reduce performance?</li>
+        <li>Explain why a systolic array is well matched to matrix multiplication — trace the path of a single data element through a small 3×3 array.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 5 -->
+<div class="topic" id="t5">
+  <div class="topic-header" onclick="toggle(5)">
+    <div class="topic-title">AI Hardware — Tensor Cores, TPUs, and the Infrastructure Behind Large Language Models</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>The training and deployment of large AI models constitutes one of the most demanding computational workloads ever created. A model such as GPT-4 contains hundreds of billions to over a trillion numerical parameters. Generating a single response requires loading all of those parameters from memory and performing trillions of multiply-accumulate operations. The bottleneck in such workloads is almost never the speed of arithmetic — it is the rate at which data can be moved from memory to the compute units. This makes AI systems a specific and severe instance of the Memory Wall problem.</p>
+      <p>Specialised hardware — NVIDIA's Tensor Cores and Google's TPUs — addresses this by tightly coupling very high-bandwidth memory with compute units specifically designed for the matrix operations AI requires. At scale, thousands of such chips are interconnected through high-speed fabrics that allow them to operate as a single logical accelerator. Understanding this infrastructure is essential for anyone designing systems that incorporate AI at any scale.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Tensor Core</div>
+      <div class="term-analogy">A specialised calculator that performs in a single operation what a standard calculator would take dozens of steps to complete — purpose-built for one specific computation type.</div>
+      <div class="term-explain">A hardware unit introduced in NVIDIA's Volta GPU architecture (2017) that performs a mixed-precision matrix multiply-accumulate — specifically, D = A×B + C where A, B, C, D are small matrices — in a single clock cycle. Standard CUDA cores require multiple cycles for equivalent computation. Using reduced-precision number formats (FP16, BF16, or INT8) rather than full 32-bit floats, Tensor Cores achieve throughputs in the hundreds of TFLOPS for AI workloads. Every NVIDIA GPU used in AI training or inference — H100, A100, RTX series — derives the majority of its AI throughput from Tensor Cores.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Tensor Processing Unit (TPU)</div>
+      <div class="term-analogy">A factory production line configured to manufacture one product with maximum efficiency — it cannot be repurposed, but for that one product, nothing is faster or cheaper.</div>
+      <div class="term-explain">Google's custom application-specific integrated circuit designed exclusively for neural network workloads. Unlike a GPU, which retains significant general-purpose capability, a TPU dedicates almost all silicon area to its systolic array and the high-bandwidth memory feeding it. The absence of caches, branch predictors, and other general-purpose structures means the TPU can perform its specific task — matrix multiplication — with far greater efficiency per watt than any GPU. TPU v4 pods, interconnected in a 3D torus topology, are the infrastructure on which Google trains all of its AI models including Gemini.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">NVLink</div>
+      <div class="term-analogy">A dedicated private motorway connecting buildings in a complex — far higher capacity than the public road network and reserved exclusively for the traffic that needs it most.</div>
+      <div class="term-explain">NVIDIA's proprietary high-bandwidth interconnect for GPU-to-GPU communication. Standard PCIe, which connects GPUs to the CPU in most systems, provides approximately 64 GB/s of bidirectional bandwidth. NVLink in the H100 generation delivers 900 GB/s bidirectional — roughly 14 times more. Training large models requires constant exchange of gradient information between GPUs; at the throughputs NVLink enables, thousands of GPUs can be synchronised frequently enough to function effectively as a single, coherent, massively parallel computer. NVSwitch extends this to multi-node all-to-all connectivity across GPU clusters.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Memory Bandwidth in AI Systems</div>
+      <div class="term-analogy">A reference library where looking up information is instantaneous, but the physical act of retrieving each volume from its shelf consumes the vast majority of the librarian's working day.</div>
+      <div class="term-explain">AI inference — running a trained model to produce outputs — is characterised by very low arithmetic intensity: each weight parameter is loaded from memory, used in one or a few multiply-accumulate operations, and then discarded. A 70-billion parameter model in 16-bit precision requires approximately 140 GB of storage; to generate a single token, this entire weight set must pass through the memory-to-compute pathway. At 3 TFLOPS of compute but only 2 TB/s of memory bandwidth, the chip is idle most of the time waiting for weights. This is why memory bandwidth, measured in GB/s, is the primary specification for AI inference chips — not FLOPS.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Explain why AI inference is described as memory-bandwidth-bound. What would need to change about the workload for it to become compute-bound?</li>
+        <li>What specific operation does a Tensor Core perform, and how does it differ from a standard multiply-accumulate on a conventional core?</li>
+        <li>Why does the NVLink bandwidth specification matter for large model training in a way that would not apply to, for example, a graphics rendering workload?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 6 -->
+<div class="topic" id="t6">
+  <div class="topic-header" onclick="toggle(6)">
+    <div class="topic-title">Edge Computing and Embedded Intelligence</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Not all computation can be delegated to remote data centres. Systems that must respond to physical events within milliseconds — autonomous vehicles, industrial control systems, medical monitors — cannot afford the round-trip latency of cloud communication. Equally, many deployment environments have no reliable network connection, or the cost and privacy implications of transmitting raw sensor data are prohibitive. <strong>Edge computing</strong> addresses these constraints by bringing computation to where data is generated rather than moving data to where computation is centralised.</p>
+      <p>The challenge at the edge is severe resource constraint. An embedded device might have 256 kilobytes of RAM, no GPU, and a battery expected to last years. Making useful AI run on such hardware requires fundamentally different engineering techniques than those used in data centres. The field of <strong>TinyML</strong> has developed a toolkit of model compression methods — quantisation, pruning, and knowledge distillation — to reduce models from gigabytes to kilobytes with acceptable loss of accuracy.</p>
+      <p><strong>Federated Learning</strong> addresses a related challenge: how to train AI on data that is both private and distributed across many devices or institutions. By inverting the traditional approach — sending the model to the data rather than the data to the model — federated learning enables collective intelligence without centralising sensitive information.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Edge Computing</div>
+      <div class="term-analogy">Processing fish at the harbour immediately after the catch rather than transporting it raw to a distant factory for processing — fresher result, lower transport cost, no dependency on the road network being open.</div>
+      <div class="term-explain">A computing paradigm in which processing occurs at or near the source of data generation rather than in a centralised cloud. The motivations are latency (network round-trips may take 50–200ms, far too slow for real-time physical control), bandwidth (streaming raw video from thousands of cameras would saturate any network), cost (compute at scale on cloud incurs substantial per-query charges), and reliability (edge devices must function during network outages). Edge deployments range from simple microcontrollers embedded in sensors to powerful GPU-equipped edge servers deployed in factories or vehicles.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">TinyML</div>
+      <div class="term-analogy">Compressing the content of a concert hall performance into a music box — the full richness cannot be preserved, but the essential melody remains recognisable and the format fits in a pocket.</div>
+      <div class="term-explain">The practice of deploying machine learning models on microcontrollers and other severely resource-constrained devices. A TinyML model might occupy 20 kilobytes of flash storage, require fewer than 100 kilobytes of RAM at runtime, and execute in under 10 milliseconds — all on a processor running at 64 MHz with no floating-point hardware. Applications include keyword spotting, gesture recognition, anomaly detection in industrial equipment, and vital sign monitoring. The discipline is enabled by model compression techniques: quantisation, structured pruning, knowledge distillation, and hardware-aware neural architecture search.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Quantisation</div>
+      <div class="term-analogy">Recording prices to the nearest naira rather than to the nearest kobo — the small loss of precision is acceptable in exchange for dramatically reduced storage and processing requirements.</div>
+      <div class="term-explain">The conversion of model weights and activations from high-precision floating-point representations (typically 32-bit) to lower-precision integer representations (8-bit or 4-bit). A 32-bit float requires 4 bytes; an 8-bit integer requires 1 byte. Quantisation therefore reduces model size by a factor of 4 (for INT8) or 8 (for INT4) and enables faster execution on hardware with integer arithmetic units. Accuracy loss is typically under 1–2% for INT8 and somewhat higher for INT4, depending on the model and quantisation method. Post-training quantisation applies compression after training; quantisation-aware training incorporates the quantisation error into the training process for better results.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Federated Learning</div>
+      <div class="term-analogy">Each hospital improves a shared medical textbook by making notes based on its own patient observations, then submitting only the editorial corrections — never the patient records themselves — to the publisher, who incorporates all corrections and redistributes the improved edition.</div>
+      <div class="term-explain">A distributed training paradigm in which a model is sent to each participating device or institution, trained locally on private data, and only the computed parameter updates (gradients) are returned to a central server for aggregation. The raw data never leaves its origin. The central server applies the averaged updates to the global model and redistributes it for the next round. Google uses federated learning for keyboard autocomplete on Android; hospitals use it to train diagnostic models across institutions without sharing patient records. Challenges include communication efficiency, protection against adversarial participants, and non-independent data distributions across participants.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Identify three distinct reasons — latency, bandwidth, and one other — why a given system might require edge computing rather than cloud computing.</li>
+        <li>A model originally trained with 32-bit weights is quantised to 8-bit integers. Calculate the factor by which its memory footprint is reduced, and describe one technique used to minimise the resulting accuracy loss.</li>
+        <li>In federated learning, what is shared between participants and the central server, and what is deliberately never shared? What security assumption does this system depend upon?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 7 -->
+<div class="topic" id="t7">
+  <div class="topic-header" onclick="toggle(7)">
+    <div class="topic-title">Internet of Things — Protocols, Scale, and Security</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>The Internet of Things encompasses the billions of physical devices — sensors, actuators, meters, locks, vehicles, and industrial machines — that are now connected to digital networks. These devices present a profile radically different from conventional computing equipment: they are often battery-powered, have kilobytes rather than gigabytes of memory, transmit small data payloads infrequently, and must operate for years without maintenance. Standard internet protocols designed for computers and smartphones impose overhead these devices cannot support.</p>
+      <p>The response has been the development of lightweight, purpose-built communication protocols — MQTT and CoAP being the most widely deployed — and long-range, low-power wireless technologies such as LoRaWAN for devices in areas without cellular coverage. At the application layer, the fragmentation of the smart home market into incompatible proprietary ecosystems has prompted the industry to develop Matter, a unified open standard. Across all of these, security remains the most serious unresolved challenge: the majority of IoT devices have no secure update mechanism, default credentials that are never changed, and software that grows increasingly outdated with no remediation path.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">MQTT — Message Queuing Telemetry Transport</div>
+      <div class="term-analogy">A notice board: sensors post their readings in labelled slots, and any interested party reads only the slots relevant to them — no direct communication between sender and receiver is required.</div>
+      <div class="term-explain">A publish-subscribe messaging protocol designed in 1999 for monitoring oil pipelines over satellite links with severely constrained bandwidth. A central broker receives messages from publishers (sensors, devices) and forwards them to all subscribers who have registered interest in a given topic. The minimum message overhead is 2 bytes, making it viable for devices with very limited processing capability. MQTT runs over TCP/IP. It is now the de facto standard for IoT data collection and is used in industrial automation, smart building management, connected vehicles, and consumer IoT products.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">CoAP — Constrained Application Protocol</div>
+      <div class="term-analogy">A stripped-down version of web browsing — request and response, but reduced to the absolute minimum for devices with only kilobytes of RAM and no TCP/IP stack.</div>
+      <div class="term-explain">A request-response protocol modelled on HTTP but designed specifically for constrained devices. Where HTTP requires TCP (which involves connection establishment, acknowledgement, and flow control overhead), CoAP uses UDP — a stateless, connectionless protocol with minimal overhead. CoAP messages can be as small as 4 bytes. It supports RESTful semantics (GET, PUT, POST, DELETE) making it natural for devices that expose simple resource endpoints. Used in smart energy metering, building automation, healthcare monitoring, and any application where a device needs to respond to queries rather than stream data continuously.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">LoRaWAN</div>
+      <div class="term-analogy">A radio whisper that carries a short message across kilometres — not enough bandwidth for conversation, but sufficient to report a reading, and the transmitter survives on a single battery for years.</div>
+      <div class="term-explain">A low-power wide-area networking protocol using the LoRa (Long Range) radio modulation scheme. A single LoRaWAN gateway can receive transmissions from devices up to 15 kilometres away in rural environments. Power consumption per transmission is extremely low — sensors can operate for 5–10 years on a pair of AA batteries. The tradeoff is very limited data rate (typically 250 bits per second to 50 kbits per second) and duty-cycle restrictions in most regulatory jurisdictions. Used for smart city infrastructure (parking sensors, air quality monitors), agricultural monitoring (soil moisture, livestock tracking), and utility metering in areas beyond cellular coverage.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Matter Protocol</div>
+      <div class="term-analogy">A universal power socket standard — one specification that any manufacturer can implement, ensuring that any compliant device works in any compliant ecosystem regardless of brand.</div>
+      <div class="term-explain">An application-layer interoperability standard for smart home devices, developed by the Connectivity Standards Alliance and backed by Apple, Google, Amazon, Samsung, and over 200 other companies. Matter runs over IPv6, using Wi-Fi for bandwidth-intensive devices and Thread (a low-power mesh networking protocol) for constrained devices. Any Matter-certified device can be commissioned and controlled by any Matter-compatible controller — Apple Home, Google Home, Amazon Alexa, or Samsung SmartThings — without requiring proprietary bridges or cloud accounts. Released in October 2022; adoption has been rapid across major consumer device categories.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">IoT Security — The Mirai Botnet as Case Study</div>
+      <div class="term-analogy">Millions of locks installed with the same master key that was printed on the box — individually trivial to open, collectively forming an army when recruited simultaneously.</div>
+      <div class="term-explain">In 2016, the Mirai botnet compromised approximately 600,000 IoT devices — primarily IP cameras and home routers — by scanning for devices with default factory credentials (username: admin, password: admin). The compromised devices were directed to flood the DNS provider Dyn with traffic, making Twitter, Netflix, PayPal, Reddit, and major portions of the US internet inaccessible for several hours. The attack required no sophisticated exploitation — only the observation that most devices shipped with and retained default passwords. Mirai remains the defining case study in IoT security failure: devices without secure defaults, without update mechanisms, and without lifecycle security planning represent not just individual vulnerabilities but infrastructure-level risk at scale.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Compare MQTT and CoAP: in what scenario would you choose MQTT, and in what scenario CoAP? What is the key architectural difference between them?</li>
+        <li>A soil moisture sensor in a remote farm must transmit a 20-byte reading once per hour for 5 years without battery replacement. Which wireless technology is most appropriate and why?</li>
+        <li>Using the Mirai botnet as evidence, construct an argument for why IoT security must be addressed at the manufacturing and regulatory level, not only by individual device owners.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="pillar-heading">Hardware Security and Real-Time Systems</div>
+
+<!-- TOPIC 8 -->
+<div class="topic" id="t8">
+  <div class="topic-header" onclick="toggle(8)">
+    <div class="topic-title">Hardware Security — Spectre, Meltdown, and Trusted Execution Environments</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>In January 2018, security researchers publicly disclosed two classes of vulnerability — Spectre and Meltdown — that affected virtually every processor manufactured in the preceding two decades. The vulnerabilities were not bugs in conventional software but exploitable consequences of the speculative and out-of-order execution mechanisms that make modern processors fast. The disclosure fundamentally changed how the industry thinks about the relationship between performance optimisation and security.</p>
+      <p>Both attacks exploit the same insight: although a processor's speculative execution is eventually cancelled if the speculation was incorrect, it leaves detectable traces in the processor's cache hierarchy. By carefully measuring how long subsequent memory accesses take, an attacker can infer what data the speculative execution touched — data that may belong to a different process, a different virtual machine, or even the operating system kernel. The attacks do not require kernel exploits or privilege escalation; they work from unprivileged user code.</p>
+      <p>The hardware industry's response was twofold: software mitigations that restrict speculative execution at the cost of performance, and new hardware features — Trusted Execution Environments — that provide hardware-enforced isolation for sensitive code and data.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Spectre</div>
+      <div class="term-analogy">Training a bank teller to automatically reach towards the safe whenever a customer in a mask enters — the teller never opens the safe, but their body language reveals where the safe is and how they respond to specific stimuli, allowing inference of its contents.</div>
+      <div class="term-explain">Spectre manipulates a processor's branch predictor — the component that predicts which direction conditional branches will take — to speculatively execute code that should never run. During this speculative execution, data from a victim's memory space is transiently accessed. Though the speculative result is discarded, the accessed data is loaded into the cache. The attacker then uses a cache timing technique (Flush+Reload) to determine exactly which cache lines were loaded, revealing the secret data. Spectre has many variants, each targeting a different microarchitectural component. It cannot be fully mitigated in hardware without redesigning speculative execution from scratch; current mitigations involve software-level restrictions that carry 5–30% performance penalties.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Meltdown</div>
+      <div class="term-analogy">A library policy prohibiting students from the restricted section, but a structural loophole allowing them to briefly glimpse pages before being escorted out — the glimpse, however brief, is sufficient to copy information.</div>
+      <div class="term-explain">Meltdown exploits the fact that out-of-order execution may access kernel memory before the processor's permission-checking logic has verified that such access is authorised. The access is cancelled when the check fails, but the data is transiently cached. An attacker process can read this cached data through timing measurements before it is evicted. Meltdown collapsed the fundamental isolation between user-space and kernel memory — the boundary that prevents applications from reading the operating system's private data. The fix, Kernel Page-Table Isolation (KPTI), keeps kernel address mappings absent from user-space page tables, requiring a costly page table switch on every system call — adding 5–30% overhead on affected Intel processors.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Cache Side-Channel Attack (Flush+Reload)</div>
+      <div class="term-analogy">Determining which shelf in a library a person visited — without following them — by measuring how quickly you can retrieve a book from that shelf; a fast retrieval means the book was recently handled and is still nearby.</div>
+      <div class="term-explain">The measurement technique underlying both Spectre and Meltdown. The attacker first flushes a target cache line from the cache (ensuring it is not present). After allowing a victim process to run, the attacker times how long it takes to access that cache line. A fast access (cache hit) reveals that the victim loaded the data during its execution; a slow access (cache miss) indicates it did not. By preparing many such probes across different cache lines, the attacker can reconstruct a byte of secret data per measurement. Modern processors' cache access times differ by approximately 100ns between hits and misses — a difference easily measured with available CPU timing instructions.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Intel SGX — Software Guard Extensions</div>
+      <div class="term-analogy">A vault inside a bank that even the bank manager cannot open — the vault's contents are encrypted by a key that exists only inside the vault itself, and the bank's own security cameras cannot see inside.</div>
+      <div class="term-explain">A set of CPU instructions introduced in Intel's Skylake generation (2015) that allow user-space applications to create hardware-encrypted, integrity-protected memory regions called enclaves. Data inside an enclave is encrypted by keys stored only within the CPU die itself; the operating system, hypervisor, BIOS, and physical memory forensics cannot read enclave contents in plaintext. Enclaves are verified through a process called remote attestation, in which the CPU cryptographically proves to a remote party that a specific, unmodified program is running inside a genuine enclave. SGX has been used for confidential cloud computing, private AI inference, and digital rights management. Several attacks — Foreshadow (2018), SGAxe (2020) — have compromised SGX enclaves through speculative execution and attestation vulnerabilities.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">TPM — Trusted Platform Module</div>
+      <div class="term-analogy">A tamper-evident passport embedded in the motherboard — it holds cryptographic proof of the computer's identity, records any tampering with the boot process, and can refuse to release encryption keys if the system has been modified.</div>
+      <div class="term-explain">A standardised security chip (ISO/IEC 11889) providing hardware-rooted cryptographic services independent of the CPU. Core functions: secure key generation and storage (private keys are generated inside the TPM and never exposed in plaintext); measured boot (a chain of SHA-256 hashes of each boot component is recorded in Platform Configuration Registers, allowing detection of any unauthorised modification); and remote attestation (the TPM signs a statement of the system's measured state with a manufacturer-endorsed key, proving to a remote party that the system is in a known-good configuration). Windows 11 requires TPM 2.0. Used as the foundation of BitLocker full-disk encryption, enterprise device management, and confidential computing attestation.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Both Spectre and Meltdown exploit the same cache timing technique, yet they are distinct attacks. Explain the specific microarchitectural mechanism each exploits and how they differ.</li>
+        <li>An SGX enclave encrypts its contents with keys stored only inside the CPU. If an attacker gains physical access to the machine and removes the RAM module, can they read the enclave's data? Justify your answer.</li>
+        <li>Describe the measured boot process using a TPM. What does it detect, and what does it do when it detects a discrepancy?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 9 -->
+<div class="topic" id="t9">
+  <div class="topic-header" onclick="toggle(9)">
+    <div class="topic-title">Physical Side-Channel Attacks — Power, Electromagnetic Radiation, and Memory Corruption</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Beyond timing-based cache attacks, hardware leaks information through additional physical channels: the electrical power it consumes, the electromagnetic radiation it emits, and the physical interference between adjacent memory cells. These side channels are exploitable without any software vulnerability — they arise from the physics of electronic hardware itself. An attacker with physical proximity to a device, or in some cases merely network-level access to timing data, may extract cryptographic keys, private data, or administrative privileges through careful measurement and statistical analysis.</p>
+      <p>The Rowhammer attack represents a qualitatively different threat: rather than passively observing information, it actively corrupts memory cells that were never accessed, potentially flipping security-critical bits. That a software operation — ordinary memory reads — can induce physical bit errors in adjacent DRAM cells through electromagnetic crosstalk is a striking illustration of how physical hardware constraints intrude into what appears to be purely logical computation.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Power Analysis Attack</div>
+      <div class="term-analogy">Determining what a sealed factory is manufacturing by watching the fluctuations of its electricity meter from the street — the power drawn varies with each production step in a pattern that reveals the process.</div>
+      <div class="term-explain">Cryptographic operations consume power in proportion to the data being processed. In Simple Power Analysis (SPA), a single power trace — recorded with an oscilloscope measuring voltage across a small resistor in series with the device's power supply — may directly reveal secret key bits through visual inspection. In Differential Power Analysis (DPA), thousands of traces are recorded during operations using different input plaintexts; statistical correlation between the hypothetical power consumption (predicted for each possible key byte) and the measured consumption isolates the correct key value. DPA can extract an AES-128 key from a smart card using commodity equipment costing under $1,000. Countermeasures include masking (adding random values to intermediate computations to decorrelate power from data) and amplitude balancing.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Electromagnetic Side-Channel Attack</div>
+      <div class="term-analogy">Holding a sensitive microphone against a wall and inferring from the sounds of machinery what is being manufactured in the room — the sounds are unintended emissions that correlate with the internal process.</div>
+      <div class="term-explain">Every switching event in a digital circuit generates a small electromagnetic emission. Using a near-field probe — essentially a small antenna positioned millimetres from a chip — an attacker captures these emissions. The emission profile correlates with the computation being performed, enabling the same statistical analysis as power analysis. EM attacks can sometimes bypass on-board power filtering that defeats power analysis, and may be performed from greater distances depending on the emission strength. They have been demonstrated against smart cards, field-programmable gate arrays, and ARM processors, including in black-box scenarios where the attacker has no physical access to the board's power rails.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Rowhammer Attack</div>
+      <div class="term-analogy">Repeatedly slamming a particular drawer so forcefully that the vibrations cause items in the drawer above — which was never opened — to shift and rearrange, changing the state of something the attacker was never permitted to touch.</div>
+      <div class="term-explain">A hardware vulnerability in DRAM arising from the physical proximity of memory cells. DRAM stores bits as electrical charges in capacitors. When a memory row is repeatedly read at high frequency — "hammered" — the electrical disturbance in the substrate causes charge to leak into or out of adjacent rows, flipping bits in memory that the attacker never accessed. Demonstrated in 2015 and subsequently shown to be exploitable for privilege escalation: by repeatedly reading from two carefully chosen rows, an attacker can flip a bit in an adjacent row corresponding to a page table entry — changing a permission bit from read-only to writable — and thereby gain write access to kernel memory. Target Row Refresh (TRR) mitigations in modern DRAM partially reduce the attack surface but have been circumvented by subsequent variants including TRRespass.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Explain why Differential Power Analysis is more powerful than Simple Power Analysis, and describe one countermeasure against each.</li>
+        <li>The Rowhammer attack flips bits in memory rows that the attacker never reads or writes. Explain the physical mechanism by which this is possible in DRAM.</li>
+        <li>Consider a cryptographic chip designed with on-board power filtering to defeat power analysis. Propose an alternative side-channel attack that the filtering would not defend against, and justify your reasoning.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 10 -->
+<div class="topic" id="t10">
+  <div class="topic-header" onclick="toggle(10)">
+    <div class="topic-title">Real-Time Systems — Scheduling, Deadlines, and Guaranteed Timing</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Most software operates under an implicit contract: execute correctly, and execute reasonably quickly. Real-time systems operate under a stricter contract: execute correctly, <em>and complete by a specified deadline</em>. For hard real-time systems — aircraft flight control, antilock braking, cardiac pacemakers, nuclear plant control — a correct computation delivered after its deadline is not merely suboptimal; it constitutes a system failure. This distinction drives completely different design philosophies, verification methods, and hardware choices.</p>
+      <p>The central challenge is that a processor can only execute one task at a time, yet a real-time system typically has many concurrent tasks, each with its own period and deadline. Determining whether a given set of tasks can all meet their deadlines on a given processor — and choosing the order in which to run them — is the real-time scheduling problem. The landmark theoretical contribution to this problem was made by Liu and Layland in 1973.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Hard and Soft Real-Time Systems</div>
+      <div class="term-analogy">Hard: an airbag that must deploy within 30 milliseconds of impact or it is useless — no late response is tolerated. Soft: a video stream that occasionally stutters — the viewer is inconvenienced, but no harm results.</div>
+      <div class="term-explain">A hard real-time system is one in which every deadline must be met without exception; a single miss constitutes failure regardless of magnitude. Safety-critical applications demand hard real-time guarantees: fly-by-wire aircraft, ABS braking, industrial robot control, pacemakers. A soft real-time system tolerates occasional deadline misses with graceful degradation of quality: audio and video streaming, user interface updates, game physics. A firm real-time system occupies the middle ground: late results have no value and are discarded, but missing deadlines does not cause harm — examples include certain financial trading systems and video conferencing where a late frame is simply dropped.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Rate Monotonic Scheduling (RMS)</div>
+      <div class="term-analogy">In a hospital pharmacy, the medication requested most frequently is always dispensed first, regardless of when requests arrive — a simple, fixed priority rule that is mathematically provable to be optimal within its constraints.</div>
+      <div class="term-explain">A fixed-priority preemptive scheduling algorithm in which each task is assigned a priority inversely proportional to its period: tasks with shorter periods (higher frequencies) receive higher priorities. Proved optimal among fixed-priority algorithms by Liu and Layland in 1973. The schedulability bound — the maximum processor utilisation that guarantees all deadlines are met — is n(2^(1/n) − 1), where n is the number of tasks. As n approaches infinity, this limit approaches ln(2) ≈ 69%. RMS is simple to implement and reason about, making it the dominant scheduling algorithm in embedded real-time operating systems including FreeRTOS, VxWorks, and AUTOSAR OS.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Earliest Deadline First (EDF)</div>
+      <div class="term-analogy">At any moment, the person with the most imminent appointment is served next — priorities are continuously reassigned as deadlines approach, allowing the service provider to always address the most urgent need.</div>
+      <div class="term-explain">A dynamic-priority preemptive scheduling algorithm in which the runnable task with the nearest deadline always executes. Proved optimal for preemptive uniprocessor scheduling: if any algorithm can schedule a task set without missing deadlines, EDF can too. EDF can sustain 100% processor utilisation while meeting all deadlines, compared to RMS's 69% bound. The implementation complexity is higher — priorities must be updated whenever new tasks become ready or deadlines change — and worst-case analysis is more complex, which limits adoption in safety-critical systems where static, verifiable behaviour is preferred. EDF is commonly used in multimedia systems and soft real-time operating systems.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Priority Inversion</div>
+      <div class="term-analogy">The head of state is waiting for a document held by a junior official, who is in turn waiting behind a mid-ranking bureaucrat in a queue — the most powerful person in the hierarchy is blocked by someone with far less authority, with the intermediate ranks unaware of the blockage they are causing.</div>
+      <div class="term-explain">A scheduling anomaly in which a high-priority task is blocked waiting for a resource held by a low-priority task, while medium-priority tasks freely preempt the low-priority task and execute — indefinitely extending the high-priority task's wait. Priority inversion caused the Mars Pathfinder spacecraft to experience repeated system resets in 1997. The VxWorks RTOS's default configuration did not enable the Priority Inheritance Protocol; once enabled through a parameter upload to the spacecraft, the problem was resolved. The Priority Inheritance Protocol addresses inversion by temporarily elevating the priority of a low-priority task holding a needed resource to match the highest priority of any task waiting for it, preventing medium-priority preemption until the resource is released.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Three tasks have periods and execution times as follows: T1 (period 10ms, execution 3ms), T2 (period 20ms, execution 4ms), T3 (period 50ms, execution 10ms). Apply the RMS schedulability test to determine whether this task set is guaranteed to meet all deadlines under RMS.</li>
+        <li>Under what conditions would you prefer EDF over RMS despite EDF's higher implementation complexity?</li>
+        <li>Describe the exact sequence of events that constitutes priority inversion, and explain precisely how the Priority Inheritance Protocol interrupts that sequence.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="pillar-heading">Quantum and Neuromorphic Computing</div>
+
+<!-- TOPIC 11 -->
+<div class="topic" id="t11">
+  <div class="topic-header" onclick="toggle(11)">
+    <div class="topic-title">Quantum Computing — Principles, Algorithms, and the Current State of Hardware</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Quantum computing is not a faster version of classical computing. It is a fundamentally different computational paradigm, exploiting quantum mechanical phenomena — superposition and entanglement — to process information in ways that have no classical analogue. For most tasks, a quantum computer offers no advantage and may perform worse than a classical machine. For specific problem classes — integer factorisation, unstructured search, and certain optimisation and simulation problems — quantum algorithms demonstrate polynomial or even exponential improvements over the best known classical methods.</p>
+      <p>The practical significance of quantum computing today is twofold. First, the algorithms that already exist on paper — particularly Shor's algorithm — are sufficient to break the public-key cryptography that secures virtually all digital communication, provided a large enough fault-tolerant quantum computer is built. This has motivated an urgent transition to post-quantum cryptographic standards, which NIST standardised in 2024. Second, near-term quantum devices have physical qubits sufficient to explore quantum algorithms, but not enough to implement quantum error correction — placing them in the Noisy Intermediate-Scale Quantum (NISQ) era, with meaningful but limited capability.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Qubit and Superposition</div>
+      <div class="term-analogy">A spinning coin represents both heads and tails simultaneously — the outcome is genuinely undetermined until the coin lands, at which point it commits to one state. A quantum computer processes information while the coins are all still spinning.</div>
+      <div class="term-explain">A qubit is the fundamental unit of quantum information. Unlike a classical bit, which has a definite state of 0 or 1, a qubit exists in a superposition described by the state vector α|0⟩ + β|1⟩, where α and β are complex numbers satisfying |α|² + |β|² = 1. The probabilities of measuring 0 and 1 are |α|² and |β|² respectively. With n qubits all in superposition, the system represents 2^n states simultaneously within the same physical device. Quantum algorithms manipulate this superposition coherently — through quantum gates — before measurement collapses the state to a single classical outcome. The art of quantum algorithm design is structuring this manipulation so that the desired answer is amplified and incorrect answers are suppressed at the moment of measurement.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Shor's Algorithm</div>
+      <div class="term-analogy">Finding the secret combination of a safe not by trying each combination in turn, but by using quantum interference to cause all incorrect combinations to cancel each other out simultaneously, leaving only the correct one visible.</div>
+      <div class="term-explain">A quantum algorithm published by Peter Shor in 1994 that factors an n-bit integer in O(n³) operations — polynomial time. The best classical factoring algorithms require sub-exponential but super-polynomial time; factoring a 2048-bit number classically would require computation on the order of the age of the universe. RSA-2048 encryption derives its security entirely from this classical intractability. A fault-tolerant quantum computer with approximately 4,000 logical qubits (equivalent to millions of physical qubits given current error rates) could factor RSA-2048 in hours. The algorithm combines classical modular arithmetic with a quantum subroutine — the Quantum Fourier Transform — that finds the period of a function exponentially faster than any classical method.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Decoherence</div>
+      <div class="term-analogy">Attempting to balance a pencil vertically on its tip on a vibrating table — the equilibrium is theoretically possible but any perturbation from the environment immediately destroys it.</div>
+      <div class="term-explain">The process by which a qubit's quantum state is disrupted through interaction with its environment — thermal noise, cosmic rays, electromagnetic interference, or even a single stray photon. Decoherence converts a qubit's superposition into a definite classical state prematurely, destroying the quantum information encoded in it. Superconducting qubits, the technology used by IBM and Google, must be cooled to approximately 15 millikelvin — colder than the average temperature of interstellar space — to suppress thermal decoherence. Even so, current qubits maintain coherence for only microseconds to milliseconds. Quantum error correction can extend the effective coherence time of logical qubits but requires approximately 1,000 physical qubits per logical qubit, explaining why millions of physical qubits are needed for practically significant computation.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">NISQ — Noisy Intermediate-Scale Quantum</div>
+      <div class="term-analogy">Early fixed-wing aircraft — capable of genuine flight over limited distances in favourable conditions, but not yet reliable enough for transoceanic travel; valuable for demonstrating principles and accumulating engineering knowledge, not yet ready for the applications that will eventually justify them.</div>
+      <div class="term-explain">The descriptor coined by physicist John Preskill in 2018 for the current generation of quantum computers: devices with 50–1,000 qubits, sufficient to perform some quantum operations but too noisy and too small to implement quantum error correction. NISQ devices cannot execute Shor's algorithm at scales relevant to real cryptographic keys. They can run variational quantum algorithms — Variational Quantum Eigensolver (VQE) for molecular ground-state energy estimation, Quantum Approximate Optimisation Algorithm (QAOA) for combinatorial problems — that are designed to tolerate noise. The central open question in the field is whether any practical problem exists for which NISQ devices offer a meaningful advantage over classical supercomputers today.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>A quantum computer with 50 qubits in superposition simultaneously represents how many states? Express your answer as a power of 2 and compare it to a meaningful physical quantity.</li>
+        <li>Explain why Shor's algorithm breaks RSA encryption, and describe two conditions that must both be met before it poses a practical threat to deployed cryptographic systems.</li>
+        <li>Distinguish between a physical qubit and a logical qubit. Why is the ratio between them the central engineering challenge separating NISQ devices from fault-tolerant quantum computers?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 12 -->
+<div class="topic" id="t12">
+  <div class="topic-header" onclick="toggle(12)">
+    <div class="topic-title">Neuromorphic Computing — Brain-Inspired Hardware and Spiking Neural Networks</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>The human brain performs remarkable computation at approximately 20 watts of power. A data centre cluster producing comparable performance for AI inference may consume megawatts. The disparity exists because the brain's computational architecture is fundamentally different from von Neumann processors. Neuromorphic computing attempts to capture the principles responsible for the brain's efficiency — event-driven computation, co-location of memory and processing, and sparse, asynchronous communication — in silicon hardware.</p>
+      <p>The dominant paradigm in artificial intelligence — deep neural networks trained with backpropagation — is loosely inspired by neuroscience but departs dramatically from biological computation in its continuous, synchronous, and dense activation patterns. Spiking Neural Networks (SNNs) represent a closer approximation to biological computation, communicating through discrete spike events rather than continuous floating-point values. Because most neurons are silent at any given moment, the energy consumed is proportional to network activity rather than constant — a fundamental advantage for always-on, battery-powered applications.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Neuromorphic Computing</div>
+      <div class="term-analogy">Rather than building a faster arithmetic calculator, constructing artificial circuits that operate on the same physical principles as biological neurons — event-driven, massively parallel, and consuming power only when processing active signals.</div>
+      <div class="term-explain">A computing paradigm that implements processing and memory in architectures modelled on biological neural systems. Neuromorphic chips feature massively parallel networks of artificial neurons and synapses, event-driven communication through spike signals, and co-location of computation and memory (eliminating the von Neumann bottleneck). Because neurons communicate only when they have information to convey, power consumption scales with activity — idle neurons consume near-zero power. Pioneered by Carver Mead at Caltech in the 1980s. Current commercial examples include Intel's Loihi 2 (research chip, 1 million neurons) and IBM's TrueNorth (4,096 cores, 1 million neurons, 65mW at full operation).</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Spiking Neural Network (SNN)</div>
+      <div class="term-analogy">Morse code transmitted across a wire rather than a continuous telephone call — information is carried in the timing and pattern of discrete pulses rather than in a continuously varying signal value.</div>
+      <div class="term-explain">An artificial neural network in which neurons communicate through discrete, binary spike events rather than the continuous floating-point activations used in conventional deep learning. A spiking neuron accumulates incoming signals as a membrane potential; when this potential crosses a threshold, the neuron emits a spike to its post-synaptic neighbours and resets. Information is encoded in the rate, timing, and pattern of spikes. Computation occurs only at spike events — inactive neurons consume virtually no power. The principal challenge is training: standard backpropagation requires differentiable activation functions, which binary spikes are not. Current approaches include surrogate gradient methods, conversion from pre-trained rate-coded networks, and local learning rules such as STDP.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Spike-Timing-Dependent Plasticity (STDP)</div>
+      <div class="term-analogy">A connection between two colleagues strengthens each time one person's action reliably precedes and appears to cause the other's — repeated coincidence in that specific temporal order builds a lasting association.</div>
+      <div class="term-explain">A biologically-observed synaptic learning rule: if a pre-synaptic neuron fires a spike shortly before a post-synaptic neuron fires, the synaptic weight between them is increased (long-term potentiation). If the post-synaptic neuron fires before the pre-synaptic neuron, the weight is decreased (long-term depression). This rule is local — each synapse updates based only on the timing of the two neurons it connects, requiring no global error signal. It enables online, unsupervised learning directly on neuromorphic hardware without external training infrastructure. Intel's Loihi 2 implements a programmable version of STDP, enabling on-chip adaptation to changing input statistics.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Memristors</div>
+      <div class="term-analogy">A water pipe whose internal diameter permanently changes in response to how much water flows through it — the pipe remembers its history and its current resistance encodes that memory even when no water is flowing.</div>
+      <div class="term-explain">A two-terminal passive circuit element whose resistance is a function of the history of current that has passed through it, and which retains that resistance when power is removed (non-volatile). This makes memristors natural artificial synapses: resistance encodes synaptic weight, and applying voltage pulses adjusts it according to a chosen learning rule. Memristive crossbar arrays — matrices of memristors at wire intersections — can perform matrix-vector multiplication (the fundamental AI operation) directly in the storage element, consuming only the energy of the read current. This in-memory computation eliminates the fetch-compute-store cycle of von Neumann architectures. IBM, Samsung, and Knowm are among the organisations developing memristive arrays for ultra-low-power AI inference.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Identify three specific architectural differences between a conventional deep learning accelerator (such as a GPU) and a neuromorphic chip (such as Intel Loihi 2), and explain how each difference contributes to energy efficiency.</li>
+        <li>Why does standard backpropagation fail when applied directly to spiking neural networks, and what approaches are used to work around this limitation?</li>
+        <li>Explain how a memristive crossbar array performs matrix-vector multiplication, and why this is more energy-efficient than performing the same computation on a conventional processor.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<div class="pillar-heading">AI Systems Engineering and Autonomous Systems</div>
+
+<!-- TOPIC 13 -->
+<div class="topic" id="t13">
+  <div class="topic-header" onclick="toggle(13)">
+    <div class="topic-title">Engineering AI Systems for Efficiency — Quantisation, Compilation, and Adaptation</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Building a capable AI model and building a deployable AI system are distinct engineering problems. A model that achieves high accuracy in a research setting may require terabytes of memory, hundreds of specialised chips, and megawatts of power — conditions incompatible with most deployment contexts. The field of AI systems engineering addresses the gap between research capability and practical deployment through a toolkit of techniques that reduce memory footprint, increase throughput, and lower operating cost, typically with acceptable but bounded accuracy trade-offs.</p>
+      <p>These techniques operate at multiple levels of abstraction: numerical representation (quantisation), model structure (pruning, low-rank adaptation), and compilation (operator fusion, hardware-specific code generation). A production AI serving system applies many of these simultaneously. The most important recent development is the emergence of efficient fine-tuning methods that allow large pre-trained models to be specialised for specific tasks at a small fraction of the original training cost — making practical deployment accessible without retraining from scratch.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">KV-Cache</div>
+      <div class="term-analogy">When composing a long document, keeping all previously written paragraphs visible so that each new sentence need only be written once — without this, writing each new sentence would require re-reading the entire document from the beginning.</div>
+      <div class="term-explain">In autoregressive language models (GPT-style), generating each new token requires computing attention scores between the new token and every preceding token. Without caching, this computation repeats identically for all preceding tokens at every generation step — quadratically wasteful. The KV-cache stores the Key and Value projection matrices for all previously processed tokens; only the current token's projections need be computed fresh. This reduces token generation complexity from O(n²) to O(n) per step. The cost: the cache's memory footprint grows linearly with context length. For a 70-billion parameter model with a 128,000-token context window, the KV-cache alone may require hundreds of gigabytes, making memory management the central challenge in large-scale inference deployment.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Operator Fusion</div>
+      <div class="term-analogy">Rather than cooking each component of a dish separately — dicing, seasoning, and cooking each vegetable on its own plate before combining — preparing everything together in one pan, eliminating the intermediate plates entirely.</div>
+      <div class="term-explain">A compiler optimisation that combines multiple consecutive computational operations — such as matrix multiplication, followed by layer normalisation, followed by an activation function — into a single GPU kernel. Without fusion, each operation writes its output to GPU HBM (high-bandwidth memory) and the next operation reads it back — the bandwidth cost dominates for memory-bound operations. With fusion, intermediate results remain in the GPU's fast on-chip SRAM or registers, touching slow HBM only once at the end. Flash Attention, the most consequential example, fuses the entire multi-head self-attention mechanism, reducing memory complexity from O(N²) to O(N) and enabling the long context windows used in modern language models.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">LoRA — Low-Rank Adaptation</div>
+      <div class="term-analogy">Rather than repainting an entire building to change its appearance, applying adhesive panels to specific walls — the building's structure is unchanged, the change is minimal in material, and the panels can be removed if required.</div>
+      <div class="term-explain">A parameter-efficient fine-tuning method that inserts trainable low-rank matrix pairs (B ∈ R^(d×r) and A ∈ R^(r×k), where r ≪ min(d,k)) in parallel with frozen weight matrices of a pre-trained model. During fine-tuning, only B and A are updated; the original weights W₀ remain frozen. The effective weight modification is W₀ + BA, where BA approximates the full-rank update that would result from fine-tuning all weights. Since r is small (typically 4–64), the number of trainable parameters is reduced by factors of 100–10,000 compared to full fine-tuning. A 70-billion parameter model that would require 8 × A100 GPUs for standard fine-tuning can be adapted with LoRA on a single consumer GPU. Post-training, BA can be merged into W₀ with no inference overhead.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">AI Compiler (TVM, XLA, MLIR)</div>
+      <div class="term-analogy">An expert interpreter who not only translates a speech into a new language, but restructures the sentences, eliminates redundancies, and reorders the content to be maximally clear and concise in the target language — performing optimisation, not just translation.</div>
+      <div class="term-explain">A software toolchain that takes a computational graph of an AI model — expressed in a framework like PyTorch or TensorFlow as a directed acyclic graph of operators — and compiles it into optimised machine code for a specific hardware target. Key transformation stages: graph-level optimisation (operator fusion, constant folding, dead code elimination); tensor-level optimisation (tiling — partitioning computations into cache-sized blocks; vectorisation; loop unrolling); and hardware code generation (targeting CUDA, Metal, OpenCL, or vendor-specific instruction sets). The same model may run 5–10x faster after compiler optimisation than with the framework's default execution path. MLIR provides a common intermediate representation enabling optimisations to be shared across frameworks and targets.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>Explain why the KV-cache is essential for efficient language model inference, and describe the memory management challenge it creates as context length increases.</li>
+        <li>A weight matrix has dimensions 4096 × 4096 (approximately 16.8 million parameters). If LoRA is applied with rank r = 16, how many parameters does the LoRA adaptation introduce, and what is the compression ratio relative to full fine-tuning of that matrix?</li>
+        <li>Describe two distinct compiler optimisations an AI compiler might apply to a sequence of operations: matrix multiply → layer norm → GELU activation. For each, explain the mechanism and the performance benefit.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 14 -->
+<div class="topic" id="t14">
+  <div class="topic-header" onclick="toggle(14)">
+    <div class="topic-title">Cyber-Physical Systems — Autonomous Vehicles, Robotics, and Digital Twins</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Cyber-Physical Systems are engineering systems in which computational processes and physical processes are tightly and bidirectionally coupled. The computation does not merely observe the physical world — it controls it in real time. This coupling introduces a class of requirements absent from conventional software engineering: correctness depends not only on logical outcomes but on the timing of those outcomes relative to physical dynamics. A control action that is correct in logic but arrives 10 milliseconds late may be useless or dangerous.</p>
+      <p>The software infrastructure supporting cyber-physical systems — middleware frameworks, communication protocols, and formal verification tools — has matured significantly over the past decade. ROS 2 has become the de facto standard for robotics middleware. Time-Sensitive Networking has extended Ethernet to support deterministic timing. Digital twin technology enables pre-deployment validation and continuous operational monitoring of complex physical systems. Together, these tools are making it feasible to build large-scale, safety-critical autonomous systems with verified behaviour.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">Cyber-Physical System (CPS)</div>
+      <div class="term-analogy">A building's climate control system that not only measures temperature but directly controls compressors, valves, and fans in real time based on those measurements — the computation and the physics are inseparable components of a single system.</div>
+      <div class="term-explain">A system in which embedded computers and networks monitor and control physical processes, with feedback loops spanning both domains. CPS correctness requires satisfying both computational specifications (logical correctness) and temporal specifications (timing guarantees), because physical processes are governed by continuous dynamics that do not pause for computation to complete. Examples span autonomous vehicles (perception, planning, and actuation at 10–100 Hz), power grids (frequency regulation requiring sub-cycle response), surgical robots (haptic feedback with sub-millisecond round-trip latency), and industrial process control. The field of CPS engineering draws from control theory, real-time computing, formal verification, and embedded systems design simultaneously.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">ROS 2 — Robot Operating System 2</div>
+      <div class="term-analogy">A telephone exchange for robot subsystems — any component can send messages to any other through a common switchboard, without needing a direct connection or knowledge of the recipient's implementation.</div>
+      <div class="term-explain">An open-source middleware framework for building robotic systems, providing discovery, communication, and tooling for distributed robot software. ROS 2 uses the Data Distribution Service (DDS) as its underlying communication middleware, which provides configurable Quality-of-Service semantics including reliability, latency budgets, and history depth. Software components called nodes publish typed messages to named topics; any node may subscribe to any topic. This publish-subscribe architecture decouples components, enabling modular development and hardware independence. ROS 2 is used in NASA JPL planetary rovers, Baidu Apollo autonomous vehicles, Boston Dynamics robots, and the majority of academic robotics research worldwide. Its realtime executor extensions support integration with hard real-time operating systems.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Time-Sensitive Networking (TSN)</div>
+      <div class="term-analogy">A managed road intersection where traffic controllers guarantee ambulances always receive a green light regardless of general traffic density — critical data is always prioritised and never delayed by background traffic on the same physical road.</div>
+      <div class="term-explain">A family of IEEE 802.1 standards extending standard Ethernet with deterministic timing guarantees. Standard Ethernet is best-effort: packets are delivered as fast as possible, but with no upper bound on latency. TSN adds: IEEE 802.1AS for sub-microsecond time synchronisation across all network devices; IEEE 802.1Qbv for time-aware shaping — dividing time into repeating cycles and reserving specific slots for different traffic classes; and IEEE 802.1Qbu for frame preemption — allowing high-priority frames to interrupt the transmission of a lower-priority frame mid-packet. TSN enables brake-by-wire, steer-by-wire, and safety control signals to share an automotive Ethernet backbone with infotainment and camera traffic, each class receiving its required latency guarantee.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Digital Twin</div>
+      <div class="term-analogy">A precisely synchronised virtual replica of a physical aircraft engine — continuously updated with real sensor readings, it reflects the engine's current state and can simulate future states, allowing engineers to test failure scenarios and maintenance interventions without touching the physical engine.</div>
+      <div class="term-explain">A real-time simulation of a physical system that is continuously synchronised with the physical asset through sensor data, maintaining an accurate model of the asset's current state. Digital twins enable predictive maintenance (detecting anomalies in the model before they manifest as failures in the physical asset), performance optimisation (testing parameter changes virtually before physical implementation), operator training (simulating failure modes safely), and design iteration (using operational data to improve future product generations). Originally developed by NASA for spacecraft health monitoring, digital twin technology is now used in wind farm management, smart manufacturing (Siemens), hospital building systems, and autonomous vehicle simulation environments.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>A software bug in a word processor causes the application to crash. Describe how an equivalent logical error in a cyber-physical system might have qualitatively different consequences, and what engineering disciplines are required to prevent it.</li>
+        <li>How does DDS-based communication in ROS 2 improve on ROS 1's TCP-based communication for real-time robotics applications?</li>
+        <li>A smart factory wishes to share a single Ethernet network for both safety-critical machine control (requiring deterministic 500µs maximum latency) and general data collection (tolerant of occasional delays). Explain how TSN enables this and which specific standard mechanisms are involved.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 15 -->
+<div class="topic" id="t15">
+  <div class="topic-header" onclick="toggle(15)">
+    <div class="topic-title">5G Networks — Architecture, Service Categories, and Integration with Edge and AI Systems</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>Fifth-generation mobile networks are architecturally distinct from their predecessors in ways that extend well beyond increased data rates. 5G is designed to serve radically heterogeneous use cases simultaneously on shared physical infrastructure — from high-definition video streaming requiring gigabits per second, to autonomous vehicle coordination requiring sub-millisecond latency and extreme reliability, to smart city sensor networks connecting millions of low-power devices per square kilometre. Serving these simultaneously with different performance guarantees on the same hardware requires a software-defined architecture that can allocate network resources dynamically.</p>
+      <p>From a computer engineering perspective, 5G is significant not only as a communications technology but as a platform that enables and depends upon edge computing. The Ultra-Reliable Low-Latency Communications service category requires end-to-end latency measured in single-digit milliseconds — a budget incompatible with processing at a distant data centre. 5G base stations are therefore becoming edge compute nodes, co-located with or integrated into AI inference infrastructure. Understanding 5G architecture is increasingly a prerequisite for systems engineers working on autonomous vehicles, industrial automation, and smart infrastructure.</p>
+    </div>
+
+    <div class="section-label">Key Concepts</div>
+
+    <div class="term">
+      <div class="term-name">5G Service Categories — eMBB, URLLC, mMTC</div>
+      <div class="term-analogy">An airport terminal complex with three entirely separate concourses — one for high-volume passenger flights, one for air ambulances with guaranteed immediate departure, and one for low-priority cargo that departs when capacity permits — each with different infrastructure, procedures, and guarantees, all on the same airfield.</div>
+      <div class="term-explain">eMBB (Enhanced Mobile Broadband): High data rate, moderate latency. Target peak throughput exceeds 10 Gbps per cell. Achieved through millimetre-wave spectrum (24–100 GHz), massive MIMO beamforming, and carrier aggregation. Serves smartphones, home broadband, augmented and virtual reality. URLLC (Ultra-Reliable Low-Latency Communications): Target end-to-end latency below 1 millisecond, with packet error rates below 10⁻⁵. Serves autonomous vehicles, remote surgery, industrial robot control, and smart grid protection relays. The latency budget mandates computation at the network edge — cloud processing cannot satisfy this requirement. mMTC (Massive Machine-Type Communications): Supports up to 1 million devices per square kilometre with ultra-low power consumption. Each device transmits infrequently and in small packets. Serves smart metering, environmental sensing, and asset tracking. Devices are expected to operate for 10 years on a single battery.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Network Slicing</div>
+      <div class="term-analogy">A physical motorway network partitioned into virtual dedicated lanes — an ambulance lane with guaranteed clear passage at all times, a freight lane with high capacity but lower speed guarantees, and a general lane for ordinary traffic — each allocated from the same physical road surface but isolated and managed independently.</div>
+      <div class="term-explain">The creation of multiple logical, isolated network instances on a shared physical infrastructure using Software-Defined Networking (SDN) and Network Function Virtualisation (NFV). Each slice has independently configured bandwidth, latency, reliability, and security properties. A mobile operator might simultaneously maintain a slice for a hospital (99.9999% reliability, strict latency), a slice for a gaming company (low latency, high throughput), and a slice for a utility company (low bandwidth, millions of devices, low cost). Slices can be created, resized, and terminated through software with no physical intervention. From a computer engineering standpoint, network slicing is the application of virtualisation — the same principle as virtual machines — to network infrastructure.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Massive MIMO</div>
+      <div class="term-analogy">Replacing a single large public address loudspeaker — which broadcasts to everyone equally — with 256 individually controllable directional speakers, each focused precisely on one listener with the exact required volume, while all others listen to different speakers simultaneously on the same audio frequency.</div>
+      <div class="term-explain">A radio access technology using 64–256 antenna elements at the base station, compared to 2–8 in 4G systems. Through beamforming — computing and applying phase shifts to each antenna element such that signals constructively interfere at the target user's location and destructively interfere elsewhere — the base station can direct focused beams to individual users. Multiple users can be served simultaneously on the same time-frequency resource through spatial multiplexing, as long as their spatial channels are sufficiently distinct. Massive MIMO is the primary mechanism by which 5G achieves its spectral efficiency targets and is a significant source of computational demand at the base station.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">O-RAN — Open Radio Access Network</div>
+      <div class="term-analogy">Disaggregating a proprietary telephone exchange — which previously had to be purchased and operated as a closed unit from one vendor — into standard modules with open interfaces, allowing operators to combine components from different manufacturers and add software intelligence to network management.</div>
+      <div class="term-explain">An industry initiative to open and standardise the interfaces within the Radio Access Network (RAN), which traditionally comprised closed, proprietary systems supplied as complete units by vendors such as Ericsson, Nokia, or Huawei. O-RAN separates the Radio Unit (RU, handling radio frequency processing and antenna interface), the Distributed Unit (DU, handling time-critical baseband processing), and the Central Unit (CU, handling higher-layer protocol functions) with open, standardised interfaces. This enables operators to procure components from multiple vendors and introduces the RAN Intelligent Controller (RIC), which hosts xApps — AI/ML applications that dynamically optimise resource allocation, handover decisions, and interference management in real time. O-RAN is backed by over 300 operators and vendors and is considered central to reducing vendor lock-in and enabling AI-native network management.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Review Questions</div>
+      <ol>
+        <li>A remote surgery application requires end-to-end latency below 2 milliseconds. Explain why this requirement mandates edge computing, and estimate the maximum physical distance between the surgeon and the processing infrastructure given the speed of light in fibre.</li>
+        <li>Explain the relationship between network slicing and software-defined networking. What specific SDN mechanism enables slices to be isolated from each other on shared physical hardware?</li>
+        <li>How does Massive MIMO enable multiple users to share the same radio frequency simultaneously? What signal processing technique makes this possible and what is the computational cost at the base station?</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOPIC 16 -->
+<div class="topic" id="t16">
+  <div class="topic-header" onclick="toggle(16)">
+    <div class="topic-title">Synthesis — Cross-Cutting Themes and the Future of Computer Engineering</div>
+    <div class="topic-arrow">▾</div>
+  </div>
+  <div class="topic-body">
+
+    <div class="overview">
+      <p>The topics covered in these notes span semiconductor physics, computer architecture, security, network engineering, and AI systems. They may appear, taken individually, to be separate domains. They are not. Every major development covered here is a response to a common underlying constraint — the end of reliable performance improvement through transistor scaling — and the fields are connected through deep technical interdependencies that engineers must understand to design systems that work correctly across all dimensions simultaneously.</p>
+      <p>A hardware security fix incurs a performance penalty. A performance optimisation creates a security vulnerability. A real-time constraint limits which AI models are deployable at the edge. A network slicing policy determines which edge computing resources are reachable. Quantum computing threatens the cryptographic foundations protecting hardware attestation. Neuromorphic hardware may be the only viable path to AI inference at the energy budgets required by certain edge deployments. No layer of the stack can be optimised in isolation.</p>
+    </div>
+
+    <div class="section-label">Cross-Cutting Connections</div>
+
+    <div class="term">
+      <div class="term-name">Architecture and Security are Inseparable</div>
+      <div class="term-analogy">The same technique that makes an engine fuel-efficient — precise timing of ignition — creates a predictable pattern that can be exploited to diagnose the engine's internal state from the outside. Efficiency and transparency are not always compatible.</div>
+      <div class="term-explain">Speculative execution, introduced as a performance optimisation in out-of-order processors, is the root cause of Spectre and its many variants. The cache hierarchy, essential for bridging the Memory Wall, is the measurement channel through which side-channel attacks operate. High-bandwidth memory, required for AI inference, is the resource that Rowhammer physically corrupts. Every architectural decision made for performance carries a security implication. Security engineering at the hardware level is not an add-on to architecture — it is a co-equal design constraint from the first transistor.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Edge Computing, Real-Time Systems, and Cyber-Physical Systems Form a Chain</div>
+      <div class="term-analogy">A chain of dependencies: you cannot control a moving vehicle remotely unless the network delivers commands fast enough, which requires computation close enough to the vehicle, which requires the computing hardware to meet real-time deadlines — break any link and the system fails.</div>
+      <div class="term-explain">Edge computing is motivated by latency requirements that cloud computing cannot meet. Those latency requirements arise from the real-time constraints of cyber-physical systems. Meeting real-time constraints requires not only the correct scheduling algorithms but the appropriate communication infrastructure — which is where Time-Sensitive Networking and 5G URLLC intersect. The AI models running at the edge must be compressed through TinyML techniques to fit within the power and memory budgets set by embedded hardware. These five topics form a single, continuous system design challenge that cannot be addressed by specialists in any one area without understanding all the others.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">Quantum Computing and Cryptography are Already Coupled</div>
+      <div class="term-analogy">The threat of a future master key does not require the key to exist yet — if it will eventually exist, every lock that key would open must be replaced before that day arrives, which may take longer than the time remaining.</div>
+      <div class="term-explain">Shor's algorithm does not require a present-day quantum computer to affect current security practice. Any data encrypted today with RSA or ECC and captured by an adversary — including state actors — can be decrypted retrospectively when a sufficiently powerful quantum computer becomes available. This "harvest now, decrypt later" threat means the transition to post-quantum cryptography cannot wait until quantum computers actually break RSA. NIST's 2024 standardisation of post-quantum algorithms (CRYSTALS-Kyber for key exchange, CRYSTALS-Dilithium for signatures) reflects this urgency. TPM 2.0 and SGX attestation protocols must be updated to use quantum-resistant algorithms — connecting quantum computing directly to hardware security infrastructure.</div>
+    </div>
+
+    <div class="term">
+      <div class="term-name">The Defining Engineering Principle of the Current Era</div>
+      <div class="term-analogy">When a single road reaches its capacity, the solution is not to widen it indefinitely but to redesign the transport network — new routes, different vehicle types for different purposes, and intelligent coordination between them.</div>
+      <div class="term-explain">The unifying principle across all topics in these notes: when a general-purpose solution reaches a scaling limit, the engineering response is specialisation, co-design, and system-level integration. Transistor scaling reached its limit — the response is specialised chips, chiplets, and heterogeneous computing. Memory bandwidth reached its limit — the response is HBM, PIM, and operator fusion. General cloud computing reached its latency limit — the response is edge computing, TinyML, and 5G URLLC. Classical computing will eventually reach its limits for certain problems — the response is quantum and neuromorphic computing. In each case, the solution requires understanding the problem across multiple levels of abstraction simultaneously — from physics to algorithms, from silicon to network. That cross-layer thinking is the core competency these notes aim to develop.</div>
+    </div>
+
+    <div class="selfcheck">
+      <div class="section-label">Final Review Questions</div>
+      <ol>
+        <li>State the single unifying engineering principle that connects all topics covered in these notes, and illustrate it with three examples from different sections.</li>
+        <li>A design team is building an autonomous surgical robot intended for use in rural hospitals with only 4G connectivity. Identify at least four technical constraints this system faces — drawn from at least three different topic areas — and explain how the constraints interact with each other.</li>
+        <li>Select any two topics from these notes that are not in adjacent sections. Identify and explain a deep technical connection between them that was not explicitly stated in the notes themselves.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggle(n) {
+  const el = document.getElementById('t' + n);
+  el.classList.toggle('open');
+}
+// Open first topic on load
+window.addEventListener('load', function() {
+  document.getElementById('t1').classList.add('open');
+});
+</script>
+
+</body>
+</html>
