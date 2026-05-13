@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Olusola Ayoola — IndabaX Nigeria 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #050508;
+    --deep: #0a0a12;
+    --amber: #f5a623;
+    --amber-dim: #c47d10;
+    --cyan: #00e5ff;
+    --cyan-dim: #007a8a;
+    --white: #f0ede6;
+    --grey: #6b6b7a;
+    --card-bg: #0f0f1a;
+    --glow-amber: 0 0 40px rgba(245,166,35,0.35);
+    --glow-cyan: 0 0 40px rgba(0,229,255,0.25);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    position: fixed; width: 12px; height: 12px;
+    background: var(--amber); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, background 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed; width: 40px; height: 40px;
+    border: 1px solid rgba(245,166,35,0.5); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.25s ease, width 0.25s, height 0.25s, opacity 0.25s;
+  }
+
+  /* ── CANVAS PARTICLES ── */
+  #particles-canvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
+    opacity: 0.6;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 2px;
+    background: linear-gradient(90deg, var(--amber), var(--cyan));
+    z-index: 1000; width: 0%; transition: width 0.1s;
+    box-shadow: var(--glow-amber);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 1.2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 500;
+    background: linear-gradient(to bottom, rgba(5,5,8,0.95), transparent);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; letter-spacing: 0.2em;
+    color: var(--amber);
+    text-shadow: var(--glow-amber);
+  }
+  .nav-meta {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem; color: var(--grey);
+    letter-spacing: 0.12em; text-align: right;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+  @keyframes gridPulse {
+    0%,100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .hero-glow {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 70%);
+    animation: breathe 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes breathe {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.25em; color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 1s 0.3s forwards;
+  }
+  .hero-tag span { color: var(--cyan); }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 10vw, 9rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    position: relative;
+    opacity: 0; animation: fadeUp 1s 0.5s forwards;
+  }
+  .hero-title .accent { color: var(--amber); display: block; }
+  .hero-title .small-line {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    font-style: italic; font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--white);
+    opacity: 0.7;
+    display: block; margin-top: 0.5rem;
+  }
+
+  .hero-divider {
+    width: 120px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    margin: 2rem auto;
+    opacity: 0; animation: fadeUp 1s 0.8s forwards;
+  }
+
+  .hero-sub {
+    font-size: 1.05rem; color: rgba(240,237,230,0.6);
+    max-width: 540px;
+    opacity: 0; animation: fadeUp 1s 1s forwards;
+  }
+
+  .hero-speaker {
+    margin-top: 3rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+  }
+  .speaker-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem; letter-spacing: 0.15em; color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+  }
+  .speaker-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em; color: var(--grey);
+    text-transform: uppercase;
+  }
+
+  .scroll-indicator {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0; animation: fadeUp 1s 1.8s forwards;
+  }
+  .scroll-indicator span {
+    font-family: 'Space Mono', monospace; font-size: 0.55rem;
+    letter-spacing: 0.2em; color: var(--grey); text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--amber), transparent);
+    animation: scrollAnim 2s ease-in-out infinite;
+  }
+  @keyframes scrollAnim {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    position: relative; z-index: 1;
+    padding: 6rem 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.3em;
+    color: var(--amber); text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .section-label::before {
+    content: ''; display: block;
+    width: 30px; height: 1px; background: var(--amber);
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    line-height: 0.95; letter-spacing: 0.03em;
+    margin-bottom: 2rem;
+    color: var(--white);
+  }
+  .section-title .hl { color: var(--amber); }
+  .section-title .hl-cyan { color: var(--cyan); }
+
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  p { margin-bottom: 1.4rem; color: rgba(240,237,230,0.8); }
+
+  em { color: var(--amber); font-style: italic; }
+
+  strong {
+    color: var(--white); font-weight: 600;
+    background: linear-gradient(transparent 60%, rgba(245,166,35,0.2) 60%);
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    position: relative;
+    margin: 3rem 0;
+    padding: 2.5rem 3rem;
+    border-left: 3px solid var(--amber);
+    background: linear-gradient(135deg, rgba(245,166,35,0.06), transparent);
+  }
+  .pull-quote::before {
+    content: '"';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 8rem; line-height: 1;
+    color: var(--amber); opacity: 0.15;
+    position: absolute; top: -1rem; left: 1.5rem;
+  }
+  .pull-quote p {
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-style: italic; font-weight: 300;
+    color: var(--white); line-height: 1.4;
+    margin: 0;
+  }
+  .pull-quote .attribution {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em;
+    color: var(--grey); text-transform: uppercase;
+    margin-top: 1rem; font-style: normal;
+  }
+
+  /* ── BIG NUMBER / STAT ── */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem; margin: 3rem 0;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(245,166,35,0.15);
+    padding: 2rem 1.5rem;
+    position: relative; overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .stat-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(245,166,35,0.08), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .stat-card:hover { border-color: var(--amber); transform: translateY(-4px); }
+  .stat-card:hover::before { opacity: 1; }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem; line-height: 1;
+    color: var(--amber);
+    text-shadow: var(--glow-amber);
+    display: block;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.15em;
+    color: var(--grey); text-transform: uppercase;
+    margin-top: 0.5rem; display: block;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .table-wrap {
+    margin: 3rem 0; overflow-x: auto;
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-family: 'Space Mono', monospace; font-size: 0.75rem;
+  }
+  thead tr { border-bottom: 1px solid var(--amber); }
+  thead th {
+    text-align: left; padding: 1rem 1.2rem;
+    color: var(--amber); letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 700;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.2s;
+  }
+  tbody tr:hover { background: rgba(245,166,35,0.05); }
+  tbody td { padding: 1rem 1.2rem; color: rgba(240,237,230,0.7); }
+  tbody td:first-child { color: var(--cyan); font-weight: 700; }
+
+  /* ── PILLARS ── */
+  .pillars {
+    display: flex; flex-direction: column; gap: 1rem;
+    margin: 2rem 0;
+  }
+  .pillar {
+    display: flex; align-items: flex-start; gap: 1.5rem;
+    padding: 1.5rem; background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    cursor: default;
+  }
+  .pillar::after {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--amber);
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform 0.4s ease;
+  }
+  .pillar:hover { transform: translateX(6px); border-color: rgba(245,166,35,0.3); }
+  .pillar:hover::after { transform: scaleY(1); }
+  .pillar-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem; color: rgba(245,166,35,0.25);
+    line-height: 1; min-width: 50px; text-align: right;
+    transition: color 0.3s;
+  }
+  .pillar:hover .pillar-num { color: var(--amber); }
+  .pillar-content h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; letter-spacing: 0.08em;
+    color: var(--white); margin-bottom: 0.4rem;
+  }
+  .pillar-content p { font-size: 0.9rem; margin: 0; color: var(--grey); }
+
+  /* ── SECTION DIVIDER ── */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,166,35,0.3), transparent);
+    margin: 2rem auto;
+    position: relative; z-index: 1;
+    max-width: 960px;
+  }
+
+  /* ── ACT HEADER ── */
+  .act-header {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto;
+    padding: 4rem 2rem 0;
+  }
+  .act-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.4em;
+    color: var(--cyan); text-transform: uppercase;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .act-tag::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--cyan-dim), transparent);
+  }
+
+  /* ── TERMINAL BLOCK ── */
+  .terminal {
+    background: #080810; border: 1px solid rgba(0,229,255,0.2);
+    padding: 2rem; margin: 2rem 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem; line-height: 1.8;
+    position: relative; overflow: hidden;
+  }
+  .terminal::before {
+    content: '● ● ●'; position: absolute; top: 0.7rem; left: 1rem;
+    font-size: 0.5rem; letter-spacing: 0.5rem;
+    color: rgba(255,255,255,0.2);
+  }
+  .terminal-title {
+    color: var(--cyan); margin-bottom: 1rem;
+    padding-top: 0.5rem; border-bottom: 1px solid rgba(0,229,255,0.1);
+    padding-bottom: 0.5rem; letter-spacing: 0.1em;
+    font-size: 0.65rem;
+  }
+  .terminal-line { color: rgba(240,237,230,0.6); display: flex; gap: 1rem; }
+  .terminal-line .step { color: var(--amber); min-width: 20px; }
+  .terminal-line .cmd { color: var(--white); }
+  .terminal-line .comment { color: var(--grey); font-style: italic; }
+
+  /* ── BIG STATEMENT ── */
+  .big-statement {
+    position: relative; z-index: 1;
+    max-width: 960px; margin: 0 auto;
+    padding: 5rem 2rem;
+    text-align: center;
+  }
+  .big-statement .text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1; letter-spacing: 0.02em;
+    color: var(--white);
+  }
+  .big-statement .text .amber { color: var(--amber); }
+  .big-statement .text .cyan { color: var(--cyan); }
+
+  /* ── CLOSING ── */
+  .closing {
+    position: relative; z-index: 1;
+    background: linear-gradient(180deg, transparent, rgba(245,166,35,0.04) 50%, transparent);
+    padding: 6rem 2rem;
+    text-align: center;
+  }
+  .closing-inner { max-width: 700px; margin: 0 auto; }
+  .closing-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    letter-spacing: 0.05em; line-height: 1;
+    margin-bottom: 2rem;
+  }
+  .closing-title .line2 { color: var(--amber); }
+  .closing-title .line3 { color: var(--cyan); }
+
+  .rain-badge {
+    display: inline-flex; flex-direction: column;
+    align-items: center; gap: 0.5rem;
+    margin-top: 4rem; padding: 2rem 3rem;
+    border: 1px solid rgba(245,166,35,0.3);
+    background: rgba(245,166,35,0.04);
+  }
+  .rain-badge .name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 0.15em; color: var(--amber);
+  }
+  .rain-badge .org {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.2em; color: var(--grey);
+    text-transform: uppercase;
+  }
+  .rain-badge .url {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem; color: var(--cyan);
+    letter-spacing: 0.1em; margin-top: 0.5rem;
+    text-decoration: none;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    padding: 2rem; text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.2em;
+    color: var(--grey); text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── GLITCH TEXT ── */
+  .glitch {
+    position: relative; display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--cyan); clip-path: polygon(0 30%, 100% 30%, 100% 50%, 0 50%);
+    animation: glitch1 4s infinite;
+    transform: translateX(-2px);
+  }
+  .glitch::after {
+    color: var(--amber); clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+    animation: glitch2 4s infinite;
+    transform: translateX(2px);
+  }
+  @keyframes glitch1 {
+    0%,90%,100% { opacity: 0; } 92%,95% { opacity: 0.8; }
+    93% { transform: translateX(-4px); }
+    94% { transform: translateX(4px); }
+  }
+  @keyframes glitch2 {
+    0%,85%,100% { opacity: 0; } 87%,90% { opacity: 0.8; }
+    88% { transform: translateX(4px); }
+    89% { transform: translateX(-4px); }
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 3px,
+      rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none; z-index: 9990;
+    opacity: 0.4;
+  }
+
+  /* ── HIGHLIGHT BAND ── */
+  .text-band {
+    background: var(--amber); color: var(--black);
+    padding: 0.05em 0.3em; font-weight: 700;
+    font-style: normal;
+  }
+
+  /* ── ORG TAGS ── */
+  .org-grid {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    margin: 2rem 0;
+  }
+  .org-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--cyan);
+    transition: background 0.2s, color 0.2s;
+  }
+  .org-tag:hover { background: var(--cyan); color: var(--black); }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--amber-dim); }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
+<!-- Canvas -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- Progress Bar -->
+<div id="progress"></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">RAIN × IndabaX '26</div>
+  <div class="nav-meta">May 13–14, 2026<br>University of Ibadan</div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-tag reveal">IndabaX Nigeria 2026 · Keynote Address · <span>University of Ibadan</span></div>
+
+  <h1 class="hero-title reveal">
+    <span class="glitch" data-text="Building">Building</span>
+    <span class="accent">Scalable AI</span>
+    <span class="small-line">That Works</span>
+  </h1>
+
+  <div class="hero-divider reveal"></div>
+
+  <p class="hero-sub reveal">
+    From Research to Development in Resource-Constrained Environments
+  </p>
+
+  <div class="hero-speaker reveal">
+    <span class="speaker-name">Dr. Olusola Ayoola</span>
+    <span class="speaker-title">Founder & CEO · Robotics and Artificial Intelligence Nigeria</span>
+  </div>
+
+  <div class="scroll-indicator">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</div>
+
+<!-- ══ OPENING ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Opening</div>
+</div>
+<section>
+  <div class="section-label reveal">From that conversation to this one</div>
+  <h2 class="section-title reveal">The Conversation <span class="hl">Has Changed.</span></h2>
+
+  <p class="reveal reveal-delay-1">Cast your mind back. Not too far — just to 2021. 2022. Do you remember what the conversation was? <em>"AI is coming for your job."</em> Every conference, every panel, every newspaper headline.</p>
+
+  <div class="pull-quote reveal reveal-delay-2">
+    <p>That conversation is over. Not because we resolved it — but because the thing we were afraid of <em>already happened.</em></p>
+  </div>
+
+  <p class="reveal reveal-delay-1">Today, AI does not need your permission to transform your industry. It can clone a human voice so perfectly that the person themselves cannot tell the difference. It can build a PowerPoint presentation more polished than what most designers would charge you for.</p>
+
+  <p class="reveal reveal-delay-2">The question is no longer: <em>will AI take our jobs?</em></p>
+
+  <div class="pull-quote reveal reveal-delay-3">
+    <p>The question is: <strong>how do we hold on to ours?</strong></p>
+    <div class="attribution">The real question — IndabaX Nigeria 2026</div>
+  </div>
+
+  <p class="reveal">Here is something I have always believed: <strong>early conversations prepare a nation for the future.</strong> The nations that were having the right conversations in 2021 are building the right things in 2026.</p>
+
+  <p class="reveal reveal-delay-1">Because while today's global conversation is dominated by cloud-based AI — ChatGPT, Gemini, Claude, all living in enormous data centres somewhere far from here — let me tell you what the <em>next</em> conversation will be.</p>
+
+  <div class="pull-quote reveal reveal-delay-2">
+    <p>The next frontier of AI is not in the cloud. It is <em>at the edge</em>. It is in the device. It is local. It is embedded. It is <strong>offline-capable.</strong></p>
+  </div>
+
+  <p class="reveal reveal-delay-1">Building AI for constrained environments is not a disadvantage we are compensating for. <span class="text-band">That is precisely the expertise the world will need next.</span></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ACT I ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act I · The Diagnosis</div>
+</div>
+<section>
+  <div class="section-label reveal">Why research never becomes reality</div>
+  <h2 class="section-title reveal">The <span class="hl">Graveyard</span><br>Between Ideas<br>& <span class="hl-cyan">Impact</span></h2>
+
+  <p class="reveal reveal-delay-1">We have brilliant researchers. Nigeria, Ghana, Kenya, South Africa — our universities are producing papers. Our conferences are growing. Our PhDs are impressive.</p>
+
+  <p class="reveal reveal-delay-2"><strong>But how many of those models are deployed in a hospital, a classroom, a factory floor, a farm?</strong></p>
+
+  <p class="reveal reveal-delay-1">There is a graveyard — a silent, expensive graveyard — between the research lab and the real world. And we keep filling it with good ideas that never had a chance.</p>
+
+  <div class="stats-row">
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Fuel — no local training data</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <span class="stat-num">∅</span>
+      <span class="stat-label">Pipeline — no deployment path</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-3">
+      <span class="stat-num">?</span>
+      <span class="stat-label">Market signal — no industry pull</span>
+    </div>
+  </div>
+
+  <p class="reveal">You cannot cook jollof rice with American recipe ingredients and expect it to taste right. Our models fail Yoruba accents, cassava leaves, and Naira transactions because they were never trained on them.</p>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Research Lab</th>
+          <th>Nigerian Reality</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Accuracy</td><td>95% on a benchmark</td><td>85% on real questions + 100% uptime</td></tr>
+        <tr><td>Latency</td><td>2 sec on an A100</td><td>Under 5 sec on 3G</td></tr>
+        <tr><td>Cost</td><td>$0.20 per query</td><td>Under $0.01 per query</td></tr>
+        <tr><td>Team</td><td>10 ML PhDs</td><td>2 engineers + 1 ops person</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="reveal">If your AI system cannot survive this table, it cannot survive Nigeria. <strong>If it can survive this table, it can survive anywhere on earth.</strong></p>
+</section>
+
+<!-- ══ BIG STATEMENT ══ -->
+<div class="big-statement reveal">
+  <div class="text">
+    Context<br><span class="amber">Produces</span><br><span class="cyan">Dominance.</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══ ACT II ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act II · The Data Army</div>
+</div>
+<section>
+  <div class="section-label reveal">Fuel for an African AI Engine</div>
+  <h2 class="section-title reveal"><span class="hl">Our</span> Data.<br>Our Rules.</h2>
+
+  <p class="reveal reveal-delay-1">Every intelligence needs raw material to think with. The human brain does not generate knowledge from nothing. Artificial intelligence is no different. It needs data. Mountains of it. <strong>Local data. Contextual data. Our data.</strong></p>
+
+  <div class="pillars">
+    <div class="pillar reveal reveal-delay-1">
+      <div class="pillar-num">01</div>
+      <div class="pillar-content">
+        <h3>Schools</h3>
+        <p>Every school in Nigeria is a data-generating machine — student performance patterns, learning trajectories, language usage. Instrument them. Build lightweight apps teachers use daily, silently building educational AI datasets.</p>
+      </div>
+    </div>
+    <div class="pillar reveal reveal-delay-2">
+      <div class="pillar-num">02</div>
+      <div class="pillar-content">
+        <h3>Clinics</h3>
+        <p>Rural health posts, primary care centers, community pharmacies. Structured symptom logs. Drug interaction patterns for African genetic profiles. This data exists in nurses' notebooks. We need to digitize it, with purpose.</p>
+      </div>
+    </div>
+    <div class="pillar reveal reveal-delay-3">
+      <div class="pillar-num">03</div>
+      <div class="pillar-content">
+        <h3>Markets</h3>
+        <p>Open markets, logistics hubs, agro-processing centers, informal financial networks — the arteries of our real economy. Instrument them, and you get economic intelligence no Western dataset can replicate.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pull-quote reveal">
+    <p>Data collection without data protection is <em>exploitation.</em> We need encrypted gateways, governance frameworks — a national vault where we know who touched our data, when, and why.</p>
+  </div>
+
+  <p class="reveal reveal-delay-1">We cannot build Africa's AI future on a foundation where our most valuable asset — our data — is extracted freely by foreign platforms while we receive nothing in return. <span class="text-band">Local patronage of locally built data infrastructure is not nationalism. It is economic self-preservation.</span></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ACT III ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act III · The Edge Revolution</div>
+</div>
+<section>
+  <div class="section-label reveal">Intelligence where the internet is not</div>
+  <h2 class="section-title reveal">The Constraint<br>Is A <span class="hl">Gift.</span></h2>
+
+  <p class="reveal reveal-delay-1">Africa has unreliable internet. Patchy power. Limited cloud access. For years, we called this a disadvantage.</p>
+
+  <div class="pull-quote reveal reveal-delay-2">
+    <p>I am here to tell you: <strong>it is a design brief.</strong></p>
+  </div>
+
+  <div class="pillars">
+    <div class="pillar reveal reveal-delay-1">
+      <div class="pillar-num">TML</div>
+      <div class="pillar-content">
+        <h3>TinyML</h3>
+        <p>Machine learning on microcontrollers with as little as 256KB of memory. A soil moisture sensor in Benue State that decides locally — without a server in London — whether to irrigate. Running on a small solar cell. No internet required.</p>
+      </div>
+    </div>
+    <div class="pillar reveal reveal-delay-2">
+      <div class="pillar-num">IoT</div>
+      <div class="pillar-content">
+        <h3>Embedded AI + IoT</h3>
+        <p>Intelligence baked into the hardware itself, combined with a network of devices communicating and acting on local data — a distributed nervous system for your city, your farm, your factory, your clinic.</p>
+      </div>
+    </div>
+    <div class="pillar reveal reveal-delay-3">
+      <div class="pillar-num">FL</div>
+      <div class="pillar-content">
+        <h3>Federated Learning</h3>
+        <p>Ten hospitals across Nigeria, each holding patient data they cannot legally share — collaborating to build a better diagnostic model without a single patient record ever leaving the hospital wall. Privacy-preserving. African-context AI.</p>
+      </div>
+    </div>
+    <div class="pillar reveal reveal-delay-4">
+      <div class="pillar-num">DT</div>
+      <div class="pillar-content">
+        <h3>Digital Twins</h3>
+        <p>Before you deploy a robot in a factory or a decision system in a hospital, build a virtual replica. Test in simulation. Break things cheaply in software before they break expensively in the real world.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ FRUGAL ARCH ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act III-B · Frugal Architecture</div>
+</div>
+<section>
+  <div class="section-label reveal">Do not use a sledgehammer for a nail</div>
+  <h2 class="section-title reveal">₦420<br><span class="hl">Per Student.</span><br>Per Month.</h2>
+
+  <p class="reveal reveal-delay-1">Do not call a 400-billion parameter model for every message. Do not throw your most expensive compute at your cheapest questions.</p>
+
+  <div class="terminal reveal reveal-delay-2">
+    <div class="terminal-title">// RAIN AUTOMATED LEARNING — PRODUCTION ARCHITECTURE</div>
+    <div class="terminal-line"><span class="step">→</span><span class="cmd">Router Layer</span><span class="comment">// cheap model handles 80% of queries</span></div>
+    <div class="terminal-line"><span class="step">→</span><span class="cmd">Cache Layer</span><span class="comment">// 70% of student Qs served from memory</span></div>
+    <div class="terminal-line"><span class="step">→</span><span class="cmd">Queue Layer</span><span class="comment">// requests batched, circuit breakers on</span></div>
+    <div class="terminal-line"><span class="step">→</span><span class="cmd">Frontier Model</span><span class="comment">// only for complex, contextual, hard Qs</span></div>
+    <div class="terminal-line" style="margin-top:1rem; color: var(--amber)">
+      <span class="step">✓</span><span class="cmd">1,200 students · 1 engineer · $380/month total</span>
+    </div>
+  </div>
+
+  <div class="pull-quote reveal reveal-delay-1">
+    <p><strong>If you cannot measure it, you cannot scale it.</strong> Track tokens per query. Track cost per student per day. Track failure rate by network type. Observability is not a luxury. It is the difference between a system that scales and one that silently bankrupts you.</p>
+  </div>
+
+  <p class="reveal reveal-delay-2">We learned this painfully. One bug cost us $47 in two hours because we had no circuit breaker. <em>Never again.</em></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ACT IV ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act IV · The China Lesson</div>
+</div>
+<section>
+  <div class="section-label reveal">Constraints breed genius</div>
+  <h2 class="section-title reveal">No Best <span class="hl">Chips.</span><br>Best <span class="hl-cyan">AI.</span></h2>
+
+  <p class="reveal reveal-delay-1">When the United States restricted access to NVIDIA's top-tier AI chips — the A100, the H100 — to Chinese companies, the world expected Chinese AI to stall. <strong>The assumption was: no best chips, no best AI.</strong></p>
+
+  <p class="reveal reveal-delay-2">What happened instead was extraordinary. Chinese engineers went back to first principles. They optimized algorithms. They developed quantization techniques — compressing large models to run efficiently on smaller chips. They built hardware-aware training pipelines.</p>
+
+  <div class="pull-quote reveal reveal-delay-3">
+    <p>The lesson is not that constraints are good. The lesson is that <em>constraints, handled by brilliant engineers, produce innovation that abundance never would.</em></p>
+    <div class="attribution">The China Lesson</div>
+  </div>
+
+  <p class="reveal">We in Africa face constraints that are real. But we have something the Silicon Valley engineer does not: <strong>radical contextual knowledge.</strong> We know our languages. We know our diseases. We know our markets. We know what failure looks like here, and we know what success must feel like.</p>
+
+  <p class="reveal reveal-delay-1"><span class="text-band">We build smarter with what we have.</span></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ACT V ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act V · Talent Through Fire</div>
+</div>
+<section>
+  <div class="section-label reveal">Project-based learning & the testing community</div>
+  <h2 class="section-title reveal">Students Learn<br>More From <span class="hl">Failure</span><br>Than From <span class="hl-cyan">Lecture.</span></h2>
+
+  <p class="reveal reveal-delay-1">You cannot learn to swim by reading about water. The biggest failure in African AI education is that we teach theory in classrooms and expect practitioners to emerge.</p>
+
+  <div class="terminal reveal reveal-delay-2">
+    <div class="terminal-title">// PRODUCTION DEPLOYMENT PIPELINE — EVERY STUDENT MUST WALK THIS</div>
+    <div class="terminal-line"><span class="step">1</span><span class="cmd">Notebook experiment</span><span class="comment">// build and test in controlled environment</span></div>
+    <div class="terminal-line"><span class="step">2</span><span class="cmd">Offline evaluation</span><span class="comment">// test on 100 real, local, contextual questions</span></div>
+    <div class="terminal-line"><span class="step">3</span><span class="cmd">Shadow mode</span><span class="comment">// AI generates, humans review before send</span></div>
+    <div class="terminal-line"><span class="step">4</span><span class="cmd">Canary deployment</span><span class="comment">// 5% of real users, full monitoring</span></div>
+    <div class="terminal-line"><span class="step">5</span><span class="cmd">Monitored rollout</span><span class="comment">// expand gradually, watch every metric</span></div>
+    <div class="terminal-line"><span class="step">6</span><span class="cmd">Feedback loop</span><span class="comment">// every real interaction = new training data</span></div>
+  </div>
+
+  <p class="reveal reveal-delay-1">Most teams — <em>professional teams</em>, not just students — skip steps 2 through 4. They build in a notebook and ship to everyone. That is how you break trust with users. That is how AI gets a bad reputation in communities that needed it most.</p>
+
+  <p class="reveal reveal-delay-2"><strong>Teach the pipeline. Not just the model.</strong></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ACT VI ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act VI · Shoulders of Giants</div>
+</div>
+<section>
+  <div class="section-label reveal">The builders already in the field</div>
+  <h2 class="section-title reveal">We Are Not<br>Starting From <span class="hl">Zero.</span></h2>
+
+  <p class="reveal reveal-delay-1">Before I talk about what we need to do, I want to honour what is already being done.</p>
+
+  <div class="org-grid reveal reveal-delay-2">
+    <div class="org-tag">Data Science Nigeria</div>
+    <div class="org-tag">NCAIR</div>
+    <div class="org-tag">NINJA</div>
+    <div class="org-tag">Deep Learning Indaba</div>
+    <div class="org-tag">Kenya · Ghana</div>
+    <div class="org-tag">Rwanda · South Africa</div>
+    <div class="org-tag">Senegal · And Beyond</div>
+  </div>
+
+  <p class="reveal reveal-delay-1">When African researchers see African names on papers, something shifts. <strong>Possibility becomes plausible.</strong></p>
+
+  <div class="pull-quote reveal reveal-delay-2">
+    <p>We are standing on shoulders. What we need now is coordination. Shared infrastructure. Amplified signals. The pieces are on the board — we need a strategy that <em>plays them together.</em></p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ ACT VII ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">Act VII · The Industry Call</div>
+</div>
+<section>
+  <div class="section-label reveal">Bring your problems. Bring your data.</div>
+  <h2 class="section-title reveal">We Are <span class="hl">Ready.</span><br>The Gap Is Not <span class="hl-cyan">Technical.</span></h2>
+
+  <p class="reveal reveal-delay-1">We have the tools. We have the talent in training. We have the frameworks. We have the hunger.</p>
+
+  <div class="pull-quote reveal reveal-delay-2">
+    <p><strong>What we need from you is the problem.</strong> Not a sanitized, generic problem designed for a hackathon. A <em>real</em> problem. The one keeping your CTO up at night.</p>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-num" style="font-size:1.8rem; color:var(--cyan)">Challenges</span>
+      <span class="stat-label">The real ones — not hackathon problems</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <span class="stat-num" style="font-size:1.8rem; color:var(--cyan)">Data</span>
+      <span class="stat-label">Not a sample — the real, messy, contextual data</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-3">
+      <span class="stat-num" style="font-size:1.8rem; color:var(--cyan)">Experts</span>
+      <span class="stat-label">Clinicians, engineers, logistics managers</span>
+    </div>
+  </div>
+
+  <p class="reveal reveal-delay-2">The companies that co-develop AI solutions with local institutions will own those solutions. They will have IP built on contextual knowledge that no foreign vendor can replicate. <span class="text-band">The money is where the problems are. Let us meet you there.</span></p>
+</section>
+
+<!-- ══ CLOSING PILLARS ══ -->
+<div class="act-header reveal">
+  <div class="act-tag">The Architecture of Possibility</div>
+</div>
+<section>
+  <div class="section-label reveal">Seven things acting together</div>
+  <h2 class="section-title reveal">The <span class="hl">Seven</span><br>Pillars.</h2>
+
+  <div class="pillars">
+    <div class="pillar reveal reveal-delay-1"><div class="pillar-num">01</div><div class="pillar-content"><h3>Data Army</h3><p>Instrumented platforms in schools, clinics, and markets — generating the fuel our models need.</p></div></div>
+    <div class="pillar reveal reveal-delay-2"><div class="pillar-num">02</div><div class="pillar-content"><h3>Data Sovereignty</h3><p>Encrypted gateways, governance frameworks, access controls — our data works for us, not against us.</p></div></div>
+    <div class="pillar reveal reveal-delay-3"><div class="pillar-num">03</div><div class="pillar-content"><h3>Intelligence at the Edge</h3><p>TinyML, embedded systems, IoT deployments that work without the internet, without the cloud.</p></div></div>
+    <div class="pillar reveal reveal-delay-4"><div class="pillar-num">04</div><div class="pillar-content"><h3>Federated Learning</h3><p>Privacy-preserving architectures that let institutions collaborate without surrendering control.</p></div></div>
+    <div class="pillar reveal reveal-delay-5"><div class="pillar-num">05</div><div class="pillar-content"><h3>Digital Twins</h3><p>Simulation environments that compress the research-to-deployment gap.</p></div></div>
+    <div class="pillar reveal reveal-delay-1"><div class="pillar-num">06</div><div class="pillar-content"><h3>Deployment-First Education</h3><p>Students who have broken real systems and fixed them — talent built through fire.</p></div></div>
+    <div class="pillar reveal reveal-delay-2"><div class="pillar-num">07</div><div class="pillar-content"><h3>Industry Partnership</h3><p>Real problems, real data, real domain knowledge — meeting real solutions where the real money is.</p></div></div>
+  </div>
+</section>
+
+<!-- ══ FINAL STATEMENT ══ -->
+<div class="closing">
+  <div class="closing-inner">
+    <div class="closing-title reveal">
+      <div>The AI that will transform</div>
+      <div class="line2">Nigeria will be built</div>
+      <div class="line3">by Nigerians.</div>
+    </div>
+
+    <p class="reveal reveal-delay-1">We do not need AI that is 99% accurate in a laboratory. We need AI that is <strong>85% accurate, 99.9% available, and costs less than a sachet of water per student.</strong> That is the AI that changes lives.</p>
+
+    <div class="pull-quote reveal reveal-delay-2">
+      <p>China proved that constraints produce genius. Africa will prove that <em>context produces dominance.</em></p>
+    </div>
+
+    <p class="reveal reveal-delay-3" style="font-size:1.3rem; color:var(--white); font-style:italic;">
+      It starts — it continues — <strong style="color:var(--amber);">here. Now. Us.</strong>
+    </p>
+
+    <div class="rain-badge reveal reveal-delay-4">
+      <span class="name">Dr. Olusola Ayoola</span>
+      <span class="org">Founder & CEO · Robotics and Artificial Intelligence Nigeria (RAIN)</span>
+      <a class="url" href="#">rainigeria.com · exams.rainigeria.com</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>IndabaX Nigeria 2026 · University of Ibadan · May 13–14, 2026 · Keynote Address</p>
+</footer>
+
+<script>
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+});
+
+function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top = ry + 'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+document.querySelectorAll('a, .pillar, .stat-card, .org-tag').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursorRing.style.width = '60px';
+    cursorRing.style.height = '60px';
+    cursorRing.style.borderColor = 'rgba(0,229,255,0.6)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursorRing.style.width = '40px';
+    cursorRing.style.height = '40px';
+    cursorRing.style.borderColor = 'rgba(245,166,35,0.5)';
+  });
+});
+
+// ── PROGRESS BAR ──
+const progressBar = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  progressBar.style.width = pct + '%';
+});
+
+// ── PARTICLES ──
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const COLORS = ['rgba(245,166,35,', 'rgba(0,229,255,', 'rgba(240,237,230,'];
+
+function createParticles() {
+  particles = Array.from({length: 80}, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 1.5 + 0.3,
+    dx: (Math.random() - 0.5) * 0.3,
+    dy: (Math.random() - 0.5) * 0.3,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    a: Math.random() * 0.4 + 0.1
+  }));
+}
+createParticles();
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color + p.a + ')';
+    ctx.fill();
+
+    p.x += p.dx; p.y += p.dy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+  });
+
+  // Draw connections
+  particles.forEach((a, i) => {
+    particles.slice(i + 1).forEach(b => {
+      const dist = Math.hypot(a.x - b.x, a.y - b.y);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(245,166,35,${0.06 * (1 - dist / 120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    });
+  });
+
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ── SCROLL REVEAL ──
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+reveals.forEach(el => observer.observe(el));
+
+// ── COUNTER ANIMATION for stat nums ──
+function animateCounter(el, target, suffix='') {
+  let start = 0;
+  const dur = 1500;
+  const startTime = performance.now();
+  function step(now) {
+    const pct = Math.min((now - startTime) / dur, 1);
+    const eased = 1 - Math.pow(1 - pct, 3);
+    if (isNaN(target)) { el.textContent = suffix; return; }
+    el.textContent = Math.round(eased * target) + suffix;
+    if (pct < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Trigger counters on scroll
+const statNums = document.querySelectorAll('.stat-num');
+const countObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !e.target.dataset.counted) {
+      e.target.dataset.counted = '1';
+      // Only animate purely numeric ones
+    }
+  });
+}, { threshold: 0.5 });
+statNums.forEach(el => countObs.observe(el));
+
+// ── PARALLAX on hero glow ──
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  const glow = document.querySelector('.hero-glow');
+  if (glow) glow.style.transform = `translate(-50%, calc(-50% + ${y * 0.3}px))`;
+});
+</script>
+</body>
+</html>
