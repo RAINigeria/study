@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RDA 211 – Practical Examination</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Times New Roman", serif;
+    font-size: 13pt;
+    color: #111;
+    background: #fff;
+    padding: 40px 60px;
+    max-width: 820px;
+    margin: auto;
+  }
+  .header {
+    text-align: center;
+    border-bottom: 3px double #1F3864;
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .header h2 { font-size: 15pt; color: #1F3864; letter-spacing: 1px; }
+  .header h3 { font-size: 13pt; margin-top: 4px; }
+  .header p  { font-size: 11pt; margin-top: 6px; color: #444; }
+  .instruction {
+    background: #f5f7fb;
+    border-left: 4px solid #1F3864;
+    padding: 10px 16px;
+    font-size: 11pt;
+    margin-bottom: 28px;
+    color: #333;
+  }
+  .question {
+    margin-bottom: 32px;
+  }
+  .question h4 {
+    font-size: 13pt;
+    color: #1F3864;
+    margin-bottom: 10px;
+  }
+  .question p, .question li {
+    line-height: 1.75;
+    margin-bottom: 6px;
+  }
+  .question ol { padding-left: 24px; }
+  .question ol li { margin-bottom: 6px; }
+  sub { font-size: 10pt; }
+  .divider {
+    text-align: center;
+    color: #999;
+    font-size: 11pt;
+    margin: 18px 0;
+    letter-spacing: 6px;
+  }
+  .marks {
+    font-style: italic;
+    color: #555;
+    font-size: 11pt;
+  }
+  .footer {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 10pt;
+    color: #999;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+  }
+  @media print {
+    body { padding: 20px 40px; }
+    .instruction { background: #eee; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h2>ROBOTICS AND ARTIFICIAL INTELLIGENCE NIGERIA (RAIN)</h2>
+  <h3>RDA 211 — Robotics and Dynamic Systems Analysis</h3>
+  <h3>Practical Examination</h3>
+  <p>Duration: 2 Hours &nbsp;|&nbsp; All questions carry equal marks &nbsp;|&nbsp; Answer <strong>ONE</strong> question only</p>
+</div>
+
+<div class="instruction">
+  <strong>Instructions:</strong> Answer <em>only one</em> of the two questions below. Submit your Python script and all output plots/figures. Clearly comment your code. Marks are awarded for correctness, code quality, and interpretation of results.
+</div>
+
+<!-- QUESTION 1 -->
+<div class="question">
+  <h4>Question 1 — Two-Link Robot Arm Workspace Visualisation</h4>
+
+  <p>
+    A two-link planar robot arm consists of Link 1 of length <em>L</em><sub>1</sub> inclined at angle
+    <em>θ</em><sub>1</sub> to the horizontal, and Link 2 of length <em>L</em><sub>2</sub> inclined at angle
+    <em>θ</em><sub>2</sub> relative to the axis of Link 1. Both links are attached at the origin (base).
+  </p>
+
+  <ol>
+    <li>
+      Write the forward kinematics equations for the position of the elbow joint and the end-effector
+      as functions of <em>L</em><sub>1</sub>, <em>L</em><sub>2</sub>, <em>θ</em><sub>1</sub>, and <em>θ</em><sub>2</sub>.
+    </li>
+    <li>
+      Write a Python script that, for user-defined values of <em>L</em><sub>1</sub> and <em>L</em><sub>2</sub>,
+      sweeps both joint angles over their full range
+      <em>θ</em><sub>1</sub> ∈ [0°, 90°] and <em>θ</em><sub>2</sub> ∈ [0°, 180°] using a suitable angular
+      step size of your choice (justify your choice in a comment).
+    </li>
+    <li>
+      Plot the complete <strong>reachable workspace</strong> — all points swept by the entire arm
+      (both links), not just the end-effector. Each link should be visually distinguishable in the plot.
+    </li>
+    <li>
+      Demonstrate your script for the case <em>L</em><sub>1</sub> = 1.0 m and <em>L</em><sub>2</sub> = 0.6 m.
+      Include appropriate axes labels, title, and a legend.
+    </li>
+  </ol>
+  <p class="marks">[ 50 Marks ]</p>
+</div>
+
+<div class="divider">— OR —</div>
+
+<!-- QUESTION 2 -->
+<div class="question">
+  <h4>Question 2 — Discrete-Time System Identification using iGD</h4>
+
+  <p>
+    A physical system was excited with a unit step input and its output was recorded over time.
+    The measured data (input and output time series) are provided in the accompanying file
+    <strong>RDA211_Q2_SystemData.xlsx</strong> (Sheet: <em>System Data</em>; columns: Time, Input u(t), Output y(t)).
+    The output contains realistic measurement noise.
+  </p>
+
+  <ol>
+    <li>
+      Load the data from the Excel file using Python. Plot the input and output signals on the same
+      time axis to visually inspect the system behaviour.
+    </li>
+    <li>
+      Using the <strong>iGD (iterative Gradient Descent)</strong> method as taught in this course,
+      identify the <strong>discrete-time model</strong> of the system.
+      The system is known to be <em>second order</em>; however, you must determine the model coefficients
+      from the data. State your chosen step size and justify it.
+    </li>
+    <li>
+      Convert the identified discrete-time model to a <strong>continuous-time transfer function</strong>
+      in the Laplace domain using the appropriate transformation, and state the final transfer function
+      G(s) clearly.
+    </li>
+    <li>
+      Simulate the identified model's response to the same step input and overlay it against the
+      original measured output. Comment on the quality of fit.
+    </li>
+    <li>
+      State the natural frequency <em>ω<sub>n</sub></em> and damping ratio <em>ζ</em> implied
+      by your identified G(s), and interpret what these values tell you about the physical system.
+    </li>
+  </ol>
+  <p class="marks">[ 50 Marks ]</p>
+</div>
+
+<div class="footer">
+  RDA 211 Practical Examination &nbsp;|&nbsp; RAIN &nbsp;|&nbsp; Ibadan, Nigeria
+</div>
+
+</body>
+</html>
