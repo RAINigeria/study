@@ -7,271 +7,75 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --card: #1c1c1c;
-    --border: #2a2a2a;
-    --accent: #e8b04b;
-    --accent2: #4be8c8;
-    --accent3: #e84b6a;
-    --text: #e8e8e8;
-    --muted: #888;
-    --mono: 'Space Mono', monospace;
-    --sans: 'Syne', sans-serif;
+    --bg: #0d0d0d; --surface: #161616; --card: #1c1c1c; --border: #2a2a2a;
+    --accent: #e8b04b; --accent2: #4be8c8; --text: #e8e8e8; --muted: #888;
+    --mono: 'Space Mono', monospace; --sans: 'Syne', sans-serif;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    padding: 0;
-}
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
 
-/* Header */
-.exam-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 28px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-.exam-header .logo-block { display: flex; flex-direction: column; gap: 2px; }
-.exam-header .org { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; }
-.exam-header h1 { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
+.exam-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.org { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+.exam-header h1 { font-size: 1.9rem; font-weight: 800; }
 .exam-header h1 span { color: var(--accent); }
-.exam-header .meta { text-align: right; }
-.exam-header .meta .code-badge {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    background: var(--accent);
-    color: #000;
-    font-weight: 700;
-    padding: 4px 14px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-}
-.exam-header .meta p { font-size: 0.82rem; color: var(--muted); font-family: var(--mono); }
+.code-badge { display: inline-block; font-family: var(--mono); font-size: 0.85rem; background: var(--accent); color: #000; font-weight: 700; padding: 4px 14px; border-radius: 4px; margin-bottom: 6px; }
+.meta { text-align: right; }
+.meta p { font-size: 0.8rem; color: var(--muted); font-family: var(--mono); }
 
-/* Score bar */
-.score-bar {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 48px;
-    overflow-x: auto;
-}
-.score-item {
-    padding: 14px 24px;
-    border-right: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 0.78rem;
-}
-.score-item .val { font-size: 1.4rem; font-weight: 700; display: block; color: var(--accent); }
-.score-item .lbl { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+.score-bar { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 48px; overflow-x: auto; }
+.score-item { padding: 12px 24px; border-right: 1px solid var(--border); font-family: var(--mono); font-size: 0.75rem; white-space: nowrap; }
+.score-item .val { font-size: 1.3rem; font-weight: 700; display: block; color: var(--accent); }
+.score-item .lbl { color: var(--muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Content */
 .exam-body { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
 
-/* Section titles */
-.section-label {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+.section-label { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
 .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* Notice box */
-.notice {
-    background: #1a1500;
-    border: 1px solid #4a3800;
-    border-left: 4px solid var(--accent);
-    border-radius: 6px;
-    padding: 16px 20px;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: #d4b97a;
-    margin-bottom: 28px;
-}
+.notice { background: #1a1500; border: 1px solid #4a3800; border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 20px; font-size: 0.9rem; line-height: 1.7; color: #d4b97a; margin-bottom: 28px; }
 .notice strong { color: var(--accent); }
 
-/* Task card */
-.task-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: border-color .2s;
-}
-.task-card:hover { border-color: #444; }
-.task-header {
-    padding: 16px 22px;
-    background: #222;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.task-num {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-.task-title { font-size: 1.05rem; font-weight: 700; margin-top: 2px; }
-.marks-badge {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 700;
-}
-.marks-badge.primary { background: rgba(232,176,75,.15); color: var(--accent); border: 1px solid rgba(232,176,75,.3); }
-.marks-badge.alt { background: rgba(75,232,200,.12); color: var(--accent2); border: 1px solid rgba(75,232,200,.25); }
-.marks-badge.danger { background: rgba(232,75,106,.12); color: var(--accent3); border: 1px solid rgba(232,75,106,.25); }
+.pool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 10px; margin: 14px 0; }
+.pool-item { background: #222; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; }
+.pool-item .pi-name { font-weight: 600; font-size: 0.87rem; color: var(--text); margin-bottom: 2px; }
+.pool-item .pi-note { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
 
-.task-body { padding: 18px 22px; }
-.task-body p { font-size: 0.93rem; line-height: 1.65; color: #ccc; margin-bottom: 10px; }
-.task-body p:last-child { margin-bottom: 0; }
+.choose-note { background: #150a00; border: 1px solid #3a2000; border-radius: 8px; padding: 12px 16px; font-size: 0.87rem; color: #c09050; margin-bottom: 18px; font-family: var(--mono); }
 
-/* Component pool */
-.pool-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 10px;
-    margin: 14px 0;
-}
-.pool-item {
-    background: #222;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-}
-.pool-item .pi-name { font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.pool-item .pi-note { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+.option-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 24px; overflow: hidden; }
+.option-header { padding: 16px 22px; background: #222; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.option-num { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+.option-title { font-size: 1.05rem; font-weight: 700; margin-top: 3px; }
+.marks-pill { font-family: var(--mono); font-size: 0.78rem; padding: 4px 14px; border-radius: 20px; font-weight: 700; background: rgba(232,176,75,.15); color: var(--accent); border: 1px solid rgba(232,176,75,.3); }
+.marks-pill.b { background: rgba(75,232,200,.12); color: var(--accent2); border-color: rgba(75,232,200,.25); }
 
-/* Option divider */
-.option-divider {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 20px 0;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
+.option-body { padding: 18px 22px; }
+.option-body p { font-size: 0.91rem; line-height: 1.7; color: #ccc; margin-bottom: 10px; }
+
+.sub-list { list-style: none; margin: 12px 0; }
+.sub-list li { padding: 7px 0 7px 14px; border-left: 3px solid var(--border); margin-bottom: 6px; font-size: 0.88rem; color: #ccc; line-height: 1.55; }
+.sub-list li strong { color: var(--accent2); }
+
+.option-divider { display: flex; align-items: center; gap: 14px; margin: 18px 0; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
 .option-divider::before, .option-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* Sub-task list */
-.subtask-list { list-style: none; margin: 12px 0; }
-.subtask-list li {
-    padding: 8px 14px;
-    border-left: 3px solid var(--border);
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    color: #ccc;
-    line-height: 1.5;
-}
-.subtask-list li strong { color: var(--accent2); }
-
-/* Rubric */
-.rubric-box {
-    background: #141414;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-top: 14px;
-}
-.rubric-box .rubric-title {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-}
-.rubric-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #222;
-    font-size: 0.85rem;
-}
-.rubric-row:last-child { border-bottom: none; }
-.rubric-row .mark { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; min-width: 50px; text-align: right; }
-
-/* Alert / submission box */
-.submission-box {
-    background: #0a0f1a;
-    border: 1px solid #1a2a4a;
-    border-left: 4px solid var(--accent2);
-    border-radius: 8px;
-    padding: 18px 22px;
-    margin-top: 32px;
-    font-size: 0.9rem;
-    line-height: 1.65;
-    color: #9dcce8;
-}
+.submission-box { background: #0a0f1a; border: 1px solid #1a2a4a; border-left: 4px solid var(--accent2); border-radius: 8px; padding: 18px 22px; margin-top: 32px; font-size: 0.9rem; line-height: 1.7; color: #9dcce8; }
 .submission-box strong { color: var(--accent2); }
-.submission-box .email-chip {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    background: rgba(75,232,200,.1);
-    border: 1px solid rgba(75,232,200,.3);
-    color: var(--accent2);
-    padding: 3px 12px;
-    border-radius: 4px;
-    margin-left: 4px;
-}
-
-/* Choose note */
-.choose-note {
-    background: #150a00;
-    border: 1px solid #3a2000;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 0.87rem;
-    color: #c09050;
-    margin-bottom: 18px;
-    font-family: var(--mono);
-}
 
 @media(max-width:600px) {
-    .exam-header { padding: 20px 20px; }
-    .score-bar { padding: 0 16px; }
-    .exam-body { padding: 24px 16px 60px; }
+    .exam-header { padding: 20px 16px; }
     .exam-header h1 { font-size: 1.4rem; }
-    .exam-header .meta { text-align: left; }
+    .meta { text-align: left; }
+    .score-bar { padding: 0 12px; }
+    .exam-body { padding: 24px 14px 60px; }
 }
 </style>
 </head>
 <body>
 
 <header class="exam-header">
-    <div class="logo-block">
-        <span class="org">RAIN · Robotics &amp; AI Nigeria</span>
+    <div>
+        <div class="org">RAIN · Robotics &amp; AI Nigeria</div>
         <h1>Practical <span>Electronics</span> Exam</h1>
     </div>
     <div class="meta">
@@ -282,29 +86,27 @@ body {
 </header>
 
 <div class="score-bar">
-    <div class="score-item"><span class="val">100</span><span class="lbl">Total Marks</span></div>
-    <div class="score-item"><span class="val">1</span><span class="lbl">Option Required</span></div>
-    <div class="score-item"><span class="val">Open</span><span class="lbl">Component Request</span></div>
+    <div class="score-item"><span class="val">30</span><span class="lbl">Total Marks</span></div>
+    <div class="score-item"><span class="val">1 of 2</span><span class="lbl">Options</span></div>
+    <div class="score-item"><span class="val">No Coding</span><span class="lbl">Hardware Only</span></div>
     <div class="score-item"><span class="val">Video</span><span class="lbl">Mandatory Evidence</span></div>
 </div>
 
 <div class="exam-body">
 
-    <!-- Preamble -->
     <div style="margin-bottom:32px;">
         <div class="section-label">Examination Brief</div>
         <div class="notice">
-            <strong>No coding required for this paper.</strong> RDA 112P tests your ability to design and build working hardware solutions using discrete electronics. All components — including resistors, LEDs, switches, relays, LDRs, diodes, capacitors, and transistors — are <strong>available on request</strong> at the lab bench. A <strong>soldering station</strong>, <strong>digital multimeter</strong>, and <strong>variable DC power supply</strong> are provided. Your circuit must be demonstrated live to a supervisor for immediate scoring. A video recording of your working circuit is mandatory for future grade verification.
+            <strong>No coding required for this paper.</strong> RDA 112P tests your ability to design and build a working hardware solution using discrete electronics. All components — resistors, LEDs, switches, relays, LDRs, transistors, diodes, capacitors — are <strong>available on request</strong> at the lab bench. A <strong>soldering station</strong>, <strong>digital multimeter</strong>, and <strong>variable DC power supply</strong> are provided. Your circuit must be demonstrated live to a supervisor for immediate scoring. A <strong>video of your working circuit is mandatory</strong>.
         </div>
     </div>
 
-    <!-- Component Pool -->
     <div style="margin-bottom:32px;">
         <div class="section-label">Available Component Pool</div>
-        <p style="font-size:0.88rem;color:var(--muted);margin-bottom:14px;">All items below are available from the lab store. Request what you need. Not all components must be used.</p>
+        <p style="font-size:0.87rem;color:var(--muted);margin-bottom:14px;">Request whatever you need from the lab store. Not everything has to be used.</p>
         <div class="pool-grid">
             <div class="pool-item"><div class="pi-name">Single Relays</div><div class="pi-note">5V / 12V SPDT</div></div>
-            <div class="pool-item"><div class="pi-name">Tactile Switches</div><div class="pi-note">Momentary, SPST</div></div>
+            <div class="pool-item"><div class="pi-name">Tactile Switches</div><div class="pi-note">Momentary SPST</div></div>
             <div class="pool-item"><div class="pi-name">Toggle Switches</div><div class="pi-note">SPST / DPDT</div></div>
             <div class="pool-item"><div class="pi-name">LEDs</div><div class="pi-note">Red, Green, Yellow, Blue</div></div>
             <div class="pool-item"><div class="pi-name">LDRs</div><div class="pi-note">Light-Dependent Resistors</div></div>
@@ -314,568 +116,83 @@ body {
             <div class="pool-item"><div class="pi-name">Capacitors</div><div class="pi-note">Electrolytic &amp; ceramic</div></div>
             <div class="pool-item"><div class="pi-name">Breadboard / PCB</div><div class="pi-note">Prototype boards</div></div>
             <div class="pool-item"><div class="pi-name">Multimeter</div><div class="pi-note">Shared bench tool</div></div>
-            <div class="pool-item"><div class="pi-name">Variable PSU</div><div class="pi-note">0–30V DC, bench</div></div>
+            <div class="pool-item"><div class="pi-name">Variable PSU</div><div class="pi-note">0–30V DC bench supply</div></div>
         </div>
     </div>
 
-    <!-- Instructions -->
-    <div style="margin-bottom:36px;">
-        <div class="section-label">Instructions</div>
-        <div class="choose-note">⟶ Choose ONE option below (Option A or Option B). You do not need to attempt both.</div>
-        <ul class="subtask-list">
-            <li>Read your chosen option in full before requesting components.</li>
-            <li>Sketch a circuit diagram on paper — this will be reviewed by the supervisor.</li>
-            <li>Build your circuit and demonstrate it <strong>working</strong> to a supervisor for live marking.</li>
-            <li>A video must be recorded of the working circuit before leaving the lab — this is non-negotiable.</li>
-            <li>You are free to ask for any component listed in the pool. Unavailable items will be flagged by the lab assistant.</li>
-            <li>No smartphones may be used to look up circuits. Your knowledge is being tested.</li>
+    <div style="margin-bottom:28px;">
+        <div class="section-label">General Instructions</div>
+        <ul class="sub-list">
+            <li>Choose <strong>ONE option only</strong> — Option A or Option B.</li>
+            <li>Sketch a rough circuit diagram on paper before building. Supervisor will review it.</li>
+            <li>Build and demonstrate your circuit <strong>working</strong> to a supervisor for live marking.</li>
+            <li>A <strong>video must be recorded</strong> of the working circuit before you leave the lab.</li>
+            <li>No smartphones may be used to look up circuits during the exam.</li>
+            <li>Hand your circuit diagram to the supervisor before leaving.</li>
         </ul>
     </div>
 
+    <div class="choose-note">⟶ Choose ONE option. You do not need to attempt both.</div>
+
     <!-- OPTION A -->
-    <div class="section-label">Option A — Logic Gate / Conditional Algorithm (60 marks)</div>
-
-    <div class="task-card">
-        <div class="task-header">
+    <div class="section-label">Option A — Logic Gate / Conditional Circuit</div>
+    <div class="option-card">
+        <div class="option-header">
             <div>
-                <div class="task-num">Task 01</div>
-                <div class="task-title">Design a Combinational Logic Circuit</div>
+                <div class="option-num">Option A</div>
+                <div class="option-title">Design a Combinational Logic Circuit</div>
             </div>
-            <span class="marks-badge primary">60 marks</span>
+            <span class="marks-pill">30 marks</span>
         </div>
-        <div class="task-body">
-            <p>Using discrete components from the pool — switches, relays, transistors, LEDs, LDRs, or a combination — design and build a hardware circuit that implements a meaningful conditional logic statement of the form:</p>
-            <p style="text-align:center;font-family:var(--mono);font-size:0.95rem;color:var(--accent);padding:14px 0;letter-spacing:1px;">
-                IF [event A] AND/OR [event B] → THEN [output C]
+        <div class="option-body">
+            <p>Using discrete components from the pool — switches, relays, transistors, LEDs, LDRs, or any combination — design and build a circuit that implements a meaningful conditional logic statement of the form:</p>
+            <p style="text-align:center;font-family:var(--mono);font-size:0.9rem;color:var(--accent);padding:14px 0;">
+                IF [event A] AND / OR [event B] → THEN [output C]
             </p>
-            <p>Your circuit must respond to <strong>real physical inputs</strong> (e.g. switches pressed by hand, LDR responding to light, relay activated by a voltage threshold) and produce a <strong>visible or audible output</strong> (e.g. LED lights, relay clicks, buzzer sounds). The more conditions and outputs your logic handles, the higher your score.</p>
+            <p>Your circuit must respond to <strong>real physical inputs</strong> and produce a <strong>visible output</strong>. The more conditions your logic handles, the stronger your solution. You are free to design any circuit that demonstrates clear conditional logic — do not copy a textbook; show your thinking.</p>
 
-            <div class="option-divider">Example Ideas (pick your own)</div>
+            <div class="option-divider">Example ideas — invent your own</div>
 
-            <ul class="subtask-list">
-                <li><strong>AND Gate simulation:</strong> LED lights only when Switch A AND Switch B are both pressed.</li>
-                <li><strong>OR + NOT logic:</strong> Relay activates when either Switch A OR Switch B is pressed, but NOT when both are pressed simultaneously (XOR).</li>
-                <li><strong>Light-controlled relay:</strong> LDR detects darkness → transistor conducts → relay switches → LED turns on. Add a manual override switch for bonus complexity.</li>
-                <li><strong>Two-input decision circuit:</strong> Two LDRs control two separate relay paths — if both LDRs are in shadow, a third "alarm" LED activates.</li>
-                <li><strong>Multi-stage cascade:</strong> Output of one relay becomes input to the next — implement a 3-state logic chain.</li>
+            <ul class="sub-list">
+                <li><strong>AND gate:</strong> LED lights only when Switch A AND Switch B are both pressed simultaneously.</li>
+                <li><strong>XOR logic:</strong> Relay activates when Switch A OR Switch B is pressed, but NOT when both are pressed at the same time.</li>
+                <li><strong>Light-controlled relay:</strong> LDR detects darkness → transistor conducts → relay activates → LED on. Add a manual override switch for extra complexity.</li>
+                <li><strong>Dual LDR decision:</strong> Both LDRs in shadow → alarm LED activates. One in light → normal state.</li>
+                <li><strong>Cascaded relay logic:</strong> Output of one relay becomes input trigger for the next — a 3-stage logic chain.</li>
             </ul>
-
-            <div class="rubric-box">
-                <div class="rubric-title">Marking Rubric</div>
-                <div class="rubric-row"><span>Circuit diagram submitted and legible</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>Circuit built correctly and neatly</span><span class="mark">15 marks</span></div>
-                <div class="rubric-row"><span>Logic function works as described</span><span class="mark">20 marks</span></div>
-                <div class="rubric-row"><span>Complexity of logic (conditions, stages)</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>Multimeter verification of voltages / correct values</span><span class="mark">5 marks</span></div>
-            </div>
         </div>
     </div>
 
     <!-- OPTION B -->
-    <div class="section-label" style="margin-top:36px;">Option B — Battery Level Indicator (60 marks)</div>
-
-    <div class="task-card">
-        <div class="task-header">
+    <div class="section-label" style="margin-top:28px;">Option B — Battery Level Indicator</div>
+    <div class="option-card">
+        <div class="option-header">
             <div>
-                <div class="task-num">Task 02</div>
-                <div class="task-title">Build a Multi-Level Battery / Voltage Indicator</div>
+                <div class="option-num">Option B</div>
+                <div class="option-title">Build a Multi-Level Voltage / Battery Indicator</div>
             </div>
-            <span class="marks-badge alt">60 marks</span>
+            <span class="marks-pill b">30 marks</span>
         </div>
-        <div class="task-body">
-            <p>Using the variable bench power supply to simulate a battery at different voltage levels, design and build a circuit that <strong>visually indicates the charge level</strong> across multiple defined thresholds. Your circuit must light different LEDs (or drive relays) depending on the input voltage.</p>
-            <p>Target at least <strong>three distinct levels</strong> (e.g. full → medium → low → critical), each triggering a different LED or combination. Use resistors and transistors (or comparators if available) to set your voltage thresholds accurately.</p>
+        <div class="option-body">
+            <p>Using the variable bench power supply to simulate a battery at different charge states, design and build a circuit that <strong>visually indicates the voltage level</strong> across at least three defined thresholds — each threshold lighting a different LED or combination of LEDs.</p>
+            <p>Use resistors and transistors to define your voltage thresholds accurately. Verify each threshold with the multimeter during your demonstration.</p>
 
-            <ul class="subtask-list">
-                <li><strong>Level 1 — Full (e.g. 11–12V):</strong> Green LED on, all others off.</li>
-                <li><strong>Level 2 — Medium (e.g. 8–10V):</strong> Yellow LED on, red and green off.</li>
-                <li><strong>Level 3 — Low (e.g. 5–7V):</strong> Red LED on.</li>
-                <li><strong>Level 4 — Critical (&lt;5V):</strong> Red LED flashes or relay activates (optional for bonus marks).</li>
-                <li>Use the multimeter to verify each threshold voltage and show the supervisor.</li>
+            <ul class="sub-list">
+                <li><strong>Level 1 — Full (e.g. 11–12 V):</strong> Green LED on, others off.</li>
+                <li><strong>Level 2 — Medium (e.g. 7–10 V):</strong> Yellow LED on.</li>
+                <li><strong>Level 3 — Low (e.g. 4–6 V):</strong> Red LED on.</li>
+                <li><strong>Level 4 — Critical (below 4 V) — Optional bonus:</strong> Red LED flashes or relay triggers a warning output.</li>
+                <li>Demonstrate each level to the supervisor by adjusting the PSU and confirming the correct LED responds.</li>
             </ul>
-
-            <div class="rubric-box">
-                <div class="rubric-title">Marking Rubric</div>
-                <div class="rubric-row"><span>Circuit diagram submitted and legible</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>At least 3 levels correctly indicated by LEDs</span><span class="mark">20 marks</span></div>
-                <div class="rubric-row"><span>Voltage thresholds accurate (verified by multimeter)</span><span class="mark">15 marks</span></div>
-                <div class="rubric-row"><span>Circuit neatness and component arrangement</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>Bonus: 4th level with flashing/relay output</span><span class="mark">+5 bonus</span></div>
-            </div>
         </div>
     </div>
 
-    <!-- Mandatory for all -->
-    <div style="margin-top:36px;">
-        <div class="section-label">Mandatory for All Students (40 marks)</div>
-
-        <div class="task-card">
-            <div class="task-header">
-                <div>
-                    <div class="task-num">All Options</div>
-                    <div class="task-title">Documentation &amp; Demonstration Requirements</div>
-                </div>
-                <span class="marks-badge danger">40 marks</span>
-            </div>
-            <div class="task-body">
-                <ul class="subtask-list">
-                    <li><strong>Live Demonstration (20 marks):</strong> Circuit must be demonstrated to a supervisor in the lab. The supervisor will test your inputs and verify outputs respond correctly. You must be able to explain your design choices verbally.</li>
-                    <li><strong>Video Evidence (10 marks):</strong> A video of the working circuit must be recorded before leaving the lab. Show all inputs being toggled and outputs responding. This is used for any future grade disputes.</li>
-                    <li><strong>Circuit Diagram (10 marks):</strong> Drawn on paper, labelled with component values and pin connections. Submitted to supervisor at end of exam.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Submission -->
     <div class="submission-box">
-        <strong>Submission &amp; Video Instructions</strong><br><br>
-        After your live demonstration is scored by the supervisor, ensure:<br>
-        1. A video of your working circuit has been recorded (supervisor or lab assistant assists if needed).<br>
-        2. Your circuit diagram is handed to the supervisor before leaving.<br>
-        3. No components are to be removed from lab equipment without sign-off.<br><br>
-        <strong>There is no email submission for RDA 112P</strong> — this is a fully hardware practical. All grading happens live in the lab.
-    </div>
-
-</div>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDA 112P — Practical Electronics Exam</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --card: #1c1c1c;
-    --border: #2a2a2a;
-    --accent: #e8b04b;
-    --accent2: #4be8c8;
-    --accent3: #e84b6a;
-    --text: #e8e8e8;
-    --muted: #888;
-    --mono: 'Space Mono', monospace;
-    --sans: 'Syne', sans-serif;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    min-height: 100vh;
-    padding: 0;
-}
-
-/* Header */
-.exam-header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 28px 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-}
-.exam-header .logo-block { display: flex; flex-direction: column; gap: 2px; }
-.exam-header .org { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; }
-.exam-header h1 { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
-.exam-header h1 span { color: var(--accent); }
-.exam-header .meta { text-align: right; }
-.exam-header .meta .code-badge {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.85rem;
-    background: var(--accent);
-    color: #000;
-    font-weight: 700;
-    padding: 4px 14px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-}
-.exam-header .meta p { font-size: 0.82rem; color: var(--muted); font-family: var(--mono); }
-
-/* Score bar */
-.score-bar {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 48px;
-    overflow-x: auto;
-}
-.score-item {
-    padding: 14px 24px;
-    border-right: 1px solid var(--border);
-    font-family: var(--mono);
-    font-size: 0.78rem;
-}
-.score-item .val { font-size: 1.4rem; font-weight: 700; display: block; color: var(--accent); }
-.score-item .lbl { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
-
-/* Content */
-.exam-body { max-width: 920px; margin: 0 auto; padding: 40px 24px 80px; }
-
-/* Section titles */
-.section-label {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-/* Notice box */
-.notice {
-    background: #1a1500;
-    border: 1px solid #4a3800;
-    border-left: 4px solid var(--accent);
-    border-radius: 6px;
-    padding: 16px 20px;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    color: #d4b97a;
-    margin-bottom: 28px;
-}
-.notice strong { color: var(--accent); }
-
-/* Task card */
-.task-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: border-color .2s;
-}
-.task-card:hover { border-color: #444; }
-.task-header {
-    padding: 16px 22px;
-    background: #222;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.task-num {
-    font-family: var(--mono);
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-.task-title { font-size: 1.05rem; font-weight: 700; margin-top: 2px; }
-.marks-badge {
-    font-family: var(--mono);
-    font-size: 0.78rem;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-weight: 700;
-}
-.marks-badge.primary { background: rgba(232,176,75,.15); color: var(--accent); border: 1px solid rgba(232,176,75,.3); }
-.marks-badge.alt { background: rgba(75,232,200,.12); color: var(--accent2); border: 1px solid rgba(75,232,200,.25); }
-.marks-badge.danger { background: rgba(232,75,106,.12); color: var(--accent3); border: 1px solid rgba(232,75,106,.25); }
-
-.task-body { padding: 18px 22px; }
-.task-body p { font-size: 0.93rem; line-height: 1.65; color: #ccc; margin-bottom: 10px; }
-.task-body p:last-child { margin-bottom: 0; }
-
-/* Component pool */
-.pool-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 10px;
-    margin: 14px 0;
-}
-.pool-item {
-    background: #222;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.85rem;
-}
-.pool-item .pi-name { font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.pool-item .pi-note { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
-
-/* Option divider */
-.option-divider {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin: 20px 0;
-    font-family: var(--mono);
-    font-size: 0.75rem;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-.option-divider::before, .option-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-/* Sub-task list */
-.subtask-list { list-style: none; margin: 12px 0; }
-.subtask-list li {
-    padding: 8px 14px;
-    border-left: 3px solid var(--border);
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    color: #ccc;
-    line-height: 1.5;
-}
-.subtask-list li strong { color: var(--accent2); }
-
-/* Rubric */
-.rubric-box {
-    background: #141414;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin-top: 14px;
-}
-.rubric-box .rubric-title {
-    font-family: var(--mono);
-    font-size: 0.68rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-}
-.rubric-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    border-bottom: 1px solid #222;
-    font-size: 0.85rem;
-}
-.rubric-row:last-child { border-bottom: none; }
-.rubric-row .mark { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); font-weight: 700; min-width: 50px; text-align: right; }
-
-/* Alert / submission box */
-.submission-box {
-    background: #0a0f1a;
-    border: 1px solid #1a2a4a;
-    border-left: 4px solid var(--accent2);
-    border-radius: 8px;
-    padding: 18px 22px;
-    margin-top: 32px;
-    font-size: 0.9rem;
-    line-height: 1.65;
-    color: #9dcce8;
-}
-.submission-box strong { color: var(--accent2); }
-.submission-box .email-chip {
-    display: inline-block;
-    font-family: var(--mono);
-    font-size: 0.82rem;
-    background: rgba(75,232,200,.1);
-    border: 1px solid rgba(75,232,200,.3);
-    color: var(--accent2);
-    padding: 3px 12px;
-    border-radius: 4px;
-    margin-left: 4px;
-}
-
-/* Choose note */
-.choose-note {
-    background: #150a00;
-    border: 1px solid #3a2000;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 0.87rem;
-    color: #c09050;
-    margin-bottom: 18px;
-    font-family: var(--mono);
-}
-
-@media(max-width:600px) {
-    .exam-header { padding: 20px 20px; }
-    .score-bar { padding: 0 16px; }
-    .exam-body { padding: 24px 16px 60px; }
-    .exam-header h1 { font-size: 1.4rem; }
-    .exam-header .meta { text-align: left; }
-}
-</style>
-</head>
-<body>
-
-<header class="exam-header">
-    <div class="logo-block">
-        <span class="org">RAIN · Robotics &amp; AI Nigeria</span>
-        <h1>Practical <span>Electronics</span> Exam</h1>
-    </div>
-    <div class="meta">
-        <div class="code-badge">RDA 112P</div>
-        <p>RDA Track · Lab Practical</p>
-        <p>Supervised — Immediate Scoring</p>
-    </div>
-</header>
-
-<div class="score-bar">
-    <div class="score-item"><span class="val">100</span><span class="lbl">Total Marks</span></div>
-    <div class="score-item"><span class="val">1</span><span class="lbl">Option Required</span></div>
-    <div class="score-item"><span class="val">Open</span><span class="lbl">Component Request</span></div>
-    <div class="score-item"><span class="val">Video</span><span class="lbl">Mandatory Evidence</span></div>
-</div>
-
-<div class="exam-body">
-
-    <!-- Preamble -->
-    <div style="margin-bottom:32px;">
-        <div class="section-label">Examination Brief</div>
-        <div class="notice">
-            <strong>No coding required for this paper.</strong> RDA 112P tests your ability to design and build working hardware solutions using discrete electronics. All components — including resistors, LEDs, switches, relays, LDRs, diodes, capacitors, and transistors — are <strong>available on request</strong> at the lab bench. A <strong>soldering station</strong>, <strong>digital multimeter</strong>, and <strong>variable DC power supply</strong> are provided. Your circuit must be demonstrated live to a supervisor for immediate scoring. A video recording of your working circuit is mandatory for future grade verification.
-        </div>
-    </div>
-
-    <!-- Component Pool -->
-    <div style="margin-bottom:32px;">
-        <div class="section-label">Available Component Pool</div>
-        <p style="font-size:0.88rem;color:var(--muted);margin-bottom:14px;">All items below are available from the lab store. Request what you need. Not all components must be used.</p>
-        <div class="pool-grid">
-            <div class="pool-item"><div class="pi-name">Single Relays</div><div class="pi-note">5V / 12V SPDT</div></div>
-            <div class="pool-item"><div class="pi-name">Tactile Switches</div><div class="pi-note">Momentary, SPST</div></div>
-            <div class="pool-item"><div class="pi-name">Toggle Switches</div><div class="pi-note">SPST / DPDT</div></div>
-            <div class="pool-item"><div class="pi-name">LEDs</div><div class="pi-note">Red, Green, Yellow, Blue</div></div>
-            <div class="pool-item"><div class="pi-name">LDRs</div><div class="pi-note">Light-Dependent Resistors</div></div>
-            <div class="pool-item"><div class="pi-name">Resistors</div><div class="pi-note">Full E24 range</div></div>
-            <div class="pool-item"><div class="pi-name">Transistors</div><div class="pi-note">BC547, BC557, 2N2222</div></div>
-            <div class="pool-item"><div class="pi-name">Diodes</div><div class="pi-note">1N4007, 1N4148</div></div>
-            <div class="pool-item"><div class="pi-name">Capacitors</div><div class="pi-note">Electrolytic &amp; ceramic</div></div>
-            <div class="pool-item"><div class="pi-name">Breadboard / PCB</div><div class="pi-note">Prototype boards</div></div>
-            <div class="pool-item"><div class="pi-name">Multimeter</div><div class="pi-note">Shared bench tool</div></div>
-            <div class="pool-item"><div class="pi-name">Variable PSU</div><div class="pi-note">0–30V DC, bench</div></div>
-        </div>
-    </div>
-
-    <!-- Instructions -->
-    <div style="margin-bottom:36px;">
-        <div class="section-label">Instructions</div>
-        <div class="choose-note">⟶ Choose ONE option below (Option A or Option B). You do not need to attempt both.</div>
-        <ul class="subtask-list">
-            <li>Read your chosen option in full before requesting components.</li>
-            <li>Sketch a circuit diagram on paper — this will be reviewed by the supervisor.</li>
-            <li>Build your circuit and demonstrate it <strong>working</strong> to a supervisor for live marking.</li>
-            <li>A video must be recorded of the working circuit before leaving the lab — this is non-negotiable.</li>
-            <li>You are free to ask for any component listed in the pool. Unavailable items will be flagged by the lab assistant.</li>
-            <li>No smartphones may be used to look up circuits. Your knowledge is being tested.</li>
-        </ul>
-    </div>
-
-    <!-- OPTION A -->
-    <div class="section-label">Option A — Logic Gate / Conditional Algorithm (60 marks)</div>
-
-    <div class="task-card">
-        <div class="task-header">
-            <div>
-                <div class="task-num">Task 01</div>
-                <div class="task-title">Design a Combinational Logic Circuit</div>
-            </div>
-            <span class="marks-badge primary">60 marks</span>
-        </div>
-        <div class="task-body">
-            <p>Using discrete components from the pool — switches, relays, transistors, LEDs, LDRs, or a combination — design and build a hardware circuit that implements a meaningful conditional logic statement of the form:</p>
-            <p style="text-align:center;font-family:var(--mono);font-size:0.95rem;color:var(--accent);padding:14px 0;letter-spacing:1px;">
-                IF [event A] AND/OR [event B] → THEN [output C]
-            </p>
-            <p>Your circuit must respond to <strong>real physical inputs</strong> (e.g. switches pressed by hand, LDR responding to light, relay activated by a voltage threshold) and produce a <strong>visible or audible output</strong> (e.g. LED lights, relay clicks, buzzer sounds). The more conditions and outputs your logic handles, the higher your score.</p>
-
-            <div class="option-divider">Example Ideas (pick your own)</div>
-
-            <ul class="subtask-list">
-                <li><strong>AND Gate simulation:</strong> LED lights only when Switch A AND Switch B are both pressed.</li>
-                <li><strong>OR + NOT logic:</strong> Relay activates when either Switch A OR Switch B is pressed, but NOT when both are pressed simultaneously (XOR).</li>
-                <li><strong>Light-controlled relay:</strong> LDR detects darkness → transistor conducts → relay switches → LED turns on. Add a manual override switch for bonus complexity.</li>
-                <li><strong>Two-input decision circuit:</strong> Two LDRs control two separate relay paths — if both LDRs are in shadow, a third "alarm" LED activates.</li>
-                <li><strong>Multi-stage cascade:</strong> Output of one relay becomes input to the next — implement a 3-state logic chain.</li>
-            </ul>
-
-            <div class="rubric-box">
-                <div class="rubric-title">Marking Rubric</div>
-                <div class="rubric-row"><span>Circuit diagram submitted and legible</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>Circuit built correctly and neatly</span><span class="mark">15 marks</span></div>
-                <div class="rubric-row"><span>Logic function works as described</span><span class="mark">20 marks</span></div>
-                <div class="rubric-row"><span>Complexity of logic (conditions, stages)</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>Multimeter verification of voltages / correct values</span><span class="mark">5 marks</span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- OPTION B -->
-    <div class="section-label" style="margin-top:36px;">Option B — Battery Level Indicator (60 marks)</div>
-
-    <div class="task-card">
-        <div class="task-header">
-            <div>
-                <div class="task-num">Task 02</div>
-                <div class="task-title">Build a Multi-Level Battery / Voltage Indicator</div>
-            </div>
-            <span class="marks-badge alt">60 marks</span>
-        </div>
-        <div class="task-body">
-            <p>Using the variable bench power supply to simulate a battery at different voltage levels, design and build a circuit that <strong>visually indicates the charge level</strong> across multiple defined thresholds. Your circuit must light different LEDs (or drive relays) depending on the input voltage.</p>
-            <p>Target at least <strong>three distinct levels</strong> (e.g. full → medium → low → critical), each triggering a different LED or combination. Use resistors and transistors (or comparators if available) to set your voltage thresholds accurately.</p>
-
-            <ul class="subtask-list">
-                <li><strong>Level 1 — Full (e.g. 11–12V):</strong> Green LED on, all others off.</li>
-                <li><strong>Level 2 — Medium (e.g. 8–10V):</strong> Yellow LED on, red and green off.</li>
-                <li><strong>Level 3 — Low (e.g. 5–7V):</strong> Red LED on.</li>
-                <li><strong>Level 4 — Critical (&lt;5V):</strong> Red LED flashes or relay activates (optional for bonus marks).</li>
-                <li>Use the multimeter to verify each threshold voltage and show the supervisor.</li>
-            </ul>
-
-            <div class="rubric-box">
-                <div class="rubric-title">Marking Rubric</div>
-                <div class="rubric-row"><span>Circuit diagram submitted and legible</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>At least 3 levels correctly indicated by LEDs</span><span class="mark">20 marks</span></div>
-                <div class="rubric-row"><span>Voltage thresholds accurate (verified by multimeter)</span><span class="mark">15 marks</span></div>
-                <div class="rubric-row"><span>Circuit neatness and component arrangement</span><span class="mark">10 marks</span></div>
-                <div class="rubric-row"><span>Bonus: 4th level with flashing/relay output</span><span class="mark">+5 bonus</span></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mandatory for all -->
-    <div style="margin-top:36px;">
-        <div class="section-label">Mandatory for All Students (40 marks)</div>
-
-        <div class="task-card">
-            <div class="task-header">
-                <div>
-                    <div class="task-num">All Options</div>
-                    <div class="task-title">Documentation &amp; Demonstration Requirements</div>
-                </div>
-                <span class="marks-badge danger">40 marks</span>
-            </div>
-            <div class="task-body">
-                <ul class="subtask-list">
-                    <li><strong>Live Demonstration (20 marks):</strong> Circuit must be demonstrated to a supervisor in the lab. The supervisor will test your inputs and verify outputs respond correctly. You must be able to explain your design choices verbally.</li>
-                    <li><strong>Video Evidence (10 marks):</strong> A video of the working circuit must be recorded before leaving the lab. Show all inputs being toggled and outputs responding. This is used for any future grade disputes.</li>
-                    <li><strong>Circuit Diagram (10 marks):</strong> Drawn on paper, labelled with component values and pin connections. Submitted to supervisor at end of exam.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Submission -->
-    <div class="submission-box">
-        <strong>Submission &amp; Video Instructions</strong><br><br>
-        After your live demonstration is scored by the supervisor, ensure:<br>
-        1. A video of your working circuit has been recorded (supervisor or lab assistant assists if needed).<br>
-        2. Your circuit diagram is handed to the supervisor before leaving.<br>
-        3. No components are to be removed from lab equipment without sign-off.<br><br>
-        <strong>There is no email submission for RDA 112P</strong> — this is a fully hardware practical. All grading happens live in the lab.
+        <strong>Demonstration &amp; Evidence Requirements</strong><br><br>
+        1. <strong>Live demo to supervisor</strong> — supervisor will test your inputs and verify outputs. Be ready to explain your design choices verbally.<br>
+        2. <strong>Video recording</strong> — record a clear video of your circuit working (inputs toggled, correct outputs responding) before leaving the lab. This is required for any future grade inquiry.<br>
+        3. <strong>Circuit diagram</strong> — hand your labelled paper sketch to the supervisor before leaving.<br><br>
+        There is no email submission for RDA 112P. All grading happens live in the lab.
     </div>
 
 </div>
