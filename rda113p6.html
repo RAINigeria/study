@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RDA 113P — Control &amp; IoT Practical Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #070d12;
+    --surface: #0d1520;
+    --card: #0f1a26;
+    --border: #1a2a3a;
+    --accent: #4b9de8;
+    --accent2: #4be88a;
+    --accent3: #e8a84b;
+    --accent4: #c14be8;
+    --text: #dceaf8;
+    --muted: #6a8aaa;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+}
+
+/* Animated grid background */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(75,157,232,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(75,157,232,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+}
+body > * { position: relative; z-index: 1; }
+
+/* Header */
+.exam-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 26px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+.exam-header .org {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.exam-header h1 { font-size: 1.9rem; font-weight: 800; line-height: 1.1; }
+.exam-header h1 span { color: var(--accent); }
+.code-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+}
+.exam-header .meta { text-align: right; }
+.exam-header .meta p { font-size: 0.8rem; color: var(--muted); font-family: var(--mono); }
+
+/* Score bar */
+.score-bar {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    overflow-x: auto;
+}
+.score-item {
+    padding: 12px 24px;
+    border-right: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+.score-item .val { font-size: 1.3rem; font-weight: 700; display: block; color: var(--accent); }
+.score-item .lbl { color: var(--muted); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Body */
+.exam-body { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* Section label */
+.section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Notice */
+.notice {
+    background: rgba(75,157,232,.07);
+    border: 1px solid rgba(75,157,232,.2);
+    border-left: 4px solid var(--accent);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #aac8e8;
+    margin-bottom: 28px;
+}
+.notice strong { color: var(--accent); }
+
+/* Option card */
+.option-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+.option-card:hover { border-color: #2a4060; }
+
+.option-header {
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.option-a .option-header { background: rgba(75,157,232,.1); border-bottom: 1px solid rgba(75,157,232,.2); }
+.option-b .option-header { background: rgba(75,232,138,.07); border-bottom: 1px solid rgba(75,232,138,.15); }
+.option-c .option-header { background: rgba(232,168,75,.07); border-bottom: 1px solid rgba(232,168,75,.15); }
+
+.option-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+.option-title { font-size: 1.1rem; font-weight: 700; margin-top: 3px; }
+.option-a .option-title { color: var(--accent); }
+.option-b .option-title { color: var(--accent2); }
+.option-c .option-title { color: var(--accent3); }
+
+.marks-pill {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+}
+.mp-a { background: rgba(75,157,232,.15); color: var(--accent); border: 1px solid rgba(75,157,232,.3); }
+.mp-b { background: rgba(75,232,138,.12); color: var(--accent2); border: 1px solid rgba(75,232,138,.25); }
+.mp-c { background: rgba(232,168,75,.12); color: var(--accent3); border: 1px solid rgba(232,168,75,.25); }
+
+.option-body { padding: 20px 24px; }
+.option-body p { font-size: 0.9rem; line-height: 1.7; color: #aac8e8; margin-bottom: 12px; }
+
+/* Tech stack chips */
+.tech-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+.chip {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid;
+}
+.chip-hw  { background: rgba(75,157,232,.1); color: var(--accent);  border-color: rgba(75,157,232,.3); }
+.chip-sw  { background: rgba(193,75,232,.1); color: var(--accent4); border-color: rgba(193,75,232,.3); }
+.chip-iot { background: rgba(75,232,138,.1); color: var(--accent2); border-color: rgba(75,232,138,.25); }
+
+/* Step list */
+.step-list { list-style: none; margin: 14px 0; counter-reset: step; }
+.step-list li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: 0.88rem;
+    color: #aac8e8;
+    line-height: 1.55;
+}
+.step-list li:last-child { border-bottom: none; }
+.step-list li::before {
+    content: counter(step);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,.06);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.step-list li strong { color: var(--text); }
+
+/* Rubric table */
+.rubric-box {
+    background: #060e17;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 16px;
+}
+.rubric-title {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+.rubric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: 0.84rem;
+    color: #aac8e8;
+}
+.rubric-row:last-child { border-bottom: none; }
+.rubric-row .mark { font-family: var(--mono); font-size: 0.78rem; font-weight: 700; min-width: 70px; text-align: right; }
+.mark-a { color: var(--accent); }
+.mark-b { color: var(--accent2); }
+.mark-c { color: var(--accent3); }
+
+/* Architecture diagram placeholder */
+.arch-block {
+    background: #060e17;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 14px 0;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.8;
+    white-space: pre;
+    overflow-x: auto;
+}
+
+/* choose banner */
+.choose-banner {
+    background: rgba(75,157,232,.06);
+    border: 1px solid rgba(75,157,232,.15);
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin-bottom: 24px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Mandatory section */
+.mandatory-card {
+    background: rgba(232,168,75,.06);
+    border: 1px solid rgba(232,168,75,.2);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-top: 32px;
+}
+.mandatory-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent3);
+    margin-bottom: 14px;
+    font-family: var(--mono);
+    letter-spacing: 1px;
+}
+
+/* Submission box */
+.submission-box {
+    background: rgba(75,232,138,.05);
+    border: 1px solid rgba(75,232,138,.2);
+    border-left: 4px solid var(--accent2);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-top: 32px;
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #8addb8;
+}
+.submission-box strong { color: var(--accent2); }
+.email-chip {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    background: rgba(75,232,138,.1);
+    border: 1px solid rgba(75,232,138,.3);
+    color: var(--accent2);
+    padding: 3px 12px;
+    border-radius: 4px;
+}
+
+@media(max-width:600px) {
+    .exam-header { padding: 18px 16px; }
+    .exam-header h1 { font-size: 1.35rem; }
+    .exam-header .meta { text-align: left; }
+    .score-bar { padding: 0 12px; }
+    .exam-body { padding: 24px 14px 60px; }
+    .arch-block { font-size: 0.65rem; }
+}
+</style>
+</head>
+<body>
+
+<header class="exam-header">
+    <div>
+        <div class="org">RAIN · Robotics &amp; AI Nigeria</div>
+        <h1>Control &amp; <span>IoT</span> Practical Exam</h1>
+    </div>
+    <div class="meta">
+        <div class="code-badge">RDA 113P</div>
+        <p>RDA Track · Lab Practical</p>
+        <p>Supervised — Code + Demo Required</p>
+    </div>
+</header>
+
+<div class="score-bar">
+    <div class="score-item"><span class="val">100</span><span class="lbl">Total Marks</span></div>
+    <div class="score-item"><span class="val">1 of 3</span><span class="lbl">Options</span></div>
+    <div class="score-item"><span class="val">Arduino/ESP</span><span class="lbl">Platform</span></div>
+    <div class="score-item"><span class="val">Demo + Video</span><span class="lbl">Evidence</span></div>
+    <div class="score-item"><span class="val">ss@rainigeria.com</span><span class="lbl">Code Submission</span></div>
+</div>
+
+<div class="exam-body">
+
+    <!-- Brief -->
+    <div style="margin-bottom:32px;">
+        <div class="section-label">Examination Brief</div>
+        <div class="notice">
+            This paper tests your ability to combine <strong>hardware integration, sensor reading, control logic, and communication</strong> into a functional IoT or embedded system. You may use <strong>Arduino, ESP8266, or ESP32</strong> as your microcontroller. Supporting components, modules, and tools are available from the lab store on request. Your working system must be <strong>demonstrated live</strong> to a supervisor for immediate scoring. A <strong>video recording</strong> of your working system is mandatory. All code must be submitted by email after the exam.
+        </div>
+    </div>
+
+    <div class="choose-banner">⟶ CHOOSE ONE OPTION ONLY · Read your chosen option completely before requesting hardware</div>
+
+    <!-- ══════════════════ OPTION A ══════════════════ -->
+    <div class="section-label">Option A — 2D Environment Scanner with Motion Detection</div>
+
+    <div class="option-card option-a">
+        <div class="option-header">
+            <div>
+                <div class="option-label">Option A · Advanced</div>
+                <div class="option-title">2D LiDAR Scanner + Anomaly Detector</div>
+            </div>
+            <span class="marks-pill mp-a">60 marks (Project) + 40 (Demo &amp; Code)</span>
+        </div>
+        <div class="option-body">
+            <p>Build a rotating distance scanner that maps a 2D slice of its environment using a <strong>Time-of-Flight (ToF) sensor</strong> mounted on a <strong>DC motor with encoder feedback</strong>. The system must continuously scan the room, track the angular position at each measurement, and <strong>detect changes in the environment</strong> — specifically, human presence indicated by a distance reading that was not there in the last 5 minutes — and alert when a change is detected.</p>
+
+            <div class="tech-chips">
+                <span class="chip chip-hw">VL53L0X / VL53L1X ToF Sensor</span>
+                <span class="chip chip-hw">DC Motor</span>
+                <span class="chip chip-hw">Hall Effect Encoder or Rotary Encoder</span>
+                <span class="chip chip-sw">Arduino / ESP32</span>
+                <span class="chip chip-iot">Serial Monitor or LED Alert</span>
+                <span class="chip chip-hw">Motor Driver (L298N / L293D)</span>
+            </div>
+
+            <div class="arch-block">[ ToF Sensor ]─────→ [ MCU ]──encoder feedback──[ Motor + Encoder ]
+       distance readings ↗          ↓
+                              [ Scan Buffer ]
+                              (angle + distance)
+                                    ↓
+                          [ Comparison Engine ]
+                          (compare with 5-min map)
+                                    ↓
+                          [ Alert if Δdistance > threshold ]
+                          (LED / Serial / Buzzer)</div>
+
+            <p>Your scan loop must read the ToF sensor at known angular steps (driven by the motor and tracked by the encoder) and store a <strong>baseline map</strong> every 5 minutes. On each new scan, compare current readings to the baseline. If any angle shows a significant change in distance (e.g. ≥15 cm), trigger an alert. This indicates an object — likely a person — has entered the field.</p>
+
+            <ol class="step-list">
+                <li><strong>Motor control:</strong> Rotate the DC motor at a consistent, measurable speed. Use the encoder to read current angle in degrees (0–360°).</li>
+                <li><strong>ToF reading:</strong> At each encoder tick interval, read distance from the ToF sensor and store as (angle, distance) pairs.</li>
+                <li><strong>Baseline management:</strong> Store the first complete scan (or refresh every 5 minutes) as the reference environment map.</li>
+                <li><strong>Change detection:</strong> On every subsequent scan, compare each angle's distance to the stored baseline. Flag angles with significant deviation.</li>
+                <li><strong>Alert output:</strong> When a change is detected, output to Serial Monitor (with angle and delta distance) AND activate an LED or buzzer alert.</li>
+                <li><strong>Continuous operation:</strong> The system must run indefinitely without manual reset.</li>
+            </ol>
+
+            <div class="rubric-box">
+                <div class="rubric-title">Marking Rubric — Option A</div>
+                <div class="rubric-row"><span>Motor rotates and encoder correctly reports angle</span><span class="mark mark-a">15 marks</span></div>
+                <div class="rubric-row"><span>ToF sensor reads distance reliably per angle step</span><span class="mark mark-a">10 marks</span></div>
+                <div class="rubric-row"><span>Baseline map stored and updated every 5 minutes</span><span class="mark mark-a">10 marks</span></div>
+                <div class="rubric-row"><span>Change detection correctly identifies new objects</span><span class="mark mark-a">15 marks</span></div>
+                <div class="rubric-row"><span>Alert triggered correctly (LED/buzzer/serial)</span><span class="mark mark-a">10 marks</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════ OPTION B ══════════════════ -->
+    <div class="section-label" style="margin-top:32px;">Option B — MQTT Height Reporter with Live Web Dashboard</div>
+
+    <div class="option-card option-b">
+        <div class="option-header">
+            <div>
+                <div class="option-label">Option B · Intermediate–Advanced</div>
+                <div class="option-title">Doorway Height Sensor → MQTT → Web Dashboard</div>
+            </div>
+            <span class="marks-pill mp-b">60 marks (Project) + 40 (Demo &amp; Code)</span>
+        </div>
+        <div class="option-body">
+            <p>Build a system that measures the height of a person passing under a doorway using a <strong>downward-facing ToF or ultrasonic sensor</strong>, publishes each height reading to an <strong>MQTT broker</strong>, and displays the latest received height on a <strong>webpage running on your laptop</strong>. The sensor must only trigger a new reading when a person is actively present under the doorway — not continuously.</p>
+
+            <div class="tech-chips">
+                <span class="chip chip-hw">VL53L0X / HC-SR04 Ultrasonic</span>
+                <span class="chip chip-sw">ESP8266 / ESP32</span>
+                <span class="chip chip-iot">MQTT (Mosquitto / HiveMQ)</span>
+                <span class="chip chip-iot">HTML/JS Web Page (MQTT.js)</span>
+                <span class="chip chip-hw">Mounting bracket / doorframe setup</span>
+            </div>
+
+            <div class="arch-block">[ Sensor (facing down) ]
+         ↓ detects presence
+[ ESP32 / ESP8266 ]
+  - measure ceiling-to-person distance
+  - compute height = door_height - sensor_reading
+  - publish to MQTT topic: rain/doorway/height
+         ↓  (WiFi)
+[ MQTT Broker ] ← (HiveMQ cloud or local Mosquitto)
+         ↓
+[ Laptop Browser - HTML page with MQTT.js ]
+  - subscribe to rain/doorway/height
+  - update display with each new reading
+  - only updates when a new person arrives</div>
+
+            <ol class="step-list">
+                <li><strong>Presence detection:</strong> Only publish a height when a person is detected (distance reading below a threshold, indicating something under the doorway). Do not publish repeatedly when no one is present.</li>
+                <li><strong>Height calculation:</strong> The sensor reads distance from ceiling to object. Height = known door height − sensor reading. Calibrate this accurately.</li>
+                <li><strong>MQTT publish:</strong> Connect the ESP to WiFi, connect to MQTT broker, publish computed height to a defined topic each time a person passes.</li>
+                <li><strong>Web subscriber:</strong> Create an HTML file (opened in your laptop browser) that subscribes to the MQTT topic using MQTT.js (WebSocket). Display the last received height prominently. The display must not update unless a new message arrives.</li>
+                <li><strong>Demonstration:</strong> Show a person walking under the sensor — height appears on screen. Show that no update happens when no one is present.</li>
+            </ol>
+
+            <div class="rubric-box">
+                <div class="rubric-title">Marking Rubric — Option B</div>
+                <div class="rubric-row"><span>Sensor correctly detects presence and calculates height</span><span class="mark mark-b">15 marks</span></div>
+                <div class="rubric-row"><span>MQTT publish works (broker receives messages)</span><span class="mark mark-b">15 marks</span></div>
+                <div class="rubric-row"><span>Web page subscribes and displays latest height</span><span class="mark mark-b">15 marks</span></div>
+                <div class="rubric-row"><span>No false triggers when doorway is empty</span><span class="mark mark-b">10 marks</span></div>
+                <div class="rubric-row"><span>Height value is reasonably accurate (±10 cm)</span><span class="mark mark-b">5 marks</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════════════ OPTION C ══════════════════ -->
+    <div class="section-label" style="margin-top:32px;">Option C — LDR-Based Hallway Entry/Exit Detector</div>
+
+    <div class="option-card option-c">
+        <div class="option-header">
+            <div>
+                <div class="option-label">Option C · Intermediate</div>
+                <div class="option-title">Smart LDR Array — Hallway Occupancy Tracker</div>
+            </div>
+            <span class="marks-pill mp-c">60 marks (Project) + 40 (Demo &amp; Code)</span>
+        </div>
+        <div class="option-body">
+            <p>Using a pool of <strong>LDRs (Light-Dependent Resistors)</strong> positioned across a hallway entrance, build a system that detects whether a person is <strong>entering or leaving</strong> the hallway by analysing the sequence in which the LDRs are triggered. Log each event (ENTRY or EXIT) with a timestamp to the Serial Monitor, and optionally display a live count on an LCD or via LEDs.</p>
+
+            <div class="tech-chips">
+                <span class="chip chip-hw">LDRs (at least 2, ideally 3–4)</span>
+                <span class="chip chip-hw">Resistors (voltage divider)</span>
+                <span class="chip chip-sw">Arduino / ESP32</span>
+                <span class="chip chip-hw">Optional: I2C LCD Display</span>
+                <span class="chip chip-hw">Optional: LEDs for visual feedback</span>
+                <span class="chip chip-iot">Serial Monitor (mandatory output)</span>
+            </div>
+
+            <div class="arch-block">Hallway entrance (top view):
+
+ OUTSIDE           [ LDR-1 ]  [ LDR-2 ]           INSIDE
+ ─────────────────────○──────────○──────────────────────
+                      ↓          ↓
+                Person triggers LDR-1 first → then LDR-2 = ENTRY
+                Person triggers LDR-2 first → then LDR-1 = EXIT
+
+ [ Arduino / ESP ]
+   - reads analog values of each LDR
+   - detects trigger sequence
+   - logs "ENTRY" or "EXIT" to Serial Monitor
+   - updates running count of people inside</div>
+
+            <ol class="step-list">
+                <li><strong>Hardware setup:</strong> Mount at least 2 LDRs in a line across the hallway entrance (inner and outer positions). Wire each as a voltage divider to an analog pin.</li>
+                <li><strong>Calibration:</strong> Read ambient light levels and set appropriate shadow-detection thresholds for your lab lighting.</li>
+                <li><strong>Sequence detection:</strong> Track which LDR is blocked first. If LDR-outer triggers before LDR-inner → ENTRY. If LDR-inner triggers first → EXIT. Allow a configurable time window (e.g. 2 seconds) for the sequence to complete.</li>
+                <li><strong>Event logging:</strong> Print each ENTRY or EXIT event to Serial Monitor with a timestamp (millis() or RTC if available) and current person count.</li>
+                <li><strong>Visual feedback (bonus):</strong> Display current inside count on an LCD or with a row of LEDs.</li>
+                <li><strong>Edge case handling:</strong> If only one LDR is triggered (person stops mid-way), ignore the event.</li>
+            </ol>
+
+            <div class="rubric-box">
+                <div class="rubric-title">Marking Rubric — Option C</div>
+                <div class="rubric-row"><span>LDRs correctly detect shadow/presence</span><span class="mark mark-c">10 marks</span></div>
+                <div class="rubric-row"><span>Entry vs exit direction correctly determined</span><span class="mark mark-c">20 marks</span></div>
+                <div class="rubric-row"><span>Serial Monitor logs ENTRY/EXIT with count</span><span class="mark mark-c">15 marks</span></div>
+                <div class="rubric-row"><span>System handles partial triggers gracefully</span><span class="mark mark-c">10 marks</span></div>
+                <div class="rubric-row"><span>Bonus: LCD / LED count display</span><span class="mark mark-c">+5 bonus</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANDATORY for all -->
+    <div class="mandatory-card">
+        <h3>★ Mandatory Requirements — All Options (40 marks)</h3>
+        <ol class="step-list">
+            <li><strong>Live Demonstration (20 marks):</strong> Your complete system must be demonstrated working to a supervisor in the lab. The supervisor will physically test the inputs (walk past sensor, press switch, etc.) and verify outputs. You must be able to verbally explain your code and circuit choices.</li>
+            <li><strong>Video Evidence (10 marks):</strong> A video showing the full working system must be recorded before you leave the lab. The video should clearly show: inputs being triggered, outputs responding, and any Serial Monitor / web display updating live. This is used for grade verification.</li>
+            <li><strong>Code Submission by Email (10 marks):</strong> All code (.ino files, HTML files, any scripts) must be emailed to <span class="email-chip">ss@rainigeria.com</span> with subject line: <span class="email-chip">RDA113P — [Your Name] — Option [A/B/C]</span>. Submission must happen on the day of the exam.</li>
+        </ol>
+    </div>
+
+    <!-- Submission -->
+    <div class="submission-box">
+        <strong>Code &amp; Submission Summary</strong><br><br>
+        After your live demonstration is scored by the supervisor:<br><br>
+        1. Record a video of your working system (supervisor assists if needed).<br>
+        2. Zip all your code files and email to <strong>ss@rainigeria.com</strong>.<br>
+        3. Subject line format: <strong>RDA113P — Firstname Lastname — Option A</strong> (or B or C).<br>
+        4. Include your registration number in the email body.<br><br>
+        <strong>No code submission = 0 for the code component.</strong> There are no extensions — submit on exam day.
+    </div>
+
+</div>
+</body>
+</html>
