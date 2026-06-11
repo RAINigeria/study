@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building Ethical Engineers in the Age of Artificial Intelligence — Dr. Olusola Sayeed Ayoola</title>
+<meta name="description" content="Keynote address delivered to the Association of Professional Women Engineers of Nigeria (APWEN), Oyo State Branch, by Dr. Olusola Sayeed Ayoola, Founder/CEO of RAIN.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --berry:#6D2E46;
+    --berry-deep:#542338;
+    --rose:#A26769;
+    --blush:#D9B8B3;
+    --cream:#ECE2D0;
+    --paper:#FFFFFF;
+    --ink:#262024;
+    --muted:#6F6266;
+    --maxw:680px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    line-height:1.75;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media(min-width:600px){ body{font-size:18.5px;} }
+
+  /* ---- reading progress ---- */
+  #progress{
+    position:fixed;top:0;left:0;height:4px;width:0%;
+    background:var(--berry);z-index:99;transition:width .1s linear;
+  }
+
+  /* ---- hero ---- */
+  .hero{
+    background:var(--berry);
+    color:#fff;
+    padding:4.5rem 1.4rem 3.5rem;
+  }
+  .hero-inner{max-width:var(--maxw);margin:0 auto;}
+  .kicker{
+    font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--cream);font-weight:600;margin-bottom:1.6rem;
+  }
+  h1{
+    font-family:'Fraunces',Georgia,'Times New Roman',serif;
+    font-weight:700;
+    font-size:clamp(2.1rem,7vw,3.4rem);
+    line-height:1.12;
+    margin-bottom:1rem;
+  }
+  .subtitle{
+    font-family:'Fraunces',Georgia,serif;
+    font-style:italic;
+    font-size:clamp(1.15rem,3.4vw,1.5rem);
+    color:var(--blush);
+    margin-bottom:2.2rem;
+  }
+  .byline{
+    font-size:.92rem;color:var(--cream);line-height:1.6;
+  }
+  .byline strong{color:#fff;font-weight:600;}
+
+  /* ---- read aloud ---- */
+  .listen{
+    margin-top:2rem;display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;
+  }
+  .listen button{
+    font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;
+    border:none;border-radius:99px;padding:.7rem 1.4rem;cursor:pointer;
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .listen button:active{transform:scale(.97);}
+  #btnPlay{background:var(--cream);color:var(--berry-deep);}
+  #btnStop{background:transparent;color:var(--cream);border:1.5px solid var(--rose) !important;display:none;}
+  .listen .hint{font-size:.78rem;color:var(--blush);width:100%;}
+
+  /* ---- article ---- */
+  article{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:3.2rem 1.4rem 2rem;
+  }
+  article p{margin-bottom:1.5rem;}
+  article p:first-of-type::first-letter{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:700;
+    font-size:3.6em;
+    float:left;
+    line-height:.82;
+    padding-right:.12em;
+    color:var(--berry);
+  }
+  .protocols{
+    font-weight:600;letter-spacing:.22em;color:var(--berry);
+    margin-bottom:2rem !important;
+  }
+
+  /* ---- pull quotes ---- */
+  .pull{
+    font-family:'Fraunces',Georgia,serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(1.35rem,4.4vw,1.75rem);
+    line-height:1.35;
+    color:var(--berry);
+    margin:2.8rem 0;
+    padding:0 0 0 1.2rem;
+  }
+  @media(min-width:600px){
+    .pull{margin:3.2rem -1.5rem;padding:0;text-align:center;}
+  }
+
+  /* ---- section breaks ---- */
+  .break{
+    text-align:center;color:var(--rose);
+    font-size:1.3rem;letter-spacing:.8em;
+    margin:2.6rem 0;user-select:none;
+  }
+
+  /* ---- closing ---- */
+  .closing{
+    background:var(--berry);
+    color:#fff;
+    margin-top:3rem;
+    padding:3.5rem 1.4rem;
+  }
+  .closing-inner{max-width:var(--maxw);margin:0 auto;text-align:center;}
+  .closing .line1{
+    font-family:'Fraunces',Georgia,serif;font-style:italic;
+    font-size:clamp(1.3rem,4.5vw,1.8rem);color:var(--blush);
+    line-height:1.4;margin-bottom:1rem;
+  }
+  .closing .line2{
+    font-family:'Fraunces',Georgia,serif;font-weight:700;
+    font-size:clamp(1.6rem,5.5vw,2.3rem);line-height:1.3;
+  }
+  .closing .thanks{
+    margin-top:2.4rem;font-size:.9rem;color:var(--cream);
+  }
+
+  footer{
+    text-align:center;padding:2rem 1.4rem 2.6rem;
+    font-size:.8rem;color:var(--muted);
+  }
+  footer a{color:var(--berry);text-decoration:none;font-weight:600;}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    #progress{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="kicker">Keynote Address &middot; APWEN Oyo State Branch</div>
+    <h1>Building Ethical Engineers</h1>
+    <div class="subtitle">in the Age of Artificial Intelligence</div>
+    <div class="byline">
+      Delivered by <strong>Dr. Olusola Sayeed Ayoola</strong><br>
+      Founder/CEO, Robotics and Artificial Intelligence Nigeria (RAIN)
+    </div>
+    <div class="listen">
+      <button id="btnPlay" onclick="toggleSpeech()">&#9654;&nbsp; Listen to this address</button>
+      <button id="btnStop" onclick="stopSpeech()">&#9632;&nbsp; Stop</button>
+      <span class="hint">Read-aloud uses your device&rsquo;s voice.</span>
+    </div>
+  </div>
+</header>
+
+<article id="speech">
+  <p class="protocols">PROTOCOLS.</p>
+
+  <p>Let me begin by sincerely thanking the organizers of this gathering &mdash; the leadership and members of the Association of Professional Women Engineers of Nigeria, APWEN, Oyo State Branch &mdash; for putting together a forum of this importance, and for the honour of inviting me to address you. A profession that will pause its busy work to reflect on its own conscience is a profession with a future &mdash; and that is exactly what you have convened us to do today.</p>
+
+  <p>Before I even introduce the topic, I want to say something about who is in this room, because it matters. When we look at the literature on how human beings make decisions &mdash; how they observe, how they plan, how they anticipate the consequences of their choices &mdash; women consistently demonstrate a depth of attention to vulnerability, a seriousness about long-term consequences, and a precision of observation that many of their male counterparts are still learning. It is not by accident that APWEN exists; it is by design &mdash; because a profession built on only one kind of intelligence is always an incomplete profession. And it is not by accident that this topic, ethics in engineering, is being hosted by you. You are, in many ways, the engineers most naturally equipped to take it seriously. You see what others overlook. You ask about who will be harmed before asking about who will profit. You plan forward. So I consider it fitting and right that we are having this conversation in this room.</p>
+
+  <p>Our subject is one I hold close: building ethical engineers in the age of artificial intelligence. It is a topic made for our moment, because we are no longer only asking the old question of how an engineer ought to behave &mdash; we are asking it at a time when the most powerful tool we have ever built is itself beginning to think and to act. So permit me to take it slowly, and to break it all the way down.</p>
+
+  <div class="break">&middot;&nbsp;&middot;&nbsp;&middot;</div>
+
+  <p>Let us begin at home &mdash; with what the Council for the Regulation of Engineering in Nigeria, COREN, our own statutory body, has always required of us and always frowned upon. COREN does not regulate only one kind of engineer. Its mandate reaches across every discipline &mdash; civil and structural engineering, mechanical engineering, electrical and electronics engineering, computer engineering, chemical and petroleum engineering, agricultural engineering, food technology and engineering, wood and furniture engineering, biomedical engineering, marine and offshore engineering, and all the others. Every one of us, regardless of discipline, practices under the same professional code. And that code has always been clear.</p>
+
+  <p>COREN has historically taken the gravest view of practising without registration &mdash; of presenting oneself as a competent professional without earning that right. It has acted on professional negligence, particularly where designs failed or structures collapsed because an engineer did not do what an engineer is supposed to do. It has pursued falsification &mdash; of credentials, of test results, of inspection reports. It has condemned corruption in contract procurement, where public funds meant for solid infrastructure are diverted and the difference is filled with shortcuts. It has disciplined engineers who abandoned clients and projects after collecting fees, and engineers who misrepresented their qualifications to win work they could not competently execute.</p>
+
+  <p>In every case, the pattern is the same: an engineer who knew the right thing, chose the profitable thing, and somebody &mdash; often somebody who had no voice in that choice &mdash; paid the price. That is the founding ethical problem of our profession, and it has not gone away. If anything, the forces pulling engineers toward that choice have grown stronger. So let us go into this conversation with our eyes open.</p>
+
+  <div class="pull">&ldquo;The good or the evil lives not in the definition of the tool, but in the application of it.&rdquo;</div>
+
+  <p>When we speak about technology and how deeply it has shaped our lives, we are forced into one uncomfortable question: do these things serve good, or do they serve evil? Some of us will insist that technology is good. Others, having seen what it can do in the wrong hands, will insist it is evil. But both camps are mistaken, because the moral weight of a technology is not contained in the technology itself. A knife is not honest or wicked. A drone is not honest or wicked. An algorithm is not honest or wicked. The good or the evil lives not in the definition of the tool, but in the application of it. And here is the part we too often ignore: that application is sometimes deliberate, by design, and sometimes it is accidental &mdash; forced upon the tool by circumstance and condition. The same solution that lights a hospital can be wired to steal from the grid. The same camera that protects a community can be turned to spy on it. The tool does not choose. People choose. Conditions choose.</p>
+
+  <p>So I want to place a burden on every engineer in this room. When you are building a solution &mdash; a product, a project, a system &mdash; it is not enough to consider what you think it is. You must also consider how you think it can be used. And not only how you intend it to be used, but how it will be used by people you will never meet, in conditions you did not design for. This is the double duty of the builder: to ask, at the very moment of creation, is this for the good, or for the greater evil? Not because you can control every hand that will touch your work, but because foresight is itself an ethical act. The engineer who refuses to imagine the misuse of his own invention has already begun to be complicit in it.</p>
+
+  <p>And let me bring this right down to the things we actually design and build. When we plan a road, a school, a hospital, a transport system; when we design a filling station, its pumps and its nozzles &mdash; safety and integrity must not be an afterthought we merely hope people will respect. They must be built into the design itself. The pump that cannot be re-wired to short-change a buyer. The meter that cannot be quietly bypassed. The system in which nobody is able to cheat anybody &mdash; not because we are trusting them to be honest, but because the design has made dishonesty impossible. That is the engineer&rsquo;s highest craft: not merely to ask people to behave well, but to build a world in which the wrong thing is hard to do and the right thing is the path of least resistance. So I charge you: ask of every solution you design &mdash; how can we use technology itself to make the cheating, the tampering, the shortcut, simply impossible?</p>
+
+  <div class="break">&middot;&nbsp;&middot;&nbsp;&middot;</div>
+
+  <p>But you cannot answer that question in a vacuum, because every technology lands inside a society of human beings &mdash; with their own habits, hungers and pressures. So before you deploy, you must study the mindset of the people you are serving. What kind of community is this? Are these people likely to bend this tool toward this or toward that? How will they adopt it, embrace it &mdash; or abuse it? I raise this deliberately, because when I look at the demography of our country and the fabric of which our society is now woven, I see qualities that should make every honest engineer afraid. There is an overwhelming urge for financial gratification &mdash; money first, money fast, money by any means. There is a growing aversion to work itself. People want the reward but they do not want the labour. And in our profession, that is a fatal contradiction. In engineering, hard work is not optional. It is inevitable. It is undeniable. It is compulsory. There is no shortcut from ignorance to mastery, no bypass around the years of practice that make an engineer trustworthy.</p>
+
+  <p>So this is the question that should keep us awake: how do we persuade a young engineer to work hard &mdash; to pay the full price &mdash; before collecting anything in return, in a society where the people around them appear to be making money with little or no effort? If we cannot answer that, we will produce a generation of engineers who cut corners. And a corner cut in engineering is not a small sin. It is a bridge that falls. A building that collapses. A device that kills.</p>
+
+  <p>Let me make this concrete, because ethics is empty until you can see it. Look at the world today. The very tools we celebrated as liberation are being weaponised. Artificial intelligence, which can teach and heal, is now used to forge faces and voices, to deceive at a scale never before possible. The internet, which connected humanity, has become a hunting ground for fraud, for hacking, for the theft of identity and trust. Every advance has produced its parasite.</p>
+
+  <p>And we do not need to travel abroad to find examples. Consider energy and energy theft. We have people who understand a meter so well that they use that knowledge to bypass it, to steal power, to falsify consumption. The same competence that should secure the grid is turned against it. Consider auditing and the deliberate cheating of systems &mdash; software built to keep honest records defeated by counter-systems designed to cook books, hide figures, and make a corrupt ledger look clean. Consider voting and electronic voting: the same technology that should make our democracy transparent becomes a target for manipulation and hacking, so that the machine designed to count our voices can be bent to silence them. Consider manufacturing, where the abuse is quieter but no less deadly &mdash; faulty products knowingly released, substandard materials substituted to save cost, and maintenance abandoned until the machine fails and someone pays for it with their safety.</p>
+
+  <div class="pull">&ldquo;And when the building falls, the question is always: where was the engineer?&rdquo;</div>
+
+  <p>And then consider the construction site &mdash; because this one cuts closest to home. When a building is going up, the engineer is the custodian of public safety, and the site is full of actors who may not share that mandate. Artisans mix concrete with too much water to make it easier to pour, knowing it will be weaker. Contractors substitute grade 40 iron for grade 60 and pocket the difference. Sand is bought from the wrong quarry; cement is stretched; test results are back-dated. On a government contract, where nobody with a real stake in the building&rsquo;s survival is watching too closely, these substitutions can travel all the way from the first footing to the roof without being caught. And when the building falls &mdash; as buildings in this country have fallen, sometimes on the people inside them &mdash; the question is always: where was the engineer? The honest answer, too often, is that the engineer either was not there, did not know, or chose not to press.</p>
+
+  <p>This is precisely where artificial intelligence and modern technology now offer us something genuinely new. We have the ability to build platforms &mdash; for site inspection, for material verification, for standards monitoring, for real-time feedback &mdash; that give the engineer an electronic presence where human presence cannot always reach. Drones can overfly a construction site daily and generate imagery that AI systems can analyse for structural deviation, for exposed steel that should be covered, for proportions inconsistent with the approved design. Sensors embedded in pours can monitor curing temperature, density and integrity from the moment the concrete is laid. Digital audit trails can tie every material delivery to a batch test, so that what goes into the building is provably what was procured. The engineer who once could not be everywhere at once can now &mdash; with the right platform &mdash; be everywhere at once. But only if we build those platforms, insist on using them, and hold the data to account.</p>
+
+  <div class="break">&middot;&nbsp;&middot;&nbsp;&middot;</div>
+
+  <p>And that brings me to the wider truth that I want us to hold. Despite everything I have described, the other face of technology is just as real. The same artificial intelligence is diagnosing disease earlier than any human eye. The same drones can carry medicine across a flooded road and find a missing child. The same digital systems can give a police station a memory so that a small incident report in a rural community is no longer lost &mdash; but becomes part of an intelligence that protects everyone. The same connectivity that spreads lies also spreads literacy, opportunity and livelihood to people history had forgotten. This is why we must consciously, deliberately embrace the good &mdash; not naively, with our eyes fully open to the abuse, but with conviction. Because the answer to a technology&rsquo;s misuse has never been to abandon it. The answer is to out-build the abusers with people of integrity.</p>
+
+  <p>Now, after everything I have said, let me turn fully to the technology of our age. Because artificial intelligence is not only one more powerful tool that can be used for good or for ill &mdash; it is, in itself, a technology that can help us improve ethics. Think of it. So much of the wrongdoing we have described thrives in darkness &mdash; in the report never recorded, the reading nobody checked, the corner cut where no supervisor was looking. But AI can watch what no human has the patience to watch. It can monitor systems, flag anomalies, notice the pattern of small thefts that quietly add up to a great one, and surface abuse before it becomes a disaster. Used well, AI becomes a tireless conscience laid over our institutions &mdash; a way of holding human conduct to account at a scale we could never manage by hand.</p>
+
+  <p>But wait. Before we celebrate too quickly, we must turn that same hard question on the technology itself. Because the application of artificial intelligence can also be deeply unethical &mdash; and the engineer who cannot see this is dangerous. Consider the data we train these systems on. If that data carries our human biases &mdash; of tribe, of gender, of class &mdash; the AI does not cleanse them; it learns them, scales them, and hands them back to us wearing the mask of objectivity. A biased model can discriminate against thousands before anyone notices, and do it with a confident, mechanical face. Consider data access and data ownership: who owns the data these systems are built upon? Who consented? Who profits? When a handful of organisations control the data, they control the intelligence &mdash; and through it, a quiet power over everyone else. And consider the digital divide. Every time we build a system that assumes a phone, a connection, an account, we risk disenfranchising the people who have none of these &mdash; locking them out of services, opportunities and rights, not by malice but by a design that simply never thought of them. An ethics that forgets the excluded is no ethics at all.</p>
+
+  <div class="pull">&ldquo;In our age, ethics in engineering runs along two tracks, not one.&rdquo;</div>
+
+  <p>So when you put it all together, one thing becomes clear: in our age, ethics in engineering runs along two tracks, not one. The first is the ethics of the engineering profession itself &mdash; the timeless duty of competence, honesty, safety and integrity that every engineer has always owed, AI or no AI, the ethics we inherit from our training and from the professional bodies that license us. The second is the ethics of the advanced technology and its own applications &mdash; the new and specific duties that artificial intelligence now places upon us: to guard against bias in our data, to be just in how data is owned and accessed, and to refuse to build a future that leaves people behind. The ethical engineer of this age must be fluent in both. It is no longer enough to be an honest builder of the old kind; you must also be a just builder of the new. And that, precisely, is why our subject is not simply building ethical engineers, but building ethical engineers in the age of artificial intelligence.</p>
+
+  <p>Let me draw the line plainly, because young engineers deserve clarity, not vagueness. It is ethical to hold the safety, health and welfare of the public above your profit, your convenience and your deadline. It is not ethical to release what you know to be dangerous. It is ethical to work only within your competence, and to say I do not yet know when you do not. It is not ethical to pretend to a mastery you have not earned. It is ethical to be honest in your data, your reports and your claims. It is not ethical to fabricate a figure, inflate a result, or present a guess as a fact. It is ethical to foresee the misuse of your work and to design against it. It is not ethical to wash your hands and say I only built it. It is ethical to interrogate your data and to design against the bias hidden inside it. It is not ethical to hide behind the machine and call its prejudice objectivity. It is ethical to earn your reward through the full labour of your craft. It is not ethical to cut the corner, bypass the standard, or steal the shortcut &mdash; even when everyone around you is doing exactly that. Ethics, in the end, is simply this: doing the right thing in the work, especially when no one is watching, and especially when the wrong thing would be easier and more profitable.</p>
+
+  <div class="break">&middot;&nbsp;&middot;&nbsp;&middot;</div>
+
+  <p>Now to the real question. If this is the standard, where do ethically sound engineers actually come from? Is it from our education? From our society? From environments like this one, where we gather to discuss? The honest answer is: from all of them &mdash; and they must work together, because no single one is enough.</p>
+
+  <p>From education, we must stop treating ethics as a footnote &mdash; one borrowed lecture before graduation &mdash; and weave it into the teaching of the craft itself, so that the young engineer learns integrity in the same breath as she learns calculation. And in this age, that teaching must stretch to cover the ethics of data and of the machines we are training, because we cannot raise just engineers for a world of artificial intelligence while keeping them ignorant of how that intelligence can be made to lie. But there is a sharper challenge here that we must face without flinching: our students are now using AI to do their work. They are submitting AI-generated designs, AI-written reports, AI-solved problems &mdash; and in many cases we cannot tell the difference. The question is not whether to be outraged. The question is what do we do about it. If you are worried that AI can answer your examination questions directly, then ask questions that AI alone cannot answer without additional human intelligence being brought in &mdash; questions that require the student to interpret a local condition, make a judgement call grounded in a specific context, defend a decision in their own words under pressure. And if your students are using AI to produce designs, give them a large set of AI-generated outputs and ask them to scrutinise every one: which are structurally sound, which violate local codes, which would fail in our soil conditions, which were clearly generated without understanding the brief? Let them defend their analysis. That way, even if they used AI to generate, you are training them to audit AI, to catch the machine&rsquo;s errors, to bring the human intelligence the tool cannot supply. You are not fighting AI; you are teaching engineers to lead it. And in the process you are training them to detect the fake &mdash; in images, in data, in reports &mdash; which is precisely the skill they will need in a world where the built environment is increasingly audited by the same tools that produce it.</p>
+
+  <p>From society, we must restore the dignity of honest labour, and stop celebrating the person who got rich without working as though they were a hero. The engineer&rsquo;s environment must reward the one who did it right, not the one who did it fast and false. From mentorship, the senior engineers in this room carry the heaviest burden. Ethics is caught more than it is taught. The young watch what we tolerate, what we reward, and what we punish &mdash; and they learn from our hands far more than from our mouths. And from forums like this one, where we name the problem out loud and refuse to pretend it does not exist, a professional conscience is slowly built.</p>
+
+  <p>And we must answer the hardest objection honestly, because if we do not, all of this is just sermon. The young engineer is right that money is the value. She is right that she must eat, must rise, must provide. We cannot ask people to be ethical and poor forever and expect it to hold. So the task before us is not to deny the reward, but to build systems in which the reward flows to the honest &mdash; fair pricing for honest work, professional standards that punish the cheat and protect the diligent, markets that prize the locally and properly made over the imported and the counterfeit &mdash; so that the path of integrity is also the path of prosperity. When doing it right is also the way to get paid, ethics stops being a sacrifice and becomes simply good sense. That is the society we are here to build: not one where a few gain by cutting corners while the rest pay the price, but one where everyone gains at the end, because the work was done right.</p>
+
+  <p>So I leave you with the burden I began with. The technology in your hands is neither good nor evil. It is waiting for you to decide &mdash; and the most powerful technology you will ever hold, artificial intelligence, is waiting on that same decision. Build as people who have already imagined how your work could be misused, and who chose to build it well anyway. Earn your reward through the full price of your labour. Guard the data, guard the excluded, and refuse &mdash; even when it costs you &mdash; to be the engineer who cut the corner.</p>
+</article>
+
+<section class="closing">
+  <div class="closing-inner">
+    <div class="line1">The bridge does not ask whether you were in a hurry.</div>
+    <div class="line2">It only asks whether you built it right.</div>
+    <div class="thanks">Thank you. &middot; Dr. Olusola Sayeed Ayoola</div>
+  </div>
+</section>
+
+<footer>
+  &copy; <span id="yr"></span> <a href="https://rainigeria.com" target="_blank" rel="noopener">Robotics and Artificial Intelligence Nigeria (RAIN)</a> &middot; Ibadan, Nigeria
+</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // reading progress bar
+  window.addEventListener('scroll', function(){
+    var h = document.documentElement;
+    var pct = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  }, {passive:true});
+
+  // ---- Read Aloud (Web Speech API) ----
+  var synth = window.speechSynthesis;
+  var speaking = false, paused = false;
+  var btnPlay = document.getElementById('btnPlay');
+  var btnStop = document.getElementById('btnStop');
+
+  function getSpeechText(){
+    var art = document.getElementById('speech');
+    var parts = [];
+    art.querySelectorAll('p').forEach(function(p){ parts.push(p.textContent); });
+    parts.push("The bridge does not ask whether you were in a hurry. It only asks whether you built it right. Thank you.");
+    return parts;
+  }
+
+  function toggleSpeech(){
+    if(!('speechSynthesis' in window)){
+      alert('Read-aloud is not supported on this browser.');
+      return;
+    }
+    if(speaking && !paused){
+      synth.pause(); paused = true;
+      btnPlay.innerHTML = '&#9654;&nbsp; Resume';
+      return;
+    }
+    if(speaking && paused){
+      synth.resume(); paused = false;
+      btnPlay.innerHTML = '&#10074;&#10074;&nbsp; Pause';
+      return;
+    }
+    // start fresh — queue paragraph by paragraph (long single utterances get cut off on some devices)
+    synth.cancel();
+    var parts = getSpeechText();
+    parts.forEach(function(t, i){
+      var u = new SpeechSynthesisUtterance(t);
+      u.rate = 0.95; u.pitch = 1;
+      if(i === parts.length - 1){
+        u.onend = function(){ resetButtons(); };
+      }
+      synth.speak(u);
+    });
+    speaking = true; paused = false;
+    btnPlay.innerHTML = '&#10074;&#10074;&nbsp; Pause';
+    btnStop.style.display = 'inline-block';
+  }
+
+  function stopSpeech(){
+    synth.cancel();
+    resetButtons();
+  }
+
+  function resetButtons(){
+    speaking = false; paused = false;
+    btnPlay.innerHTML = '&#9654;&nbsp; Listen to this address';
+    btnStop.style.display = 'none';
+  }
+
+  window.addEventListener('beforeunload', function(){ synth.cancel(); });
+</script>
+</body>
+</html>
