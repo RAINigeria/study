@@ -181,7 +181,29 @@
 <article id="speech">
   <p class="protocols">PROTOCOLS.</p>
 
-  <p>Let me begin by sincerely thanking the organizers of this gathering &mdash; the leadership and members of the Association of Professional Women Engineers of Nigeria, APWEN, Oyo State Branch &mdash; for putting together a forum of this importance, and for the honour of inviting me to address you. </p>
+  <p>Let me begin with something we all learned in school.</p>
+
+  <p>Boyle&rsquo;s Law. Charles&rsquo; Law. The Pressure Law. We were taught that pressure is a function of volume, temperature, and the number of molecules in a system. Clean. Predictable. Solvable.</p>
+
+  <p>Real-world engineering pressure is far more complex than that. Because in practice, pressure is not only physical. It is also human.</p>
+
+  <p>In every engineering ecosystem, there are four key players: the clients, the engineering firms, the artisans, and the regulators &mdash; bodies like COREN, whose mandate touches every one of us in this room. Between those four players, something happens. Deadlines collide with budgets. Expectations grind against compliance. Cost-cutting meets survival. And out of all of that friction, a very specific kind of force is produced &mdash; not measured in pascals, not solved with an equation.</p>
+
+  <p>It is called ethical pressure.</p>
+
+  <p>And nowhere does that pressure show up more plainly than in three things every engineer knows: time, money, and scope. The client wants it done fast. The client wants it done cheap. The client wants everything the brief promised. All three, fully, at once. And what happens? The negotiation begins. Fees are quoted, then questioned. Numbers are challenged, revised, revised again. The engineer who quoted honestly is told the other firm will do it for less. So the number moves. Then the deadline moves. Then the scope quietly expands &mdash; one addition here, one revision there &mdash; until what was a reasonable job becomes an impossible one, delivered under conditions that were never designed to produce safe or honest work. People beg, bargain, and push until the impossible gives way. And what gives way with it, almost always, is the standard.</p>
+
+  <p>What people do under that pressure determines the integrity of the entire system.</p>
+
+  <p>I have watched this for years. I have seen the building that stood until it did not. I have seen the report that was clean until someone looked closely. I have seen the standard that held until the deadline moved. And in every case, at the centre of the story, was an engineer &mdash; trained, registered, capable &mdash; who made a choice under pressure.</p>
+
+  <p>That is the founding question of our profession, and it has never gone away.</p>
+
+  <p>But now we are in a new era. An era in which Artificial Intelligence exists &mdash; and exists at scale. And I often find myself asking: under pressure, how will AI be used? Who will control it? And when the system is strained and the deadline is tomorrow and the budget is short, will AI be the tool that holds the line &mdash; or the tool that helps someone cross it faster?</p>
+
+  <p>These are not abstract questions. They are the reason institutions like RAIN exist. They are the reason gatherings like this one matter. And they are exactly what we are here tonight to discuss.</p>
+
+  <p>Let me begin by sincerely thanking the organizers of this gathering &mdash; the leadership and members of the Association of Professional Women Engineers of Nigeria, APWEN, Oyo State Branch &mdash; for putting together a forum of this importance, and for the honour of inviting me to address you.</p>
 
   <p>Before I even introduce the topic, I want to say something about who is in this room, because it matters. When we look at the literature on how human beings make decisions &mdash; how they observe, how they plan, how they anticipate the consequences of their choices &mdash; women consistently demonstrate a depth of attention to vulnerability, a seriousness about long-term consequences, and a precision of observation that many of their male counterparts are still learning. It is not by accident that APWEN exists; it is by design &mdash; because a profession built on only one kind of intelligence is always an incomplete profession. And it is not by accident that this topic, ethics in engineering, is being hosted by you. You are, in many ways, the engineers most naturally equipped to take it seriously. You see what others overlook. You ask about who will be harmed before asking about who will profit. You plan forward. So I consider it fitting and right that we are having this conversation in this room.</p>
 
@@ -297,7 +319,6 @@
       btnPlay.innerHTML = '&#10074;&#10074;&nbsp; Pause';
       return;
     }
-    // start fresh — queue paragraph by paragraph (long single utterances get cut off on some devices)
     synth.cancel();
     var parts = getSpeechText();
     parts.forEach(function(t, i){
