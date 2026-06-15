@@ -3,491 +3,704 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAIN — Semester 20 · Welcome Message</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>RAIN — Semester 20 Begins</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #F7F6F2;
-    --ink: #0B0E13;
-    --rain-deep: #003D2A;
-    --green: #00C48C;
-    --green-light: #E8FBF5;
-    --amber: #F5A623;
-    --amber-light: #FFF8EC;
-    --blue: #2D6BF4;
-    --blue-light: #EEF3FF;
-    --red: #E84B3C;
-    --red-light: #FFF0EF;
-    --purple: #7C3AED;
-    --purple-light: #F5F0FF;
-    --border: #E2E0DA;
-    --muted: #6B7280;
-    --card: #FFFFFF;
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --deep:    #021A0E;
+  --green:   #00D68F;
+  --green2:  #00A86B;
+  --ink:     #0F1F15;
+  --amber:   #FFAD1F;
+  --blue:    #3B82F6;
+  --purple:  #8B5CF6;
+  --paper:   #F2F4F0;
+  --white:   #FFFFFF;
+  --muted:   rgba(255,255,255,0.42);
+  --border:  rgba(0,214,143,0.18);
+}
 
-  body {
-    font-family: 'Space Grotesk', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    padding: 32px 16px 60px;
-  }
+html { scroll-behavior: smooth; }
 
-  .envelope {
-    max-width: 680px;
-    margin: 0 auto;
-    opacity: 0;
-    transform: translateY(24px);
-    animation: rise 0.7s ease 0.1s forwards;
-  }
-  @keyframes rise {
-    to { opacity: 1; transform: translateY(0); }
-  }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--deep);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* TOP BAR */
-  .top-bar {
-    background: var(--rain-deep);
-    border-radius: 16px 16px 0 0;
-    padding: 28px 36px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .top-bar-left .from {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
-    margin-bottom: 5px;
-  }
-  .top-bar-left .org {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: var(--green);
-  }
-  .top-bar-left .tagline {
-    font-size: 0.72rem;
-    color: rgba(255,255,255,0.45);
-    margin-top: 2px;
-  }
-  .rain-seal {
-    display: block;
-    height: 56px;
-    width: auto;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
-  }
+/* ─── ANIMATED BG ─────────────────────────────────── */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.bg-layer canvas { position: absolute; inset: 0; }
+.bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  animation: drift 12s ease-in-out infinite alternate;
+}
+.bg-glow.g1 {
+  width: 600px; height: 600px;
+  background: rgba(0,214,143,0.07);
+  top: -200px; left: -100px;
+  animation-delay: 0s;
+}
+.bg-glow.g2 {
+  width: 500px; height: 500px;
+  background: rgba(59,130,246,0.06);
+  bottom: -100px; right: -100px;
+  animation-delay: -6s;
+}
+@keyframes drift {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(40px, 30px) scale(1.08); }
+}
 
-  /* SUBJECT LINE */
-  .subject-line {
-    background: var(--green);
-    padding: 14px 36px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .subject-line .subj {
-    font-family: 'Syne', sans-serif;
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: var(--rain-deep);
-  }
-  .subject-line .date-stamp {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    color: rgba(0,61,42,0.6);
-  }
+/* ─── WRAP ────────────────────────────────────────── */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 48px 20px 64px;
+}
 
-  /* BODY */
-  .body-wrap {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-top: none;
-    padding: 36px 36px 32px;
-  }
+/* ─── CARD ────────────────────────────────────────── */
+.card {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(0,214,143,0.08),
+    0 40px 80px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  transform: translateY(40px);
+  opacity: 0;
+  animation: cardIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+}
+@keyframes cardIn {
+  to { transform: translateY(0); opacity: 1; }
+}
 
-  .greeting {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--ink);
-    margin-bottom: 16px;
-    line-height: 1.2;
-  }
-  .greeting em { font-style: normal; color: var(--green); }
+/* ─── HERO HEADER ─────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, #021A0E 0%, #03270F 60%, #041E0A 100%);
+  padding: 40px 40px 36px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 90% 10%, rgba(0,214,143,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0,168,107,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
 
-  .body-text {
-    font-size: 0.92rem;
-    line-height: 1.75;
-    color: #374151;
-    margin-bottom: 28px;
-  }
+.hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+.hero-top img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  animation: logoIn 0.7s cubic-bezier(0.22,1,0.36,1) 0.5s both;
+}
+@keyframes logoIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.hero-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: rgba(0,214,143,0.1);
+  border: 1px solid rgba(0,214,143,0.25);
+  padding: 6px 14px;
+  border-radius: 100px;
+  animation: fadeIn 0.6s ease 0.8s both;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* DIVIDER */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 28px 0;
-  }
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.6s both;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero h1 {
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.72s both;
+}
+.hero h1 .accent { color: var(--green); }
+.hero-sub {
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.58);
+  line-height: 1.65;
+  margin-top: 14px;
+  max-width: 480px;
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.84s both;
+}
 
-  /* COHORT SECTIONS */
-  .cohort-block {
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateX(-12px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .cohort-block.visible { opacity: 1; transform: translateX(0); }
+/* ─── BODY ────────────────────────────────────────── */
+.body { padding: 0; }
 
-  .cohort-block.returning { background: var(--blue-light); border: 1px solid #C7D7FD; }
-  .cohort-block.new-cohort { background: var(--green-light); border: 1px solid #A7F3D8; }
+/* ─── COHORT SECTIONS ─────────────────────────────── */
+.section {
+  padding: 32px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.055);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.section.in { opacity: 1; transform: translateY(0); }
 
-  .cohort-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-  }
-  .returning .cohort-eyebrow { color: var(--blue); }
-  .new-cohort .cohort-eyebrow { color: #059669; }
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+.tag-returning { background: rgba(59,130,246,0.12); color: #60A5FA; border: 1px solid rgba(59,130,246,0.25); }
+.tag-new       { background: rgba(0,214,143,0.1);  color: var(--green); border: 1px solid rgba(0,214,143,0.25); }
+.tag-all       { background: rgba(139,92,246,0.1); color: #A78BFA; border: 1px solid rgba(139,92,246,0.25); }
 
-  .cohort-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    margin-bottom: 10px;
-    color: var(--ink);
-  }
-  .cohort-body {
-    font-size: 0.85rem;
-    line-height: 1.65;
-    color: #374151;
-    margin-bottom: 14px;
-  }
+.tag-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+.tag-returning .tag-dot { background: #60A5FA; }
+.tag-new .tag-dot       { background: var(--green); }
+.tag-all .tag-dot       { background: #A78BFA; }
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.5; transform: scale(0.7); }
+}
 
-  /* LINK BUTTONS */
-  .link-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .link-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: transform 0.15s, box-shadow 0.15s;
-    border: 1px solid transparent;
-  }
-  .link-item:hover { transform: translateX(3px); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.section-heading {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.section-body {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
 
-  .link-item.green  { background: #fff; border-color: #A7F3D8; }
-  .link-item.blue   { background: #fff; border-color: #BFDBFE; }
-  .link-item.amber  { background: #fff; border-color: #FDE68A; }
-  .link-item.red    { background: #fff; border-color: #FECACA; }
-  .link-item.purple { background: #fff; border-color: #DDD6FE; }
-  .link-item.drive  { background: #fff; border-color: #E0E0E0; }
+/* ─── LINK CARDS ──────────────────────────────────── */
+.links { display: flex; flex-direction: column; gap: 10px; }
 
-  .link-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.95rem;
-    flex-shrink: 0;
-  }
-  .green  .link-icon { background: var(--green-light); }
-  .blue   .link-icon { background: var(--blue-light); }
-  .amber  .link-icon { background: var(--amber-light); }
-  .red    .link-icon { background: var(--red-light); }
-  .purple .link-icon { background: var(--purple-light); }
-  .drive  .link-icon { background: #F5F5F5; }
+.link-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.2s cubic-bezier(0.22,1,0.36,1);
+}
+.link-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.link-card:hover { transform: translateX(5px); }
+.link-card:hover::before { opacity: 1; }
 
-  .link-text { flex: 1; }
-  .link-label {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--ink);
-    display: block;
-    margin-bottom: 1px;
-  }
-  .link-url {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--muted);
-  }
-  .link-arrow {
-    font-size: 0.85rem;
-    color: var(--muted);
-    flex-shrink: 0;
-  }
+.link-card.c-green  { --c: var(--green); }
+.link-card.c-blue   { --c: #60A5FA; }
+.link-card.c-amber  { --c: var(--amber); }
+.link-card.c-purple { --c: #A78BFA; }
+.link-card.c-drive  { --c: #9CA3AF; }
 
-  /* NOTE CHIPS */
-  .note-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
-    border-radius: 100px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    margin-top: 10px;
-  }
-  .note-chip.warn { background: #FFF8EC; color: #92400E; border: 1px solid #FDE68A; }
-  .note-chip.info { background: var(--blue-light); color: #1E40AF; border: 1px solid #BFDBFE; }
+.link-card:hover { border-color: rgba(var(--c-rgb, 255,255,255), 0.3); }
+.link-card.c-green:hover  { border-color: rgba(0,214,143,0.35); background: rgba(0,214,143,0.06); }
+.link-card.c-blue:hover   { border-color: rgba(96,165,250,0.35); background: rgba(96,165,250,0.06); }
+.link-card.c-amber:hover  { border-color: rgba(255,173,31,0.35); background: rgba(255,173,31,0.06); }
+.link-card.c-purple:hover { border-color: rgba(167,139,250,0.35); background: rgba(167,139,250,0.06); }
+.link-card.c-drive:hover  { border-color: rgba(156,163,175,0.35); background: rgba(156,163,175,0.04); }
 
-  /* ALL TRAINEES SECTION */
-  .all-section {
-    background: #FAFAF7;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 22px;
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateX(-12px);
-    transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
-  }
-  .all-section.visible { opacity: 1; transform: translateX(0); }
-  .all-section .cohort-eyebrow { color: var(--muted); }
+.link-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.07);
+  transition: background 0.25s;
+}
+.link-card.c-green:hover  .link-icon-wrap { background: rgba(0,214,143,0.12); }
+.link-card.c-blue:hover   .link-icon-wrap { background: rgba(96,165,250,0.12); }
+.link-card.c-amber:hover  .link-icon-wrap { background: rgba(255,173,31,0.12); }
+.link-card.c-purple:hover .link-icon-wrap { background: rgba(167,139,250,0.12); }
+.link-card.c-drive:hover  .link-icon-wrap { background: rgba(156,163,175,0.1); }
 
-  /* SIGN OFF */
-  .signoff {
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-  }
-  .signoff p {
-    font-size: 0.88rem;
-    color: #374151;
-    margin-bottom: 4px;
-    line-height: 1.6;
-  }
-  .signoff .sig-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--rain-deep);
-    margin-top: 14px;
-    display: block;
-  }
-  .signoff .sig-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
+.link-info { flex: 1; min-width: 0; }
+.link-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-url {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.32);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.link-arrow {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.2);
+  flex-shrink: 0;
+  transition: color 0.2s, transform 0.2s;
+}
+.link-card:hover .link-arrow { color: rgba(255,255,255,0.7); transform: translateX(3px); }
 
-  /* FOOTER */
-  .footer-strip {
-    background: var(--rain-deep);
-    border-radius: 0 0 16px 16px;
-    padding: 16px 36px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .footer-strip p {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 0.1em;
-  }
-  .rain-foot-logo {
-    height: 28px;
-    width: auto;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
-    opacity: 0.7;
-  }
+/* ─── NOTICE CHIPS ────────────────────────────────── */
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+.notice.warn   { background: rgba(255,173,31,0.08); border: 1px solid rgba(255,173,31,0.2); color: #FCD34D; }
+.notice.info   { background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2); color: #93C5FD; }
+.notice-icon   { font-size: 0.95rem; flex-shrink: 0; margin-top: 1px; }
 
-  @media (max-width: 540px) {
-    .top-bar, .body-wrap, .subject-line, .footer-strip { padding-left: 20px; padding-right: 20px; }
-    .greeting { font-size: 1.2rem; }
-  }
+/* ─── SIGN OFF ────────────────────────────────────── */
+.signoff {
+  padding: 32px 40px 36px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.signoff.in { opacity: 1; transform: translateY(0); }
+.signoff-text {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.52);
+  line-height: 1.75;
+  margin-bottom: 24px;
+}
+.sig-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.sig-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green2), var(--green));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--deep);
+  flex-shrink: 0;
+  font-family: 'Outfit', sans-serif;
+}
+.sig-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+.sig-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+  margin-top: 2px;
+}
+
+/* ─── FOOTER ──────────────────────────────────────── */
+.footer {
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.footer img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.7;
+  filter: brightness(0) invert(1);
+}
+.footer-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+}
+
+/* ─── SCAN LINE EFFECT (signature) ───────────────── */
+.hero::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  top: 0;
+  animation: scanLine 3s ease-in-out infinite;
+  z-index: 2;
+  opacity: 0.6;
+}
+@keyframes scanLine {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  20%  { opacity: 0.6; }
+  80%  { opacity: 0.6; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* ─── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 520px) {
+  .hero, .section, .footer, .signoff { padding-left: 22px; padding-right: 22px; }
+  .hero h1 { font-size: 1.9rem; }
+  .link-title { font-size: 0.82rem; }
+}
 </style>
 </head>
 <body>
 
-<div class="envelope">
+<!-- ANIMATED BACKGROUND -->
+<div class="bg-layer">
+  <div class="bg-glow g1"></div>
+  <div class="bg-glow g2"></div>
+  <canvas id="bgCanvas"></canvas>
+</div>
 
-  <!-- TOP BAR -->
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <div class="from">From</div>
-      <div class="org">Robotics &amp; Artificial Intelligence Nigeria</div>
-      <div class="tagline">Ibadan, Nigeria · rainigeria.com</div>
+<div class="wrap">
+<div class="card">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-top">
+      <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN Logo">
+      <span class="hero-date" id="heroDate">15 Jun 2026</span>
     </div>
-    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN Logo" class="rain-seal">
+    <div class="hero-label">Semester 20 · Official Notice</div>
+    <h1>Welcome.<br>Semester <span class="accent">20</span> begins<br>today.</h1>
+    <p class="hero-sub">All trainees — please read your section below carefully. Links and instructions differ by cohort. Everything you need to get started is here.</p>
   </div>
 
-  <!-- SUBJECT -->
-  <div class="subject-line">
-    <span class="subj">📬 Semester 20 Begins Today — Your Links &amp; Resources</span>
-    <span class="date-stamp" id="datestamp">15 Jun 2026</span>
-  </div>
+  <div class="body">
 
-  <!-- BODY -->
-  <div class="body-wrap">
-
-    <div class="greeting">Welcome to<br><em>Semester 20.</em></div>
-
-    <p class="body-text">
-      Semester 20 officially commences today, <strong>Monday 15 June 2026</strong>. Whether you are returning or joining RAIN for the first time, everything you need to get started is in this message. Please read your section carefully — the links and instructions differ by cohort.
-    </p>
-
-    <!-- RETURNING — COHORT 18 & 19 -->
-    <div class="cohort-block returning" id="block1">
-      <div class="cohort-eyebrow">For Returning Trainees</div>
-      <div class="cohort-title">Cohort 18 &amp; Cohort 19</div>
-      <p class="cohort-body">
-        Welcome back. Your Semester 20 timetable and academic calendar are now live. Check the timetable before you come in each day — sessions begin at 9:30 AM Monday through Thursday. Log into the portal for your coursework, assessments, and results.
-      </p>
-      <div class="link-list">
-        <a class="link-item green" href="https://study.rainigeria.com/calendar" target="_blank">
-          <div class="link-icon">📅</div>
-          <div class="link-text">
-            <span class="link-label">Semester 20 Academic Calendar</span>
-            <span class="link-url">study.rainigeria.com/calendar</span>
+    <!-- COHORT 18 & 19 -->
+    <div class="section" data-delay="0">
+      <div class="section-tag tag-returning">
+        <span class="tag-dot"></span>Cohort 18 &amp; 19 — Returning Trainees
+      </div>
+      <div class="section-heading">Welcome back. Let's get to work.</div>
+      <p class="section-body">Your timetable and calendar for Semester 20 are live now. Classes run Monday to Thursday, 9:30 AM–4:30 PM. Log into the portal for coursework, assessments, and all academic activity. Former training resources are available on Google Drive for reference.</p>
+      <div class="links">
+        <a class="link-card c-green" href="https://study.rainigeria.com/calendar" target="_blank">
+          <div class="link-icon-wrap">📅</div>
+          <div class="link-info">
+            <div class="link-title">Semester 20 Academic Calendar</div>
+            <div class="link-url">study.rainigeria.com/calendar</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
-        <a class="link-item blue" href="https://study.rainigeria.com/timetable" target="_blank">
-          <div class="link-icon">🗓️</div>
-          <div class="link-text">
-            <span class="link-label">Semester 20 Weekly Timetable</span>
-            <span class="link-url">study.rainigeria.com/timetable</span>
+        <a class="link-card c-blue" href="https://study.rainigeria.com/timetable" target="_blank">
+          <div class="link-icon-wrap">🗓️</div>
+          <div class="link-info">
+            <div class="link-title">Semester 20 Weekly Timetable</div>
+            <div class="link-url">study.rainigeria.com/timetable</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
-        <a class="link-item amber" href="https://exams.rainigeria.com" target="_blank">
-          <div class="link-icon">🖥️</div>
-          <div class="link-text">
-            <span class="link-label">RAIN LMS &amp; Exams Portal</span>
-            <span class="link-url">exams.rainigeria.com</span>
+        <a class="link-card c-amber" href="https://exams.rainigeria.com" target="_blank">
+          <div class="link-icon-wrap">🖥️</div>
+          <div class="link-info">
+            <div class="link-title">RAIN LMS &amp; Exams Portal</div>
+            <div class="link-url">exams.rainigeria.com</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
-        <a class="link-item drive" href="https://drive.google.com/drive/folders/194OpU3JIznZpZxfZTKMoCL3s_0Di92Pm1XQHWPzOVPETECnF7QDz30eCAwlgiWKT38GOM5WR?usp=drive_link" target="_blank">
-          <div class="link-icon">📁</div>
-          <div class="link-text">
-            <span class="link-label">Former Training Resources</span>
-            <span class="link-url">Google Drive · View only</span>
+        <a class="link-card c-drive" href="https://drive.google.com/drive/folders/194OpU3JIznZpZxfZTKMoCL3s_0Di92Pm1XQHWPzOVPETECnF7QDz30eCAwlgiWKT38GOM5WR?usp=drive_link" target="_blank">
+          <div class="link-icon-wrap">📁</div>
+          <div class="link-info">
+            <div class="link-title">Former Training Resources</div>
+            <div class="link-url">Google Drive — view only</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
       </div>
     </div>
 
-    <!-- NEW TRAINEES — COHORT 20 -->
-    <div class="cohort-block new-cohort" id="block2">
-      <div class="cohort-eyebrow">For New Trainees</div>
-      <div class="cohort-title">Cohort 20</div>
-      <p class="cohort-body">
-        Welcome to RAIN. Before regular classes begin, your first task is orientation. You will be participating in a set of team bonding activities designed to get you talking, collaborating, and building together with your new cohort. Your first day starts there — not in a classroom.
-      </p>
-      <div class="link-list">
-        <a class="link-item green" href="https://study.rainigeria.com/team" target="_blank">
-          <div class="link-icon">🤝</div>
-          <div class="link-text">
-            <span class="link-label">Orientation — Team Bonding Tasks</span>
-            <span class="link-url">study.rainigeria.com/team</span>
+    <!-- COHORT 20 -->
+    <div class="section" data-delay="120">
+      <div class="section-tag tag-new">
+        <span class="tag-dot"></span>Cohort 20 — New Trainees
+      </div>
+      <div class="section-heading">Your first day starts with your people.</div>
+      <p class="section-body">Before classes begin, you will go through a set of team bonding activities — Human Bingo, the Survival Challenge, the Tower Build, and two group presentations. Your Bingo card will be printed and handed to you at orientation. Everything else is at the link below.</p>
+      <div class="links">
+        <a class="link-card c-green" href="https://study.rainigeria.com/team" target="_blank">
+          <div class="link-icon-wrap">🤝</div>
+          <div class="link-info">
+            <div class="link-title">Orientation — Team Bonding Tasks</div>
+            <div class="link-url">study.rainigeria.com/team</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
-        <a class="link-item amber" href="https://exams.rainigeria.com" target="_blank">
-          <div class="link-icon">🖥️</div>
-          <div class="link-text">
-            <span class="link-label">RAIN LMS &amp; Exams Portal</span>
-            <span class="link-url">exams.rainigeria.com</span>
+        <a class="link-card c-amber" href="https://exams.rainigeria.com" target="_blank">
+          <div class="link-icon-wrap">🖥️</div>
+          <div class="link-info">
+            <div class="link-title">RAIN LMS &amp; Exams Portal</div>
+            <div class="link-url">exams.rainigeria.com</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
-        <a class="link-item drive" href="https://drive.google.com/drive/folders/194OpU3JIznZpZxfZTKMoCL3s_0Di92Pm1XQHWPzOVPETECnF7QDz30eCAwlgiWKT38GOM5WR?usp=drive_link" target="_blank">
-          <div class="link-icon">📁</div>
-          <div class="link-text">
-            <span class="link-label">Former Training Resources</span>
-            <span class="link-url">Google Drive · View only</span>
+        <a class="link-card c-drive" href="https://drive.google.com/drive/folders/194OpU3JIznZpZxfZTKMoCL3s_0Di92Pm1XQHWPzOVPETECnF7QDz30eCAwlgiWKT38GOM5WR?usp=drive_link" target="_blank">
+          <div class="link-icon-wrap">📁</div>
+          <div class="link-info">
+            <div class="link-title">Former Training Resources</div>
+            <div class="link-url">Google Drive — view only</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
       </div>
-      <div class="note-chip info">📌 Human Bingo cards will be printed and distributed to you at orientation — you do not need a link for that.</div>
+      <div class="notice info">
+        <span class="notice-icon">🖨️</span>
+        <span>Human Bingo cards will be <strong>printed by admin staff</strong> and distributed to you at orientation. You do not need a link for that.</span>
+      </div>
     </div>
 
     <!-- ALL TRAINEES -->
-    <div class="all-section" id="block3">
-      <div class="cohort-eyebrow">For All Trainees — Cohort 18, 19 &amp; 20</div>
-      <div class="cohort-title">Accommodation Registration</div>
-      <p class="cohort-body">
-        If you will be staying in RAIN accommodation this semester, you must register now. Spaces are limited and allocated on a first-come, first-served basis. Do not delay.
-      </p>
-      <div class="link-list">
-        <a class="link-item purple" href="https://rainigeria.com/accommodation" target="_blank">
-          <div class="link-icon">🏠</div>
-          <div class="link-text">
-            <span class="link-label">Accommodation Registration</span>
-            <span class="link-url">rainigeria.com/accommodation</span>
+    <div class="section" data-delay="240">
+      <div class="section-tag tag-all">
+        <span class="tag-dot"></span>All Trainees — Cohort 18, 19 &amp; 20
+      </div>
+      <div class="section-heading">Staying on campus? Register now.</div>
+      <p class="section-body">If you require accommodation this semester, register immediately. Spaces are limited and allocated strictly on a first-come, first-served basis.</p>
+      <div class="links">
+        <a class="link-card c-purple" href="https://rainigeria.com/accommodation" target="_blank">
+          <div class="link-icon-wrap">🏠</div>
+          <div class="link-info">
+            <div class="link-title">Accommodation Registration</div>
+            <div class="link-url">rainigeria.com/accommodation</div>
           </div>
           <span class="link-arrow">→</span>
         </a>
       </div>
-      <div class="note-chip warn">⚠️ Only register here if you need accommodation. This is not general programme registration.</div>
+      <div class="notice warn">
+        <span class="notice-icon">⚠️</span>
+        <span>Only register here if you need accommodation. This is <strong>not</strong> general programme registration.</span>
+      </div>
     </div>
 
     <!-- SIGN OFF -->
     <div class="signoff">
-      <p>We are glad to have each of you here. Semester 20 is going to be significant — make the most of it.</p>
-      <p style="margin-top: 8px;">If you have any questions, reach your programme coordinator or visit the portal.</p>
-      <span class="sig-name">Dr. Olusola Ayoola</span>
-      <span class="sig-title">FOUNDER &amp; CEO · ROBOTICS AND ARTIFICIAL INTELLIGENCE NIGERIA</span>
+      <p class="signoff-text">We are glad to have each of you in this semester. Whether you are returning or joining RAIN for the first time — you are now part of something that is building the future of AI and robotics in Nigeria. Make the most of it.</p>
+      <div class="sig-block">
+        <div class="sig-avatar">OA</div>
+        <div>
+          <div class="sig-name">Dr. Olusola Ayoola</div>
+          <div class="sig-title">Founder &amp; CEO · Robotics and Artificial Intelligence Nigeria</div>
+        </div>
+      </div>
     </div>
 
   </div>
 
   <!-- FOOTER -->
-  <div class="footer-strip">
-    <p>RAIN · SEMESTER 20 · 15 JUN – 27 SEP 2026 · IBADAN, NIGERIA</p>
-    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-foot-logo">
+  <div class="footer">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN Logo">
+    <span class="footer-text">Semester 20 · 15 Jun – 27 Sep 2026 · Ibadan, Nigeria</span>
   </div>
 
 </div>
+</div>
 
 <script>
-  // Live date stamp
-  const d = new Date();
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  document.getElementById('datestamp').textContent =
-    `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+// ── LIVE DATE ───────────────────────────────────────
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const now = new Date();
+document.getElementById('heroDate').textContent =
+  `${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
 
-  // Scroll reveal
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        setTimeout(() => e.target.classList.add('visible'), i * 120);
+// ── PARTICLE CANVAS ─────────────────────────────────
+const canvas = document.getElementById('bgCanvas');
+const ctx    = canvas.getContext('2d');
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+const COUNT = 60;
+const pts = Array.from({length: COUNT}, () => ({
+  x:  Math.random() * innerWidth,
+  y:  Math.random() * innerHeight,
+  r:  Math.random() * 1.4 + 0.4,
+  sx: (Math.random() - 0.5) * 0.22,
+  sy: (Math.random() - 0.5) * 0.22,
+  o:  Math.random() * 0.35 + 0.05,
+  c:  Math.random() > 0.65 ? '#00D68F' : '#ffffff',
+}));
+
+// Draw connecting lines between nearby particles
+function drawLines() {
+  for (let i = 0; i < pts.length; i++) {
+    for (let j = i+1; j < pts.length; j++) {
+      const dx = pts[i].x - pts[j].x;
+      const dy = pts[i].y - pts[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 130) {
+        ctx.beginPath();
+        ctx.moveTo(pts[i].x, pts[i].y);
+        ctx.lineTo(pts[j].x, pts[j].y);
+        ctx.strokeStyle = `rgba(0,214,143,${0.06 * (1 - dist/130)})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
       }
-    });
-  }, { threshold: 0.1 });
-  ['block1','block2','block3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) obs.observe(el);
+    }
+  }
+}
+
+function tick() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawLines();
+  pts.forEach(p => {
+    p.x += p.sx; p.y += p.sy;
+    if (p.x < 0 || p.x > canvas.width)  p.sx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.sy *= -1;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.c;
+    ctx.globalAlpha = p.o;
+    ctx.fill();
+    ctx.globalAlpha = 1;
   });
+  requestAnimationFrame(tick);
+}
+tick();
+
+// ── SCROLL-IN SECTIONS ──────────────────────────────
+const sections  = document.querySelectorAll('.section');
+const signoff   = document.querySelector('.signoff');
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const delay = parseInt(e.target.dataset.delay || 0);
+    setTimeout(() => e.target.classList.add('in'), delay);
+    io.unobserve(e.target);
+  });
+}, { threshold: 0.12 });
+
+sections.forEach(s => io.observe(s));
+
+const io2 = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io2.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+if (signoff) io2.observe(signoff);
+
+// ── LINK CARD STAGGER ON ENTER ──────────────────────
+const linkCards = document.querySelectorAll('.link-card');
+linkCards.forEach((card, i) => {
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(10px)';
+  card.style.transition = `opacity 0.45s ease ${i * 60}ms, transform 0.45s cubic-bezier(0.22,1,0.36,1) ${i * 60}ms, border-color 0.25s ease, background 0.25s ease`;
+});
+
+const linkObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      linkObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+linkCards.forEach(c => linkObs.observe(c));
 </script>
 </body>
 </html>
