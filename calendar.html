@@ -3,923 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAIN — Semester 20 Academic Calendar</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>RAIN — Semester 20 Calendar</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #0B0E13;
-    --bg: #07100A;
-    --green: #00C48C;
-    --green-dim: rgba(0,196,140,0.12);
-    --green-mid: rgba(0,196,140,0.35);
-    --amber: #F5A623;
-    --red: #E84B3C;
-    --blue: #2D6BF4;
-    --paper: #F5F4F0;
-    --card: #0F1C14;
-    --border: rgba(0,196,140,0.18);
-    --muted: rgba(255,255,255,0.4);
-    --white: #ffffff;
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#080600;--deep:#100E00;--gold:#D4A017;--gold2:#F5C842;--gold3:#FFF0B0;
+  --white:#FFFFFF;--muted:rgba(255,255,255,0.4);--border:rgba(212,160,23,0.2);
+  --red:#E84B3C;--blue:#3B82F6;--purple:#8B5CF6;
+}
+body{font-family:'Outfit',sans-serif;background:var(--black);color:var(--white);min-height:100vh;overflow-x:hidden;}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.glow{position:absolute;border-radius:50%;filter:blur(130px);animation:drift 14s ease-in-out infinite alternate;}
+.g1{width:700px;height:700px;background:rgba(212,160,23,0.07);top:-200px;left:-100px;}
+.g2{width:500px;height:500px;background:rgba(212,160,23,0.04);bottom:-100px;right:-100px;animation-delay:-7s;}
+@keyframes drift{to{transform:translate(40px,30px) scale(1.1);}}
+#bgc{position:absolute;inset:0;}
+.page{position:relative;z-index:1;}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* HEADER */
+header{padding:52px 48px 36px;max-width:1100px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;opacity:0;animation:up 0.8s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;}
+@keyframes up{from{opacity:0;transform:translateY(-18px);}to{opacity:1;transform:translateY(0);}}
+.hl .ey{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.hl h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-0.03em;line-height:1.06;}
+.hl h1 em{font-style:normal;color:var(--gold2);}
+.hr img{height:56px;width:auto;object-fit:contain;}
+.hr .sm{font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--muted);margin-top:6px;text-align:right;letter-spacing:0.08em;}
 
-  body {
-    font-family: 'Space Grotesk', sans-serif;
-    background: var(--bg);
-    color: var(--white);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+/* COUNTDOWN */
+.cstrip{
+  background:rgba(212,160,23,0.07);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:22px 48px;display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap;
+  opacity:0;animation:up 0.6s ease 0.5s forwards;
+}
+.ci{text-align:center;}
+.cn{font-family:'Outfit',sans-serif;font-size:2.4rem;font-weight:900;color:var(--gold2);display:block;line-height:1;letter-spacing:-0.02em;transition:transform 0.12s ease;}
+.cn.bump{transform:scale(1.18);}
+.cl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block;}
+.cdiv{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:900;color:rgba(212,160,23,0.3);animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+.cctx{font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);text-align:center;}
 
-  /* PARTICLE CANVAS */
-  #canvas {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.35;
-  }
+/* MAIN */
+.main{max-width:1100px;margin:0 auto;padding:52px 48px 80px;}
+.ey2{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+.st{font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:28px;}
 
-  .page-wrap {
-    position: relative;
-    z-index: 1;
-  }
+/* TIMELINE */
+.tl{position:relative;margin-bottom:64px;}
+.tl::before{content:'';position:absolute;left:120px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(212,160,23,0.3) 8%,rgba(212,160,23,0.3) 92%,transparent);}
+.tr{display:flex;align-items:flex-start;margin-bottom:2px;opacity:0;transform:translateX(-14px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.tr.in{opacity:1;transform:translateX(0);}
+.td{width:120px;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);padding:14px 18px 14px 0;text-align:right;line-height:1.4;}
+.dc{width:38px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;padding-top:18px;}
+.dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--gold);background:var(--black);transition:background 0.3s,transform 0.3s,box-shadow 0.3s;cursor:default;}
+.dot.on{background:var(--gold2);box-shadow:0 0 14px rgba(245,200,66,0.55);transform:scale(1.3);}
+.dot.ex{border-color:var(--red);}
+.dot.ex.on{background:var(--red);box-shadow:0 0 14px rgba(232,75,60,0.5);}
+.dot.va{border-color:var(--blue);}
+.dot.va.on{background:var(--blue);}
+.dot.nx{border-color:var(--purple);}
+.dot.nx.on{background:var(--purple);}
+.tc{flex:1;padding:10px 0 10px 18px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.tc-t{font-size:0.88rem;font-weight:700;color:var(--white);margin-bottom:2px;transition:color 0.2s;}
+.tr:hover .tc-t{color:var(--gold2);}
+.tc-s{font-family:'JetBrains Mono',monospace;font-size:0.66rem;color:var(--muted);}
+.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-left:8px;vertical-align:middle;}
+.b-now{background:rgba(212,160,23,0.18);color:var(--gold2);}
+.b-rev{background:rgba(59,130,246,0.15);color:#60A5FA;}
+.b-ex {background:rgba(232,75,60,0.15);color:#F87171;}
+.b-vac{background:rgba(139,92,246,0.15);color:#A78BFA;}
+.b-nx {background:rgba(139,92,246,0.1);color:#A78BFA;}
 
-  /* HEADER */
-  header {
-    padding: 60px 40px 40px;
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-    opacity: 0;
-    transform: translateY(-20px);
-    animation: slideDown 0.7s ease 0.2s forwards;
-  }
-  @keyframes slideDown {
-    to { opacity: 1; transform: translateY(0); }
-  }
+/* MONTH GRID */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;}
+.mc{
+  background:rgba(255,255,255,0.025);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+  opacity:0;transform:translateY(18px);transition:opacity 0.5s ease,transform 0.5s ease,border-color 0.3s;
+}
+.mc:hover{border-color:rgba(212,160,23,0.35);}
+.mc.in{opacity:1;transform:translateY(0);}
+.mh{background:rgba(212,160,23,0.07);border-bottom:1px solid var(--border);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;}
+.mn{font-family:'Outfit',sans-serif;font-size:0.95rem;font-weight:800;color:var(--white);}
+.my{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);}
+.cg{padding:14px;}
+.dlabs{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:5px;}
+.dlab{text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.08em;color:var(--muted);padding:3px 0;}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:0.7rem;border-radius:5px;cursor:default;}
+.cd.e{opacity:0;}
+.cd.n{color:rgba(255,255,255,0.5);}
+.cd.n:hover{background:rgba(255,255,255,0.05);}
+.cd.we{color:rgba(255,255,255,0.2);}
+.cd.today{background:var(--gold2);color:var(--black);font-weight:800;box-shadow:0 0 14px rgba(245,200,66,0.45);}
+.cd.ir{background:rgba(212,160,23,0.08);color:rgba(255,255,255,0.5);}
+.cd.irev{background:rgba(59,130,246,0.1);color:rgba(255,255,255,0.5);}
+.cd.iex{background:rgba(232,75,60,0.1);color:rgba(255,255,255,0.5);}
+.cd.ivac{background:rgba(139,92,246,0.1);color:rgba(255,255,255,0.5);}
+.cd.ev-rev{background:rgba(59,130,246,0.2);color:#93C5FD;font-weight:700;border:1px solid rgba(59,130,246,0.3);}
+.cd.ev-ex{background:rgba(232,75,60,0.2);color:#FCA5A5;font-weight:700;border:1px solid rgba(232,75,60,0.3);}
+.cd.ev-vac{background:rgba(139,92,246,0.18);color:#C4B5FD;font-weight:700;border:1px solid rgba(139,92,246,0.28);}
 
-  .header-left .eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 10px;
-  }
-  .header-left h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3.4rem);
-    font-weight: 800;
-    line-height: 1.05;
-    color: var(--white);
-  }
-  .header-left h1 em {
-    font-style: normal;
-    color: var(--green);
-  }
+/* LEGEND */
+.leg{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:28px;}
+.li2{display:flex;align-items:center;gap:7px;font-size:0.76rem;color:rgba(255,255,255,0.6);}
+.ld{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
 
-  .header-right {
-    text-align: right;
-  }
-  .rain-logo {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--green);
-    border: 2px solid var(--green);
-    padding: 8px 18px;
-    border-radius: 6px;
-    display: inline-block;
-    margin-bottom: 8px;
-    position: relative;
-    overflow: hidden;
-  }
-  .rain-logo::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--green);
-    transform: translateX(-101%);
-    transition: transform 0.4s ease;
-    z-index: -1;
-  }
-  .rain-logo:hover { color: var(--bg); }
-  .rain-logo:hover::after { transform: translateX(0); }
+footer{border-top:1px solid var(--border);padding:24px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;max-width:1100px;margin:0 auto;}
+footer img{height:30px;width:auto;object-fit:contain;}
+footer p{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+footer a{color:var(--gold2);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:0.7rem;}
 
-  .signed-by {
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* LIVE COUNTDOWN */
-  .countdown-strip {
-    background: var(--green-dim);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 20px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.5s forwards;
-  }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .countdown-item {
-    text-align: center;
-  }
-  .countdown-num {
-    font-family: 'Syne', sans-serif;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: var(--green);
-    display: block;
-    line-height: 1;
-    transition: transform 0.15s ease;
-  }
-  .countdown-num.bump { transform: scale(1.15); }
-  .countdown-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 4px;
-    display: block;
-  }
-  .countdown-divider {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--green-mid);
-    animation: blink 1s step-end infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-
-  .countdown-context {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-family: 'JetBrains Mono', monospace;
-    text-align: center;
-  }
-
-  /* MAIN GRID */
-  .main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 48px 40px 80px;
-  }
-
-  /* SECTION HEADER */
-  .section-eyebrow {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--green);
-    margin-bottom: 6px;
-  }
-  .section-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: var(--white);
-    margin-bottom: 28px;
-  }
-
-  /* SEMESTER 20 TIMELINE */
-  .timeline {
-    position: relative;
-    margin-bottom: 64px;
-  }
-  .timeline::before {
-    content: '';
-    position: absolute;
-    left: 140px;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: linear-gradient(to bottom, transparent, var(--green-mid) 10%, var(--green-mid) 90%, transparent);
-  }
-
-  .timeline-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 0;
-    margin-bottom: 4px;
-    opacity: 0;
-    transform: translateX(-16px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-  }
-  .timeline-row.visible {
-    opacity: 1;
-    transform: translateX(0);
-  }
-
-  .tl-date {
-    width: 140px;
-    flex-shrink: 0;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--muted);
-    padding: 14px 20px 14px 0;
-    text-align: right;
-    line-height: 1.3;
-  }
-  .tl-dot-col {
-    width: 40px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 18px;
-  }
-  .tl-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid var(--green);
-    background: var(--bg);
-    flex-shrink: 0;
-    transition: background 0.3s ease, transform 0.3s ease;
-    cursor: pointer;
-  }
-  .tl-dot.active {
-    background: var(--green);
-    box-shadow: 0 0 12px rgba(0,196,140,0.6);
-    transform: scale(1.3);
-  }
-  .tl-dot.semester { border-color: var(--amber); }
-  .tl-dot.semester.active { background: var(--amber); box-shadow: 0 0 12px rgba(245,166,35,0.6); }
-  .tl-dot.exam { border-color: var(--red); }
-  .tl-dot.exam.active { background: var(--red); }
-  .tl-dot.vacation { border-color: var(--blue); }
-  .tl-dot.vacation.active { background: var(--blue); }
-
-  .tl-content {
-    flex: 1;
-    padding: 10px 0 10px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .tl-content:hover .tl-title { color: var(--green); }
-  .tl-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--white);
-    transition: color 0.2s;
-    margin-bottom: 2px;
-  }
-  .tl-sub {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.68rem;
-    color: var(--muted);
-  }
-  .tl-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 100px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-left: 8px;
-    vertical-align: middle;
-  }
-  .badge-active { background: rgba(0,196,140,0.2); color: var(--green); }
-  .badge-sem { background: rgba(245,166,35,0.15); color: var(--amber); }
-  .badge-exam { background: rgba(232,75,60,0.15); color: var(--red); }
-  .badge-vac { background: rgba(45,107,244,0.15); color: var(--blue); }
-
-  /* FULL CALENDAR GRID */
-  .calendar-section { margin-bottom: 64px; }
-
-  .month-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-  }
-
-  .month-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s;
-  }
-  .month-card:hover { border-color: var(--green-mid); }
-  .month-card.visible { opacity: 1; transform: translateY(0); }
-
-  .month-head {
-    background: rgba(0,196,140,0.08);
-    border-bottom: 1px solid var(--border);
-    padding: 12px 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .month-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 800;
-    color: var(--white);
-  }
-  .month-year {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--muted);
-  }
-
-  .cal-grid {
-    padding: 14px;
-  }
-  .day-labels {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 6px;
-  }
-  .day-label {
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    padding: 4px 0;
-  }
-  .days-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
-  }
-  .cal-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.72rem;
-    border-radius: 6px;
-    cursor: default;
-    transition: background 0.15s, transform 0.15s;
-    position: relative;
-  }
-  .cal-day.empty { opacity: 0; }
-  .cal-day.normal { color: rgba(255,255,255,0.6); }
-  .cal-day.normal:hover { background: rgba(255,255,255,0.05); }
-  .cal-day.weekend { color: rgba(255,255,255,0.25); }
-  .cal-day.today {
-    background: var(--green);
-    color: var(--bg);
-    font-weight: 700;
-    font-family: 'Syne', sans-serif;
-    box-shadow: 0 0 12px rgba(0,196,140,0.5);
-  }
-  .cal-day.event-sem {
-    background: rgba(245,166,35,0.15);
-    color: var(--amber);
-    font-weight: 600;
-    border: 1px solid rgba(245,166,35,0.3);
-  }
-  .cal-day.event-revision {
-    background: rgba(45,107,244,0.15);
-    color: var(--blue);
-    font-weight: 600;
-    border: 1px solid rgba(45,107,244,0.3);
-  }
-  .cal-day.event-exam {
-    background: rgba(232,75,60,0.15);
-    color: var(--red);
-    font-weight: 600;
-    border: 1px solid rgba(232,75,60,0.3);
-  }
-  .cal-day.event-vacation {
-    background: rgba(139,92,246,0.12);
-    color: #A78BFA;
-    font-weight: 600;
-    border: 1px solid rgba(139,92,246,0.25);
-  }
-  .cal-day.in-range {
-    background: rgba(0,196,140,0.06);
-    color: rgba(255,255,255,0.55);
-  }
-  .cal-day.in-revision { background: rgba(45,107,244,0.06); }
-  .cal-day.in-exam { background: rgba(232,75,60,0.06); }
-  .cal-day.in-vacation { background: rgba(139,92,246,0.06); }
-
-  /* LEGEND */
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.65);
-  }
-  .legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
-
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 28px 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  footer p { font-size: 0.78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
-  footer a {
-    color: var(--green);
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-  }
-
-  @media (max-width: 640px) {
-    header { padding: 40px 20px 28px; }
-    .main { padding: 32px 20px 60px; }
-    .countdown-strip { padding: 18px 20px; gap: 20px; }
-    .timeline::before { left: 90px; }
-    .tl-date { width: 90px; font-size: 0.62rem; }
-    footer { padding: 24px 20px; }
-  }
+@media(max-width:640px){header,footer,.main{padding-left:22px;padding-right:22px;}.cstrip{padding:18px 22px;gap:18px;}.tl::before{left:80px;}.td{width:80px;font-size:0.6rem;}}
 </style>
 </head>
 <body>
+<div class="bg"><div class="glow g1"></div><div class="glow g2"></div><canvas id="bgc"></canvas></div>
+<div class="page">
 
-<canvas id="canvas"></canvas>
-
-<div class="page-wrap">
-
-  <!-- HEADER -->
-  <header>
-    <div class="header-left">
-      <div class="eyebrow">Robotics &amp; Artificial Intelligence Nigeria</div>
-      <h1>Semester 20<br><em>Academic Calendar</em></h1>
-    </div>
-    <div class="header-right">
-      <div class="rain-logo">RAIN</div><br>
-      <span class="signed-by">Dir. Academic Programmes · Aminat Akinyemi-Ayoola</span>
-    </div>
-  </header>
-
-  <!-- LIVE COUNTDOWN -->
-  <div class="countdown-strip">
-    <div class="countdown-context">Time remaining in Semester 20</div>
-    <div class="countdown-item">
-      <span class="countdown-num" id="cd-weeks">—</span>
-      <span class="countdown-label">Weeks</span>
-    </div>
-    <div class="countdown-divider">:</div>
-    <div class="countdown-item">
-      <span class="countdown-num" id="cd-days">—</span>
-      <span class="countdown-label">Days</span>
-    </div>
-    <div class="countdown-divider">:</div>
-    <div class="countdown-item">
-      <span class="countdown-num" id="cd-hours">—</span>
-      <span class="countdown-label">Hours</span>
-    </div>
-    <div class="countdown-divider">:</div>
-    <div class="countdown-item">
-      <span class="countdown-num" id="cd-mins">—</span>
-      <span class="countdown-label">Minutes</span>
-    </div>
-    <div class="countdown-divider">:</div>
-    <div class="countdown-item">
-      <span class="countdown-num" id="cd-secs">—</span>
-      <span class="countdown-label">Seconds</span>
-    </div>
-    <div class="countdown-context">until Examination Week · 21 Sep 2026</div>
+<header>
+  <div class="hl">
+    <div class="ey">Robotics &amp; Artificial Intelligence Nigeria</div>
+    <h1>Semester 20<br><em>Academic Calendar</em></h1>
   </div>
-
-  <div class="main">
-
-    <!-- TIMELINE -->
-    <div class="section-eyebrow">Semester 20 — Key Dates</div>
-    <div class="section-title">Academic Timeline</div>
-
-    <div class="timeline" id="timeline">
-
-      <div class="timeline-row">
-        <div class="tl-date">15 Jun<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot semester active"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Commencement of 20th Semester — 12 Weeks <span class="tl-badge badge-active">TODAY</span></div>
-          <div class="tl-sub">All four tracks begin · AIML 1st Sem · AIML 2nd Sem · RDA 1st Sem · RDA 2nd Sem</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">22 Jun<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 2 begins</div>
-          <div class="tl-sub">Python Basics · Unsupervised Learning · Techniques for Digital Twinning</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">29 Jun<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 3 begins</div>
-          <div class="tl-sub">Microcontroller Fundamentals · Recommender Systems · PID Control</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">06 Jul<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 4 begins</div>
-          <div class="tl-sub">Sensors &amp; Actuators · ML II · Time Series Analysis · PID Control continued</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">13 Jul<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 5 begins</div>
-          <div class="tl-sub">Database Management · Web Dev · Excel · Neural Networks · Neural Networks</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">20 Jul<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 6 begins</div>
-          <div class="tl-sub">Database · Web Dev continued · Computer Vision · Computer Vision</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">27 Jul<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 7 begins</div>
-          <div class="tl-sub">Internet of Things · IoT · SLAM</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">03 Aug<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 8 begins</div>
-          <div class="tl-sub">Practical Electronics · GAN &amp; Computer Vision Algorithm (both tracks)</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">10 Aug<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 9 begins</div>
-          <div class="tl-sub">Embedded System Development · NLP techniques across all advanced tracks</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">17 Aug<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 10 begins</div>
-          <div class="tl-sub">Robot Manufacturing · LLM Techniques · Drone System Development</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">24 Aug<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 11 begins</div>
-          <div class="tl-sub">Python for Desktop GUI App · Explainable AI · Robot Arm Kinematics</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">31 Aug<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Week 12 begins — Final Teaching Week</div>
-          <div class="tl-sub">Git &amp; GitHub · Cloud Services · AI Applications &amp; Model Deployment · ML &amp; Intelligent Control</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">07 Sep<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot exam"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Revision Week — 2 Weeks <span class="tl-badge badge-exam">Revision</span></div>
-          <div class="tl-sub">No new content · All tracks review and consolidate</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">21 Sep<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot exam"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Examination Week — 1 Week <span class="tl-badge badge-exam">Exams</span></div>
-          <div class="tl-sub">Semester 20 assessments · All tracks</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">28 Sep<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot vacation"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Beginning of 2-Week Vacation <span class="tl-badge badge-vac">Vacation</span></div>
-          <div class="tl-sub">Break before Semester 21</div>
-        </div>
-      </div>
-
-      <div class="timeline-row">
-        <div class="tl-date">12 Oct<br>2026</div>
-        <div class="tl-dot-col"><div class="tl-dot semester"></div></div>
-        <div class="tl-content">
-          <div class="tl-title">Commencement of 21st Semester — 10 Weeks <span class="tl-badge badge-sem">Next</span></div>
-          <div class="tl-sub">New semester begins</div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- CALENDAR MONTHS -->
-    <div class="calendar-section">
-      <div class="section-eyebrow">Month View</div>
-      <div class="section-title">June 2026 → October 2026</div>
-
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Today</div>
-        <div class="legend-item"><div class="legend-dot" style="background:rgba(0,196,140,0.3)"></div> Teaching weeks</div>
-        <div class="legend-item"><div class="legend-dot" style="background:rgba(45,107,244,0.4)"></div> Revision</div>
-        <div class="legend-item"><div class="legend-dot" style="background:rgba(232,75,60,0.4)"></div> Exams</div>
-        <div class="legend-item"><div class="legend-dot" style="background:rgba(139,92,246,0.4)"></div> Vacation</div>
-      </div>
-
-      <div class="month-grid" id="monthGrid"></div>
-    </div>
-
+  <div class="hr">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN">
+    <div class="sm">Dir. Academic Programmes · Aminat Akinyemi-Ayoola</div>
   </div>
+</header>
 
-  <footer>
-    <p>R-A-I-N · Semester 20 · 2026 Academic Calendar</p>
-    <a href="timetable.html">→ View Timetable</a>
-  </footer>
+<div class="cstrip">
+  <div class="cctx">Time remaining until Examination Week</div>
+  <div class="ci"><span class="cn" id="cw">—</span><span class="cl">Weeks</span></div>
+  <div class="cdiv">:</div>
+  <div class="ci"><span class="cn" id="cd2">—</span><span class="cl">Days</span></div>
+  <div class="cdiv">:</div>
+  <div class="ci"><span class="cn" id="ch">—</span><span class="cl">Hours</span></div>
+  <div class="cdiv">:</div>
+  <div class="ci"><span class="cn" id="cm">—</span><span class="cl">Mins</span></div>
+  <div class="cdiv">:</div>
+  <div class="ci"><span class="cn" id="cs">—</span><span class="cl">Secs</span></div>
+  <div class="cctx">21 Sep 2026</div>
+</div>
+
+<div class="main">
+
+<div class="ey2">Semester 20 Key Dates</div>
+<div class="st">Academic Timeline</div>
+
+<div class="tl" id="tl">
+  <div class="tr"><div class="td">15 Jun 2026</div><div class="dc"><div class="dot on"></div></div><div class="tc"><div class="tc-t">Commencement of 20th Semester — 12 Weeks <span class="badge b-now">TODAY</span></div><div class="tc-s">All four tracks begin · AIML 1st &amp; 2nd Sem · RDA 1st &amp; 2nd Sem</div></div></div>
+  <div class="tr"><div class="td">22 Jun</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 2</div><div class="tc-s">Python Basics · Unsupervised Learning · Digital Twinning</div></div></div>
+  <div class="tr"><div class="td">29 Jun</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 3</div><div class="tc-s">Microcontroller Fundamentals · Recommender Systems · PID Control</div></div></div>
+  <div class="tr"><div class="td">06 Jul</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 4</div><div class="tc-s">Sensors &amp; Actuators · ML II · Time Series Analysis · PID Control</div></div></div>
+  <div class="tr"><div class="td">13 Jul</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 5</div><div class="tc-s">Database Management · Web Dev · Excel · Neural Networks</div></div></div>
+  <div class="tr"><div class="td">20 Jul</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 6</div><div class="tc-s">Database &amp; Web Dev continued · Computer Vision</div></div></div>
+  <div class="tr"><div class="td">27 Jul</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 7</div><div class="tc-s">Internet of Things · SLAM</div></div></div>
+  <div class="tr"><div class="td">03 Aug</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 8</div><div class="tc-s">Practical Electronics · GAN &amp; Computer Vision Algorithm</div></div></div>
+  <div class="tr"><div class="td">10 Aug</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 9</div><div class="tc-s">Embedded System Development · NLP Techniques</div></div></div>
+  <div class="tr"><div class="td">17 Aug</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 10</div><div class="tc-s">Robot Manufacturing · LLM Techniques · Drone System Development</div></div></div>
+  <div class="tr"><div class="td">24 Aug</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 11</div><div class="tc-s">Python for Desktop GUI App · Explainable AI · Robot Arm Kinematics</div></div></div>
+  <div class="tr"><div class="td">31 Aug</div><div class="dc"><div class="dot"></div></div><div class="tc"><div class="tc-t">Week 12 — Final Teaching Week</div><div class="tc-s">Git &amp; GitHub · Cloud Services · AI Model Deployment · ML &amp; Intelligent Control</div></div></div>
+  <div class="tr"><div class="td">07 Sep 2026</div><div class="dc"><div class="dot ex"></div></div><div class="tc"><div class="tc-t">Revision Week — 2 Weeks <span class="badge b-rev">Revision</span></div><div class="tc-s">No new content · All tracks consolidate</div></div></div>
+  <div class="tr"><div class="td">21 Sep 2026</div><div class="dc"><div class="dot ex"></div></div><div class="tc"><div class="tc-t">Examination Week — 1 Week <span class="badge b-ex">Exams</span></div><div class="tc-s">Semester 20 assessments · All tracks</div></div></div>
+  <div class="tr"><div class="td">28 Sep 2026</div><div class="dc"><div class="dot va"></div></div><div class="tc"><div class="tc-t">Beginning of 2-Week Vacation <span class="badge b-vac">Vacation</span></div><div class="tc-s">Break before Semester 21</div></div></div>
+  <div class="tr"><div class="td">12 Oct 2026</div><div class="dc"><div class="dot nx"></div></div><div class="tc"><div class="tc-t">Commencement of 21st Semester — 10 Weeks <span class="badge b-nx">Next</span></div><div class="tc-s">New semester begins</div></div></div>
+</div>
+
+<div class="ey2">Month View</div>
+<div class="st">June 2026 → October 2026</div>
+<div class="leg">
+  <div class="li2"><div class="ld" style="background:var(--gold2)"></div>Today</div>
+  <div class="li2"><div class="ld" style="background:rgba(212,160,23,0.35)"></div>Teaching weeks</div>
+  <div class="li2"><div class="ld" style="background:rgba(59,130,246,0.4)"></div>Revision</div>
+  <div class="li2"><div class="ld" style="background:rgba(232,75,60,0.4)"></div>Exams</div>
+  <div class="li2"><div class="ld" style="background:rgba(139,92,246,0.4)"></div>Vacation</div>
+</div>
+<div class="mgrid" id="mgrid"></div>
 
 </div>
 
+<footer>
+  <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN">
+  <p>R-A-I-N · Semester 20 · 2026</p>
+  <a href="timetable.html">→ View Timetable</a>
+</footer>
+
+</div>
 <script>
-// ============================================================
-// PARTICLE CANVAS
-// ============================================================
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
+// Particles
+const cv=document.getElementById('bgc'),cx=cv.getContext('2d');
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}rsz();window.addEventListener('resize',rsz);
+const pts=Array.from({length:60},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.3+0.3,sx:(Math.random()-.5)*.2,sy:(Math.random()-.5)*.2,o:Math.random()*.3+0.05,c:Math.random()>.6?'#D4A017':'#ffffff'}));
+function frame(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<120){cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.strokeStyle=`rgba(212,160,23,${0.06*(1-d/120)})`;cx.lineWidth=0.5;cx.stroke();}}
+  pts.forEach(p=>{p.x+=p.sx;p.y+=p.sy;if(p.x<0||p.x>cv.width)p.sx*=-1;if(p.y<0||p.y>cv.height)p.sy*=-1;cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=p.c;cx.globalAlpha=p.o;cx.fill();cx.globalAlpha=1;});
+  requestAnimationFrame(frame);
+}frame();
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+// Countdown
+const EXAM=new Date('2026-09-21T09:30:00');
+function tick(){
+  const diff=EXAM-new Date();if(diff<=0)return;
+  const ts=Math.floor(diff/1000);
+  const w=Math.floor(ts/(7*86400)),d=Math.floor((ts%(7*86400))/86400),h=Math.floor((ts%86400)/3600),m=Math.floor((ts%3600)/60),s=ts%60;
+  const se=document.getElementById('cs'),ov=se.textContent,nv=String(s).padStart(2,'0');
+  if(ov!==nv){se.classList.add('bump');setTimeout(()=>se.classList.remove('bump'),120);}
+  document.getElementById('cw').textContent=w;
+  document.getElementById('cd2').textContent=String(d).padStart(2,'0');
+  document.getElementById('ch').textContent=String(h).padStart(2,'0');
+  document.getElementById('cm').textContent=String(m).padStart(2,'0');
+  se.textContent=nv;
+}tick();setInterval(tick,1000);
 
-class Particle {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 1.5 + 0.3;
-    this.speedX = (Math.random() - 0.5) * 0.3;
-    this.speedY = (Math.random() - 0.5) * 0.3;
-    this.opacity = Math.random() * 0.5 + 0.1;
-    this.color = Math.random() > 0.7 ? '#00C48C' : '#ffffff';
+// Timeline scroll
+const io=new IntersectionObserver(entries=>entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('in'),i*55);}),{threshold:0.05});
+document.querySelectorAll('.tr').forEach(r=>io.observe(r));
+
+// Calendar months
+const SS=new Date('2026-06-15'),SE=new Date('2026-09-06'),RS=new Date('2026-09-07'),RE=new Date('2026-09-20'),ES=new Date('2026-09-21'),EE=new Date('2026-09-27'),VS=new Date('2026-09-28'),VE=new Date('2026-10-11'),TODAY=new Date('2026-06-15');
+function inR(d,s,e){return d>=s&&d<=e;}
+const MN=['January','February','March','April','May','June','July','August','September','October','November','December'];
+function buildMonth(y,m){
+  const card=document.createElement('div');card.className='mc';
+  card.innerHTML=`<div class="mh"><span class="mn">${MN[m]}</span><span class="my">${y}</span></div><div class="cg"><div class="dlabs">${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="dlab">${d}</div>`).join('')}</div><div class="dgrid" id="dg-${y}-${m}"></div></div>`;
+  const g=card.querySelector('.dgrid');
+  const fd=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate();
+  for(let i=0;i<fd;i++){const b=document.createElement('div');b.className='cd e';g.appendChild(b);}
+  for(let d=1;d<=dim;d++){
+    const dt=new Date(y,m,d),cell=document.createElement('div');cell.textContent=d;
+    const dow=dt.getDay(),isTd=dt.toDateString()===TODAY.toDateString();
+    if(isTd)cell.className='cd today';
+    else if(dt.toDateString()===RS.toDateString())cell.className='cd ev-rev';
+    else if(dt.toDateString()===ES.toDateString())cell.className='cd ev-ex';
+    else if(dt.toDateString()===VS.toDateString())cell.className='cd ev-vac';
+    else if(inR(dt,RS,RE))cell.className='cd irev';
+    else if(inR(dt,ES,EE))cell.className='cd iex';
+    else if(inR(dt,VS,VE))cell.className='cd ivac';
+    else if(inR(dt,SS,SE)&&(dow===0||dow===6))cell.className='cd we';
+    else if(inR(dt,SS,SE))cell.className='cd ir';
+    else if(dow===0||dow===6)cell.className='cd we';
+    else cell.className='cd n';
+    g.appendChild(cell);
   }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.globalAlpha = this.opacity;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-  }
-}
-
-for (let i = 0; i < 120; i++) particles.push(new Particle());
-
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-
-// ============================================================
-// COUNTDOWN
-// ============================================================
-const EXAM_DATE = new Date('2026-09-21T09:30:00');
-
-function updateCountdown() {
-  const now = new Date();
-  const diff = EXAM_DATE - now;
-  if (diff <= 0) {
-    document.getElementById('cd-weeks').textContent = '0';
-    document.getElementById('cd-days').textContent = '0';
-    document.getElementById('cd-hours').textContent = '0';
-    document.getElementById('cd-mins').textContent = '0';
-    document.getElementById('cd-secs').textContent = '0';
-    return;
-  }
-  const totalSecs = Math.floor(diff / 1000);
-  const weeks = Math.floor(totalSecs / (7 * 86400));
-  const days = Math.floor((totalSecs % (7 * 86400)) / 86400);
-  const hours = Math.floor((totalSecs % 86400) / 3600);
-  const mins = Math.floor((totalSecs % 3600) / 60);
-  const secs = totalSecs % 60;
-
-  const secEl = document.getElementById('cd-secs');
-  const old = secEl.textContent;
-  const newVal = String(secs).padStart(2,'0');
-  if (old !== newVal) {
-    secEl.classList.add('bump');
-    setTimeout(() => secEl.classList.remove('bump'), 150);
-  }
-
-  document.getElementById('cd-weeks').textContent = weeks;
-  document.getElementById('cd-days').textContent = String(days).padStart(2,'0');
-  document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
-  document.getElementById('cd-mins').textContent = String(mins).padStart(2,'0');
-  secEl.textContent = newVal;
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
-
-// ============================================================
-// SCROLL REVEAL — TIMELINE
-// ============================================================
-const rows = document.querySelectorAll('.timeline-row');
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 60);
-    }
-  });
-}, { threshold: 0.1 });
-rows.forEach(r => obs.observe(r));
-
-// ============================================================
-// CALENDAR MONTHS
-// ============================================================
-const SEM_START  = new Date('2026-06-15');
-const SEM_END    = new Date('2026-09-06');   // end of week 12
-const REV_START  = new Date('2026-09-07');
-const REV_END    = new Date('2026-09-20');
-const EXAM_START = new Date('2026-09-21');
-const EXAM_END   = new Date('2026-09-27');
-const VAC_START  = new Date('2026-09-28');
-const VAC_END    = new Date('2026-10-11');
-const TODAY      = new Date('2026-06-15');
-
-function dateInRange(d, start, end) {
-  return d >= start && d <= end;
-}
-
-function buildMonth(year, month) {
-  const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const card = document.createElement('div');
-  card.className = 'month-card';
-
-  const head = document.createElement('div');
-  head.className = 'month-head';
-  head.innerHTML = `<span class="month-name">${names[month]}</span><span class="month-year">${year}</span>`;
-  card.appendChild(head);
-
-  const grid = document.createElement('div');
-  grid.className = 'cal-grid';
-
-  const dayLabels = document.createElement('div');
-  dayLabels.className = 'day-labels';
-  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => {
-    const l = document.createElement('div');
-    l.className = 'day-label';
-    l.textContent = d;
-    dayLabels.appendChild(l);
-  });
-  grid.appendChild(dayLabels);
-
-  const daysGrid = document.createElement('div');
-  daysGrid.className = 'days-grid';
-
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  for (let i = 0; i < firstDay; i++) {
-    const blank = document.createElement('div');
-    blank.className = 'cal-day empty';
-    daysGrid.appendChild(blank);
-  }
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(year, month, d);
-    const cell = document.createElement('div');
-    cell.textContent = d;
-    const dow = date.getDay();
-    const isWeekend = dow === 0 || dow === 6;
-
-    const isTodayDate = date.toDateString() === TODAY.toDateString();
-    const inTeaching = dateInRange(date, SEM_START, SEM_END);
-    const inRevision = dateInRange(date, REV_START, REV_END);
-    const inExam = dateInRange(date, EXAM_START, EXAM_END);
-    const inVacation = dateInRange(date, VAC_START, VAC_END);
-
-    // Is it a week-start marker?
-    const weekStarts = [];
-    for (let w = 0; w < 12; w++) {
-      const ws = new Date(SEM_START);
-      ws.setDate(ws.getDate() + w * 7);
-      weekStarts.push(ws.toDateString());
-    }
-    const isWeekStart = weekStarts.includes(date.toDateString());
-
-    if (isTodayDate) {
-      cell.className = 'cal-day today';
-    } else if (date.toDateString() === REV_START.toDateString()) {
-      cell.className = 'cal-day event-revision';
-    } else if (date.toDateString() === EXAM_START.toDateString()) {
-      cell.className = 'cal-day event-exam';
-    } else if (date.toDateString() === VAC_START.toDateString()) {
-      cell.className = 'cal-day event-vacation';
-    } else if (inRevision) {
-      cell.className = 'cal-day in-revision normal';
-    } else if (inExam) {
-      cell.className = 'cal-day in-exam normal';
-    } else if (inVacation) {
-      cell.className = 'cal-day in-vacation normal';
-    } else if (inTeaching && isWeekend) {
-      cell.className = 'cal-day weekend';
-    } else if (inTeaching) {
-      cell.className = 'cal-day in-range';
-    } else if (isWeekend) {
-      cell.className = 'cal-day weekend';
-    } else {
-      cell.className = 'cal-day normal';
-    }
-
-    daysGrid.appendChild(cell);
-  }
-
-  grid.appendChild(daysGrid);
-  card.appendChild(grid);
   return card;
 }
-
-const monthGrid = document.getElementById('monthGrid');
-// June 2026 through October 2026
-[[2026,5],[2026,6],[2026,7],[2026,8],[2026,9]].forEach(([y,m]) => {
-  monthGrid.appendChild(buildMonth(y, m));
-});
-
-// Scroll reveal for month cards
-const cardObs = new IntersectionObserver((entries) => {
-  entries.forEach((e, i) => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), i * 80);
-    }
-  });
-}, { threshold: 0.05 });
-document.querySelectorAll('.month-card').forEach(c => cardObs.observe(c));
+const mg=document.getElementById('mgrid');
+[[2026,5],[2026,6],[2026,7],[2026,8],[2026,9]].forEach(([y,m])=>mg.appendChild(buildMonth(y,m)));
+const io2=new IntersectionObserver(entries=>entries.forEach((e,i)=>{if(e.isIntersecting)setTimeout(()=>e.target.classList.add('in'),i*80);}),{threshold:0.05});
+document.querySelectorAll('.mc').forEach(c=>io2.observe(c));
 </script>
 </body>
 </html>
