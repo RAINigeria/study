@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAIN Human Bingo — Orientation</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#080600;--gold:#D4A017;--gold2:#F5C842;--white:#fff;
+  --muted:#6B7280;--border:#2A2200;--card:#FFFFFF;--paper:#FAFAF5;
+}
+body{font-family:'Outfit',sans-serif;background:var(--paper);color:#0B0E13;min-height:100vh;padding:32px 16px 56px;}
+
+/* HEADER */
+.hdr{max-width:720px;margin:0 auto 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;opacity:0;animation:up 0.7s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;}
+@keyframes up{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:translateY(0);}}
+.hl .ey{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+.hl h1{font-family:'Outfit',sans-serif;font-size:2.2rem;font-weight:900;letter-spacing:-0.03em;line-height:1.08;color:#080600;}
+.hl h1 em{font-style:normal;color:var(--gold);}
+.hr img{height:52px;width:auto;object-fit:contain;}
+
+/* INSTRUCTIONS */
+.instr{max-width:720px;margin:0 auto 20px;background:#080600;border-radius:12px;padding:16px 22px;display:flex;gap:14px;align-items:flex-start;opacity:0;animation:up 0.6s ease 0.3s forwards;}
+.instr-body strong{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold2);margin-bottom:6px;}
+.instr-body ol{padding-left:16px;color:rgba(255,255,255,0.72);font-size:0.82rem;line-height:1.65;}
+.instr-body li{margin-bottom:4px;}
+
+/* NAME */
+.name-row{max-width:720px;margin:0 auto 18px;display:flex;align-items:center;gap:12px;opacity:0;animation:up 0.6s ease 0.45s forwards;}
+.name-row label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.name-inp{flex:1;border:none;border-bottom:2.5px solid #080600;background:transparent;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:#080600;padding:4px 2px;outline:none;}
+.name-inp::placeholder{color:#D1D5DB;font-weight:400;}
+.name-inp:focus{border-bottom-color:var(--gold);}
+
+/* GRID WRAP */
+.gw{max-width:720px;margin:0 auto;opacity:0;animation:up 0.6s ease 0.55s forwards;}
+
+/* BINGO LETTERS */
+.bletters{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:6px;}
+.bl{text-align:center;font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:900;padding:8px 4px;}
+.bl:nth-child(1){color:#D4A017;}
+.bl:nth-child(2){color:#3B82F6;}
+.bl:nth-child(3){color:#E84B3C;}
+.bl:nth-child(4){color:#8B5CF6;}
+.bl:nth-child(5){color:#FB923C;}
+
+/* CELLS */
+.bgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.bcell{
+  background:var(--card);border:1.5px solid #E5E3DC;border-radius:9px;
+  padding:10px 8px;min-height:108px;display:flex;flex-direction:column;justify-content:space-between;
+  position:relative;cursor:pointer;
+  transition:border-color 0.18s,background 0.18s,box-shadow 0.18s,transform 0.15s;
+}
+.bcell:hover{border-color:var(--gold);box-shadow:0 2px 12px rgba(212,160,23,0.15);transform:scale(1.02);}
+.bcell.stamped{background:#FFFBEB;border-color:var(--gold);box-shadow:0 2px 12px rgba(212,160,23,0.2);}
+.bcell.free{background:#080600;border-color:#080600;cursor:default;}
+.bcell.free:hover{transform:none;box-shadow:none;}
+.free-in{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;}
+.free-w{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:900;color:var(--gold2);}
+.free-s{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-top:3px;}
+.cell-emoji{font-size:1rem;margin-bottom:5px;display:block;}
+.cell-prompt{font-size:0.68rem;font-weight:600;color:#1F2937;line-height:1.32;flex:1;}
+.name-blank{border:none;border-bottom:1.5px solid #E5E3DC;width:100%;margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:0.64rem;color:var(--muted);padding:2px 1px;background:transparent;outline:none;flex-shrink:0;}
+.name-blank::placeholder{color:#D1D5DB;}
+.name-blank:focus{border-bottom-color:var(--gold);}
+.stamp{position:absolute;top:6px;right:7px;width:18px;height:18px;background:var(--gold2);border-radius:50%;display:none;align-items:center;justify-content:center;font-size:9px;color:#080600;font-weight:900;}
+.bcell.stamped .stamp{display:flex;}
+
+/* SCORE */
+.score-row{max-width:720px;margin:16px auto 0;display:flex;align-items:center;gap:14px;}
+.score-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+.score-track{flex:1;height:5px;background:#E5E3DC;border-radius:100px;overflow:hidden;}
+.score-fill{height:100%;background:var(--gold2);border-radius:100px;transition:width 0.3s ease;width:0%;}
+.score-num{font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:900;color:#080600;}
+.score-num span{color:var(--gold);}
+
+/* BINGO OVERLAY */
+.bingo-ov{display:none;position:fixed;inset:0;background:rgba(8,6,0,0.94);z-index:100;align-items:center;justify-content:center;flex-direction:column;text-align:center;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.bingo-ov.show{display:flex;}
+.bingo-ov h2{font-family:'Outfit',sans-serif;font-size:4rem;font-weight:900;color:var(--gold2);margin-bottom:10px;letter-spacing:-0.03em;animation:bounce 0.5s cubic-bezier(0.22,1,0.36,1);}
+@keyframes bounce{from{transform:scale(0.5);}to{transform:scale(1);}}
+.bingo-ov p{color:rgba(255,255,255,0.65);font-size:1rem;margin-bottom:28px;}
+.bingo-ov button{background:var(--gold2);color:#080600;border:none;padding:12px 32px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;border-radius:9px;cursor:pointer;transition:transform 0.15s;}
+.bingo-ov button:hover{transform:scale(1.04);}
+
+@media(max-width:600px){
+  .bcell{min-height:80px;padding:7px 5px;}
+  .cell-prompt{font-size:0.58rem;}
+  .cell-emoji{font-size:0.82rem;}
+  .hl h1{font-size:1.5rem;}
+  .bl{font-size:1.1rem;}
+}
+@media print{
+  body{background:#fff;padding:0;}
+  .bingo-ov,.score-row{display:none!important;}
+  .bcell.free{background:#080600!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .bl:nth-child(1){color:#D4A017!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hl">
+    <div class="ey">Task 01 — Break the Ice</div>
+    <h1>Human<br><em>Bingo</em></h1>
+  </div>
+  <div class="hr"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN"></div>
+</div>
+
+<div class="instr">
+  <div class="instr-body">
+    <strong>How to play</strong>
+    <ol>
+      <li>Move around the room and talk to people — no shouting across.</li>
+      <li>Find someone who matches a square. Write their name and ask them to initial it.</li>
+      <li>You cannot use the same person for more than <strong style="color:#fff">two squares</strong>.</li>
+      <li>First to complete a row, column, or diagonal shouts <strong style="color:var(--gold2)">BINGO!</strong></li>
+    </ol>
+  </div>
+</div>
+
+<div class="name-row">
+  <label>Your name</label>
+  <input type="text" class="name-inp" placeholder="Write your full name here">
+</div>
+
+<div class="gw">
+  <div class="bletters">
+    <div class="bl">B</div><div class="bl">I</div><div class="bl">N</div><div class="bl">G</div><div class="bl">O</div>
+  </div>
+  <div class="bgrid" id="bgrid">
+    <!-- Row 1 -->
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🛠️</span><div class="cell-prompt">Has built something with their hands</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🌍</span><div class="cell-prompt">Has lived outside Nigeria</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🤖</span><div class="cell-prompt">Can name 3 AI tools right now</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🎓</span><div class="cell-prompt">Has taught someone something tech-related</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🌙</span><div class="cell-prompt">Has pulled an all-nighter for a project</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <!-- Row 2 -->
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🗣️</span><div class="cell-prompt">Speaks more than two languages</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">📱</span><div class="cell-prompt">Has built or launched an app or website</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🏆</span><div class="cell-prompt">Has won a competition or award</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🌱</span><div class="cell-prompt">Grew up in a rural or small-town area</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🎤</span><div class="cell-prompt">Has spoken in front of 50+ people</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <!-- Row 3 — FREE -->
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">✈️</span><div class="cell-prompt">Has been on a plane at least once</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🐛</span><div class="cell-prompt">Debugged code for 2+ hours straight</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell free"><div class="free-in"><div class="free-w">FREE</div><div class="free-s">That's you!</div></div></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">📚</span><div class="cell-prompt">Is self-taught in their main skill</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🔋</span><div class="cell-prompt">Has worked on a hardware or electronics project</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <!-- Row 4 -->
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">💡</span><div class="cell-prompt">Had a business idea they actually pursued</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🤝</span><div class="cell-prompt">Has mentored or coached someone else</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🧠</span><div class="cell-prompt">Read a research paper in the last 3 months</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🚀</span><div class="cell-prompt">Joined RAIN because of a specific dream or goal</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🌐</span><div class="cell-prompt">Believes Nigeria can lead Africa in AI</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <!-- Row 5 -->
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🎮</span><div class="cell-prompt">Has used Python, Arduino, or Raspberry Pi</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">📸</span><div class="cell-prompt">Has a creative hobby outside tech</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">💬</span><div class="cell-prompt">Used an AI chatbot to solve a real problem</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🏙️</span><div class="cell-prompt">Has a plan to change something in their community</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+    <div class="bcell" onclick="toggle(this)"><div class="stamp">✓</div><span class="cell-emoji">🔭</span><div class="cell-prompt">Can describe what they want to build in 5 years</div><input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()"></div>
+  </div>
+</div>
+
+<div class="score-row">
+  <span class="score-lbl">Progress</span>
+  <div class="score-track"><div class="score-fill" id="sfill"></div></div>
+  <div class="score-num"><span id="snum">0</span> / 24</div>
+</div>
+
+<div class="bingo-ov" id="bov">
+  <h2>BINGO! 🎉</h2>
+  <p>You completed a row, column, or diagonal.<br>Raise your hand — you've earned it.</p>
+  <button onclick="document.getElementById('bov').classList.remove('show')">Keep going →</button>
+</div>
+
+<script>
+const FREE=12;
+let stamped=Array(25).fill(false);stamped[FREE]=true;
+let shown=false;
+function toggle(cell){
+  const all=[...document.querySelectorAll('.bcell')];
+  const i=all.indexOf(cell);
+  if(i===FREE)return;
+  stamped[i]=!stamped[i];
+  cell.classList.toggle('stamped',stamped[i]);
+  updateScore();checkBingo();
+}
+function updateScore(){
+  const n=stamped.filter((v,i)=>v&&i!==FREE).length;
+  document.getElementById('snum').textContent=n;
+  document.getElementById('sfill').style.width=(n/24*100)+'%';
+}
+function checkBingo(){
+  if(shown)return;
+  for(let r=0;r<5;r++)if([0,1,2,3,4].every(c=>stamped[r*5+c])){show();return;}
+  for(let c=0;c<5;c++)if([0,1,2,3,4].every(r=>stamped[r*5+c])){show();return;}
+  if([0,6,12,18,24].every(i=>stamped[i])){show();return;}
+  if([4,8,12,16,20].every(i=>stamped[i])){show();return;}
+}
+function show(){shown=true;document.getElementById('bov').classList.add('show');}
+</script>
+</body>
+</html>
