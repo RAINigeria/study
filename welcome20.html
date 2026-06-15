@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAIN — Semester 20 · Welcome Message</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F2;
+    --ink: #0B0E13;
+    --rain-deep: #003D2A;
+    --green: #00C48C;
+    --green-light: #E8FBF5;
+    --amber: #F5A623;
+    --amber-light: #FFF8EC;
+    --blue: #2D6BF4;
+    --blue-light: #EEF3FF;
+    --red: #E84B3C;
+    --red-light: #FFF0EF;
+    --purple: #7C3AED;
+    --purple-light: #F5F0FF;
+    --border: #E2E0DA;
+    --muted: #6B7280;
+    --card: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+  }
+
+  .envelope {
+    max-width: 680px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: rise 0.7s ease 0.1s forwards;
+  }
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TOP BAR */
+  .top-bar {
+    background: var(--rain-deep);
+    border-radius: 16px 16px 0 0;
+    padding: 28px 36px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .top-bar-left .from {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 5px;
+  }
+  .top-bar-left .org {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--green);
+  }
+  .top-bar-left .tagline {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.45);
+    margin-top: 2px;
+  }
+  .rain-seal {
+    display: block;
+    height: 56px;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  /* SUBJECT LINE */
+  .subject-line {
+    background: var(--green);
+    padding: 14px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .subject-line .subj {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--rain-deep);
+  }
+  .subject-line .date-stamp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(0,61,42,0.6);
+  }
+
+  /* BODY */
+  .body-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: none;
+    padding: 36px 36px 32px;
+  }
+
+  .greeting {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+  .greeting em { font-style: normal; color: var(--green); }
+
+  .body-text {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: #374151;
+    margin-bottom: 28px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* COHORT SECTIONS */
+  .cohort-block {
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .cohort-block.visible { opacity: 1; transform: translateX(0); }
+
+  .cohort-block.returning { background: var(--blue-light); border: 1px solid #C7D7FD; }
+  .cohort-block.new-cohort { background: var(--green-light); border: 1px solid #A7F3D8; }
+
+  .cohort-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .returning .cohort-eyebrow { color: var(--blue); }
+  .new-cohort .cohort-eyebrow { color: #059669; }
+
+  .cohort-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .cohort-body {
+    font-size: 0.85rem;
+    line-height: 1.65;
+    color: #374151;
+    margin-bottom: 14px;
+  }
+
+  /* LINK BUTTONS */
+  .link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 1px solid transparent;
+  }
+  .link-item:hover { transform: translateX(3px); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+
+  .link-item.green  { background: #fff; border-color: #A7F3D8; }
+  .link-item.blue   { background: #fff; border-color: #BFDBFE; }
+  .link-item.amber  { background: #fff; border-color: #FDE68A; }
+  .link-item.red    { background: #fff; border-color: #FECACA; }
+  .link-item.purple { background: #fff; border-color: #DDD6FE; }
+  .link-item.drive  { background: #fff; border-color: #E0E0E0; }
+
+  .link-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+  .green  .link-icon { background: var(--green-light); }
+  .blue   .link-icon { background: var(--blue-light); }
+  .amber  .link-icon { background: var(--amber-light); }
+  .red    .link-icon { background: var(--red-light); }
+  .purple .link-icon { background: var(--purple-light); }
+  .drive  .link-icon { background: #F5F5F5; }
+
+  .link-text { flex: 1; }
+  .link-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 1px;
+  }
+  .link-url {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+  .link-arrow {
+    font-size: 0.85rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* NOTE CHIPS */
+  .note-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  .note-chip.warn { background: #FFF8EC; color: #92400E; border: 1px solid #FDE68A; }
+  .note-chip.info { background: var(--blue-light); color: #1E40AF; border: 1px solid #BFDBFE; }
+
+  /* ALL TRAINEES SECTION */
+  .all-section {
+    background: #FAFAF7;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateX(-12px);
+    transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+  }
+  .all-section.visible { opacity: 1; transform: translateX(0); }
+  .all-section .cohort-eyebrow { color: var(--muted); }
+
+  /* SIGN OFF */
+  .signoff {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .signoff p {
+    font-size: 0.88rem;
+    color: #374151;
+    margin-bottom: 4px;
+    line-height: 1.6;
+  }
+  .signoff .sig-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--rain-deep);
+    margin-top: 14px;
+    display: block;
+  }
+  .signoff .sig-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* FOOTER */
+  .footer-strip {
+    background: var(--rain-deep);
+    border-radius: 0 0 16px 16px;
+    padding: 16px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer-strip p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.1em;
+  }
+  .rain-foot-logo {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 540px) {
+    .top-bar, .body-wrap, .subject-line, .footer-strip { padding-left: 20px; padding-right: 20px; }
+    .greeting { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="envelope">
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <div class="from">From</div>
+      <div class="org">Robotics &amp; Artificial Intelligence Nigeria</div>
+      <div class="tagline">Ibadan, Nigeria · rainigeria.com</div>
+    </div>
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN Logo" class="rain-seal">
+  </div>
+
+  <!-- SUBJECT -->
+  <div class="subject-line">
+    <span class="subj">📬 Semester 20 Begins Today — Your Links &amp; Resources</span>
+    <span class="date-stamp" id="datestamp">15 Jun 2026</span>
+  </div>
+
+  <!-- BODY -->
+  <div class="body-wrap">
+
+    <div class="greeting">Welcome to<br><em>Semester 20.</em></div>
+
+    <p class="body-text">
+      Semester 20 officially commences today, <strong>Monday 15 June 2026</strong>. Whether you are returning or joining RAIN for the first time, everything you need to get started is in this message. Please read your section carefully — the links and instructions differ by cohort.
+    </p>
+
+    <!-- RETURNING — COHORT 18 & 19 -->
+    <div class="cohort-block returning" id="block1">
+      <div class="cohort-eyebrow">For Returning Trainees</div>
+      <div class="cohort-title">Cohort 18 &amp; Cohort 19</div>
+      <p class="cohort-body">
+        Welcome back. Your Semester 20 timetable and academic calendar are now live. Check the timetable before you come in each day — sessions begin at 9:30 AM Monday through Thursday. Log into the portal for your coursework, assessments, and results.
+      </p>
+      <div class="link-list">
+        <a class="link-item green" href="https://study.rainigeria.com/calendar" target="_blank">
+          <div class="link-icon">📅</div>
+          <div class="link-text">
+            <span class="link-label">Semester 20 Academic Calendar</span>
+            <span class="link-url">study.rainigeria.com/calendar</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a class="link-item blue" href="https://study.rainigeria.com/timetable" target="_blank">
+          <div class="link-icon">🗓️</div>
+          <div class="link-text">
+            <span class="link-label">Semester 20 Weekly Timetable</span>
+            <span class="link-url">study.rainigeria.com/timetable</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a class="link-item amber" href="https://exams.rainigeria.com" target="_blank">
+          <div class="link-icon">🖥️</div>
+          <div class="link-text">
+            <span class="link-label">RAIN LMS &amp; Exams Portal</span>
+            <span class="link-url">exams.rainigeria.com</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a class="link-item drive" href="https://drive.google.com/drive/folders/194OpU3JIznZpZxfZTKMoCL3s_0Di92Pm1XQHWPzOVPETECnF7QDz30eCAwlgiWKT38GOM5WR?usp=drive_link" target="_blank">
+          <div class="link-icon">📁</div>
+          <div class="link-text">
+            <span class="link-label">Former Training Resources</span>
+            <span class="link-url">Google Drive · View only</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- NEW TRAINEES — COHORT 20 -->
+    <div class="cohort-block new-cohort" id="block2">
+      <div class="cohort-eyebrow">For New Trainees</div>
+      <div class="cohort-title">Cohort 20</div>
+      <p class="cohort-body">
+        Welcome to RAIN. Before regular classes begin, your first task is orientation. You will be participating in a set of team bonding activities designed to get you talking, collaborating, and building together with your new cohort. Your first day starts there — not in a classroom.
+      </p>
+      <div class="link-list">
+        <a class="link-item green" href="https://study.rainigeria.com/team" target="_blank">
+          <div class="link-icon">🤝</div>
+          <div class="link-text">
+            <span class="link-label">Orientation — Team Bonding Tasks</span>
+            <span class="link-url">study.rainigeria.com/team</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a class="link-item amber" href="https://exams.rainigeria.com" target="_blank">
+          <div class="link-icon">🖥️</div>
+          <div class="link-text">
+            <span class="link-label">RAIN LMS &amp; Exams Portal</span>
+            <span class="link-url">exams.rainigeria.com</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+        <a class="link-item drive" href="https://drive.google.com/drive/folders/194OpU3JIznZpZxfZTKMoCL3s_0Di92Pm1XQHWPzOVPETECnF7QDz30eCAwlgiWKT38GOM5WR?usp=drive_link" target="_blank">
+          <div class="link-icon">📁</div>
+          <div class="link-text">
+            <span class="link-label">Former Training Resources</span>
+            <span class="link-url">Google Drive · View only</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+      </div>
+      <div class="note-chip info">📌 Human Bingo cards will be printed and distributed to you at orientation — you do not need a link for that.</div>
+    </div>
+
+    <!-- ALL TRAINEES -->
+    <div class="all-section" id="block3">
+      <div class="cohort-eyebrow">For All Trainees — Cohort 18, 19 &amp; 20</div>
+      <div class="cohort-title">Accommodation Registration</div>
+      <p class="cohort-body">
+        If you will be staying in RAIN accommodation this semester, you must register now. Spaces are limited and allocated on a first-come, first-served basis. Do not delay.
+      </p>
+      <div class="link-list">
+        <a class="link-item purple" href="https://rainigeria.com/accommodation" target="_blank">
+          <div class="link-icon">🏠</div>
+          <div class="link-text">
+            <span class="link-label">Accommodation Registration</span>
+            <span class="link-url">rainigeria.com/accommodation</span>
+          </div>
+          <span class="link-arrow">→</span>
+        </a>
+      </div>
+      <div class="note-chip warn">⚠️ Only register here if you need accommodation. This is not general programme registration.</div>
+    </div>
+
+    <!-- SIGN OFF -->
+    <div class="signoff">
+      <p>We are glad to have each of you here. Semester 20 is going to be significant — make the most of it.</p>
+      <p style="margin-top: 8px;">If you have any questions, reach your programme coordinator or visit the portal.</p>
+      <span class="sig-name">Dr. Olusola Ayoola</span>
+      <span class="sig-title">FOUNDER &amp; CEO · ROBOTICS AND ARTIFICIAL INTELLIGENCE NIGERIA</span>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer-strip">
+    <p>RAIN · SEMESTER 20 · 15 JUN – 27 SEP 2026 · IBADAN, NIGERIA</p>
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-foot-logo">
+  </div>
+
+</div>
+
+<script>
+  // Live date stamp
+  const d = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('datestamp').textContent =
+    `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+  // Scroll reveal
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 120);
+      }
+    });
+  }, { threshold: 0.1 });
+  ['block1','block2','block3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) obs.observe(el);
+  });
+</script>
+</body>
+</html>
