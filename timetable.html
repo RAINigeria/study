@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAIN — Semester 20 Timetable</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07100A;
+    --card: #0F1C14;
+    --card2: #0D1810;
+    --green: #00C48C;
+    --green-dim: rgba(0,196,140,0.1);
+    --green-mid: rgba(0,196,140,0.25);
+    --amber: #F5A623;
+    --red: #E84B3C;
+    --blue: #2D6BF4;
+    --purple: #8B5CF6;
+    --border: rgba(0,196,140,0.15);
+    --muted: rgba(255,255,255,0.38);
+    --white: #ffffff;
+
+    /* Track colors */
+    --aiml1: #00C48C;
+    --aiml2: #2D6BF4;
+    --rda1: #F5A623;
+    --rda2: #E84B3C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  #canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.25;
+  }
+
+  .page { position: relative; z-index: 1; }
+
+  /* ============ HEADER ============ */
+  header {
+    padding: 56px 40px 36px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeSlide 0.7s ease 0.1s forwards;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .h-left .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 8px;
+  }
+  .h-left h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.08;
+  }
+  .h-left h1 em { font-style: normal; color: var(--green); }
+
+  .h-right { text-align: right; }
+  .rain-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--green);
+    border: 2px solid var(--green);
+    padding: 6px 16px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .sub-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  /* ============ LIVE TIME BAR ============ */
+  .live-bar {
+    background: var(--green-dim);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeSlide 0.6s ease 0.4s forwards;
+  }
+  .live-time {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
+  .live-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .week-badge {
+    background: rgba(0,196,140,0.15);
+    border: 1px solid var(--green-mid);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--green);
+    letter-spacing: 0.1em;
+  }
+  .current-class {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+  }
+  .current-class strong { color: var(--white); }
+
+  /* ============ TABS ============ */
+  .main { max-width: 1200px; margin: 0 auto; padding: 40px 40px 80px; }
+
+  .tab-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeSlide 0.6s ease 0.6s forwards;
+  }
+  .tab {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.02em;
+  }
+  .tab:hover { border-color: var(--green-mid); color: rgba(255,255,255,0.8); }
+  .tab.active { background: var(--green); color: var(--bg); border-color: var(--green); }
+  .tab[data-track="aiml1"].active { background: var(--aiml1); border-color: var(--aiml1); }
+  .tab[data-track="aiml2"].active { background: var(--aiml2); border-color: var(--aiml2); }
+  .tab[data-track="rda1"].active  { background: var(--rda1);  border-color: var(--rda1);  color: var(--bg); }
+  .tab[data-track="rda2"].active  { background: var(--rda2);  border-color: var(--rda2); }
+
+  /* ============ TRACK LEGEND ============ */
+  .track-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .tleg {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.6);
+  }
+  .tleg-dot {
+    width: 10px; height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ============ DAILY TIMETABLE ============ */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+  }
+
+  /* TIMETABLE GRID */
+  .tt-wrap {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    margin-bottom: 52px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .tt-wrap.visible { opacity: 1; transform: translateY(0); }
+
+  .tt-grid {
+    display: grid;
+    grid-template-columns: 90px repeat(7, 1fr);
+    min-width: 700px;
+  }
+
+  .tt-head {
+    background: rgba(0,196,140,0.06);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 10px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tt-head.day-head { color: var(--white); font-size: 0.72rem; }
+  .tt-head.today-head { color: var(--green); }
+
+  .tt-time {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 16px 8px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    background: var(--card2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .tt-cell {
+    border-right: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 10px 8px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: background 0.15s;
+  }
+  .tt-cell:hover { background: rgba(255,255,255,0.02); }
+  .tt-cell.lunch {
+    background: rgba(255,255,255,0.02);
+    align-items: center;
+    justify-content: center;
+  }
+  .tt-cell.lunch span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.2);
+  }
+  .tt-cell.active-now { background: rgba(0,196,140,0.05); }
+
+  .class-block {
+    border-radius: 6px;
+    padding: 6px 8px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    cursor: default;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .class-block:hover { transform: scale(1.02); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+
+  .class-block.aiml1 { background: rgba(0,196,140,0.12); border-left: 3px solid var(--aiml1); }
+  .class-block.aiml2 { background: rgba(45,107,244,0.12); border-left: 3px solid var(--aiml2); }
+  .class-block.rda1  { background: rgba(245,166,35,0.1);  border-left: 3px solid var(--rda1);  }
+  .class-block.rda2  { background: rgba(232,75,60,0.1);   border-left: 3px solid var(--rda2);  }
+  .class-block.special { background: rgba(139,92,246,0.1); border-left: 3px solid var(--purple); }
+  .class-block.break-block { background: rgba(255,255,255,0.04); border-left: 3px solid rgba(255,255,255,0.1); }
+
+  .cb-track {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .class-block.aiml1 .cb-track { color: var(--aiml1); }
+  .class-block.aiml2 .cb-track { color: var(--aiml2); }
+  .class-block.rda1  .cb-track { color: var(--rda1);  }
+  .class-block.rda2  .cb-track { color: var(--rda2);  }
+  .class-block.special .cb-track { color: var(--purple); }
+
+  .cb-subject {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.3;
+  }
+
+  /* ============ WEEKLY CURRICULUM ============ */
+  .curriculum-section { margin-bottom: 52px; }
+
+  .week-selector {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .wk-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: rgba(255,255,255,0.45);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .wk-btn:hover { border-color: var(--green-mid); color: rgba(255,255,255,0.8); }
+  .wk-btn.active { background: var(--green); color: var(--bg); border-color: var(--green); font-weight: 700; }
+  .wk-btn.current { border-color: var(--green); color: var(--green); }
+  .wk-btn.current.active { background: var(--green); color: var(--bg); }
+  .wk-btn.past { opacity: 0.4; }
+
+  .curriculum-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .curriculum-grid.show { opacity: 1; transform: translateY(0); }
+
+  .track-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .track-card:hover { border-color: var(--green-mid); }
+
+  .tc-head {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .tc-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .tc-body { padding: 14px 16px; }
+  .tc-week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .tc-topics {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .tc-topics li {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.75);
+    padding-left: 12px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .tc-topics li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  footer p { font-size: 0.75rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  footer a { color: var(--green); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+
+  @media (max-width: 640px) {
+    header { padding: 36px 20px 24px; }
+    .main { padding: 28px 16px 60px; }
+    .live-bar { padding: 14px 20px; gap: 16px; }
+    footer { padding: 20px 20px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="page">
+
+<header>
+  <div class="h-left">
+    <div class="eyebrow">Robotics &amp; Artificial Intelligence Nigeria</div>
+    <h1>Semester 20<br><em>Timetable</em></h1>
+  </div>
+  <div class="h-right">
+    <div class="rain-logo">RAIN</div><br>
+    <span class="sub-meta">15 Jun – 27 Sep 2026 · 12 Teaching Weeks</span>
+  </div>
+</header>
+
+<!-- LIVE BAR -->
+<div class="live-bar">
+  <div>
+    <div class="live-time" id="liveTime">--:--:--</div>
+    <div class="live-date" id="liveDate">Loading...</div>
+  </div>
+  <div class="week-badge" id="weekBadge">Week — · —</div>
+  <div class="current-class" id="currentClass">Computing current session...</div>
+</div>
+
+<div class="main">
+
+  <!-- TRACK LEGEND -->
+  <div class="track-legend">
+    <div class="tleg"><div class="tleg-dot" style="background:var(--aiml1)"></div>AIML 1st Sem</div>
+    <div class="tleg"><div class="tleg-dot" style="background:var(--aiml2)"></div>AIML 2nd Sem</div>
+    <div class="tleg"><div class="tleg-dot" style="background:var(--rda1)"></div>RDA 1st Sem</div>
+    <div class="tleg"><div class="tleg-dot" style="background:var(--rda2)"></div>RDA 2nd Sem</div>
+  </div>
+
+  <!-- DAILY TIMETABLE -->
+  <div class="section-label">Daily Schedule</div>
+  <div class="section-title">Monday → Thursday · 9:30 AM – 4:30 PM</div>
+
+  <div class="tt-wrap" id="ttWrap">
+    <div class="tt-grid">
+      <!-- Header row -->
+      <div class="tt-head">Time</div>
+      <div class="tt-head day-head" id="hMon">Monday</div>
+      <div class="tt-head day-head" id="hTue">Tuesday</div>
+      <div class="tt-head day-head" id="hWed">Wednesday</div>
+      <div class="tt-head day-head" id="hThu">Thursday</div>
+      <div class="tt-head day-head">Friday</div>
+      <div class="tt-head day-head">Saturday</div>
+      <div class="tt-head day-head">Sunday</div>
+
+      <!-- 9:30 – 10:30 -->
+      <div class="tt-time"><span>9:30</span><span>↓</span><span>10:30</span></div>
+      <div class="tt-cell" id="cell-mon-1">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Unsupervised Learning / Advanced AI Topics</span>
+        </div>
+      </div>
+      <div class="tt-cell" id="cell-tue-1">
+        <div class="class-block aiml1">
+          <span class="cb-track">AIML 1st Sem</span>
+          <span class="cb-subject">Python Basics / ML Fundamentals</span>
+        </div>
+      </div>
+      <div class="tt-cell" id="cell-wed-1">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Unsupervised Learning / Advanced AI Topics</span>
+        </div>
+      </div>
+      <div class="tt-cell" id="cell-thu-1">
+        <div class="class-block aiml1">
+          <span class="cb-track">AIML 1st Sem</span>
+          <span class="cb-subject">Python Basics / ML Fundamentals</span>
+        </div>
+      </div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+
+      <!-- 10:30 – 11:30 -->
+      <div class="tt-time"><span>10:30</span><span>↓</span><span>11:30</span></div>
+      <div class="tt-cell">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Continued session</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block aiml1">
+          <span class="cb-track">AIML 1st Sem</span>
+          <span class="cb-subject">Continued session</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Continued session</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Continued session</span>
+        </div>
+      </div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+
+      <!-- 11:30 – 12:30 -->
+      <div class="tt-time"><span>11:30</span><span>↓</span><span>12:30</span></div>
+      <div class="tt-cell">
+        <div class="class-block aiml1">
+          <span class="cb-track">AIML 1st Sem</span>
+          <span class="cb-subject">Python Basics / Data Analytics</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Advanced AI Topics</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block aiml1">
+          <span class="cb-track">AIML 1st Sem</span>
+          <span class="cb-subject">Python Basics / Data Analytics</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block aiml2">
+          <span class="cb-track">AIML 2nd Sem</span>
+          <span class="cb-subject">Advanced AI Topics</span>
+        </div>
+      </div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+
+      <!-- LUNCH -->
+      <div class="tt-time"><span>12:30</span><span>↓</span><span>13:30</span></div>
+      <div class="tt-cell lunch" style="grid-column: span 4"><span>🍽 Lunch Break</span></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+
+      <!-- 13:30 – 14:30 -->
+      <div class="tt-time"><span>13:30</span><span>↓</span><span>14:30</span></div>
+      <div class="tt-cell">
+        <div class="class-block rda2">
+          <span class="cb-track">RDA 2nd Sem</span>
+          <span class="cb-subject">Raspberry Pi / Digital Twinning / Advanced Robotics</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block rda1">
+          <span class="cb-track">RDA 1st Sem</span>
+          <span class="cb-subject">Microcontrollers / IoT / Embedded Systems</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block rda2">
+          <span class="cb-track">RDA 2nd Sem</span>
+          <span class="cb-subject">Raspberry Pi / Digital Twinning / Advanced Robotics</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block rda1">
+          <span class="cb-track">RDA 1st Sem</span>
+          <span class="cb-subject">Microcontrollers / IoT / Embedded Systems</span>
+        </div>
+      </div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+
+      <!-- 14:30 – 15:30 -->
+      <div class="tt-time"><span>14:30</span><span>↓</span><span>15:30</span></div>
+      <div class="tt-cell">
+        <div class="class-block rda1">
+          <span class="cb-track">RDA 1st Sem</span>
+          <span class="cb-subject">Microcontrollers / IoT / Embedded Systems</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block rda2">
+          <span class="cb-track">RDA 2nd Sem</span>
+          <span class="cb-subject">Raspberry Pi / Digital Twinning / Advanced Robotics</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block rda1">
+          <span class="cb-track">RDA 1st Sem</span>
+          <span class="cb-subject">Microcontrollers / IoT / Embedded Systems</span>
+        </div>
+      </div>
+      <div class="tt-cell">
+        <div class="class-block rda2" id="thu-rda2">
+          <span class="cb-track">RDA 2nd Sem</span>
+          <span class="cb-subject">Raspberry Pi / SLAM / Drone Dev</span>
+        </div>
+      </div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+
+      <!-- 15:30 – 16:30 -->
+      <div class="tt-time"><span>15:30</span><span>↓</span><span>16:30</span></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">End of day</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">End of day</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">End of day</span></div></div>
+      <div class="tt-cell">
+        <div class="class-block special">
+          <span class="cb-track" style="color:var(--purple)">Thursday Special</span>
+          <span class="cb-subject">FSRI · RAiR Seminar · Tea &amp; Bread</span>
+        </div>
+      </div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">No class</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+      <div class="tt-cell"><div class="class-block break-block"><span class="cb-subject" style="color:var(--muted)">Weekend</span></div></div>
+    </div>
+  </div>
+
+  <!-- WEEKLY CURRICULUM -->
+  <div class="curriculum-section">
+    <div class="section-label">12-Week Curriculum</div>
+    <div class="section-title">What each track covers — week by week</div>
+
+    <div class="week-selector" id="weekSelector"></div>
+    <div class="curriculum-grid" id="curriculumGrid"></div>
+  </div>
+
+</div>
+
+<footer>
+  <p>R-A-I-N · Semester 20 Timetable · Mon–Thu · 9:30–16:30</p>
+  <a href="calendar.html">← View Full Calendar</a>
+</footer>
+</div>
+
+<script>
+// ============================================================
+// PARTICLES
+// ============================================================
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); window.addEventListener('resize', resize);
+const pts = Array.from({length:80}, () => ({
+  x: Math.random()*innerWidth, y: Math.random()*innerHeight,
+  sx: (Math.random()-.5)*.25, sy: (Math.random()-.5)*.25,
+  r: Math.random()*1.2+.3,
+  o: Math.random()*.4+.1,
+  c: Math.random()>.6 ? '#00C48C' : '#ffffff'
+}));
+function animPts() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p => {
+    p.x += p.sx; p.y += p.sy;
+    if(p.x<0||p.x>canvas.width) p.sx*=-1;
+    if(p.y<0||p.y>canvas.height) p.sy*=-1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=p.c; ctx.globalAlpha=p.o; ctx.fill(); ctx.globalAlpha=1;
+  });
+  requestAnimationFrame(animPts);
+}
+animPts();
+
+// ============================================================
+// LIVE TIME + CURRENT SESSION
+// ============================================================
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const SEM_START = new Date('2026-06-15');
+
+function getWeekNum(now) {
+  const diff = now - SEM_START;
+  const days = Math.floor(diff / 86400000);
+  if (days < 0) return null;
+  const week = Math.floor(days / 7) + 1;
+  return week <= 12 ? week : null;
+}
+
+const SESSIONS = [
+  { label: 'Morning Session 1', start: [9,30], end: [10,30] },
+  { label: 'Morning Session 2', start: [10,30], end: [11,30] },
+  { label: 'Morning Session 3', start: [11,30], end: [12,30] },
+  { label: 'Lunch Break', start: [12,30], end: [13,30] },
+  { label: 'Afternoon Session 1', start: [13,30], end: [14,30] },
+  { label: 'Afternoon Session 2', start: [14,30], end: [15,30] },
+  { label: 'Afternoon Session 3 / Seminar', start: [15,30], end: [16,30] },
+];
+
+function updateLive() {
+  const now = new Date();
+  const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('liveTime').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  document.getElementById('liveDate').textContent = `${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+
+  const week = getWeekNum(now);
+  const dow = now.getDay();
+  const isSchoolDay = dow >= 1 && dow <= 4;
+
+  if (week) {
+    document.getElementById('weekBadge').textContent = `Semester 20 · Week ${week} of 12`;
+  } else {
+    const examDate = new Date('2026-09-21');
+    if (now >= examDate && now < new Date('2026-09-28')) {
+      document.getElementById('weekBadge').textContent = 'Examination Week';
+    } else if (now >= new Date('2026-09-07') && now < examDate) {
+      document.getElementById('weekBadge').textContent = 'Revision Week';
+    } else {
+      document.getElementById('weekBadge').textContent = 'Outside Semester 20';
+    }
+  }
+
+  // current session
+  let sessionLabel = 'No active session right now';
+  if (isSchoolDay) {
+    const mins = h * 60 + m;
+    for (const sess of SESSIONS) {
+      const start = sess.start[0]*60 + sess.start[1];
+      const end = sess.end[0]*60 + sess.end[1];
+      if (mins >= start && mins < end) { sessionLabel = `🟢 Now: <strong>${sess.label}</strong>`; break; }
+    }
+  }
+  document.getElementById('currentClass').innerHTML = sessionLabel;
+
+  // highlight today's column
+  ['Mon','Tue','Wed','Thu'].forEach((d,i) => {
+    const el = document.getElementById(`h${d}`);
+    if (el) el.classList.toggle('today-head', dow === i+1);
+  });
+}
+updateLive();
+setInterval(updateLive, 1000);
+
+// ============================================================
+// CURRICULUM DATA — Semester 20
+// Based on Semester 18 tracks adapted for Sem 20 (2nd semester of 2026 cycle)
+// ============================================================
+const curriculum = {
+  aiml1: {
+    name: 'AIML 1st Sem',
+    color: '#00C48C',
+    weeks: [
+      'Intro to AI & Robotics, No Coding AI & Prompt Engineering',
+      'Python Basics',
+      'Advanced Data Analytics',
+      'Advanced Data Analytics',
+      'Python for Database Management, Python for Web Development, Microsoft Excel',
+      'Python for Database Management, Python for Web Development, Microsoft Excel',
+      'Theories in Machine Learning I, Machine Learning Algorithms I',
+      'Theories in Machine Learning I, Machine Learning Algorithms I',
+      'Theories in Machine Learning I, Machine Learning Algorithms I',
+      'Theories in Machine Learning I, Machine Learning Algorithms I',
+      'Python for Desktop GUI App',
+      'Git & GitHub, Cloud Services (AWS, IBM, Azure), Cybersecurity, Python for Chatbots',
+    ]
+  },
+  rda1: {
+    name: 'RDA 1st Sem',
+    color: '#F5A623',
+    weeks: [
+      'Intro to AI & Robotics, No Coding AI & Prompt Engineering & Product Design',
+      'Python Basics, Product Design and Development',
+      'Microcontroller Fundamentals',
+      'Microcontrollers, Sensors and Actuators',
+      'Python for Database Management, Python for Web Development, Microsoft Excel',
+      'Python for Database Management, Python for Web Development, Microsoft Excel',
+      'Internet of Things',
+      'Practical Electronics',
+      'Embedded System Development',
+      'Robot Manufacturing and Robotics Aided Manufacturing',
+      'Python for Desktop GUI App',
+      'Git & GitHub, Cloud Services (AWS, IBM, Azure), Cybersecurity, Python for Chatbots',
+    ]
+  },
+  aiml2: {
+    name: 'AIML 2nd Sem',
+    color: '#2D6BF4',
+    weeks: [
+      'Unsupervised Learning',
+      'Unsupervised Learning',
+      'Recommender Systems',
+      'Theories in Machine Learning II, Time Series Analysis',
+      'Theories in Neural Networks',
+      'Techniques for Computer Vision',
+      'Internet of Things',
+      'GAN and Computer Vision Algorithm',
+      'Techniques for Natural Language Processing',
+      'Techniques for Large Language Model',
+      'Explainable AI',
+      'AI Applications & Model Deployment',
+    ]
+  },
+  rda2: {
+    name: 'RDA 2nd Sem',
+    color: '#E84B3C',
+    weeks: [
+      'Raspberry Pi, ROS and Controller Coordination',
+      'Techniques for Digital Twinning',
+      'Control Systems Fundamentals and PID Control',
+      'Control Systems Fundamentals and PID Control',
+      'Theories in Neural Networks',
+      'Techniques for Computer Vision',
+      'SLAM',
+      'GAN and Computer Vision Algorithm',
+      'Techniques for Natural Language Processing',
+      'Drone System Development',
+      'Robot Arm Kinematics',
+      'Machine Learning and Intelligent Control',
+    ]
+  }
+};
+
+// ============================================================
+// WEEK SELECTOR + CURRICULUM GRID
+// ============================================================
+const weekSelector = document.getElementById('weekSelector');
+const currGrid = document.getElementById('curriculumGrid');
+let activeWeek = 1;
+
+// Determine current week
+const nowForWeek = new Date('2026-06-15'); // today = week 1
+const curWeek = 1;
+
+for (let w = 1; w <= 12; w++) {
+  const btn = document.createElement('button');
+  btn.className = 'wk-btn' + (w === curWeek ? ' current' : '') + (w < curWeek ? ' past' : '');
+  btn.textContent = w;
+  btn.onclick = () => selectWeek(w);
+  btn.id = `wk-btn-${w}`;
+  weekSelector.appendChild(btn);
+}
+
+function selectWeek(w) {
+  activeWeek = w;
+  document.querySelectorAll('.wk-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`wk-btn-${w}`).classList.add('active');
+
+  currGrid.classList.remove('show');
+  setTimeout(() => {
+    currGrid.innerHTML = '';
+    Object.entries(curriculum).forEach(([key, track]) => {
+      const card = document.createElement('div');
+      card.className = 'track-card';
+      card.innerHTML = `
+        <div class="tc-head">
+          <div class="tc-dot" style="background:${track.color}"></div>
+          <span class="tc-name" style="color:${track.color}">${track.name}</span>
+        </div>
+        <div class="tc-body">
+          <div class="tc-week-label">Week ${w} — ${getWeekDate(w)}</div>
+          <ul class="tc-topics">
+            ${track.weeks[w-1].split(',').map(t => `<li>${t.trim()}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+      currGrid.appendChild(card);
+    });
+    currGrid.classList.add('show');
+  }, 200);
+}
+
+function getWeekDate(w) {
+  const d = new Date('2026-06-15');
+  d.setDate(d.getDate() + (w-1)*7);
+  return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+selectWeek(1);
+
+// ============================================================
+// SCROLL REVEAL — TIMETABLE
+// ============================================================
+const ttObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.05 });
+document.querySelectorAll('.tt-wrap').forEach(el => ttObs.observe(el));
+</script>
+</body>
+</html>
