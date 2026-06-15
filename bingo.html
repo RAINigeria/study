@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAIN Human Bingo — Orientation</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0B0E13;
+    --rain-green: #00C48C;
+    --rain-deep: #003D2A;
+    --paper: #FAFAF7;
+    --cell-bg: #FFFFFF;
+    --border: #D1D5DB;
+    --muted: #6B7280;
+    --accent: #F5A623;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 48px;
+  }
+
+  /* HEADER */
+  .header {
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .header-left {}
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--rain-green);
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--rain-deep);
+  }
+  .header h1 span {
+    color: var(--rain-green);
+  }
+  .header-right {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .rain-badge {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--rain-deep);
+    border: 2.5px solid var(--rain-deep);
+    padding: 6px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 6px;
+  }
+  .task-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+  }
+
+  /* INSTRUCTIONS */
+  .instructions {
+    width: 100%;
+    max-width: 720px;
+    background: var(--rain-deep);
+    color: #fff;
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 22px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  .instructions .rules {
+    flex: 1;
+  }
+  .instructions strong {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--rain-green);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .instructions ol {
+    padding-left: 16px;
+    color: rgba(255,255,255,0.82);
+  }
+  .instructions ol li { margin-bottom: 4px; }
+
+  /* NAME FIELD */
+  .name-row {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .name-row label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .name-row .name-line {
+    flex: 1;
+    border: none;
+    border-bottom: 2px solid var(--ink);
+    background: transparent;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    padding: 4px 2px;
+    outline: none;
+  }
+  .name-row .name-line::placeholder { color: #CBD5E1; font-weight: 400; }
+
+  /* BINGO GRID */
+  .grid-wrap {
+    width: 100%;
+    max-width: 720px;
+  }
+
+  .bingo-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    width: 100%;
+  }
+
+  .bingo-cell {
+    background: var(--cell-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 8px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+  }
+  .bingo-cell:hover {
+    border-color: var(--rain-green);
+    box-shadow: 0 0 0 2px rgba(0,196,140,0.12);
+  }
+  .bingo-cell.stamped {
+    background: #F0FDF4;
+    border-color: var(--rain-green);
+  }
+  .bingo-cell.stamped .cell-prompt { color: #166534; }
+
+  /* FREE space */
+  .bingo-cell.free {
+    background: var(--rain-deep);
+    border-color: var(--rain-deep);
+    cursor: default;
+  }
+  .bingo-cell.free:hover {
+    box-shadow: none;
+  }
+  .bingo-cell.free .free-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+  }
+  .bingo-cell.free .free-word {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--rain-green);
+    line-height: 1;
+  }
+  .bingo-cell.free .free-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-top: 4px;
+  }
+
+  .cell-prompt {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.35;
+    flex: 1;
+  }
+  .cell-emoji {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    display: block;
+  }
+  .name-blank {
+    border: none;
+    border-bottom: 1.5px solid var(--border);
+    width: 100%;
+    margin-top: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding: 2px 1px;
+    background: transparent;
+    outline: none;
+    flex-shrink: 0;
+  }
+  .name-blank::placeholder { color: #D1D5DB; }
+  .name-blank:focus { border-bottom-color: var(--rain-green); }
+
+  .stamp-check {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    width: 18px;
+    height: 18px;
+    background: var(--rain-green);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+    font-weight: 700;
+  }
+  .bingo-cell.stamped .stamp-check { display: flex; }
+
+  /* COLUMN HEADERS */
+  .bingo-header {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .col-head {
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    padding: 8px 4px;
+  }
+  .col-head:nth-child(1) { color: #00C48C; }
+  .col-head:nth-child(2) { color: #2D6BF4; }
+  .col-head:nth-child(3) { color: #E84B3C; }
+  .col-head:nth-child(4) { color: #F5A623; }
+  .col-head:nth-child(5) { color: #8B5CF6; }
+
+  /* BINGO ALERT */
+  .bingo-alert {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,61,42,0.92);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .bingo-alert.show { display: flex; }
+  .bingo-alert-inner { padding: 40px; }
+  .bingo-alert h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--rain-green);
+    margin-bottom: 12px;
+  }
+  .bingo-alert p { color: rgba(255,255,255,0.75); font-size: 1rem; margin-bottom: 28px; }
+  .bingo-alert button {
+    background: var(--rain-green);
+    color: var(--rain-deep);
+    border: none;
+    padding: 12px 32px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  /* SCORE BAR */
+  .score-bar {
+    width: 100%;
+    max-width: 720px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .score-count {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--rain-deep);
+  }
+  .score-count span { color: var(--rain-green); }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--rain-green);
+    border-radius: 100px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; padding: 0; }
+    .bingo-alert, .score-bar { display: none !important; }
+    .bingo-cell { break-inside: avoid; }
+    .name-row .name-line { border-bottom: 2px solid #000; }
+    .instructions { background: #003D2A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .bingo-cell.free { background: #003D2A !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .col-head:nth-child(1) { color: #00C48C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .col-head:nth-child(2) { color: #2D6BF4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .col-head:nth-child(3) { color: #E84B3C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .col-head:nth-child(4) { color: #F5A623 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .col-head:nth-child(5) { color: #8B5CF6 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 600px) {
+    .bingo-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+    .bingo-cell { min-height: 80px; padding: 7px 5px; }
+    .cell-prompt { font-size: 0.6rem; }
+    .cell-emoji { font-size: 0.85rem; }
+    .header h1 { font-size: 1.4rem; }
+    .col-head { font-size: 1rem; }
+    .name-blank { font-size: 0.62rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="eyebrow">Task 01 — Break the Ice</div>
+    <h1>Human<br><span>Bingo</span></h1>
+  </div>
+  <div class="header-right">
+    <div class="rain-badge">RAIN</div>
+    <span class="task-badge">Orientation · 2025</span>
+  </div>
+</div>
+
+<!-- INSTRUCTIONS -->
+<div class="instructions">
+  <div class="rules">
+    <strong>How to play</strong>
+    <ol>
+      <li>Move around the room and talk to people — no shouting across the room.</li>
+      <li>Find someone who matches a square. Write their name in it and ask them to initial it.</li>
+      <li>You cannot use the same person for more than <strong style="color:#fff">two squares</strong>.</li>
+      <li>First to complete a row, column, or diagonal shouts <strong style="color:var(--rain-green)">BINGO!</strong></li>
+    </ol>
+  </div>
+</div>
+
+<!-- NAME FIELD -->
+<div class="name-row">
+  <label>Your name</label>
+  <input type="text" class="name-line" placeholder="Write your full name here">
+</div>
+
+<!-- BINGO GRID HEADERS -->
+<div class="grid-wrap">
+  <div class="bingo-header">
+    <div class="col-head">B</div>
+    <div class="col-head">I</div>
+    <div class="col-head">N</div>
+    <div class="col-head">G</div>
+    <div class="col-head">O</div>
+  </div>
+
+  <div class="bingo-grid" id="bingoGrid">
+    <!-- Row 1 -->
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🛠️</span>
+      <div class="cell-prompt">Has built something with their hands</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🌍</span>
+      <div class="cell-prompt">Has lived outside Nigeria</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🤖</span>
+      <div class="cell-prompt">Can name 3 AI tools right now</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🎓</span>
+      <div class="cell-prompt">Has taught someone something tech-related</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🌙</span>
+      <div class="cell-prompt">Has pulled an all-nighter for a project</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Row 2 -->
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🗣️</span>
+      <div class="cell-prompt">Speaks more than two languages</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">📱</span>
+      <div class="cell-prompt">Has built or launched an app or website</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🏆</span>
+      <div class="cell-prompt">Has won a competition or award</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🌱</span>
+      <div class="cell-prompt">Grew up in a rural or small-town area</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🎤</span>
+      <div class="cell-prompt">Has spoken in front of 50+ people</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Row 3 — FREE in middle -->
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">✈️</span>
+      <div class="cell-prompt">Has been on a plane at least once</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🐛</span>
+      <div class="cell-prompt">Has debugged code for 2+ hours straight</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell free">
+      <div class="free-inner">
+        <span class="free-word">FREE</span>
+        <span class="free-sub">That's you!</span>
+      </div>
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">📚</span>
+      <div class="cell-prompt">Is self-taught in their main skill</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🔋</span>
+      <div class="cell-prompt">Has worked on a hardware or electronics project</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Row 4 -->
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">💡</span>
+      <div class="cell-prompt">Has had a business idea they actually pursued</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🤝</span>
+      <div class="cell-prompt">Has mentored or coached someone else</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🧠</span>
+      <div class="cell-prompt">Has read a research paper in the last 3 months</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🚀</span>
+      <div class="cell-prompt">Joined RAIN because of a specific dream or goal</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🌐</span>
+      <div class="cell-prompt">Believes Nigeria can lead Africa in AI</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Row 5 -->
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🎮</span>
+      <div class="cell-prompt">Has used Python, Arduino, or Raspberry Pi</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">📸</span>
+      <div class="cell-prompt">Has a creative hobby outside tech</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">💬</span>
+      <div class="cell-prompt">Has used an AI chatbot to solve a real problem</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🏙️</span>
+      <div class="cell-prompt">Has a plan to change something in their community</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+    <div class="bingo-cell" onclick="toggleStamp(this)">
+      <div class="stamp-check">✓</div>
+      <span class="cell-emoji">🔭</span>
+      <div class="cell-prompt">Can describe what they want to build in 5 years</div>
+      <input class="name-blank" type="text" placeholder="Name + initials" onclick="event.stopPropagation()">
+    </div>
+  </div>
+</div>
+
+<!-- SCORE BAR -->
+<div class="score-bar">
+  <div class="score-label">Squares filled</div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+  <div class="score-count"><span id="scoreNum">0</span> / 24</div>
+</div>
+
+<!-- BINGO OVERLAY -->
+<div class="bingo-alert" id="bingoAlert">
+  <div class="bingo-alert-inner">
+    <h2>BINGO! 🎉</h2>
+    <p>You completed a row, column, or diagonal.<br>Raise your hand and shout it — you've earned it.</p>
+    <button onclick="document.getElementById('bingoAlert').classList.remove('show')">Keep going →</button>
+  </div>
+</div>
+
+<script>
+  // 5x5 grid, FREE is index 12 (row 3, col 3, 0-based)
+  const GRID_SIZE = 5;
+  const FREE_INDEX = 12;
+  const TOTAL = 24; // 25 - 1 free
+
+  let stamped = Array(25).fill(false);
+  stamped[FREE_INDEX] = true; // free space always stamped
+
+  let bingoShown = false;
+
+  function toggleStamp(cell) {
+    const cells = document.querySelectorAll('.bingo-cell:not(.free)');
+    const allCells = document.querySelectorAll('.bingo-cell');
+    const idx = Array.from(allCells).indexOf(cell);
+    if (idx === FREE_INDEX) return;
+
+    stamped[idx] = !stamped[idx];
+    if (stamped[idx]) {
+      cell.classList.add('stamped');
+    } else {
+      cell.classList.remove('stamped');
+    }
+    updateScore();
+    checkBingo();
+  }
+
+  function updateScore() {
+    const filled = stamped.filter((v, i) => v && i !== FREE_INDEX).length;
+    document.getElementById('scoreNum').textContent = filled;
+    document.getElementById('progressFill').style.width = (filled / TOTAL * 100) + '%';
+  }
+
+  function checkBingo() {
+    if (bingoShown) return;
+    // Check rows
+    for (let r = 0; r < 5; r++) {
+      if ([0,1,2,3,4].every(c => stamped[r*5+c])) { showBingo(); return; }
+    }
+    // Check cols
+    for (let c = 0; c < 5; c++) {
+      if ([0,1,2,3,4].every(r => stamped[r*5+c])) { showBingo(); return; }
+    }
+    // Check diagonals
+    if ([0,6,12,18,24].every(i => stamped[i])) { showBingo(); return; }
+    if ([4,8,12,16,20].every(i => stamped[i])) { showBingo(); return; }
+  }
+
+  function showBingo() {
+    bingoShown = true;
+    document.getElementById('bingoAlert').classList.add('show');
+  }
+</script>
+</body>
+</html>
