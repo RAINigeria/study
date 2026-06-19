@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle of the Bots 2.0 — Panel Briefing | Emmanuel Okunlola</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --green: #1B6B3A;
+    --green-light: #2a8f4f;
+    --gold: #C8922A;
+    --gold-light: #e0a83a;
+    --bg: #0D1F13;
+    --card: #152B1C;
+    --card-hover: #1a3322;
+    --text: #F5F0E8;
+    --muted: #9CB8A4;
+    --border: #2a4a35;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, #0D1F13 0%, #1B3A22 60%, #0a1a0f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(200,146,42,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero-title span {
+    color: var(--gold);
+  }
+
+  .hero-meta {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .hero-rep {
+    display: inline-block;
+    margin-top: 24px;
+    background: rgba(27,107,58,0.4);
+    border: 1px solid var(--green);
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #a8d4b8;
+  }
+
+  /* ── HOW TO USE ── */
+  .how-to {
+    background: rgba(200,146,42,0.07);
+    border-left: 3px solid var(--gold);
+    margin: 32px auto;
+    max-width: 780px;
+    padding: 20px 24px;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .how-to h2 {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .how-to p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .how-to p:last-child { margin-bottom: 0; }
+
+  /* ── NAV ── */
+  .q-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,31,19,0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .q-nav::-webkit-scrollbar { display: none; }
+
+  .q-nav a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .q-nav a:hover {
+    color: var(--text);
+    border-bottom-color: var(--gold);
+  }
+
+  .q-nav a .num {
+    width: 20px;
+    height: 20px;
+    background: var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .q-card:hover { border-color: #3a6a4a; }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px 24px 0;
+  }
+
+  .q-number {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 2px;
+  }
+
+  .q-text {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .q-body {
+    padding: 16px 24px 24px 76px;
+  }
+
+  .q-body p {
+    font-size: 15px;
+    color: #c8ddd0;
+    margin-bottom: 14px;
+    line-height: 1.75;
+  }
+
+  .q-body p:last-child { margin-bottom: 0; }
+
+  /* Highlight a key sentence */
+  .q-body strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .q-body em {
+    color: var(--gold-light);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  /* ── DIVISON/VISION CALLOUT ── */
+  .vision-word {
+    text-align: center;
+    padding: 32px 24px;
+    margin: 20px 0 16px;
+    background: rgba(200,146,42,0.06);
+    border-radius: 6px;
+    border: 1px solid rgba(200,146,42,0.2);
+  }
+
+  .vision-word .big-word {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(36px, 8vw, 64px);
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+    line-height: 1;
+  }
+
+  .vision-word .big-word .highlight {
+    color: var(--gold);
+    position: relative;
+  }
+
+  .vision-word .caption {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* ── PULLQUOTE ── */
+  .pullquote {
+    border-left: 3px solid var(--gold);
+    padding: 12px 20px;
+    margin: 20px 0;
+    background: rgba(200,146,42,0.05);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .pullquote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px !important;
+    font-style: italic;
+    color: var(--text) !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .footer .rain-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green-light);
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .q-body { padding-left: 24px; }
+    .q-header { flex-direction: column; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Panel Briefing Document — Confidential</div>
+  <h1 class="hero-title">Battle of the <span>Bots 2.0</span></h1>
+  <p class="hero-meta">Panel Session 2: The Builders and the Workforce &nbsp;|&nbsp; 12:55 PM – 1:40 PM</p>
+  <p class="hero-meta">The Podium Event Center, Lekki, Lagos &nbsp;|&nbsp; Saturday 20 June 2026</p>
+  <div class="hero-rep">Prepared for Emmanuel Okunlola — representing Dr. Olusola Ayoola, CEO, RAIN</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- HOW TO USE -->
+  <div class="how-to">
+    <h2>How to use this document</h2>
+    <p>This captures Dr. Ayoola's positions on each panel question. You are not expected to read this verbatim — use it as your guide. Speak with authority, use RAIN examples where highlighted, and represent the institution as he would.</p>
+    <p>The moderator is Motunrayo Opayinka (Womenovate). Fellow panelists include Alex Tsado (Udutech), Ashley Immanuel (Semicolon), Lanre Ogundipe (Imperial Edtech), and Prof. Chika Yinka Banjo (UNILAG). You do not need to cover every point — pick 2–3 strong ones per question and deliver with confidence.</p>
+  </div>
+
+  <!-- Q1 -->
+  <div class="q-card" id="q1">
+    <div class="q-header">
+      <div class="q-number">1</div>
+      <div class="q-text">How do you design your robotics training programs to catalyse quick employment for graduates?</div>
+    </div>
+    <div class="q-body">
+      <p>RAIN is a unique institution — not a university, not a secondary school. It is a school built specifically to fill the skills gap that society has left open in robotics. We are deliberate about this. We train for outcomes: to build opportunities, access jobs, and create an advanced society.</p>
+      <p>Our curriculum does two things. First, it covers every knowledge area a robotics engineer must have — from 3D design and programming, to web development, embedded systems, IoT, cybersecurity, and desktop development, all the way through to the core of robotics: <strong>SLAM, path planning, navigation, PID control, robot arm control, and drone development.</strong> We understood early that robotics is not a standalone field.</p>
+      <p>Second, we build careers — not just competencies. Using platforms like LinkedIn, we ensure trainees put themselves out there. <em>Opportunities don't come looking for you. You have to be visible.</em></p>
+      <div class="pullquote"><p>"At RAIN, it is not what you know — it is what you can do."</p></div>
+      <p>Projects are central from day one. We provide the kits, the workshop, the laboratory, and the parts, so trainees have no excuse but to build. We have had mechanical engineering graduates who only found confidence in calling themselves engineers after RAIN — because here, they were made to do advanced practical work they would otherwise have outsourced.</p>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="q-card" id="q2">
+    <div class="q-header">
+      <div class="q-number">2</div>
+      <div class="q-text">Where have you seen robotics generate measurable productivity gains — and what evidence should funders look for?</div>
+    </div>
+    <div class="q-body">
+      <p>Robotics is not just about replacing humans in dangerous tasks — it is about freeing people. A person who would have stood by the roadside to sell goods can now deploy a robot to do that while they manage from a distance. <em>That is empowerment, not displacement.</em></p>
+      <p>The area I point to for measurable productivity is <strong>smart vending.</strong> Go to Dubai, go to the US — in train stations and subways, vending machines are generating money for owners around the clock with no one there. They squeeze orange juice, dispense drinks, detect faults, and self-report issues. It works.</p>
+      <p>In Nigeria, we can domesticate this. <em>Imagine an akara vending machine at the airport, at a shopping mall, at a train station</em> — hygienic, consistent, smart. This is a low-hanging fruit that investors should take seriously. Start in supermarkets and restaurants, validate the model, then scale out.</p>
+      <p>Funders should look for: <strong>cost-per-unit reduction, revenue generated per hour without human supervision, and consistency of output quality.</strong> Those are the metrics that matter.</p>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="q-card" id="q3">
+    <div class="q-header">
+      <div class="q-number">3</div>
+      <div class="q-text">What is one low-cost robotics application for fast pilots with immediate ROI?</div>
+    </div>
+    <div class="q-body">
+      <p>My answer here connects to Question 2 — what generates income is what we should recommend, because it has been tested.</p>
+      <p><strong>Smart vending remains the strongest recommendation:</strong> domesticated, locally adapted vending machines serving Nigerian street food and beverages. It is tangible, it is profitable, and it generates immediate public trust in robotics.</p>
+      <p>People talk about drones, autonomous vehicles, and humanoid robots — and these are exciting areas — but they are still in research phase. Nobody is making money from fully autonomous vehicles yet. <em>The vending machine is real, it is working, and it can work here.</em></p>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="q-card" id="q4">
+    <div class="q-header">
+      <div class="q-number">4</div>
+      <div class="q-text">What are the 1–2 most viable pathways for a robotics research lab to transition into a scalable product or startup?</div>
+    </div>
+    <div class="q-body">
+      <p>It is no longer business as usual. <em>The era of academics producing miniature robot cars is over.</em> What can a 12x18cm robot do for Nigeria?</p>
+      <p><strong>Pathway one: bring artisans into the lab.</strong> A welder, a mechanical fitter, an electrician, a blacksmith — these are the people who will take your beautiful code and turn it into something rugged, industrial, and real. At RAIN, we built Unmanned Ground Vehicles using locally fabricated materials from the welder's workshop. We are currently recruiting artisans for this exact reason.</p>
+      <p><strong>Pathway two: fund boldly and collaborate fearlessly.</strong> Labs must take financial risk. Collaborate with fabricators and industry players. Open apprenticeship opportunities — at RAIN, we have apprenticeship openings precisely because we know the next generation of robotics entrepreneurs must learn in that hybrid environment.</p>
+      <p>The medical sector demands robotic arms in stainless steel — not 3D-printed plastic. Drones must be weather-proofed. <em>Labs that face these industrial realities head-on are the ones that will produce scalable products.</em></p>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="q-card" id="q5">
+    <div class="q-header">
+      <div class="q-number">5</div>
+      <div class="q-text">What are the most significant technical bottlenecks African robotics engineers face that require localized R&amp;D?</div>
+    </div>
+    <div class="q-body">
+      <p>I will not say that sensors made abroad don't work in Nigeria. They do — manufacturers make products for every climate, every pressure range, every price point. The problem is not the sensors; it is <strong>what we can afford, what we can access, and what we are producing ourselves.</strong></p>
+      <p>The real bottleneck is that we are not producing our own components. Because demand is low and funding is scarce, importers bring in cheap, low-quality stock. <em>The market is self-defeating.</em></p>
+      <p>My prescription: <strong>young engineers must choose a specialisation within the supply chain and become unit experts.</strong> If it is motors — understand gears, torque, and fabricate your own. If it is sensors — study the chemistry and physics and build your own. If it is battery packs — Aba should be producing battery packs of different specifications so that when you are building a robot, you call a local supplier, not Alibaba.</p>
+      <p>We may never produce our own microchips — but if we can produce everything else, we will have built a self-sufficient ecosystem. Right now, robotics in Nigeria is largely personally funded by individuals. Large companies are not buying Nigerian-made robots. <em>That must change — and it starts with us building the supply chain from within.</em></p>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="q-card" id="q6">
+    <div class="q-header">
+      <div class="q-number">6</div>
+      <div class="q-text">What is your vision for a national robotics research and prototyping facility that serves both academia and industry?</div>
+    </div>
+    <div class="q-body">
+      <p>I must make a caveat: <strong>centralisation is no longer the answer.</strong> We used to say united we stand, divided we fall — but we are entering an era where, if done right, united we fall and divided we stand.</p>
+
+      <div class="vision-word">
+        <div class="big-word">di<span class="highlight">vision</span></div>
+        <div class="caption">The vision lives inside the division</div>
+      </div>
+
+      <p>Consider blockchain — it operates peer-to-peer, where everyone is a server and no one is the master. No single point of failure. Compare that to a master-slave network: once the master is corrupted, everything collapses. <em>The same logic applies to national robotics infrastructure.</em></p>
+      <p>My vision is a <strong>distributed national robotics ecosystem</strong> — not one central facility that can be starved of funding or politicised. Instead: somewhere in the North, a centre building battery technology from our lithium deposits. Somewhere in the South, a centre producing sensors. In the East, excellence in embedded systems. In the West, specialists in long-range communication systems.</p>
+      <p>Each node is independent, but they share a common vision. When one falls, the others stand.</p>
+      <div class="pullquote"><p>"The vision is intact as long as the division does not destroy the vision."</p></div>
+      <p>Government must encourage, fund, and coordinate this distributed structure — not build one central facility and call it done.</p>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- STICKY NAV -->
+<nav class="q-nav">
+  <a href="#q1"><span class="num">1</span> Employment</a>
+  <a href="#q2"><span class="num">2</span> Productivity</a>
+  <a href="#q3"><span class="num">3</span> Low-cost ROI</a>
+  <a href="#q4"><span class="num">4</span> Lab → Startup</a>
+  <a href="#q5"><span class="num">5</span> Bottlenecks</a>
+  <a href="#q6"><span class="num">6</span> Vision</a>
+</nav>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="rain-logo">RAIN</div>
+  Robotics and Artificial Intelligence Nigeria &nbsp;|&nbsp; rainigeria.com<br>
+  20, Oba Adesida Road, Iyaganku, Ibadan
+</div>
+
+</body>
+</html>
