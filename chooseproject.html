@@ -25,22 +25,18 @@
   --foundational:#4CAF6E;
   --advanced:#FFBE33;
   --frontier:#FF5C5C;
+  --whatsapp:#25D366;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
 html,body{
   background:var(--black);
   color:var(--text);
   font-family:'Inter',sans-serif;
-  height:100%;
-  overflow:hidden;
   -webkit-font-smoothing:antialiased;
 }
-body{
-  display:flex;
-  flex-direction:column;
-  min-height:100vh;
-  min-height:100dvh;
-}
+body.swipe-mode{height:100%;overflow:hidden;display:flex;flex-direction:column;min-height:100vh;min-height:100dvh;}
+body.reference-mode{height:auto;overflow:auto;}
 
 .topbar{
   display:flex;
@@ -50,11 +46,7 @@ body{
   flex-shrink:0;
   z-index:50;
 }
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.brand{display:flex;align-items:center;gap:10px;}
 .brand-mark{
   width:30px;height:30px;border-radius:8px;
   background:var(--gold);
@@ -62,10 +54,7 @@ body{
   font-family:'Space Grotesk',sans-serif;
   font-weight:700;font-size:15px;color:var(--black);
 }
-.brand-text{
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;font-size:15px;letter-spacing:0.5px;color:var(--text);
-}
+.brand-text{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;letter-spacing:0.5px;color:var(--text);}
 .brand-sub{font-size:10px;color:var(--text-faint);letter-spacing:0.5px;margin-top:-2px;}
 .progress-pill{
   font-family:'JetBrains Mono',monospace;
@@ -73,364 +62,211 @@ body{
   background:var(--surface);
   padding:6px 12px;border-radius:20px;
   border:1px solid var(--surface-3);
-  text-align:right;
-  line-height:1.3;
+  text-align:right;line-height:1.3;
 }
 .progress-pill .sub{font-size:9.5px;color:var(--text-faint);display:block;}
 
-.tracktabs{
-  display:flex;
-  gap:8px;
-  padding:0 20px 14px;
-  flex-shrink:0;
+.name-gate{
+  position:fixed;inset:0;
+  background:var(--black);
+  display:flex;align-items:center;justify-content:center;
+  z-index:200;
+  padding:24px;
 }
-.tracktab{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:13px;
-  font-weight:700;
-  white-space:nowrap;
-  padding:9px 22px;
-  border-radius:18px;
-  border:1px solid var(--surface-3);
-  background:var(--surface);
-  color:var(--text-dim);
-  cursor:pointer;
-  transition:all 0.15s ease;
+.name-gate-card{
+  max-width:380px;width:100%;
+  text-align:center;
 }
-.tracktab.active{
+.name-gate-mark{
+  width:56px;height:56px;border-radius:16px;
   background:var(--gold);
-  border-color:var(--gold);
-  color:var(--black);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;color:var(--black);
+  margin:0 auto 18px;
 }
-.tracktab .count{
-  font-family:'JetBrains Mono',monospace;
-  font-weight:400;
-  font-size:11px;
-  opacity:0.7;
-  margin-left:4px;
+.name-gate h1{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:24px;
+  margin-bottom:8px;
 }
-
-.deck-wrap{
-  flex:1;
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:0 16px 18px;
-  overflow:hidden;
-  min-height:0;
-}
-
-.deck{
-  position:relative;
+.name-gate p{font-size:14px;color:var(--text-dim);line-height:1.6;margin-bottom:24px;}
+.name-input{
   width:100%;
-  max-width:460px;
-  height:100%;
-  max-height:680px;
+  padding:14px 16px;
+  background:var(--surface);
+  border:1px solid var(--surface-3);
+  border-radius:14px;
+  color:var(--text);
+  font-size:15px;
+  font-family:'Inter',sans-serif;
+  margin-bottom:12px;
 }
+.name-input:focus{outline:none;border-color:var(--gold);}
+.name-input::placeholder{color:var(--text-faint);}
+.name-gate-btn{
+  width:100%;
+  padding:14px;
+  background:var(--gold);
+  color:var(--black);
+  border:none;
+  border-radius:14px;
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:15px;
+  cursor:pointer;
+  margin-top:6px;
+}
+.name-gate-err{font-size:12px;color:var(--severe);margin-top:8px;min-height:16px;}
+
+.tracktabs{display:flex;gap:8px;padding:0 20px 14px;flex-shrink:0;}
+.tracktab{
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;white-space:nowrap;
+  padding:9px 22px;border-radius:18px;border:1px solid var(--surface-3);
+  background:var(--surface);color:var(--text-dim);cursor:pointer;transition:all 0.15s ease;
+}
+.tracktab.active{background:var(--gold);border-color:var(--gold);color:var(--black);}
+.tracktab .count{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:11px;opacity:0.7;margin-left:4px;}
+
+.deck-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:0 16px 18px;overflow:hidden;min-height:0;}
+.deck{position:relative;width:100%;max-width:460px;align-self:stretch;max-height:680px;}
 
 .card{
-  position:absolute;
-  top:0;left:0;right:0;bottom:0;
-  background:var(--surface);
-  border-radius:22px;
-  border:1px solid var(--surface-3);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  will-change:transform,opacity;
-  touch-action:none;
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  background:var(--surface);border-radius:22px;border:1px solid var(--surface-3);
+  display:flex;flex-direction:column;overflow:hidden;will-change:transform,opacity;touch-action:none;
 }
-.card-scroll{
-  flex:1;
-  overflow-y:auto;
-  padding:24px 22px 22px;
-  scrollbar-width:thin;
-  scrollbar-color:var(--surface-3) transparent;
-}
+.card-scroll{flex:1;overflow-y:auto;padding:24px 22px 22px;scrollbar-width:thin;scrollbar-color:var(--surface-3) transparent;}
 .card-scroll::-webkit-scrollbar{width:4px;}
 .card-scroll::-webkit-scrollbar-thumb{background:var(--surface-3);border-radius:4px;}
 
-.depth-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:16px;
-}
-.depth-gauge{
-  width:38px;height:38px;
-  position:relative;
-  flex-shrink:0;
-}
+.depth-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.depth-gauge{width:38px;height:38px;position:relative;flex-shrink:0;}
 .depth-gauge svg{transform:rotate(-90deg);}
 .depth-gauge-bg{fill:none;stroke:var(--surface-3);stroke-width:3.5;}
 .depth-gauge-fill{fill:none;stroke-width:3.5;stroke-linecap:round;transition:stroke-dashoffset 0.6s ease;}
 .depth-label-group{flex:1;}
-.depth-tag{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  font-weight:500;
-}
+.depth-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:500;}
 .depth-tag.foundational{color:var(--foundational);}
 .depth-tag.advanced{color:var(--advanced);}
 .depth-tag.frontier{color:var(--frontier);}
-.round-tag{
-  font-size:11px;color:var(--text-faint);margin-top:1px;
-}
-.card-index{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;color:var(--text-faint);
-  text-align:right;
-}
+.round-tag{font-size:11px;color:var(--text-faint);margin-top:1px;}
+.card-index{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);text-align:right;}
 
-.card-title{
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;
-  font-size:23px;
-  line-height:1.25;
-  color:var(--text);
-  margin-bottom:14px;
-}
-
-.card-desc{
-  font-size:14.5px;
-  line-height:1.6;
-  color:var(--text-dim);
-  margin-bottom:18px;
-}
+.card-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;line-height:1.25;color:var(--text);margin-bottom:14px;}
+.card-desc{font-size:14.5px;line-height:1.6;color:var(--text-dim);margin-bottom:18px;}
 
 .expand-btn{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  width:100%;
-  padding:11px;
-  background:var(--surface-2);
-  border:1px solid var(--surface-3);
-  border-radius:12px;
-  color:var(--gold);
-  font-size:12.5px;
-  font-weight:500;
-  font-family:'JetBrains Mono',monospace;
-  cursor:pointer;
-  margin-bottom:14px;
+  display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;
+  background:var(--surface-2);border:1px solid var(--surface-3);border-radius:12px;color:var(--gold);
+  font-size:12.5px;font-weight:500;font-family:'JetBrains Mono',monospace;cursor:pointer;margin-bottom:14px;
   transition:background 0.15s;
 }
 .expand-btn:active{background:var(--surface-3);}
-.expand-btn .chev{
-  transition:transform 0.25s ease;
-  font-size:14px;
-  line-height:1;
-}
+.expand-btn .chev{transition:transform 0.25s ease;font-size:14px;line-height:1;}
 .expand-btn.open .chev{transform:rotate(180deg);}
 
-.detail-panel{
-  max-height:0;
-  overflow:hidden;
-  transition:max-height 0.35s ease;
-}
+.detail-panel{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
 .detail-panel.open{max-height:1400px;}
 .detail-inner{padding-top:4px;padding-bottom:6px;}
-
 .detail-block{margin-bottom:16px;}
 .detail-label{
-  font-family:'JetBrains Mono',monospace;
-  font-size:10.5px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  color:var(--gold-dim);
-  margin-bottom:6px;
-  display:flex;
-  align-items:center;
-  gap:6px;
+  font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--gold-dim);margin-bottom:6px;display:flex;align-items:center;gap:6px;
 }
-.detail-text{
-  font-size:13.5px;
-  line-height:1.6;
-  color:var(--text-dim);
-}
-.detail-block.deliverable{
-  background:var(--surface-2);
-  border-left:2px solid var(--gold);
-  border-radius:0 10px 10px 0;
-  padding:12px 14px;
-}
+.detail-text{font-size:13.5px;line-height:1.6;color:var(--text-dim);}
+.detail-block.deliverable{background:var(--surface-2);border-left:2px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 14px;}
 .detail-block.deliverable .detail-text{color:var(--text);}
 .skill-chips{display:flex;flex-wrap:wrap;gap:6px;}
-.chip{
-  font-family:'JetBrains Mono',monospace;
-  font-size:11px;
-  background:var(--surface-2);
-  border:1px solid var(--surface-3);
-  color:var(--text-dim);
-  padding:5px 10px;
-  border-radius:14px;
-}
+.chip{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface-2);border:1px solid var(--surface-3);color:var(--text-dim);padding:5px 10px;border-radius:14px;}
 
-.card-footer{
-  flex-shrink:0;
-  padding:14px 22px 18px;
-  border-top:1px solid var(--surface-3);
-  display:flex;
-  gap:10px;
-}
-.pick-btn{
-  flex:1;
-  padding:13px;
-  border-radius:14px;
-  border:none;
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;
-  font-size:14px;
-  cursor:pointer;
-  transition:transform 0.1s, opacity 0.15s;
-}
+.card-footer{flex-shrink:0;padding:14px 22px 18px;border-top:1px solid var(--surface-3);display:flex;gap:10px;}
+.pick-btn{flex:1;padding:13px;border-radius:14px;border:none;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:transform 0.1s, opacity 0.15s;}
 .pick-btn:active{transform:scale(0.97);}
 .pick-yes{background:var(--gold);color:var(--black);}
 .pick-skip{background:transparent;color:var(--text-faint);border:1px solid var(--surface-3);}
 
 .swipe-hint{
-  position:absolute;
-  top:50%;
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;
-  font-size:26px;
-  padding:8px 18px;
-  border-radius:10px;
-  border:3px solid;
-  transform:translateY(-50%) rotate(-12deg);
-  opacity:0;
-  pointer-events:none;
-  z-index:5;
-  letter-spacing:1px;
+  position:absolute;top:50%;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:26px;
+  padding:8px 18px;border-radius:10px;border:3px solid;transform:translateY(-50%) rotate(-12deg);
+  opacity:0;pointer-events:none;z-index:5;letter-spacing:1px;
 }
 .swipe-hint.like{left:24px;color:var(--healthy);border-color:var(--healthy);}
 .swipe-hint.skip{right:24px;color:var(--severe);border-color:var(--severe);transform:translateY(-50%) rotate(12deg);}
 
-.bottombar{
-  flex-shrink:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:22px;
-  padding:6px 20px 22px;
-}
+.bottombar{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:22px;padding:6px 20px 22px;}
 .navbtn{
-  width:52px;height:52px;
-  border-radius:50%;
-  background:var(--surface);
-  border:1px solid var(--surface-3);
-  color:var(--text-dim);
-  font-size:20px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;
-  transition:transform 0.1s;
+  width:52px;height:52px;border-radius:50%;background:var(--surface);border:1px solid var(--surface-3);
+  color:var(--text-dim);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.1s;
 }
 .navbtn:active{transform:scale(0.92);}
-.navbtn.big{
-  width:60px;height:60px;
-  background:var(--gold);
-  color:var(--black);
-  font-size:24px;
+.navbtn.big{width:60px;height:60px;background:var(--gold);color:var(--black);font-size:24px;}
+.remaining-counter{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-dim);text-align:center;min-width:90px;}
+.remaining-counter .num{font-size:20px;font-weight:500;color:var(--gold);display:block;}
+
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:30px 20px;color:var(--text-dim);}
+.empty-state .trophy{font-size:38px;margin-bottom:4px;}
+.empty-state h2{font-family:'Space Grotesk',sans-serif;color:var(--text);font-size:19px;margin-bottom:6px;}
+.empty-state .winner-title{font-family:'Space Grotesk',sans-serif;color:var(--gold);font-size:21px;font-weight:700;margin:8px 0 14px;line-height:1.3;}
+.empty-state p{font-size:13px;line-height:1.55;margin-bottom:16px;max-width:300px;}
+.restart-btn{background:var(--gold);color:var(--black);border:none;padding:12px 22px;border-radius:14px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;cursor:pointer;}
+.restart-btn.secondary{background:transparent;color:var(--text-dim);border:1px solid var(--surface-3);margin-top:8px;}
+.share-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--whatsapp);color:#fff;border:none;
+  padding:13px 22px;border-radius:14px;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;cursor:pointer;
+  margin-bottom:10px;width:100%;max-width:300px;
+  text-decoration:none;
 }
-.remaining-counter{
-  font-family:'JetBrains Mono',monospace;
-  font-size:13px;
-  color:var(--text-dim);
-  text-align:center;
-  min-width:90px;
-}
-.remaining-counter .num{
-  font-size:20px;
-  font-weight:500;
-  color:var(--gold);
-  display:block;
+.share-btn svg{width:18px;height:18px;flex-shrink:0;}
+.view-brief-link{
+  font-size:12px;color:var(--text-faint);text-decoration:underline;margin-top:4px;display:inline-block;
 }
 
-.empty-state{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  height:100%;
-  text-align:center;
-  padding:40px 20px;
-  color:var(--text-dim);
-}
-.empty-state .trophy{
-  font-size:40px;
-  margin-bottom:6px;
-}
-.empty-state h2{
-  font-family:'Space Grotesk',sans-serif;
-  color:var(--text);
-  font-size:20px;
-  margin-bottom:8px;
-}
-.empty-state .winner-title{
-  font-family:'Space Grotesk',sans-serif;
-  color:var(--gold);
-  font-size:22px;
-  font-weight:700;
-  margin:10px 0 16px;
-  line-height:1.3;
-}
-.empty-state p{font-size:13.5px;line-height:1.6;margin-bottom:20px;max-width:300px;}
-.restart-btn{
-  background:var(--gold);
-  color:var(--black);
-  border:none;
-  padding:12px 24px;
-  border-radius:14px;
-  font-family:'Space Grotesk',sans-serif;
-  font-weight:700;
-  font-size:13.5px;
-  cursor:pointer;
-}
-.restart-btn.secondary{
-  background:transparent;
-  color:var(--text-dim);
-  border:1px solid var(--surface-3);
-  margin-top:10px;
-}
-
-.legend-row{
-  display:flex;
-  justify-content:center;
-  gap:16px;
-  padding:0 0 8px;
-  flex-shrink:0;
-}
-.legend-item{
-  display:flex;align-items:center;gap:5px;
-  font-family:'JetBrains Mono',monospace;
-  font-size:9.5px;
-  color:var(--text-faint);
-  text-transform:uppercase;
-  letter-spacing:0.5px;
-}
+.legend-row{display:flex;justify-content:center;gap:16px;padding:0 0 8px;flex-shrink:0;}
+.legend-item{display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:0.5px;}
 .legend-dot{width:6px;height:6px;border-radius:50%;}
+
+.reference-toggle{text-align:center;padding:6px 0 16px;flex-shrink:0;}
+.reference-toggle a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);text-decoration:underline;cursor:pointer;}
+#reference-section{display:none;padding:24px 20px 60px;max-width:760px;margin:0 auto;}
+#reference-section.visible{display:block;}
+.ref-header{margin-bottom:24px;}
+.ref-header h2{font-family:'Space Grotesk',sans-serif;font-size:22px;margin-bottom:8px;}
+.ref-header p{font-size:13.5px;color:var(--text-dim);line-height:1.6;}
+.ref-back{display:inline-block;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold);text-decoration:none;cursor:pointer;}
+.ref-pool-heading{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;margin:32px 0 14px;color:var(--gold);border-bottom:1px solid var(--surface-3);padding-bottom:8px;}
+.ref-topic{background:var(--surface);border:1px solid var(--surface-3);border-radius:16px;padding:20px;margin-bottom:14px;scroll-margin-top:20px;}
+.ref-topic:target{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold);}
+.ref-topic .depth-row{margin-bottom:12px;}
+.ref-topic .card-title{font-size:18px;margin-bottom:10px;}
+.ref-topic .card-desc{font-size:13.5px;margin-bottom:14px;}
+.ref-topic .detail-block{margin-bottom:12px;}
+.ref-anchor-link{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-faint);}
 
 @media (min-width:680px){
   .deck-wrap{padding:8px 16px 32px;}
   .deck{max-width:560px;max-height:560px;}
   .card-title{font-size:27px;}
   .card-desc{font-size:15.5px;}
-  body{
-    background:radial-gradient(circle at 50% 0%, #14151c 0%, var(--black) 65%);
-  }
-  .topbar,.tracktabs,.legend-row{max-width:680px;margin:0 auto;width:100%;}
+  body.swipe-mode{background:radial-gradient(circle at 50% 0%, #14151c 0%, var(--black) 65%);}
+  .topbar,.tracktabs,.legend-row,.reference-toggle{max-width:680px;margin:0 auto;width:100%;}
   .bottombar{max-width:680px;margin:0 auto;width:100%;}
 }
-@media (min-width:1000px){
-  .deck{max-width:520px;}
-}
+@media (min-width:1000px){.deck{max-width:520px;}}
 </style>
 </head>
-<body>
+<body class="swipe-mode">
+
+<div class="name-gate" id="nameGate">
+  <div class="name-gate-card">
+    <div class="name-gate-mark">R</div>
+    <h1>What's your name?</h1>
+    <p>So your final picks are clearly labeled when you share them to the group.</p>
+    <input type="text" class="name-input" id="nameInputField" placeholder="e.g. Adebayo Olamide" autocomplete="name">
+    <button class="name-gate-btn" id="nameGateBtn">Start choosing</button>
+    <div class="name-gate-err" id="nameGateErr"></div>
+  </div>
+</div>
 
 <div class="topbar">
   <div class="brand">
@@ -455,10 +291,23 @@ body{
   <div class="deck" id="deck"></div>
 </div>
 
-<div class="bottombar">
+<div class="bottombar" id="bottombar">
   <div class="navbtn" id="btnSkip" aria-label="Ditch this topic">&#10005;</div>
   <div class="remaining-counter" id="remainingCounter"><span class="num">40</span>still in</div>
   <div class="navbtn big" id="btnLike" aria-label="Keep this topic">&#10003;</div>
+</div>
+
+<div class="reference-toggle">
+  <a id="viewAllLink">Browse every topic's full brief without swiping &rarr;</a>
+</div>
+
+<div id="reference-section">
+  <div class="ref-header">
+    <a class="ref-back" id="backToSwipe">&larr; Back to swiping</a>
+    <h2>Every topic, full brief</h2>
+    <p>All 80 project topics with their complete technical brief. Each has its own permanent link &mdash; share a direct link to any topic and it opens straight to that section.</p>
+  </div>
+  <div id="referenceList"></div>
 </div>
 
 <script type="application/json" id="pool-data">
@@ -474,7 +323,8 @@ body{
         "skills_used": "Logistic regression, model evaluation under class imbalance, threshold tuning against a stated business cost, data cleaning",
         "deliverable": "A written comparison of model performance at 3 different classification thresholds, each justified against a stated cost assumption, with the final recommended threshold defended explicitly.",
         "market_angle": "Nigerian fintech lending depends entirely on getting this exact trade-off right \u2014 a model that reports 95% accuracy while missing every real default is worthless in production. Demonstrating you understand why is a genuine fintech-hiring differentiator.",
-        "feasibility": "Strong fit, directly extends Unit 5 content into the rigor real practitioners are actually judged on."
+        "feasibility": "Strong fit, directly extends Unit 5 content into the rigor real practitioners are actually judged on.",
+        "slug": "aiml-credit-risk-scorer-with-honest-model-evaluation-under-class-"
       },
       {
         "title": "Fraud Pattern Detector With Adversarial Stress-Testing",
@@ -483,7 +333,8 @@ body{
         "skills_used": "Logistic regression / classification, adversarial thinking, model evaluation, data engineering",
         "deliverable": "A documented set of adversarial test cases the team designed themselves, the model's performance against each, and at least one successful evasion the team found and analyzed.",
         "market_angle": "Real fraud detection at Paystack/Flutterwave-scale companies is an active arms race against people trying to evade it \u2014 a project that demonstrates adversarial thinking, not just clean-dataset accuracy, signals genuine understanding of the actual problem.",
-        "feasibility": "Good \u2014 use public synthetic fraud datasets; the adversarial design work is the real intellectual content and doesn't require real transaction data."
+        "feasibility": "Good \u2014 use public synthetic fraud datasets; the adversarial design work is the real intellectual content and doesn't require real transaction data.",
+        "slug": "aiml-fraud-pattern-detector-with-adversarial-stress-testing"
       },
       {
         "title": "Time-Series Demand Forecaster With Quantified Forecast Error",
@@ -492,7 +343,8 @@ body{
         "skills_used": "Time series concepts, regression, backtesting methodology, error quantification (MAE/RMSE), data visualization",
         "deliverable": "A backtested error comparison between two forecasting methods on the same dataset, with a recommendation for which to use and an honest account of where both methods struggled.",
         "market_angle": "Any forecasting tool without quantified, backtested error is a guess wearing a chart \u2014 Nigerian retail and logistics businesses that adopt forecasting need to know how much to trust it, and demonstrating proper backtesting is what separates a real forecasting capability from a plausible-looking line on a graph.",
-        "feasibility": "Strong fit, directly extends Unit 5 content with the rigor of proper backtesting rather than a single train/test split."
+        "feasibility": "Strong fit, directly extends Unit 5 content with the rigor of proper backtesting rather than a single train/test split.",
+        "slug": "aiml-time-series-demand-forecaster-with-quantified-forecast-error"
       },
       {
         "title": "Custom Fine-Tuned Sentiment Classifier (Not Off-the-Shelf)",
@@ -501,7 +353,8 @@ body{
         "skills_used": "Text classification, data labeling and dataset construction, model training and evaluation, domain adaptation concepts",
         "deliverable": "A side-by-side comparison: a generic pre-built sentiment tool's performance vs. the team's own domain-trained classifier, on the same domain-specific test set, with the gap explained.",
         "market_angle": "Generic AI tools systematically underperform on Nigerian informal language and Pidgin \u2014 building something that actually understands local text, by training on local data rather than assuming a Western-trained model just works, is a genuine, demonstrable Nigerian-context AI skill.",
-        "feasibility": "Good \u2014 keep the dataset small (low hundreds of labeled examples) and domain genuinely narrow to stay achievable."
+        "feasibility": "Good \u2014 keep the dataset small (low hundreds of labeled examples) and domain genuinely narrow to stay achievable.",
+        "slug": "aiml-custom-fine-tuned-sentiment-classifier-not-off-the-shelf"
       },
       {
         "title": "Decision Tree Model With Full Interpretability Report",
@@ -510,7 +363,8 @@ body{
         "skills_used": "Decision trees, model interpretability, feature importance analysis, overfitting diagnosis, plain-language technical communication",
         "deliverable": "A written interpretability report explaining the model's actual decision logic to a non-technical reader, plus a documented test of the tree's performance on data it wasn't trained on.",
         "market_angle": "The ability to explain what a model actually does \u2014 not just that it works \u2014 is what makes AI usable and trustable for real institutional decisions (school admin, HR, lending). This explainability skill is explicitly what Nigerian institutions need before they'll trust AI in real decisions.",
-        "feasibility": "Strong, achievable \u2014 the rigor lives in the interpretability and overfitting analysis, not in algorithmic complexity."
+        "feasibility": "Strong, achievable \u2014 the rigor lives in the interpretability and overfitting analysis, not in algorithmic complexity.",
+        "slug": "aiml-decision-tree-model-with-full-interpretability-report"
       },
       {
         "title": "Database-Backed Inventory System With Real Concurrent-Access Handling",
@@ -519,7 +373,8 @@ body{
         "skills_used": "SQL/database management, transaction safety and race-condition handling, FastAPI, concurrent access testing",
         "deliverable": "A deliberately constructed concurrent-access test (simulating two simultaneous updates to the same stock item) demonstrating the system handles it correctly, plus a before/after showing what would have gone wrong without the safety handling.",
         "market_angle": "Every real multi-user business system hits this exact problem \u2014 a system that only works when tested by one person at a time isn't production-ready. Demonstrating you understand why, and fixed it deliberately, is real software engineering maturity beyond a tutorial-level CRUD app.",
-        "feasibility": "Good \u2014 the database and API skills are 1st-semester-appropriate; the deliberate concurrency testing is what elevates this beyond a basic tutorial project."
+        "feasibility": "Good \u2014 the database and API skills are 1st-semester-appropriate; the deliberate concurrency testing is what elevates this beyond a basic tutorial project.",
+        "slug": "aiml-database-backed-inventory-system-with-real-concurrent-access"
       },
       {
         "title": "Packaged Desktop Financial Tool With Edge-Case Input Validation",
@@ -528,7 +383,8 @@ body{
         "skills_used": "PyQt5, .pyw/.exe packaging, input validation, deliberate self-testing/bug-hunting discipline",
         "deliverable": "A documented bug-hunting log: every edge case the team tried, what broke, and how it was fixed \u2014 alongside the final working, packaged .exe.",
         "market_angle": "Software that only works with perfect input isn't real software \u2014 and most beginner projects are never stress-tested against bad input before being called 'done.' This deliberate self-testing discipline is what separates a demo from something a real user could actually trust.",
-        "feasibility": "Excellent fit for Unit 6 \u2014 gives students a complete, robust, double-clickable deliverable, with the edge-case rigor as the genuine differentiator over a typical class project."
+        "feasibility": "Excellent fit for Unit 6 \u2014 gives students a complete, robust, double-clickable deliverable, with the edge-case rigor as the genuine differentiator over a typical class project.",
+        "slug": "aiml-packaged-desktop-financial-tool-with-edge-case-input-validat"
       },
       {
         "title": "Secure FastAPI Service With Real Vulnerability Testing",
@@ -537,7 +393,8 @@ body{
         "skills_used": "FastAPI, Git/GitHub, cloud deployment, applied cybersecurity (SQL injection, input validation), security testing discipline",
         "deliverable": "A documented security testing log: each vulnerability attempted, whether it succeeded, and the specific fix applied \u2014 not just a deployed API that 'works' under normal use.",
         "market_angle": "Most beginner-deployed APIs are never security-tested at all. Demonstrating you can actually find and fix real vulnerabilities in your own work \u2014 not just follow a deployment tutorial \u2014 is a direct, credible signal for any backend/security-adjacent role.",
-        "feasibility": "High \u2014 directly extends Unit 7 content; the security-testing discipline is genuinely achievable within a semester and is the real differentiator here."
+        "feasibility": "High \u2014 directly extends Unit 7 content; the security-testing discipline is genuinely achievable within a semester and is the real differentiator here.",
+        "slug": "aiml-secure-fastapi-service-with-real-vulnerability-testing"
       },
       {
         "title": "A/B-Tested Recommendation Logic for a Mock E-Commerce Catalog",
@@ -546,7 +403,8 @@ body{
         "skills_used": "Recommender logic, experimental design (A/B testing methodology), data analytics, defined success metrics",
         "deliverable": "A written comparison report: two recommendation strategies tested against the same defined metric, with a clear, justified conclusion about which performed better and why.",
         "market_angle": "Every real product team validates recommendation changes with proper A/B testing \u2014 building a recommender without ever evaluating it against an alternative is incomplete by industry standards. This experimental-design discipline is the genuine differentiator most beginner recommender projects skip entirely.",
-        "feasibility": "Good \u2014 keep the dataset and strategies simple; the rigor is in the comparison methodology, not algorithmic sophistication."
+        "feasibility": "Good \u2014 keep the dataset and strategies simple; the rigor is in the comparison methodology, not algorithmic sophistication.",
+        "slug": "aiml-ab-tested-recommendation-logic-for-a-mock-e-commerce-catalog"
       },
       {
         "title": "Excel/Data Pipeline Automation With Real Data-Quality Auditing",
@@ -555,7 +413,8 @@ body{
         "skills_used": "Pandas data cleaning, Excel integration, data quality auditing methodology, documentation discipline",
         "deliverable": "A data-quality audit report: a breakdown of every issue category found in the source data, the volume of each, and the justified handling decision \u2014 not just a final clean output with no record of what was done to get there.",
         "market_angle": "Real business data is always messier than tutorial datasets, and the decisions made while cleaning it (what to drop, what to assume) materially affect business conclusions. Most beginner projects clean data invisibly; documenting and justifying those decisions is the actual professional skill.",
-        "feasibility": "Strong, achievable \u2014 deliberately uses genuinely messy mock or real anonymized data rather than a pre-cleaned tutorial dataset."
+        "feasibility": "Strong, achievable \u2014 deliberately uses genuinely messy mock or real anonymized data rather than a pre-cleaned tutorial dataset.",
+        "slug": "aiml-exceldata-pipeline-automation-with-real-data-quality-auditin"
       },
       {
         "title": "Personal AI Tool-Use Audit and Custom GPT/Workflow Build",
@@ -564,7 +423,8 @@ body{
         "skills_used": "Prompt engineering, Python scripting, FastAPI basics, time-measurement and before/after comparison",
         "deliverable": "A measured before/after: time taken to complete the task manually vs. with the built automation, run on at least 5 real repetitions of the task.",
         "market_angle": "This mirrors exactly how real AI-adoption consulting work happens \u2014 find the actual friction, build the actual fix, measure the actual time saved \u2014 directly relevant to RAIN's own corporate AI consulting offering, and a genuinely useful skill even for students who end up in non-technical-facing roles.",
-        "feasibility": "Most accessible option on this list \u2014 appropriate as a lighter-weight option for students who want a real, measured deliverable without committing to a heavier ML/deployment build this semester."
+        "feasibility": "Most accessible option on this list \u2014 appropriate as a lighter-weight option for students who want a real, measured deliverable without committing to a heavier ML/deployment build this semester.",
+        "slug": "aiml-personal-ai-tool-use-audit-and-custom-gptworkflow-build"
       },
       {
         "title": "Domain Fine-Tuned Generative Language Model (Not Prompting)",
@@ -573,7 +433,8 @@ body{
         "skills_used": "LLM internals, fine-tuning vs. prompting distinction, training dataset construction, deep learning fundamentals, quantitative model evaluation",
         "deliverable": "A measured before/after comparison: base model output vs. fine-tuned model output on the same test prompts, scored against an evaluation rubric the team designs themselves (not just 'it sounds better').",
         "market_angle": "The market is flooded with prompt-engineers and starved of people who've actually fine-tuned a model on real data \u2014 this is exactly the skill gap most 'AI-trained' graduates don't have, making it a genuine differentiator.",
-        "feasibility": "Ambitious \u2014 use a small model (not a frontier model) and a tightly scoped dataset (low hundreds to low thousands of examples). Achievable with real scope discipline; this is intentionally one of the hardest options on the list."
+        "feasibility": "Ambitious \u2014 use a small model (not a frontier model) and a tightly scoped dataset (low hundreds to low thousands of examples). Achievable with real scope discipline; this is intentionally one of the hardest options on the list.",
+        "slug": "aiml-domain-fine-tuned-generative-language-model-not-prompting"
       },
       {
         "title": "Fine-Tuned Image Generation Model for a Domain-Specific Style",
@@ -582,7 +443,8 @@ body{
         "skills_used": "Generative model architecture (GANs/diffusion), transfer learning extended to actual fine-tuning, image dataset construction, qualitative + quantitative evaluation design",
         "deliverable": "A side-by-side comparison grid: base model generations vs. fine-tuned model generations on the same prompts, with a team-designed scoring rubric for 'on-style-ness' applied to both.",
         "market_angle": "Custom-styled generative image tools are an active commercial application (fashion, branding, product design) \u2014 demonstrating real fine-tuning rather than just prompting a general-purpose model signals genuine technical depth in a crowded 'AI image generation' market.",
-        "feasibility": "Advanced \u2014 scope the dataset and training run small; image fine-tuning is computationally heavier than text, so this should be approached with care for available compute."
+        "feasibility": "Advanced \u2014 scope the dataset and training run small; image fine-tuning is computationally heavier than text, so this should be approached with care for available compute.",
+        "slug": "aiml-fine-tuned-image-generation-model-for-a-domain-specific-styl"
       },
       {
         "title": "Explainable AI Layer for a High-Stakes Decision Model",
@@ -591,7 +453,8 @@ body{
         "skills_used": "Explainable AI, feature importance methods, counterfactual reasoning, model auditing for consistency",
         "deliverable": "A consistency audit: explanations generated for several similar input cases, checked for whether the model's stated reasoning is actually stable and coherent across them \u2014 with any inconsistencies found and discussed honestly.",
         "market_angle": "Regulatory and fairness pressure on AI decision systems is rising globally and in Nigeria \u2014 demonstrating you can build AND audit explainability (not just bolt on a feature-importance chart and call it done) is genuinely current, responsible AI practice valued by fintech and HR-tech employers.",
-        "feasibility": "Good \u2014 can extend a model built earlier in the programme rather than starting from scratch, keeping focus on the explainability/auditing rigor."
+        "feasibility": "Good \u2014 can extend a model built earlier in the programme rather than starting from scratch, keeping focus on the explainability/auditing rigor.",
+        "slug": "aiml-explainable-ai-layer-for-a-high-stakes-decision-model"
       },
       {
         "title": "Deployed Model With Real Drift Detection (Not Just an Endpoint)",
@@ -600,7 +463,8 @@ body{
         "skills_used": "Model deployment, FastAPI, statistical distribution comparison, monitoring system design, MLOps fundamentals",
         "deliverable": "A demonstrated drift alert: deliberately feed the deployed model data that differs meaningfully from its training distribution, and show the monitoring system correctly flags it.",
         "market_angle": "The ability to deploy AND maintain a model in production \u2014 not just train one in a notebook \u2014 is what separates a job-ready AI engineer from a notebook-only data scientist. Drift monitoring specifically is a real MLOps skill most bootcamp-level projects never touch.",
-        "feasibility": "Strong capstone-style option \u2014 works well as a 'finishing' project on a model built earlier in the semester, properly productionized rather than left as a notebook."
+        "feasibility": "Strong capstone-style option \u2014 works well as a 'finishing' project on a model built earlier in the semester, properly productionized rather than left as a notebook.",
+        "slug": "aiml-deployed-model-with-real-drift-detection-not-just-an-endpoin"
       },
       {
         "title": "Customer Segmentation With Actioned Business Strategy (Not Just Clusters)",
@@ -609,7 +473,8 @@ body{
         "skills_used": "Unsupervised learning, K-Means, PCA, business-strategy translation, evaluation design",
         "deliverable": "A segment-by-segment action plan, each with a specific proposed business action and a defined metric for how the business would know if it worked \u2014 not just a labeled cluster plot.",
         "market_angle": "Clusters without an action plan are an analytics exercise, not a business deliverable \u2014 Nigerian SMEs and e-commerce businesses need the 'so what do we DO about it' translation, which is the actual billable analytics skill, not the clustering algorithm itself.",
-        "feasibility": "Strong fit, directly extends Unit 1 with the business-translation rigor that separates a real analytics consultant from a notebook exercise."
+        "feasibility": "Strong fit, directly extends Unit 1 with the business-translation rigor that separates a real analytics consultant from a notebook exercise.",
+        "slug": "aiml-customer-segmentation-with-actioned-business-strategy-not-ju"
       },
       {
         "title": "Recommender System With Cold-Start Handling",
@@ -618,7 +483,8 @@ body{
         "skills_used": "Recommender systems (collaborative + content-based), cold-start strategy design, comparative evaluation",
         "deliverable": "A measured comparison of recommendation quality for established users/items vs. cold-start cases, with the fallback strategy's effectiveness explicitly quantified, not assumed.",
         "market_angle": "Every real recommender system (Jumia, any content platform) faces the cold-start problem constantly \u2014 new products and new users arrive every day. Solving it deliberately, rather than ignoring it like most tutorial-level recommenders, is the genuine production-relevant skill.",
-        "feasibility": "Good \u2014 keep the dataset well-understood; the cold-start handling and its evaluation is the real intellectual content here."
+        "feasibility": "Good \u2014 keep the dataset well-understood; the cold-start handling and its evaluation is the real intellectual content here.",
+        "slug": "aiml-recommender-system-with-cold-start-handling"
       },
       {
         "title": "Computer Vision Quality Control With Documented Failure Modes",
@@ -627,7 +493,8 @@ body{
         "skills_used": "Computer vision, CNNs, transfer learning, systematic failure-mode analysis",
         "deliverable": "A documented failure-mode catalog: specific image conditions that cause misclassification, organized by category, each with a proposed data-collection fix.",
         "market_angle": "Manufacturing and agriculture quality-control automation fails in production specifically because of unaddressed edge cases nobody tested for. Honestly cataloging failure modes \u2014 rather than only demoing the cases that work \u2014 is the real engineering maturity that production deployment requires.",
-        "feasibility": "Good \u2014 use a pre-trained model with transfer learning as taught; the rigor is in the deliberate failure-hunting, not training-from-scratch."
+        "feasibility": "Good \u2014 use a pre-trained model with transfer learning as taught; the rigor is in the deliberate failure-hunting, not training-from-scratch.",
+        "slug": "aiml-computer-vision-quality-control-with-documented-failure-mode"
       },
       {
         "title": "Custom Domain Chatbot With Hallucination-Rate Measurement",
@@ -636,7 +503,8 @@ body{
         "skills_used": "LLM application development, FastAPI deployment, retrieval-grounding concepts, quantitative hallucination measurement",
         "deliverable": "A measured hallucination rate before and after adding a grounding/mitigation strategy, on a fixed test set with known correct answers \u2014 not just a chatbot that 'seems to work.'",
         "market_angle": "Every real deployed LLM application has to confront hallucination rates honestly \u2014 RAIN's own corporate AI consulting work depends on being able to say 'we measured and reduced the error rate,' not just 'we built a chatbot.' This is the actual current frontier of applied LLM engineering.",
-        "feasibility": "Strong \u2014 pick a real, narrow institutional use case (ideally a RAIN-affiliated business) for both the chatbot and its known-answer test set."
+        "feasibility": "Strong \u2014 pick a real, narrow institutional use case (ideally a RAIN-affiliated business) for both the chatbot and its known-answer test set.",
+        "slug": "aiml-custom-domain-chatbot-with-hallucination-rate-measurement"
       },
       {
         "title": "Time-Series Anomaly Detector With Real-World Validation",
@@ -645,7 +513,8 @@ body{
         "skills_used": "Time series analysis, ensemble methods, anomaly detection, historical backtesting against real known events",
         "deliverable": "A backtest report: did the detector correctly flag a real, known historical anomaly when run on the data leading up to it? Documented honestly, including any false positives/negatives found.",
         "market_angle": "Anomaly detection systems are judged on whether they catch REAL problems, not synthetic test cases \u2014 validating against genuine historical events (not just artificially injected ones) is the rigor that separates a credible monitoring tool from a class demo.",
-        "feasibility": "Good fit, directly extends Unit 3 content; requires access to a real historical dataset with at least one known anomalous event to validate against."
+        "feasibility": "Good fit, directly extends Unit 3 content; requires access to a real historical dataset with at least one known anomalous event to validate against.",
+        "slug": "aiml-time-series-anomaly-detector-with-real-world-validation"
       },
       {
         "title": "Cross-Track AI+IoT Intelligent Decision System",
@@ -654,7 +523,8 @@ body{
         "skills_used": "IoT integration, any relevant ML technique (time series, classification), FastAPI integration, cross-track collaboration",
         "deliverable": "A documented comparison: a specific real scenario where the AI-driven decision differed from what a simple fixed-threshold system would have done, with reasoning for why the AI approach was actually better (or an honest account of when it wasn't).",
         "market_angle": "This is exactly the cross-disciplinary AI+hardware capability RAIN positions itself around \u2014 a strong joint AIML/RDA showcase project, and genuinely reflects how real smart-agriculture and smart-infrastructure systems are built, not toy IoT-with-AI-sprinkled-on demos.",
-        "feasibility": "Ambitious \u2014 best suited to a cross-track team pairing an AIML student with an RDA student; the honesty requirement (documenting when the AI approach ISN'T better) is deliberately part of the rigor."
+        "feasibility": "Ambitious \u2014 best suited to a cross-track team pairing an AIML student with an RDA student; the honesty requirement (documenting when the AI approach ISN'T better) is deliberately part of the rigor.",
+        "slug": "aiml-cross-track-aiiot-intelligent-decision-system"
       },
       {
         "title": "Neural Network Built From Scratch (No Framework) With Gradient Verification",
@@ -663,7 +533,8 @@ body{
         "skills_used": "Neural network theory, backpropagation mathematics, gradient checking/verification, linear algebra implementation",
         "deliverable": "A gradient-checking report: hand-coded gradients compared numerically against finite-difference estimates, with the maximum discrepancy reported and explained \u2014 proof the implementation is mathematically correct, not just empirically plausible.",
         "market_angle": "Anyone can call model.fit() in a framework \u2014 understanding what's actually happening inside backpropagation, to the point of being able to verify it's correct, is the genuine theoretical depth that separates an ML engineer who understands the math from one who only knows the API.",
-        "feasibility": "Frontier-level for this point in the programme \u2014 recommended for the strongest, most mathematically confident students; explicitly the most theoretically demanding option on this list."
+        "feasibility": "Frontier-level for this point in the programme \u2014 recommended for the strongest, most mathematically confident students; explicitly the most theoretically demanding option on this list.",
+        "slug": "aiml-neural-network-built-from-scratch-no-framework-with-gradient"
       },
       {
         "title": "Multi-Armed Bandit for Real-Time Ad/Content Optimization",
@@ -672,7 +543,8 @@ body{
         "skills_used": "Reinforcement learning fundamentals, statistical decision-making under uncertainty, simulation design, Python",
         "deliverable": "A cumulative-reward comparison plot: bandit algorithm vs. static A/B test, on the same simulated traffic, with the bandit's regret (lost reward from suboptimal early choices) explicitly quantified.",
         "market_angle": "Every serious digital advertising and content platform uses bandit algorithms, not static A/B tests, because they waste less traffic on losing options \u2014 implementing one from scratch, not just naming it, is a genuine differentiator for ad-tech and growth roles.",
-        "feasibility": "Good \u2014 fully simulation-based, no real ad platform needed; the rigor is in implementing the algorithm correctly and proving it beats the naive baseline."
+        "feasibility": "Good \u2014 fully simulation-based, no real ad platform needed; the rigor is in implementing the algorithm correctly and proving it beats the naive baseline.",
+        "slug": "aiml-multi-armed-bandit-for-real-time-adcontent-optimization"
       },
       {
         "title": "Knowledge Graph Builder From Unstructured Text",
@@ -681,7 +553,8 @@ body{
         "skills_used": "NLP entity/relationship extraction, graph data structures, LLM-assisted extraction techniques, query design",
         "deliverable": "A working graph that can answer at least 3 multi-hop queries (questions requiring traversing 2+ relationships) correctly, demonstrated live.",
         "market_angle": "Knowledge graphs underlie real applications in due-diligence, fraud-network detection, and research synthesis \u2014 a working multi-hop query demo is a concrete, advanced NLP capability most graduates have only read about, not built.",
-        "feasibility": "Ambitious \u2014 scope the text corpus narrowly (one sector, a manageable number of articles) to keep entity/relationship extraction quality high enough for meaningful queries."
+        "feasibility": "Ambitious \u2014 scope the text corpus narrowly (one sector, a manageable number of articles) to keep entity/relationship extraction quality high enough for meaningful queries.",
+        "slug": "aiml-knowledge-graph-builder-from-unstructured-text"
       },
       {
         "title": "Federated Learning Simulation Across Simulated Devices",
@@ -690,7 +563,8 @@ body{
         "skills_used": "Federated learning concepts, distributed training simulation, model aggregation, privacy-preserving ML",
         "deliverable": "A performance comparison: federated-trained model vs. centrally-trained model on the same held-out test set, with the accuracy gap (if any) explicitly reported and discussed.",
         "market_angle": "Privacy-preserving ML is increasingly required for health and financial data in regulated markets \u2014 demonstrating you understand federated learning beyond the buzzword, with an actual working simulation, is a genuine signal for privacy-conscious AI roles.",
-        "feasibility": "Advanced \u2014 fully simulatable on one machine using data partitioning; no real distributed infrastructure required, keeping this achievable within a semester."
+        "feasibility": "Advanced \u2014 fully simulatable on one machine using data partitioning; no real distributed infrastructure required, keeping this achievable within a semester.",
+        "slug": "aiml-federated-learning-simulation-across-simulated-devices"
       },
       {
         "title": "Bias Audit of a Public Pre-Trained Model",
@@ -699,7 +573,8 @@ body{
         "skills_used": "Model auditing methodology, statistical testing for bias, NLP or computer vision (depending on model chosen), responsible AI practice",
         "deliverable": "A bias audit report: specific test cases constructed, results quantified (not just anecdotal), and a clear statement of what was and wasn't found \u2014 including admitting if no significant bias was detected in the tested dimension.",
         "market_angle": "Responsible AI auditing is a growing, real compliance need as AI regulation tightens globally \u2014 demonstrating rigorous, evidence-based bias testing methodology (not just claiming awareness of the issue) is a genuine, current AI-ethics skill employers are starting to actively seek.",
-        "feasibility": "Good \u2014 uses an existing pre-trained model, so no training compute needed; the rigor is entirely in the test-case design and statistical analysis."
+        "feasibility": "Good \u2014 uses an existing pre-trained model, so no training compute needed; the rigor is entirely in the test-case design and statistical analysis.",
+        "slug": "aiml-bias-audit-of-a-public-pre-trained-model"
       },
       {
         "title": "Speech-to-Text Pipeline Fine-Tuned for Nigerian-Accented English",
@@ -708,7 +583,8 @@ body{
         "skills_used": "Speech recognition fundamentals, model fine-tuning, audio dataset construction, word-error-rate evaluation",
         "deliverable": "A measured word-error-rate comparison: base model vs. fine-tuned model, on a held-out set of Nigerian-accented test recordings the team didn't train on.",
         "market_angle": "Generic speech recognition systems systematically underperform on African-accented English \u2014 building something that actually works better for Nigerian voices, with measured proof, is a genuine, locally-relevant AI contribution with real product potential (call centers, voice assistants, transcription services).",
-        "feasibility": "Ambitious \u2014 recording a sufficient, well-labeled audio dataset is real work; scope to a narrow vocabulary/use case to keep the fine-tuning task tractable."
+        "feasibility": "Ambitious \u2014 recording a sufficient, well-labeled audio dataset is real work; scope to a narrow vocabulary/use case to keep the fine-tuning task tractable.",
+        "slug": "aiml-speech-to-text-pipeline-fine-tuned-for-nigerian-accented-eng"
       },
       {
         "title": "Causal Inference: Did the Intervention Actually Work?",
@@ -717,7 +593,8 @@ body{
         "skills_used": "Causal inference methodology, regression, statistical reasoning beyond correlation, data analysis",
         "deliverable": "A causal analysis report explicitly distinguishing correlation from causation for the studied intervention, including a discussion of confounding factors that could explain the observed change without the intervention being the true cause.",
         "market_angle": "Most business analytics confuses correlation with causation, leading to confidently wrong conclusions about what's actually working \u2014 genuine causal inference skill is rare and highly valued in any data-driven decision-making role, Nigerian or global.",
-        "feasibility": "Good \u2014 use a real dataset with a clear before/after event; the statistical rigor of properly isolating causation is the real intellectual content here."
+        "feasibility": "Good \u2014 use a real dataset with a clear before/after event; the statistical rigor of properly isolating causation is the real intellectual content here.",
+        "slug": "aiml-causal-inference-did-the-intervention-actually-work"
       },
       {
         "title": "Active Learning Loop to Minimize Labeling Cost",
@@ -726,7 +603,8 @@ body{
         "skills_used": "Active learning strategies, model uncertainty estimation, classification, experimental comparison design",
         "deliverable": "A comparison: model accuracy achieved per number of labels used, active learning strategy vs. random labeling, showing the active learning curve reaching equivalent accuracy with fewer labels.",
         "market_angle": "Labeling data is expensive and slow for any real Nigerian company building ML products \u2014 active learning directly reduces that cost, and demonstrating it quantitatively is a genuine, practical ML-engineering skill beyond textbook classification.",
-        "feasibility": "Good \u2014 fully simulatable using an already-labeled dataset where labels are deliberately 'hidden' and revealed only when requested by the active learning strategy."
+        "feasibility": "Good \u2014 fully simulatable using an already-labeled dataset where labels are deliberately 'hidden' and revealed only when requested by the active learning strategy.",
+        "slug": "aiml-active-learning-loop-to-minimize-labeling-cost"
       },
       {
         "title": "Multi-Modal Model: Combining Text and Image Signals",
@@ -735,7 +613,8 @@ body{
         "skills_used": "Multi-modal model architecture, computer vision, NLP, feature fusion techniques",
         "deliverable": "A three-way performance comparison: image-only model, text-only model, and combined multi-modal model, on the same test set, showing the combined approach's improvement quantified.",
         "market_angle": "Real-world fraud and content-moderation systems (e-commerce listings, social media) increasingly need multi-modal understanding \u2014 demonstrating you can build and justify a fusion approach, not just a single-signal model, is genuinely current applied AI skill.",
-        "feasibility": "Advanced \u2014 requires a dataset with both image and text per example; scope to a publicly available multi-modal dataset or carefully construct a small one."
+        "feasibility": "Advanced \u2014 requires a dataset with both image and text per example; scope to a publicly available multi-modal dataset or carefully construct a small one.",
+        "slug": "aiml-multi-modal-model-combining-text-and-image-signals"
       },
       {
         "title": "Reinforcement Learning Agent for a Simple Game/Control Task",
@@ -744,7 +623,8 @@ body{
         "skills_used": "Reinforcement learning fundamentals, reward function design, hyperparameter tuning, training curve analysis",
         "deliverable": "A learning curve plot (reward vs. training episode) showing genuine improvement over training, with a written account of what reward-function or hyperparameter changes were needed to get the agent to actually learn.",
         "market_angle": "Reinforcement learning is the methodology behind real robotics control, game AI, and increasingly recommendation/operations optimization \u2014 building and training an agent from scratch (not calling a pre-trained one) demonstrates the genuine RL skill, not just familiarity with the term.",
-        "feasibility": "Good \u2014 choose a simple, well-documented environment (e.g. a grid-world or simple physics task) to keep training time and complexity manageable within a semester."
+        "feasibility": "Good \u2014 choose a simple, well-documented environment (e.g. a grid-world or simple physics task) to keep training time and complexity manageable within a semester.",
+        "slug": "aiml-reinforcement-learning-agent-for-a-simple-gamecontrol-task"
       },
       {
         "title": "Model Compression: Making a Model Small Enough for a Phone",
@@ -753,7 +633,8 @@ body{
         "skills_used": "Model quantization/pruning, deployment constraints engineering, accuracy-vs-efficiency trade-off analysis",
         "deliverable": "A before/after table: model size, inference speed, and accuracy for the original vs. compressed model, with an honest discussion of whether the trade-off is acceptable for a real use case.",
         "market_angle": "Most Nigerian end users access AI products on mid-range phones with real data and storage constraints \u2014 knowing how to compress a model for real deployment, not just train one in the cloud with unlimited resources, is a genuine, locally-relevant engineering skill.",
-        "feasibility": "Good \u2014 apply standard quantization techniques to an existing trained model; the measurement and trade-off analysis rigor is the real deliverable."
+        "feasibility": "Good \u2014 apply standard quantization techniques to an existing trained model; the measurement and trade-off analysis rigor is the real deliverable.",
+        "slug": "aiml-model-compression-making-a-model-small-enough-for-a-phone"
       },
       {
         "title": "Synthetic Minority Oversampling for a Genuinely Rare Event",
@@ -762,7 +643,8 @@ body{
         "skills_used": "Class imbalance handling, SMOTE and alternative rebalancing techniques, careful model evaluation",
         "deliverable": "A comparison table of at least 3 rebalancing strategies against a no-rebalancing baseline, evaluated on metrics that actually matter for rare-event detection (recall, precision-recall AUC \u2014 not accuracy), with a justified final recommendation.",
         "market_angle": "Extremely rare-event detection (specific fraud types, rare disease indicators, critical equipment failure) is a genuinely hard, common real-world ML problem where naive approaches fail badly \u2014 rigorous comparison of rebalancing strategies is a real differentiator over a beginner who just calls SMOTE once and assumes it worked.",
-        "feasibility": "Strong fit \u2014 use a public dataset with genuine extreme imbalance; the comparative rigor across multiple techniques is the real content."
+        "feasibility": "Strong fit \u2014 use a public dataset with genuine extreme imbalance; the comparative rigor across multiple techniques is the real content.",
+        "slug": "aiml-synthetic-minority-oversampling-for-a-genuinely-rare-event"
       },
       {
         "title": "Web-Scraped Market Intelligence Dashboard With Data Validation",
@@ -771,7 +653,8 @@ body{
         "skills_used": "Web scraping, data validation and anomaly detection on ingested data, FastAPI dashboard, ethical scraping practice",
         "deliverable": "A documented validation layer: specific examples of bad/anomalous scraped data the system caught and correctly excluded or flagged, not just a dashboard that assumes all scraped data is trustworthy.",
         "market_angle": "Market intelligence and competitive pricing tools are real, billable services for Nigerian e-commerce and retail businesses \u2014 and the validation rigor (not just the scraping itself) is what makes a scraping pipeline trustworthy enough for real business decisions.",
-        "feasibility": "Good \u2014 choose a scraping target that explicitly permits it or use a public API/dataset instead if scraping terms are unclear; the validation logic is the genuine technical content regardless of data source."
+        "feasibility": "Good \u2014 choose a scraping target that explicitly permits it or use a public API/dataset instead if scraping terms are unclear; the validation logic is the genuine technical content regardless of data source.",
+        "slug": "aiml-web-scraped-market-intelligence-dashboard-with-data-validati"
       },
       {
         "title": "Ensemble Stacking: Combining Multiple Models Properly",
@@ -780,7 +663,8 @@ body{
         "skills_used": "Ensemble methods, model stacking architecture, cross-validation to avoid leakage in the meta-model, careful evaluation",
         "deliverable": "A performance comparison: best individual model vs. the stacked ensemble, on the same held-out test set, with a specific check for whether the stacking actually helped or just added complexity without benefit.",
         "market_angle": "Stacked ensembles are standard in competitive/production ML, but done incorrectly (with data leakage into the meta-model) they silently produce misleadingly optimistic results \u2014 demonstrating you can build one correctly, with proper validation, is real ML engineering rigor.",
-        "feasibility": "Good \u2014 can extend models built earlier in the programme as the base learners, keeping the focus on the stacking architecture and validation rigor."
+        "feasibility": "Good \u2014 can extend models built earlier in the programme as the base learners, keeping the focus on the stacking architecture and validation rigor.",
+        "slug": "aiml-ensemble-stacking-combining-multiple-models-properly"
       },
       {
         "title": "Automated Data Drift Dashboard for a Live Data Source",
@@ -789,7 +673,8 @@ body{
         "skills_used": "Statistical monitoring, drift detection algorithms, dashboard/visualization, FastAPI or similar for the live tracking layer",
         "deliverable": "A live demo where deliberately-shifted test data triggers a correctly-flagged drift alert on the dashboard, with the specific statistical test used to detect the drift documented.",
         "market_angle": "Any organization running ML in production needs this monitoring layer, and very few entry-level candidates can build it \u2014 this project demonstrates production-ML-operations maturity distinct from (and complementary to) model-building skill.",
-        "feasibility": "Good \u2014 standalone project, doesn't require an actual deployed model; the statistical drift detection logic is the genuine content."
+        "feasibility": "Good \u2014 standalone project, doesn't require an actual deployed model; the statistical drift detection logic is the genuine content.",
+        "slug": "aiml-automated-data-drift-dashboard-for-a-live-data-source"
       },
       {
         "title": "Counterfactual Data Augmentation for Robustness",
@@ -798,7 +683,8 @@ body{
         "skills_used": "Counterfactual reasoning, AI-assisted data augmentation, robustness testing, classification",
         "deliverable": "A robustness comparison: model trained with vs. without counterfactual augmentation, tested specifically on edge cases designed to probe the exact robustness gap the augmentation targeted.",
         "market_angle": "Robustness to edge cases is what separates models that work in a demo from models that survive real deployment \u2014 counterfactual augmentation is a genuinely current ML research technique, not standard bootcamp content, making this a real differentiator.",
-        "feasibility": "Advanced \u2014 requires careful counterfactual design; scope to a narrow, well-understood classification problem to keep the counterfactual generation tractable and meaningful."
+        "feasibility": "Advanced \u2014 requires careful counterfactual design; scope to a narrow, well-understood classification problem to keep the counterfactual generation tractable and meaningful.",
+        "slug": "aiml-counterfactual-data-augmentation-for-robustness"
       },
       {
         "title": "Graph Neural Network for a Relationship-Based Prediction Task",
@@ -807,7 +693,8 @@ body{
         "skills_used": "Graph neural network fundamentals, graph data representation, comparative model evaluation",
         "deliverable": "A performance comparison: traditional feature-based model vs. graph-based model, on the same prediction task, with a specific discussion of what relationship information the graph model captured that the traditional model missed.",
         "market_angle": "Fraud rings, social recommendation, and supply-chain risk are all fundamentally relationship/network problems where traditional flat-feature models miss real signal \u2014 graph neural networks are a genuinely advanced, currently in-demand technique most graduates have never implemented.",
-        "feasibility": "Frontier-level \u2014 recommended only for the strongest, most mathematically confident students; explicitly one of the most demanding options in the pool."
+        "feasibility": "Frontier-level \u2014 recommended only for the strongest, most mathematically confident students; explicitly one of the most demanding options in the pool.",
+        "slug": "aiml-graph-neural-network-for-a-relationship-based-prediction-tas"
       },
       {
         "title": "Privacy-Preserving Data Sharing With Differential Privacy",
@@ -816,7 +703,8 @@ body{
         "skills_used": "Differential privacy mathematics, statistical noise calibration, privacy-utility trade-off analysis",
         "deliverable": "A trade-off curve: result accuracy/utility at multiple different privacy-strength settings, with a recommendation for a specific setting justified against a realistic stated use case.",
         "market_angle": "Genuine privacy-preserving analytics (not just 'we anonymized the names') is increasingly required for health, financial, and government data \u2014 implementing real differential privacy, with a quantified trade-off, is rare, advanced, and directly relevant to regulated-sector AI work.",
-        "feasibility": "Frontier-level \u2014 mathematically demanding; best for students comfortable with the underlying statistics, explicitly positioned as a stretch option."
+        "feasibility": "Frontier-level \u2014 mathematically demanding; best for students comfortable with the underlying statistics, explicitly positioned as a stretch option.",
+        "slug": "aiml-privacy-preserving-data-sharing-with-differential-privacy"
       },
       {
         "title": "Automated Hyperparameter Search With a Real Compute Budget",
@@ -825,7 +713,8 @@ body{
         "skills_used": "Hyperparameter optimization methods, experiment tracking, compute-budget-aware experimentation",
         "deliverable": "A comparison: best model found via automated search vs. a default/manually-guessed configuration, both constrained to the same number of total training runs, with the search method's efficiency explicitly discussed.",
         "market_angle": "Real ML teams operate under real compute budgets and need systematic, not manual, hyperparameter search \u2014 demonstrating a properly budget-constrained automated search (and discussing its efficiency honestly) is real production ML practice.",
-        "feasibility": "Good \u2014 can be applied to any model built earlier in the programme; the rigor is in the budget constraint and honest comparison, not algorithmic novelty."
+        "feasibility": "Good \u2014 can be applied to any model built earlier in the programme; the rigor is in the budget constraint and honest comparison, not algorithmic novelty.",
+        "slug": "aiml-automated-hyperparameter-search-with-a-real-compute-budget"
       }
     ]
   },
@@ -840,7 +729,8 @@ body{
         "skills_used": "ESP32 programming beyond basic connect, repeater/relay network architecture, RF fundamentals, LoRa modulation basics, measurement-based engineering documentation",
         "deliverable": "A distance-vs-RSSI characterization table/graph, with and without the repeater, plus a written diagnosis of every factor that degraded the link at range.",
         "market_angle": "Long-range, low-power connectivity is THE actual unsolved problem in rural Nigerian agriculture sensors, remote infrastructure monitoring, and pipeline surveillance \u2014 WiFi-range thinking fails completely there. Solving this for real is a genuine differentiator most 'IoT' graduates can't demonstrate.",
-        "feasibility": "Achievable with widely-available LoRa modules or ESP-NOW repeater chaining. Scope the target distance to something testable in the student's real environment (campus, neighborhood, or a rural test site)."
+        "feasibility": "Achievable with widely-available LoRa modules or ESP-NOW repeater chaining. Scope the target distance to something testable in the student's real environment (campus, neighborhood, or a rural test site).",
+        "slug": "rda-esp-based-long-range-network-extender-with-measured-link-bud"
       },
       {
         "title": "Potentiometer-Based Collision & Impact Classification Bumper",
@@ -849,7 +739,8 @@ body{
         "skills_used": "Sensors/actuators pushed into unconventional application, basic sensor fusion logic, embedded systems, signal interpretation beyond simple threshold triggers, mechanical bumper design",
         "deliverable": "A live demo correctly classifying at least 3 distinct impact scenarios (light touch, moderate bump, hard collision) using the fused signal \u2014 not an LED that turns on when touched.",
         "market_angle": "This is literally how real robot bumper-collision systems and industrial safety-edge sensors work. Repurposing a cheap, common component into an intelligent sensing role is a genuine engineering skill that signals real understanding, not parts-assembly.",
-        "feasibility": "Mechanically fiddly \u2014 the spring-loaded bumper rig needs genuine design thought. That mechanical design challenge IS the project, not a distraction from it."
+        "feasibility": "Mechanically fiddly \u2014 the spring-loaded bumper rig needs genuine design thought. That mechanical design challenge IS the project, not a distraction from it.",
+        "slug": "rda-potentiometer-based-collision-impact-classification-bumper"
       },
       {
         "title": "Multi-Sensor Industrial Safety Node \u2014 Touch, Pressure, and Proximity Fusion",
@@ -858,7 +749,8 @@ body{
         "skills_used": "Multi-sensor fusion logic, embedded systems, practical electronics, decision-tree-style rule design in firmware",
         "deliverable": "A truth table of sensor combinations and the system's actual response to each, demonstrated live, including at least one deliberately ambiguous case the system correctly resolves.",
         "market_angle": "Industrial safety systems (machine guarding, robotic cell perimeter safety) genuinely work exactly this way \u2014 sensor fusion to avoid both false stops and missed hazards. This is a direct, demonstrable analog to real factory safety engineering.",
-        "feasibility": "Strong fit for a full semester \u2014 the complexity lives in the fusion logic and the rigor of the test matrix, not in exotic hardware."
+        "feasibility": "Strong fit for a full semester \u2014 the complexity lives in the fusion logic and the rigor of the test matrix, not in exotic hardware.",
+        "slug": "rda-multi-sensor-industrial-safety-node-touch-pressure-and-proxi"
       },
       {
         "title": "Sound-Based Anomaly Detection Node (Acoustic Sensing)",
@@ -867,7 +759,8 @@ body{
         "skills_used": "Acoustic sensing, basic signal processing (amplitude/frequency features), embedded systems, edge-case false-positive tuning",
         "deliverable": "A demonstrated detection rate against a defined test set of sound clips/live sounds (target sound vs. normal ambient noise), with a documented false-positive rate, not just 'it beeped once.'",
         "market_angle": "RAIN's own founder has directly worked on a Passenger Scream Detection System for public buses \u2014 this project puts students on the same real, applied problem class: security and safety systems that listen for trouble, a genuinely funded application area in Nigerian public safety.",
-        "feasibility": "Ambitious but achievable if scoped to 1-2 specific target sounds rather than general audio classification \u2014 the rigor is in the false-positive testing, not raw sound variety."
+        "feasibility": "Ambitious but achievable if scoped to 1-2 specific target sounds rather than general audio classification \u2014 the rigor is in the false-positive testing, not raw sound variety.",
+        "slug": "rda-sound-based-anomaly-detection-node-acoustic-sensing"
       },
       {
         "title": "Generator/Vehicle Fuel-Theft Detection System",
@@ -876,7 +769,8 @@ body{
         "skills_used": "Sensor fusion (fuel level + engine state), embedded systems, pattern-based anomaly logic, basic data logging and reporting",
         "deliverable": "A log demonstrating the system correctly distinguishing at least 3 real test scenarios: normal running consumption, normal engine-off (no theft), and a simulated theft event (rapid drop, engine off).",
         "market_angle": "Generator and vehicle fuel theft is one of the most specific, costly, and unaddressed pain points for Nigerian businesses and households running backup power \u2014 a real, monetizable, narrowly-targeted product, not a generic IoT demo.",
-        "feasibility": "Moderate \u2014 fuel-level sensing itself can be technically fiddly (float sensors are noisy); the anomaly-pattern logic is the real intellectual core and is fully achievable regardless of sensor noise, as long as it's filtered properly."
+        "feasibility": "Moderate \u2014 fuel-level sensing itself can be technically fiddly (float sensors are noisy); the anomaly-pattern logic is the real intellectual core and is fully achievable regardless of sensor noise, as long as it's filtered properly.",
+        "slug": "rda-generatorvehicle-fuel-theft-detection-system"
       },
       {
         "title": "Closed-Loop Temperature/Humidity Control for a Controlled Micro-Environment",
@@ -885,7 +779,8 @@ body{
         "skills_used": "Closed-loop control concepts (a direct preview of 2nd semester PID content), sensors/actuators, system characterization, embedded systems",
         "deliverable": "A logged temperature/humidity trace over time showing the system holding setpoint against an external disturbance (e.g. opening the box briefly), with a written note on what control approach was used and why simple on/off thresholding was insufficient.",
         "market_angle": "Controlled-environment systems (seed propagation, vaccine/medication cold-chain boxes, server room micro-climates) are a real Nigerian infrastructure gap given power instability \u2014 and this project gives students a genuine head start into 2nd semester's control theory content.",
-        "feasibility": "Strong, well-scoped \u2014 deliberately written to bridge into 2nd semester rather than just repeating 1st semester sensor-wiring content."
+        "feasibility": "Strong, well-scoped \u2014 deliberately written to bridge into 2nd semester rather than just repeating 1st semester sensor-wiring content.",
+        "slug": "rda-closed-loop-temperaturehumidity-control-for-a-controlled-mic"
       },
       {
         "title": "Vibration-Based Machine Health Monitor",
@@ -894,7 +789,8 @@ body{
         "skills_used": "Accelerometer/vibration sensing, baseline characterization, basic signal comparison logic, embedded systems, data logging",
         "deliverable": "A comparison plot of the machine's healthy baseline vibration signature against a deliberately induced abnormal condition (e.g. an intentionally unbalanced load), with the system correctly flagging the deviation.",
         "market_angle": "Predictive maintenance is a high-value industrial application Nigerian manufacturing is actively exploring, and a working small-scale demo translates directly to real factory-floor value \u2014 unlike a passive sensor display.",
-        "feasibility": "Good \u2014 keep the monitored machine simple (a single motor) so the vibration signature is clean and the project stays about the detection logic, not noisy mechanical complexity."
+        "feasibility": "Good \u2014 keep the monitored machine simple (a single motor) so the vibration signature is clean and the project stays about the detection logic, not noisy mechanical complexity.",
+        "slug": "rda-vibration-based-machine-health-monitor"
       },
       {
         "title": "Solar-Powered Sensor Node With Real Power Budget Engineering",
@@ -903,7 +799,8 @@ body{
         "skills_used": "Power budgeting and measurement, microcontroller sleep modes, solar charging basics, embedded systems, IoT",
         "deliverable": "A measured power budget table (active current, sleep current, duty cycle) and a calculated vs. actually-observed runtime comparison over a multi-day test.",
         "market_angle": "Off-grid, solar-powered sensing is essential for rural Nigerian deployments where mains power isn't available \u2014 and power-budget engineering is a real skill gap most beginner IoT projects never touch because they're always plugged in during development.",
-        "feasibility": "Achievable and genuinely rigorous if the team commits to actually measuring current draw (a cheap USB power meter or multimeter in series) rather than estimating from datasheets alone."
+        "feasibility": "Achievable and genuinely rigorous if the team commits to actually measuring current draw (a cheap USB power meter or multimeter in series) rather than estimating from datasheets alone.",
+        "slug": "rda-solar-powered-sensor-node-with-real-power-budget-engineering"
       },
       {
         "title": "Capacitive Liquid-Level Sensing Without a Float Switch",
@@ -912,7 +809,8 @@ body{
         "skills_used": "Capacitive sensing fundamentals, analog signal characterization and calibration, embedded systems, practical electronics",
         "deliverable": "A calibration curve (measured capacitance/signal vs. actual liquid level) and a demonstrated level reading accurate to a stated tolerance across the full range of the container used.",
         "market_angle": "Non-contact sensing matters for corrosive liquids, sealed tanks, and hygienic applications \u2014 this project deliberately avoids the 'buy a module, read its output' trap and forces real sensing-principle understanding, the exact uncommon-use-case depth requested.",
-        "feasibility": "Genuinely challenging \u2014 capacitive sensing is electrically subtle (noise-sensitive). Best for a confident team; the calibration rigor is the actual grading bar, not just 'it sort of works.'"
+        "feasibility": "Genuinely challenging \u2014 capacitive sensing is electrically subtle (noise-sensitive). Best for a confident team; the calibration rigor is the actual grading bar, not just 'it sort of works.'",
+        "slug": "rda-capacitive-liquid-level-sensing-without-a-float-switch"
       },
       {
         "title": "Multi-Node Sensor Network With Time-Synchronized Data Fusion",
@@ -921,7 +819,8 @@ body{
         "skills_used": "Multi-node network architecture, wireless communication protocols, data fusion and synchronization, database logging, basic dashboard",
         "deliverable": "A demonstrated fused dataset (e.g. a spatial map or combined trend graph) from the 3+ live nodes, including a documented test of how the system behaves when one node temporarily drops offline.",
         "market_angle": "Real-world sensor deployments are always multi-node \u2014 single-sensor demos don't reflect how agriculture, building monitoring, or infrastructure sensing actually works at any meaningful scale. This is the genuine systems-engineering step up from a single Arduino-and-a-sensor project.",
-        "feasibility": "Ambitious in scope but well-suited to a 3-4 person team where each member owns one node and the team jointly owns the fusion/central logic."
+        "feasibility": "Ambitious in scope but well-suited to a 3-4 person team where each member owns one node and the team jointly owns the fusion/central logic.",
+        "slug": "rda-multi-node-sensor-network-with-time-synchronized-data-fusion"
       },
       {
         "title": "Custom RF Remote Control Protocol (No Pre-Built Remote Module)",
@@ -930,7 +829,8 @@ body{
         "skills_used": "Raw RF communication, custom protocol design, basic error detection (checksum/parity), embedded systems, debugging at the signal level",
         "deliverable": "A working multi-device control demo (e.g. controlling 2+ independent actuators from one transmitter, addressed individually) plus a deliberately corrupted/interfered transmission test showing the receiver correctly rejecting bad packets rather than acting on them.",
         "market_angle": "Understanding what off-the-shelf wireless modules and protocols actually abstract away is a genuine differentiator for embedded/RF engineering roles \u2014 exactly the 'build it yourself first' philosophy that makes someone dangerous in a real engineering interview, not just a module-assembler.",
-        "feasibility": "Frontier-level for 1st semester \u2014 recommended only for the strongest, most curious teams; explicitly positioned as the most technically demanding option on this list."
+        "feasibility": "Frontier-level for 1st semester \u2014 recommended only for the strongest, most curious teams; explicitly positioned as the most technically demanding option on this list.",
+        "slug": "rda-custom-rf-remote-control-protocol-no-pre-built-remote-module"
       },
       {
         "title": "Single-Axis Robotic Joint With Closed-Loop PID Position Control",
@@ -939,7 +839,8 @@ body{
         "skills_used": "PID control theory and implementation, system modeling/identification, potentiometer/encoder feedback as a real sensing problem, control loop frequency and discretization",
         "deliverable": "A full tuning report: logged step-response data, rise time, overshoot %, settling time, steady-state error, before/after tuning comparison, plus a live disturbance-rejection demo (someone pushes the arm; it fights back to setpoint).",
         "market_angle": "This is the literal core competency behind every industrial robot joint, every CNC axis, every drone gimbal. A real PID tuning report with demonstrated disturbance rejection signals the actual foundation of robotics engineering employment \u2014 not a class demo.",
-        "feasibility": "Achievable in one semester precisely because it's narrow \u2014 one axis, done rigorously, beats five axes done superficially."
+        "feasibility": "Achievable in one semester precisely because it's narrow \u2014 one axis, done rigorously, beats five axes done superficially.",
+        "slug": "rda-single-axis-robotic-joint-with-closed-loop-pid-position-cont"
       },
       {
         "title": "Self-Balancing Two-Wheeled Robot \u2014 The Flagship Capstone",
@@ -948,7 +849,8 @@ body{
         "skills_used": "PID control, sensor fusion (IMU), system identification, intelligent/learning-enhanced control, real-time embedded programming",
         "deliverable": "A demonstrated balancing robot, a documented PID tuning process, AND a specific before/after comparison showing the adaptive layer recovering performance after a deliberately changed condition (added weight, different floor) that broke the original fixed-PID tuning.",
         "market_angle": "Self-balancing robots are a globally recognized robotics benchmark \u2014 combined with the adaptive-control extension, this is genuinely PhD-adjacent territory at an undergraduate-achievable scope, and the strongest possible RAIN showcase piece for open days and investor demos.",
-        "feasibility": "Ambitious but exactly matched to the full semester's taught arc \u2014 this is the curriculum's intended centerpiece; allocate the most build time here."
+        "feasibility": "Ambitious but exactly matched to the full semester's taught arc \u2014 this is the curriculum's intended centerpiece; allocate the most build time here.",
+        "slug": "rda-self-balancing-two-wheeled-robot-the-flagship-capstone"
       },
       {
         "title": "Build-Your-Own ROS-Equivalent: Custom Multi-Controller Coordination",
@@ -957,7 +859,8 @@ body{
         "skills_used": "PySerial, Python sockets, pub/sub architecture design, controller coordination concepts, fault-tolerant system design",
         "deliverable": "A working multi-process demo with at least 2 independent 'nodes' communicating, plus a deliberate fault-injection test (killing one node mid-run) showing the system degrades gracefully rather than crashing entirely.",
         "market_angle": "Understanding what ROS abstracts away \u2014 by having built a smaller version yourself \u2014 is a genuine differentiator in robotics engineering interviews, where candidates who've only ever used frameworks without understanding their internals are common and unremarkable.",
-        "feasibility": "Excellent, well-scoped, and deliberately positioned as the 'build it yourself first' philosophy before relying on ROS for more complex future work."
+        "feasibility": "Excellent, well-scoped, and deliberately positioned as the 'build it yourself first' philosophy before relying on ROS for more complex future work.",
+        "slug": "rda-build-your-own-ros-equivalent-custom-multi-controller-coordi"
       },
       {
         "title": "Basic SLAM-Capable Mobile Robot \u2014 Real-Time Room Mapping",
@@ -966,7 +869,8 @@ body{
         "skills_used": "SLAM fundamentals, navigation control, odometry, sensor-based ranging, basic probabilistic position estimation",
         "deliverable": "A generated 2D map of a real test room compared against the room's actual floor plan, with a documented error analysis (where the map drifted from reality and why).",
         "market_angle": "SLAM is one of the most commercially important robotics capabilities \u2014 used in robot vacuums, warehouse robots, and autonomous delivery robots. A working basic demo with honest error analysis is a strong, recognizable skill signal that goes beyond 'we used a library.'",
-        "feasibility": "High complexity \u2014 recommend a simplified 2D approach over full 3D SLAM. Best for a confident team; this is intentionally one of the harder options on the list."
+        "feasibility": "High complexity \u2014 recommend a simplified 2D approach over full 3D SLAM. Best for a confident team; this is intentionally one of the harder options on the list.",
+        "slug": "rda-basic-slam-capable-mobile-robot-real-time-room-mapping"
       },
       {
         "title": "Voice-Commanded Robot Arm With Intent Disambiguation",
@@ -975,7 +879,8 @@ body{
         "skills_used": "Voice/language interfaces for robots, computer vision object detection, inverse kinematics, multi-modal system integration",
         "deliverable": "A live demo handling at least one genuinely ambiguous command correctly (via clarification or context resolution), not just a fixed vocabulary of unambiguous single-object commands.",
         "market_angle": "Real assistive and consumer robotics must handle ambiguous human language, not just clean command sets \u2014 this is the actual hard problem in voice-controlled robotics, and tackling it directly (rather than avoiding it by only using unambiguous test commands) is a genuine differentiator.",
-        "feasibility": "Ambitious, multi-system integration \u2014 best for a strong team comfortable with both the AIML-side NLP concepts and RDA-side kinematics; explicitly a stretch project."
+        "feasibility": "Ambitious, multi-system integration \u2014 best for a strong team comfortable with both the AIML-side NLP concepts and RDA-side kinematics; explicitly a stretch project.",
+        "slug": "rda-voice-commanded-robot-arm-with-intent-disambiguation"
       },
       {
         "title": "Drone With Autonomous Waypoint Navigation and Real Flight Log Analysis",
@@ -984,7 +889,8 @@ body{
         "skills_used": "Drone systems, flight controllers, autonomous waypoint navigation, post-flight data analysis, control systems",
         "deliverable": "A flight log analysis report: commanded vs. actual path overlay, quantified position error, and at least one identified disturbance event with a hypothesis for its cause.",
         "market_angle": "Agricultural and infrastructure-inspection drones \u2014 a real, established RAIN technology area \u2014 depend entirely on autonomous waypoint reliability, not just manual flight. A rigorous flight-log analysis demonstrates the actual engineering discipline behind commercial drone operations, not just 'it flew.'",
-        "feasibility": "Ambitious \u2014 drone hardware adds real cost/safety considerations; strongly consider using a RAIN-provided drone platform rather than building from scratch, and prioritize the analysis rigor over flight complexity."
+        "feasibility": "Ambitious \u2014 drone hardware adds real cost/safety considerations; strongly consider using a RAIN-provided drone platform rather than building from scratch, and prioritize the analysis rigor over flight complexity.",
+        "slug": "rda-drone-with-autonomous-waypoint-navigation-and-real-flight-lo"
       },
       {
         "title": "Two-Joint Robot Arm With Full Forward + Inverse Kinematics Pipeline",
@@ -993,7 +899,8 @@ body{
         "skills_used": "Forward and inverse kinematics derived and implemented by hand, sensors/actuators, basic trigonometric control",
         "deliverable": "A demo where the operator inputs a target (x,y) coordinate and the arm moves there, with the underlying joint-angle calculation shown/logged \u2014 not a black-boxed library result.",
         "market_angle": "Pick-and-place robotics is core to warehouse and manufacturing automation. Deriving and implementing the kinematics math yourself, rather than calling a library, is exactly the depth that separates an engineer who understands robot arms from one who has only ever used pre-built tools.",
-        "feasibility": "Achievable \u2014 limiting to 2 joints keeps the math and mechanical build genuinely manageable while staying mathematically honest (no library shortcuts)."
+        "feasibility": "Achievable \u2014 limiting to 2 joints keeps the math and mechanical build genuinely manageable while staying mathematically honest (no library shortcuts).",
+        "slug": "rda-two-joint-robot-arm-with-full-forward-inverse-kinematics-pip"
       },
       {
         "title": "Adaptive Cruise-Style Following Robot With Real Disturbance Testing",
@@ -1002,7 +909,8 @@ body{
         "skills_used": "Control systems, PID or equivalent control strategy, sensor-based distance ranging, disturbance/edge-case testing",
         "deliverable": "A test log covering at least 3 disturbance scenarios (sudden stop, sudden acceleration, brief sensor dropout) with the system's actual response documented for each \u2014 including any failure modes found and how they were addressed.",
         "market_angle": "Adaptive following behavior underlies real autonomous vehicle following-distance systems \u2014 and rigorously testing disturbance/edge cases (not just the happy path) is the actual engineering discipline that separates a class project from a system someone could trust in the real world.",
-        "feasibility": "Good fit \u2014 the control logic itself is moderate complexity; the deliberate disturbance-testing rigor is what elevates this beyond a basic demo."
+        "feasibility": "Good fit \u2014 the control logic itself is moderate complexity; the deliberate disturbance-testing rigor is what elevates this beyond a basic demo.",
+        "slug": "rda-adaptive-cruise-style-following-robot-with-real-disturbance-"
       },
       {
         "title": "GAN-Generated Synthetic Training Data for Robot Vision",
@@ -1011,7 +919,8 @@ body{
         "skills_used": "GANs applied to a robotics context, computer vision/object detection, training data engineering, quantitative model evaluation",
         "deliverable": "A measured comparison: detection accuracy of a model trained on real-only data vs. real+synthetic data, on the same held-out test set.",
         "market_angle": "Synthetic data generation for robotics training is a genuinely current, technically sophisticated capability \u2014 most entry-level robotics engineers have never touched this, making it a real differentiator for AI-robotics hybrid roles.",
-        "feasibility": "Advanced \u2014 best for teams already comfortable with both AIML-track GAN content and robotics vision integration; explicitly a cross-disciplinary stretch option."
+        "feasibility": "Advanced \u2014 best for teams already comfortable with both AIML-track GAN content and robotics vision integration; explicitly a cross-disciplinary stretch option.",
+        "slug": "rda-gan-generated-synthetic-training-data-for-robot-vision"
       },
       {
         "title": "Digital Twin With Predictive Maintenance Alerting",
@@ -1020,7 +929,8 @@ body{
         "skills_used": "Digital twinning, sensors, trend-based predictive logic (not simple thresholding), control systems fundamentals",
         "deliverable": "A demonstration where the digital twin correctly predicts an approaching issue (e.g. rising vibration trend) before a simple threshold alarm would have triggered, with the underlying trend data shown.",
         "market_angle": "Predictive maintenance via digital twins is a real, high-value industrial application Nigerian manufacturing is actively exploring \u2014 and the trend-prediction angle (vs. simple threshold alerting) is the genuine technical step up that makes this a frontier-leaning project, not a basic sensor dashboard.",
-        "feasibility": "Good \u2014 keep the physical system simple so the digital twin and prediction logic stay the focus, not mechanical complexity."
+        "feasibility": "Good \u2014 keep the physical system simple so the digital twin and prediction logic stay the focus, not mechanical complexity.",
+        "slug": "rda-digital-twin-with-predictive-maintenance-alerting"
       },
       {
         "title": "Cross-Track Capstone: Vision + Voice + Control Integrated Robot",
@@ -1029,7 +939,8 @@ body{
         "skills_used": "Computer vision, voice/NLP interfaces, PID control, kinematics, multi-system integration, cross-track collaboration",
         "deliverable": "An end-to-end live demo of the full pipeline (command \u2192 vision \u2192 navigation \u2192 manipulation) succeeding on at least 2 distinct test objects/locations, with a written account of where the integration was hardest and how it was solved.",
         "market_angle": "This is the kind of multi-capability system that mirrors real commercial robotics products \u2014 the strongest possible RAIN showcase piece for open days, government demonstrations, or investor pitches, and a genuine signal of systems-integration capability that most single-discipline projects can't demonstrate.",
-        "feasibility": "Highest ambition on this list \u2014 recommended only for strong, motivated cross-track teams, offered as an optional 'reach' project alongside a more contained individual project."
+        "feasibility": "Highest ambition on this list \u2014 recommended only for strong, motivated cross-track teams, offered as an optional 'reach' project alongside a more contained individual project.",
+        "slug": "rda-cross-track-capstone-vision-voice-control-integrated-robot"
       },
       {
         "title": "Stereo Vision Depth Estimation Without a Pre-Built Depth Sensor",
@@ -1038,7 +949,8 @@ body{
         "skills_used": "Stereo vision geometry, camera calibration, computer vision, embedded image processing",
         "deliverable": "A calibration/validation table: estimated distance vs. physically measured distance at several test points, with the system's accuracy and error pattern explicitly characterized.",
         "market_angle": "Understanding how depth sensing actually works \u2014 not just buying a LiDAR or depth module \u2014 is the kind of fundamental computer vision/robotics knowledge that separates engineers who can debug and adapt sensing systems from those who can only integrate pre-built modules.",
-        "feasibility": "Frontier-level \u2014 camera calibration and stereo geometry are genuinely demanding; recommended for the strongest, most mathematically confident teams."
+        "feasibility": "Frontier-level \u2014 camera calibration and stereo geometry are genuinely demanding; recommended for the strongest, most mathematically confident teams.",
+        "slug": "rda-stereo-vision-depth-estimation-without-a-pre-built-depth-sen"
       },
       {
         "title": "Closed-Loop Quadruped Leg \u2014 One Leg, Real Ground-Reaction Force Sensing",
@@ -1047,7 +959,8 @@ body{
         "skills_used": "Force sensing, closed-loop control, multi-joint coordination, legged locomotion fundamentals",
         "deliverable": "A side-by-side demo: the leg's response (timing, force profile) when stepping on a rigid surface vs. a soft surface, showing the control system genuinely reacting to sensed force, not running an identical pre-set motion regardless of surface.",
         "market_angle": "Legged robotics (quadrupeds, humanoids) is one of the most active global robotics research and commercial areas \u2014 even a single-leg force-responsive demo signals genuine understanding of locomotion control, well beyond typical wheeled-robot projects.",
-        "feasibility": "Highly ambitious \u2014 mechanically and electrically demanding; explicitly one of the hardest options in the pool, recommended only for very strong, mechanically confident teams."
+        "feasibility": "Highly ambitious \u2014 mechanically and electrically demanding; explicitly one of the hardest options in the pool, recommended only for very strong, mechanically confident teams.",
+        "slug": "rda-closed-loop-quadruped-leg-one-leg-real-ground-reaction-force"
       },
       {
         "title": "Swarm Coordination \u2014 Two Simple Robots Sharing One Task",
@@ -1056,7 +969,8 @@ body{
         "skills_used": "Multi-robot coordination, wireless/wired inter-robot communication, control systems, task decomposition",
         "deliverable": "A live demo of the two-robot task succeeding, plus a documented account of how the robots' actions were actually synchronized (timing, message protocol) \u2014 not just 'they both moved.'",
         "market_angle": "Multi-robot coordination underlies real warehouse and agricultural robot fleets \u2014 building even a minimal two-robot coordinated task from scratch demonstrates genuine systems thinking beyond single-robot projects.",
-        "feasibility": "Ambitious \u2014 requires building/maintaining two working robot platforms simultaneously; best for a team that can split work across both robots in parallel."
+        "feasibility": "Ambitious \u2014 requires building/maintaining two working robot platforms simultaneously; best for a team that can split work across both robots in parallel.",
+        "slug": "rda-swarm-coordination-two-simple-robots-sharing-one-task"
       },
       {
         "title": "Active Vibration Damping for a Sensitive Payload",
@@ -1065,7 +979,8 @@ body{
         "skills_used": "Active vibration control, accelerometer-based feedback, closed-loop control, mechanical isolation concepts",
         "deliverable": "A measured vibration comparison (accelerometer data) with active damping on vs. off, under an identical induced disturbance, with the percentage vibration reduction explicitly calculated.",
         "market_angle": "Camera/sensor stabilization is a real, valuable capability in drone payloads, vehicle-mounted cameras, and scientific instruments \u2014 a working, quantitatively-validated active damping demo is genuinely impressive control-systems engineering.",
-        "feasibility": "Frontier-level \u2014 demanding control problem requiring careful tuning; recommended for confident teams willing to iterate extensively on the control loop."
+        "feasibility": "Frontier-level \u2014 demanding control problem requiring careful tuning; recommended for confident teams willing to iterate extensively on the control loop.",
+        "slug": "rda-active-vibration-damping-for-a-sensitive-payload"
       },
       {
         "title": "Underwater/Submersible Sensor Pod With Pressure-Compensated Design",
@@ -1074,7 +989,8 @@ body{
         "skills_used": "Waterproof enclosure design, pressure-sensing, embedded systems, real-world environmental testing discipline",
         "deliverable": "A documented submersion test: the sensor pod tested at a specific depth/duration with sensor data successfully logged throughout and the enclosure confirmed dry/intact afterward \u2014 not just a claim that it 'should' work.",
         "market_angle": "Water quality monitoring (boreholes, rivers, aquaculture) is a genuine Nigerian infrastructure and agriculture need, and most beginner IoT projects never attempt real environmental sealing \u2014 actually testing and proving waterproofing is the engineering rigor that separates this from a typical class project.",
-        "feasibility": "Good \u2014 keep target depth modest and clearly stated; the sealing/testing discipline is the real content, not exotic electronics."
+        "feasibility": "Good \u2014 keep target depth modest and clearly stated; the sealing/testing discipline is the real content, not exotic electronics.",
+        "slug": "rda-underwatersubmersible-sensor-pod-with-pressure-compensated-d"
       },
       {
         "title": "Exoskeleton-Style Assistive Joint for Limited Range-of-Motion Support",
@@ -1083,7 +999,8 @@ body{
         "skills_used": "Assistive robotics, closed-loop control with safety limits, sensors/actuators, human-machine interaction design",
         "deliverable": "A demo showing the assistive joint responding to a triggered movement attempt and providing measured, safety-limited assistance \u2014 with the safety limiting mechanism specifically tested and shown to actually engage.",
         "market_angle": "RAIN's own founder has directly worked on exoskeleton rehabilitation devices \u2014 this project puts students on a genuinely RAIN-relevant, high-impact application area (assistive/medical robotics) with real humanitarian and commercial value in Nigerian healthcare.",
-        "feasibility": "Ambitious and safety-sensitive \u2014 must be designed conservatively (low force, clear mechanical limits) given it's assistive-device-adjacent; recommended with close instructor safety review."
+        "feasibility": "Ambitious and safety-sensitive \u2014 must be designed conservatively (low force, clear mechanical limits) given it's assistive-device-adjacent; recommended with close instructor safety review.",
+        "slug": "rda-exoskeleton-style-assistive-joint-for-limited-range-of-motio"
       },
       {
         "title": "Autonomous Lawn/Field Boundary-Following Robot Using GPS + Dead Reckoning",
@@ -1092,7 +1009,8 @@ body{
         "skills_used": "GPS navigation, dead reckoning/odometry, sensor fusion between GPS and odometry, path-following control",
         "deliverable": "A logged path trace showing the robot maintaining reasonable boundary-following even through a deliberately simulated GPS gap, with the dead-reckoning fallback's drift quantified over the gap duration.",
         "market_angle": "Real agricultural and field robots constantly deal with imperfect GPS (tree cover, terrain) \u2014 explicitly engineering for that failure mode, rather than assuming clean GPS always available, is the genuine field-robotics engineering skill.",
-        "feasibility": "Good \u2014 achievable with a basic GPS module and wheel encoders; the rigor is in the explicit GPS-gap handling, not raw navigation complexity."
+        "feasibility": "Good \u2014 achievable with a basic GPS module and wheel encoders; the rigor is in the explicit GPS-gap handling, not raw navigation complexity.",
+        "slug": "rda-autonomous-lawnfield-boundary-following-robot-using-gps-dead"
       },
       {
         "title": "Thermal Imaging-Based Early Fire/Hotspot Detection Node",
@@ -1101,7 +1019,8 @@ body{
         "skills_used": "Thermal sensing, anomaly detection logic, embedded systems, false-positive minimization design",
         "deliverable": "A demonstrated test matrix: the system correctly identifying a genuine hotspot scenario while correctly ignoring at least 2 deliberately-tested normal heat sources that could otherwise cause false alarms.",
         "market_angle": "Fire/overheating early-detection is a genuine safety application for Nigerian markets, warehouses, and electrical installations where conventional smoke detectors react too late \u2014 and false-positive discipline is exactly what separates a useful safety system from an annoying, ignored alarm.",
-        "feasibility": "Good \u2014 low-resolution thermal arrays are increasingly affordable; the false-positive testing rigor is the real differentiator over a simple threshold-triggered demo."
+        "feasibility": "Good \u2014 low-resolution thermal arrays are increasingly affordable; the false-positive testing rigor is the real differentiator over a simple threshold-triggered demo.",
+        "slug": "rda-thermal-imaging-based-early-firehotspot-detection-node"
       },
       {
         "title": "Custom PCB Design for a Sensor Node (Beyond Breadboard/Perfboard)",
@@ -1110,7 +1029,8 @@ body{
         "skills_used": "PCB design, circuit layout for reliability, fabrication process, comparative robustness testing",
         "deliverable": "A documented reliability comparison: the custom PCB version vs. the original breadboard/perfboard version, under an identical stress test (vibration, repeated connector insertion, etc.), with failure points noted for each.",
         "market_angle": "Moving from breadboard prototypes to real PCBs is the literal step from 'class project' to 'product' \u2014 and RAIN's own facility has exactly this capability, making this a direct, achievable bridge into genuine hardware product development.",
-        "feasibility": "Good \u2014 pairs naturally with an existing sensor project as its 'productization' step; PCB design tools are free and well-documented."
+        "feasibility": "Good \u2014 pairs naturally with an existing sensor project as its 'productization' step; PCB design tools are free and well-documented.",
+        "slug": "rda-custom-pcb-design-for-a-sensor-node-beyond-breadboardperfboa"
       },
       {
         "title": "Energy Harvesting From Ambient Vibration or Light for a Self-Powered Sensor",
@@ -1119,7 +1039,8 @@ body{
         "skills_used": "Energy harvesting circuits, power budgeting, sensor node design, real-environment power measurement",
         "deliverable": "A measured power budget: harvested power available (in the actual test environment) vs. node power consumption, with an honest conclusion about whether true self-sufficiency was achieved or how much battery backup would still be needed.",
         "market_angle": "Truly self-powered sensors solve a real deployment problem (no battery replacement trips to remote sites) \u2014 and the honest power-budget measurement (rather than an optimistic theoretical claim) is the engineering rigor that makes this credible, not just a cool demo.",
-        "feasibility": "Frontier-level \u2014 energy harvesting yields are often disappointingly small in practice; this honest measurement (including likely negative results) is itself valuable engineering learning, explicitly framed as a stretch project."
+        "feasibility": "Frontier-level \u2014 energy harvesting yields are often disappointingly small in practice; this honest measurement (including likely negative results) is itself valuable engineering learning, explicitly framed as a stretch project.",
+        "slug": "rda-energy-harvesting-from-ambient-vibration-or-light-for-a-self"
       },
       {
         "title": "Robotic Gripper With Adaptive Grip-Force Control",
@@ -1128,7 +1049,8 @@ body{
         "skills_used": "Force-sensitive gripping, closed-loop control, actuator control, adaptive control logic",
         "deliverable": "A demonstrated comparison: the gripper successfully holding both a rigid object and a soft/fragile object (e.g. without crushing it) using adaptively different grip force for each, with the measured force difference reported.",
         "market_angle": "Adaptive grip force is a genuine unsolved-at-scale problem in warehouse/logistics robotics, where package fragility varies enormously \u2014 a working adaptive demo, even simplified, speaks directly to real automation industry needs.",
-        "feasibility": "Good \u2014 achievable with a force sensor on a simple gripper mechanism; the adaptive control logic is the real technical content."
+        "feasibility": "Good \u2014 achievable with a force sensor on a simple gripper mechanism; the adaptive control logic is the real technical content.",
+        "slug": "rda-robotic-gripper-with-adaptive-grip-force-control"
       },
       {
         "title": "Indoor Positioning Without GPS Using WiFi Signal Triangulation",
@@ -1137,7 +1059,8 @@ body{
         "skills_used": "RF signal-based positioning, trilateration mathematics, calibration against known reference points, embedded systems",
         "deliverable": "A position-accuracy validation: estimated position vs. actual physical position at several test points within the covered indoor area, with the average positioning error explicitly reported.",
         "market_angle": "Indoor positioning (without expensive dedicated infrastructure) matters for warehouse robotics, indoor asset tracking, and building navigation \u2014 implementing real trilateration math from RSSI data, with measured accuracy, is a genuine RF-engineering skill beyond just 'connect to WiFi.'",
-        "feasibility": "Advanced \u2014 RSSI is electrically noisy, so achieving usable accuracy requires careful calibration; the validation rigor against real measured positions is the key deliverable."
+        "feasibility": "Advanced \u2014 RSSI is electrically noisy, so achieving usable accuracy requires careful calibration; the validation rigor against real measured positions is the key deliverable.",
+        "slug": "rda-indoor-positioning-without-gps-using-wifi-signal-triangulati"
       },
       {
         "title": "Modular Robot Chassis With Hot-Swappable Sensor/Actuator Modules",
@@ -1146,7 +1069,8 @@ body{
         "skills_used": "Modular mechanical/electrical design, standardized interface design, embedded systems, systems engineering thinking",
         "deliverable": "A live demonstration of swapping between 2 different functional modules on the same chassis, with both modules working correctly after the swap without code changes beyond selecting which module is active.",
         "market_angle": "Modular robot design (rather than one-off, single-purpose builds) is how real robotics companies manage product lines efficiently \u2014 demonstrating genuine modular systems-engineering thinking, not just a single fixed-purpose robot, signals real product-development maturity.",
-        "feasibility": "Good \u2014 the interface design discipline (mechanical and electrical standardization) is the real content; keep the swappable modules themselves relatively simple."
+        "feasibility": "Good \u2014 the interface design discipline (mechanical and electrical standardization) is the real content; keep the swappable modules themselves relatively simple.",
+        "slug": "rda-modular-robot-chassis-with-hot-swappable-sensoractuator-modu"
       },
       {
         "title": "Real-Time Object Tracking With a Pan-Tilt Camera Mount",
@@ -1155,7 +1079,8 @@ body{
         "skills_used": "Computer vision object detection, closed-loop pan-tilt control, real-time processing constraints, sensors/actuators",
         "deliverable": "A live tracking demo with a moving target (a person walking, a moved object), showing the camera correctly re-centering on the target continuously, plus a measurement of the system's tracking latency/lag.",
         "market_angle": "Pan-tilt tracking underlies real security camera systems, wildlife monitoring, and sports broadcast automation \u2014 a working, latency-characterized demo is a concrete computer-vision-plus-control integration skill with clear commercial analogs.",
-        "feasibility": "Good \u2014 achievable with a basic pan-tilt servo mount and a vision model; the real-time performance characterization (not just 'it tracks sometimes') is what elevates this beyond a basic demo."
+        "feasibility": "Good \u2014 achievable with a basic pan-tilt servo mount and a vision model; the real-time performance characterization (not just 'it tracks sometimes') is what elevates this beyond a basic demo.",
+        "slug": "rda-real-time-object-tracking-with-a-pan-tilt-camera-mount"
       },
       {
         "title": "Structural Health Monitoring for a Small Bridge/Beam Model",
@@ -1164,7 +1089,8 @@ body{
         "skills_used": "Strain/vibration sensing, baseline characterization, structural health monitoring concepts, embedded systems",
         "deliverable": "A comparison of the structure's healthy vibration/strain signature against its signature after a deliberately introduced defect, with the system correctly flagging the change.",
         "market_angle": "Structural health monitoring for bridges, buildings, and industrial structures is a genuine, high-value civil/infrastructure engineering application \u2014 directly relevant given real infrastructure maintenance challenges in Nigeria, and a strong interdisciplinary robotics-meets-civil-engineering project.",
-        "feasibility": "Good \u2014 use a simple model beam, not a real structure; the sensing and baseline-comparison logic is the transferable technical content."
+        "feasibility": "Good \u2014 use a simple model beam, not a real structure; the sensing and baseline-comparison logic is the transferable technical content.",
+        "slug": "rda-structural-health-monitoring-for-a-small-bridgebeam-model"
       },
       {
         "title": "Autonomous Battery-Swap or Self-Docking Charging Station",
@@ -1173,7 +1099,8 @@ body{
         "skills_used": "Autonomous navigation, precision docking control, sensor-guided final approach, closed-loop control",
         "deliverable": "A demonstrated success rate across multiple docking attempts (e.g. 8 out of 10 successful autonomous dockings from varied starting positions), with failure cases documented and analyzed.",
         "market_angle": "Autonomous charging/docking is what separates a robot that needs constant human babysitting from one that can run genuinely unattended \u2014 robot vacuums and warehouse robots depend entirely on solving this exact problem reliably.",
-        "feasibility": "Frontier-level \u2014 precision docking is genuinely hard to make reliable; the honest success-rate reporting (not just 'it worked once') is the real engineering rigor expected here."
+        "feasibility": "Frontier-level \u2014 precision docking is genuinely hard to make reliable; the honest success-rate reporting (not just 'it worked once') is the real engineering rigor expected here.",
+        "slug": "rda-autonomous-battery-swap-or-self-docking-charging-station"
       },
       {
         "title": "Multi-Spectral Crop Health Imaging (Beyond Visible-Light Cameras)",
@@ -1182,7 +1109,8 @@ body{
         "skills_used": "Multi-spectral/NIR imaging, vegetation index calculation, comparative image analysis, agricultural sensing",
         "deliverable": "A side-by-side comparison: standard visible-light photo vs. NIR-derived vegetation index map of the same plants, with at least one case where the NIR data revealed a health issue not visible in the standard photo.",
         "market_angle": "Multi-spectral crop monitoring is standard in advanced precision agriculture globally but rarely attempted at the student/prototype level in Nigeria \u2014 building a working low-cost version is a genuinely differentiated, high-value agritech demonstration.",
-        "feasibility": "Frontier-level \u2014 sourcing/modifying appropriate imaging hardware is a real challenge; explicitly one of the more exploratory, hardware-dependent options in the pool."
+        "feasibility": "Frontier-level \u2014 sourcing/modifying appropriate imaging hardware is a real challenge; explicitly one of the more exploratory, hardware-dependent options in the pool.",
+        "slug": "rda-multi-spectral-crop-health-imaging-beyond-visible-light-came"
       },
       {
         "title": "Beamforming Microphone Array for Directional Sound Source Localization",
@@ -1191,7 +1119,8 @@ body{
         "skills_used": "Acoustic array signal processing, time-difference-of-arrival localization math, embedded systems, calibration/validation testing",
         "deliverable": "A direction-estimation accuracy table: estimated source direction vs. actual physical test position, across several tested angles, with the system's angular error explicitly reported.",
         "market_angle": "Directional sound localization underlies real security/surveillance systems, smart assistants, and search-and-rescue applications \u2014 implementing the actual array signal-processing math, rather than using a single omnidirectional microphone, is a genuinely advanced acoustic-sensing capability.",
-        "feasibility": "Frontier-level \u2014 the signal processing math is demanding and synchronization between microphones matters a great deal; recommended for confident, mathematically comfortable teams."
+        "feasibility": "Frontier-level \u2014 the signal processing math is demanding and synchronization between microphones matters a great deal; recommended for confident, mathematically comfortable teams.",
+        "slug": "rda-beamforming-microphone-array-for-directional-sound-source-lo"
       }
     ]
   }
@@ -1200,16 +1129,11 @@ body{
 
 <script>
 const pools = JSON.parse(document.getElementById('pool-data').textContent);
+const WHATSAPP_GROUP = "https://chat.whatsapp.com/GXO4noaZB61AkJDDdjsHx7";
 
-// Elimination-tournament state machine:
-// - Each pool starts as a full queue of its 40 projects.
-// - "Keep" (swipe right) sends the current project to the BACK of the
-//   same queue -- it survives and will be compared again later.
-// - "Ditch" (swipe left) removes the project permanently.
-// - The deck stops automatically the instant exactly one project
-//   remains in a pool's queue -- that is the winner.
+let studentName = "";
 let activePoolIdx = 0;
-let queues = pools.map(p => p.projects.map((proj, i) => ({...proj, _id: p.id + '-' + i})));
+let queues = pools.map(p => p.projects.map((proj) => ({...proj})));
 let winners = pools.map(() => null);
 
 const DEPTH_META = {
@@ -1218,25 +1142,8 @@ const DEPTH_META = {
   frontier:     {pct:100,color:'var(--frontier)',      label:'Frontier'},
 };
 
-function renderTabs(){
-  const wrap = document.getElementById('trackTabs');
-  wrap.innerHTML = '';
-  pools.forEach((p, i) => {
-    const el = document.createElement('div');
-    el.className = 'tracktab' + (i === activePoolIdx ? ' active' : '');
-    const remaining = queues[i].length;
-    el.innerHTML = p.name + '<span class="count">' + remaining + '</span>';
-    el.onclick = () => { activePoolIdx = i; renderTabs(); renderDeck(); };
-    wrap.appendChild(el);
-  });
-}
-
-function updateCounters(){
-  const remaining = queues[activePoolIdx].length;
-  document.getElementById('progressPill').innerHTML =
-    remaining + ' LEFT<span class="sub">in the running</span>';
-  document.getElementById('remainingCounter').innerHTML =
-    '<span class="num">' + remaining + '</span>still in';
+function getPageBaseUrl(){
+  return window.location.origin + window.location.pathname;
 }
 
 function depthGaugeSVG(depth){
@@ -1246,12 +1153,39 @@ function depthGaugeSVG(depth){
   return `<div class="depth-gauge">
     <svg width="38" height="38" viewBox="0 0 38 38">
       <circle class="depth-gauge-bg" cx="19" cy="19" r="${r}"></circle>
-      <circle class="depth-gauge-fill" cx="19" cy="19" r="${r}"
-        stroke="${meta.color}"
-        stroke-dasharray="${c}"
-        stroke-dashoffset="${offset}"></circle>
+      <circle class="depth-gauge-fill" cx="19" cy="19" r="${r}" stroke="${meta.color}" stroke-dasharray="${c}" stroke-dashoffset="${offset}"></circle>
     </svg>
   </div>`;
+}
+
+document.getElementById('nameGateBtn').addEventListener('click', submitName);
+document.getElementById('nameInputField').addEventListener('keydown', e=>{ if(e.key==='Enter') submitName(); });
+function submitName(){
+  const val = document.getElementById('nameInputField').value.trim();
+  if(val.length < 2){
+    document.getElementById('nameGateErr').textContent = 'Please enter your full name.';
+    return;
+  }
+  studentName = val;
+  document.getElementById('nameGate').style.display = 'none';
+}
+
+function renderTabs(){
+  const wrap = document.getElementById('trackTabs');
+  wrap.innerHTML = '';
+  pools.forEach((p, i) => {
+    const el = document.createElement('div');
+    el.className = 'tracktab' + (i === activePoolIdx ? ' active' : '');
+    el.innerHTML = p.name + '<span class="count">' + queues[i].length + '</span>';
+    el.onclick = () => { activePoolIdx = i; renderTabs(); renderDeck(); };
+    wrap.appendChild(el);
+  });
+}
+
+function updateCounters(){
+  const remaining = queues[activePoolIdx].length;
+  document.getElementById('progressPill').innerHTML = remaining + ' LEFT<span class="sub">in the running</span>';
+  document.getElementById('remainingCounter').innerHTML = '<span class="num">' + remaining + '</span>still in';
 }
 
 function buildCard(project, poolName, remainingCount, zStack){
@@ -1309,12 +1243,9 @@ function buildCard(project, poolName, remainingCount, zStack){
 
 function attachDrag(card, onResolve){
   let startX=0, startY=0, curX=0, curY=0, dragging=false;
-
   function pointerDown(e){
     const target = e.target.closest('[data-action]');
-    if(target && (target.classList.contains('pick-btn') || target.classList.contains('expand-btn'))){
-      return;
-    }
+    if(target && (target.classList.contains('pick-btn') || target.classList.contains('expand-btn'))) return;
     if(e.target.closest('.card-scroll') && e.target.closest('.detail-panel.open')) return;
     dragging = true;
     startX = (e.touches ? e.touches[0].clientX : e.clientX);
@@ -1328,10 +1259,8 @@ function attachDrag(card, onResolve){
     if(Math.abs(curX) < 8 && Math.abs(curY) < 8) return;
     const rot = curX/18;
     card.style.transform = `translate(${curX}px, ${curY*0.3}px) rotate(${rot}deg)`;
-    const likeHint = card.querySelector('.swipe-hint.like');
-    const skipHint = card.querySelector('.swipe-hint.skip');
-    likeHint.style.opacity = Math.max(0, Math.min(1, curX/100));
-    skipHint.style.opacity = Math.max(0, Math.min(1, -curX/100));
+    card.querySelector('.swipe-hint.like').style.opacity = Math.max(0, Math.min(1, curX/100));
+    card.querySelector('.swipe-hint.skip').style.opacity = Math.max(0, Math.min(1, -curX/100));
   }
   function pointerUp(){
     if(!dragging) return;
@@ -1352,7 +1281,6 @@ function attachDrag(card, onResolve){
     }
     curX = 0; curY = 0;
   }
-
   card.addEventListener('mousedown', pointerDown);
   window.addEventListener('mousemove', pointerMove);
   window.addEventListener('mouseup', pointerUp);
@@ -1364,15 +1292,19 @@ function attachDrag(card, onResolve){
 function resolveCurrent(action){
   const queue = queues[activePoolIdx];
   const current = queue.shift();
-  if(action === 'keep'){
-    queue.push(current);
-  }
-  // 'ditch' simply does not get pushed back -- permanently removed.
-
-  if(queue.length === 1){
-    winners[activePoolIdx] = queue[0];
-  }
+  if(action === 'keep') queue.push(current);
+  if(queue.length === 1) winners[activePoolIdx] = queue[0];
   renderDeck();
+}
+
+function buildWhatsAppShareUrl(winner, poolName){
+  const briefUrl = getPageBaseUrl() + '#' + winner.slug;
+  const text =
+    '*' + studentName + '* has picked a *' + poolName + '* project topic:\n\n' +
+    '*' + winner.title + '*\n' +
+    '(' + DEPTH_META[winner.depth].label + ' difficulty)\n\n' +
+    'Full technical brief here:\n' + briefUrl;
+  return 'https://wa.me/?text=' + encodeURIComponent(text);
 }
 
 function renderDeck(){
@@ -1384,20 +1316,32 @@ function renderDeck(){
   if(queue.length === 1){
     const winner = queue[0];
     const meta = DEPTH_META[winner.depth] || DEPTH_META.advanced;
+    const shareUrl = buildWhatsAppShareUrl(winner, pool.name);
+    const briefUrl = '#' + winner.slug;
     deck.innerHTML = `
       <div class="empty-state">
         <div class="trophy">&#127942;</div>
         <h2>Your ${pool.name} pick</h2>
         <div class="winner-title">${winner.title}</div>
-        <p style="color:var(--text-dim)">${meta.label} difficulty. That's the one left standing out of 40 ${pool.name} topics.</p>
-        <button class="restart-btn" id="restartBtn">Start ${pool.name} over</button>
+        <p>${meta.label} difficulty. That's the one left standing out of 40 ${pool.name} topics.</p>
+        <a href="${shareUrl}" target="_blank" rel="noopener" class="share-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4a8.94 8.94 0 0 0-7.74 13.4L3 21l3.7-1.28a8.9 8.9 0 0 0 4.33 1.13h.03a8.94 8.94 0 0 0 6.54-15.53zm-5.55 13.7h-.02a7.4 7.4 0 0 1-3.77-1.04l-.27-.16-2.8.97.93-2.73-.18-.28a7.43 7.43 0 0 1 11.65-9.2 7.36 7.36 0 0 1 2.18 5.26 7.44 7.44 0 0 1-7.72 7.18zm4.07-5.56c-.22-.11-1.31-.65-1.51-.72-.2-.08-.35-.11-.5.11-.15.21-.57.72-.7.87-.13.15-.26.16-.48.05-.22-.1-1.2-.45-2.18-1.36-.81-.72-1.35-1.61-1.51-1.88-.16-.27-.02-.42.1-.55.11-.12.24-.31.36-.46.13-.16.17-.27.26-.45.09-.18.04-.33-.04-.46-.08-.13-.43-1.04-.6-1.43-.16-.38-.32-.32-.45-.33-.12-.01-.26-.01-.4-.01-.14 0-.36.05-.55.27-.2.21-.76.74-.76 1.81s.78 2.1.89 2.25c.11.15 1.49 2.27 3.61 3.1 2.13.82 2.13.55 2.51.52.38-.04 1.31-.53 1.5-1.05.18-.51.18-.95.13-1.04-.06-.1-.21-.16-.43-.27z"/></svg>
+          Share my pick to the group
+        </a>
+        <a href="${briefUrl}" class="view-brief-link" id="winnerBriefLink">View the full brief on this page &rarr;</a>
+        <button class="restart-btn secondary" id="restartBtn" style="margin-top:14px;">Start ${pool.name} over</button>
       </div>`;
     document.getElementById('restartBtn').onclick = () => {
-      queues[activePoolIdx] = pool.projects.map((proj, i) => ({...proj, _id: pool.id + '-' + i}));
+      queues[activePoolIdx] = pool.projects.map((proj) => ({...proj}));
       winners[activePoolIdx] = null;
       renderTabs();
       renderDeck();
     };
+    document.getElementById('winnerBriefLink').addEventListener('click', (e)=>{
+      e.preventDefault();
+      showReference();
+      document.getElementById(winner.slug).scrollIntoView({behavior:'smooth', block:'start'});
+    });
     renderTabs();
     updateCounters();
     return;
@@ -1412,7 +1356,6 @@ function renderDeck(){
     card.style.transform = `translateY(${yOff}px) scale(${scale})`;
     card.style.opacity = i === 0 ? '1' : (i===1 ? '0.7' : '0.4');
     deck.appendChild(card);
-
     if(i === 0){
       const expandBtn = card.querySelector('.expand-btn');
       const panel = card.querySelector('.detail-panel');
@@ -1421,23 +1364,14 @@ function renderDeck(){
         panel.classList.toggle('open');
         expandBtn.classList.toggle('open');
         if(panel.classList.contains('open')){
-          setTimeout(()=>{
-            expandBtn.scrollIntoView({behavior:'smooth', block:'start'});
-          }, 80);
+          setTimeout(()=>{ expandBtn.scrollIntoView({behavior:'smooth', block:'start'}); }, 80);
         }
       });
-      card.querySelector('[data-action="pick"]').addEventListener('click', (e)=>{
-        e.stopPropagation();
-        resolveCurrent('keep');
-      });
-      card.querySelector('[data-action="skip"]').addEventListener('click', (e)=>{
-        e.stopPropagation();
-        resolveCurrent('ditch');
-      });
+      card.querySelector('[data-action="pick"]').addEventListener('click', (e)=>{ e.stopPropagation(); resolveCurrent('keep'); });
+      card.querySelector('[data-action="skip"]').addEventListener('click', (e)=>{ e.stopPropagation(); resolveCurrent('ditch'); });
       attachDrag(card, resolveCurrent);
     }
   });
-
   updateCounters();
   renderTabs();
 }
@@ -1459,8 +1393,101 @@ document.getElementById('btnLike').onclick = () => {
   setTimeout(()=>resolveCurrent('keep'), 220);
 };
 
+function renderReferenceSection(){
+  const list = document.getElementById('referenceList');
+  let html = '';
+  pools.forEach(pool => {
+    html += `<div class="ref-pool-heading">${pool.name} &mdash; 40 topics</div>`;
+    pool.projects.forEach(p => {
+      const meta = DEPTH_META[p.depth] || DEPTH_META.advanced;
+      const skills = p.skills_used.split(',').map(s=>s.trim()).filter(Boolean);
+      html += `
+        <div class="ref-topic" id="${p.slug}">
+          <div class="depth-row">
+            ${depthGaugeSVG(p.depth)}
+            <div class="depth-label-group">
+              <div class="depth-tag ${p.depth}">${meta.label}</div>
+              <div class="round-tag">${pool.name} project topic</div>
+            </div>
+          </div>
+          <div class="card-title">${p.title}</div>
+          <div class="card-desc">${p.description}</div>
+          <div class="detail-block">
+            <div class="detail-label">Skills this draws on</div>
+            <div class="skill-chips">${skills.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
+          </div>
+          <div class="detail-block deliverable">
+            <div class="detail-label" style="color:var(--gold)">What you must actually show</div>
+            <div class="detail-text">${p.deliverable}</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">Why this is market-worthy</div>
+            <div class="detail-text">${p.market_angle}</div>
+          </div>
+          <div class="detail-block">
+            <div class="detail-label">Feasibility, one semester</div>
+            <div class="detail-text">${p.feasibility}</div>
+          </div>
+          <div class="ref-anchor-link">#${p.slug}</div>
+        </div>`;
+    });
+  });
+  list.innerHTML = html;
+}
+
+function showReference(){
+  document.body.classList.remove('swipe-mode');
+  document.body.classList.add('reference-mode');
+  document.getElementById('reference-section').classList.add('visible');
+  document.querySelector('.topbar').style.display = 'none';
+  document.querySelector('.tracktabs').style.display = 'none';
+  document.querySelector('.legend-row').style.display = 'none';
+  document.querySelector('.deck-wrap').style.display = 'none';
+  document.getElementById('bottombar').style.display = 'none';
+  document.querySelector('.reference-toggle').style.display = 'none';
+}
+function showSwipe(){
+  document.body.classList.add('swipe-mode');
+  document.body.classList.remove('reference-mode');
+  document.getElementById('reference-section').classList.remove('visible');
+  document.querySelector('.topbar').style.display = '';
+  document.querySelector('.tracktabs').style.display = '';
+  document.querySelector('.legend-row').style.display = '';
+  document.querySelector('.deck-wrap').style.display = '';
+  document.getElementById('bottombar').style.display = '';
+  document.querySelector('.reference-toggle').style.display = '';
+}
+
+document.getElementById('viewAllLink').addEventListener('click', (e)=>{
+  e.preventDefault();
+  showReference();
+});
+document.getElementById('backToSwipe').addEventListener('click', (e)=>{
+  e.preventDefault();
+  showSwipe();
+});
+
+function checkInitialHash(){
+  const hash = window.location.hash.replace('#','');
+  if(hash){
+    const allSlugs = pools.flatMap(p => p.projects.map(x=>x.slug));
+    if(allSlugs.includes(hash)){
+      // Arriving via a shared brief link means they're here to read,
+      // not to start a swipe session -- skip the name gate entirely.
+      document.getElementById('nameGate').style.display = 'none';
+      showReference();
+      setTimeout(()=>{
+        const el = document.getElementById(hash);
+        if(el) el.scrollIntoView({behavior:'auto', block:'start'});
+      }, 50);
+    }
+  }
+}
+
 renderTabs();
 renderDeck();
+renderReferenceSection();
+checkInitialHash();
 </script>
 
 </body>
