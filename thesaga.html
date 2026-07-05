@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bureaucratic Heist — Olusola Ayoola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0A0A0A;
+  --paper:#FFFFFF;
+  --panel:#F6F6F4;
+  --mute:#8B8B8B;
+  --stamp:#C8102E;
+  --hair:#E4E4E0;
+  --display:'Anton',Impact,sans-serif;
+  --body:'Newsreader',Georgia,serif;
+  --mono:'IBM Plex Mono',Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.65;overflow-x:hidden}
+::selection{background:var(--stamp);color:#fff}
+
+header{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 28px;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--hair);
+}
+.brand{font-family:var(--display);font-size:17px;letter-spacing:.06em;text-transform:uppercase}
+.brand em{font-style:normal;color:var(--stamp)}
+.head-meta{font-family:var(--mono);font-size:10.5px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase}
+.head-meta b{color:var(--ink)}
+
+#rail{position:fixed;left:0;top:0;bottom:0;width:3px;background:var(--hair);z-index:49}
+#rail-fill{position:absolute;top:0;left:0;width:100%;height:0;background:var(--stamp);transition:height .15s linear}
+#audit{
+  position:fixed;left:16px;bottom:20px;z-index:48;
+  font-family:var(--mono);font-size:10px;line-height:1.9;color:var(--mute);
+  max-width:250px;pointer-events:none;
+}
+#audit .entry{opacity:0;transform:translateX(-8px);transition:opacity .5s,transform .5s}
+#audit .entry.on{opacity:1;transform:none}
+#audit .entry .ok{color:var(--stamp);font-weight:500}
+@media(max-width:900px){#audit{display:none}}
+
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:120px 7vw 60px;position:relative}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute);margin-bottom:26px;display:flex;align-items:center;gap:14px}
+.eyebrow::before{content:"";width:44px;height:1px;background:var(--ink);display:inline-block}
+h1{
+  font-family:var(--display);font-weight:400;text-transform:uppercase;
+  font-size:clamp(40px,11.5vw,164px);line-height:.92;letter-spacing:.005em;
+  overflow-wrap:anywhere;
+}
+h1 .w{display:inline-block;overflow:hidden;vertical-align:bottom}
+h1 .w span{display:inline-block;transform:translateY(110%);transition:transform .9s cubic-bezier(.19,1,.22,1)}
+h1.in .w span{transform:none}
+h1 .accent{color:var(--stamp)}
+.deck{
+  max-width:660px;margin-top:34px;font-size:clamp(19px,2.2vw,24px);
+  font-weight:300;color:#333;
+  opacity:0;transform:translateY(18px);transition:opacity .9s .55s,transform .9s .55s;
+}
+.deck.in{opacity:1;transform:none}
+.byline{margin-top:30px;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);opacity:0;transition:opacity .9s .8s}
+.byline.in{opacity:1}
+.byline b{color:var(--ink)}
+
+#stamp{
+  position:absolute;right:6vw;top:20vh;
+  font-family:var(--mono);font-weight:500;color:var(--stamp);
+  border:3px solid var(--stamp);border-radius:8px;
+  padding:14px 22px;text-align:center;line-height:1.5;
+  font-size:clamp(11px,1.4vw,15px);letter-spacing:.16em;text-transform:uppercase;
+  transform:rotate(-8deg) scale(4);opacity:0;
+  mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 .35'/%3E%3C/filter%3E%3Crect width='120' height='120' fill='%23fff'/%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-size:130px;
+  pointer-events:none;user-select:none;z-index:2;
+}
+#stamp.slam{animation:slam .55s cubic-bezier(.34,1.3,.5,1) forwards}
+@keyframes slam{
+  0%{transform:rotate(-8deg) scale(4);opacity:0}
+  60%{transform:rotate(-8deg) scale(.94);opacity:1}
+  80%{transform:rotate(-8deg) scale(1.05)}
+  100%{transform:rotate(-8deg) scale(1);opacity:.92}
+}
+body.shake{animation:jolt .3s .28s}
+@keyframes jolt{0%,100%{transform:none}30%{transform:translate(1px,3px) rotate(.15deg)}60%{transform:translate(-1px,-2px)}}
+@media(max-width:700px){#stamp{right:4vw;top:11vh;max-width:62vw;padding:10px 14px;font-size:10px}}
+
+.scrolldown{position:absolute;bottom:26px;left:7vw;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:10px}
+.scrolldown i{display:block;width:1px;height:38px;background:var(--ink);animation:drip 1.6s ease-in-out infinite;transform-origin:top}
+@keyframes drip{0%{transform:scaleY(0)}55%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.stat{padding:44px 24px;border-right:1px solid var(--hair);text-align:left}
+.stat:last-child{border-right:none}
+.stat .num{font-family:var(--display);font-size:clamp(36px,5vw,68px);line-height:1;letter-spacing:.01em}
+.stat .num .u{font-size:.5em;vertical-align:.5em;color:var(--stamp)}
+.stat .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-top:12px}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.stat{border-bottom:1px solid var(--hair)}}
+
+main{max-width:1160px;margin:0 auto;padding:0 7vw}
+section{padding:110px 0 30px}
+.sec-head{display:flex;align-items:baseline;gap:22px;margin-bottom:44px;flex-wrap:wrap}
+h2{font-family:var(--display);font-weight:400;text-transform:uppercase;font-size:clamp(34px,5.4vw,64px);line-height:1;letter-spacing:.01em}
+.hash{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.05em;border:1px solid var(--hair);padding:5px 10px;border-radius:3px;white-space:nowrap}
+.hash.signed{border-color:var(--stamp);color:var(--stamp)}
+.prose{max-width:680px}
+.prose p{margin-bottom:26px}
+.prose .pull{font-family:var(--display);text-transform:uppercase;font-size:clamp(24px,3.4vw,38px);line-height:1.1;margin:44px 0;color:var(--ink)}
+.prose .pull em{font-style:normal;color:var(--stamp)}
+.cipher{transition:color .3s}
+.cipher.locked{color:#B9B9B4}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.19,1,.22,1)}
+.reveal.in{opacity:1;transform:none}
+
+.letter{background:var(--panel);border:1px solid var(--hair);border-radius:4px;padding:38px 36px;max-width:680px;margin:14px 0 30px;position:relative;font-size:17px}
+.letter .from{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.08em;margin-bottom:16px}
+.letter .from b{color:var(--stamp)}
+.letter .mini-stamp{position:absolute;top:18px;right:20px;transform:rotate(6deg);font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--stamp);border:2px solid var(--stamp);border-radius:4px;padding:5px 9px;opacity:.85;text-transform:uppercase}
+
+.fixes{max-width:760px}
+.fix{display:grid;grid-template-columns:54px 1fr;gap:20px;align-items:start;padding:26px 0;border-bottom:1px solid var(--hair)}
+.fix .box{width:34px;height:34px;border:2px solid var(--ink);border-radius:4px;position:relative;margin-top:3px}
+.fix .box svg{position:absolute;inset:4px;stroke:var(--stamp);stroke-width:3.4;fill:none;stroke-dasharray:26;stroke-dashoffset:26;transition:stroke-dashoffset .55s cubic-bezier(.6,0,.3,1)}
+.fix.in .box svg{stroke-dashoffset:0}
+.fix h3{font-family:var(--body);font-weight:500;font-size:21px;margin-bottom:6px}
+.fix p{color:#444;font-size:16.5px;max-width:600px}
+.fix .tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-left:10px}
+
+.offer{border:2px solid var(--ink);border-radius:6px;padding:52px 6vw;margin:70px 0 0;text-align:center;position:relative;overflow:hidden;background:var(--paper)}
+.offer h2{margin-bottom:18px}
+.offer p{max-width:600px;margin:0 auto 10px;font-size:18px;color:#333}
+.offer .big{font-weight:500;color:var(--ink);font-size:20px}
+.offer .sig{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--mute);margin-top:26px;text-transform:uppercase}
+.offer .sig b{color:var(--stamp)}
+
+footer{margin-top:120px;border-top:1px solid var(--ink);padding:34px 7vw 44px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+footer b{color:var(--ink)}
+footer .vr{color:var(--stamp)}
+
+.marq{border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);overflow:hidden;white-space:nowrap;padding:12px 0;margin:90px 0 0}
+.marq span{display:inline-block;font-family:var(--display);text-transform:uppercase;font-size:22px;letter-spacing:.08em;padding-right:60px;animation:roll 22s linear infinite}
+.marq em{font-style:normal;color:var(--stamp)}
+@keyframes roll{to{transform:translateX(-50%)}}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  h1 .w span,.deck,.byline,.reveal{transform:none;opacity:1}
+  #stamp{opacity:.92;transform:rotate(-8deg)}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">AYOOLA <em>/</em> DISPATCH</div>
+  <div class="head-meta">Verified commentary · <b id="clock">--:--:--</b> WAT</div>
+</header>
+
+<div id="rail"><div id="rail-fill"></div></div>
+<div id="audit" aria-hidden="true"></div>
+
+<section class="hero">
+  <div class="eyebrow">Opinion · Governance · Nigeria</div>
+  <h1 id="title">
+    <span class="w"><span>The</span></span>
+    <span class="w"><span class="accent">Bureaucratic</span></span><br>
+    <span class="w"><span>Heist</span></span>
+  </h1>
+  <p class="deck">The PFIPC saga is not a failure of political leadership — and it is not an indictment of government or of the civil service as a whole. It is a heist pulled off by a few bad eggs exploiting loopholes in the analogue communication of the machinery of state. I met the same side door myself, thirteen years ago.</p>
+  <p class="byline">By <b>Dr. Olusola Sayeed Ayoola</b> · Founder, RAIN · July 2026</p>
+  <div id="stamp">Received<br>Aso Rock · Gate 1<br><span style="font-size:.85em">Ref: YSTN/2013/EMERGENCY-PPP</span></div>
+  <div class="scrolldown"><i></i> Follow the paper trail</div>
+</section>
+
+<div class="stats">
+  <div class="stat"><div class="num"><span data-count="13">0</span></div><div class="lab">Years between my proposal and this saga</div></div>
+  <div class="stat"><div class="num"><span class="u">₦</span><span data-count="1.3" data-dec="1">0</span><span class="u">bn</span></div><div class="lab">Budget line for a phantom council</div></div>
+  <div class="stat"><div class="num"><span data-count="34">0</span></div><div class="lab">Bank accounts investigators allege</div></div>
+  <div class="stat"><div class="num"><span data-count="12">0</span><span class="u">+</span></div><div class="lab">Months a phantom council allegedly ran</div></div>
+</div>
+
+<main>
+
+<section id="s1">
+  <div class="sec-head reveal"><h2>Not the politicians. Not the whole service.</h2><span class="hash">awaiting…</span></div>
+  <div class="prose">
+    <p class="reveal cipher">Before anyone reduces this to partisan point-scoring: this is not about President Tinubu, his regime or his leadership. And let me be equally clear the other way — this is not an accusation against the civil service as an institution, nor against the millions of honest officers who keep the state running. Not everyone is a suspect. A heist needs only a few insiders and one unlocked door.</p>
+    <p class="reveal cipher">That door is analogue communication. Paper letters, physical files, rubber stamps, folio numbers — a chain of custody that cannot be audited, where a document's journey leaves no fingerprint. A man allegedly operated a phantom council from the Federal Secretariat for over a year — office space, processed letters, diplomatic meetings, even a ₦1.3 billion line in the published federal budget.</p>
+    <p class="reveal cipher">And before we turn on the legislators: budgets are not written line by line, nor scrutinised line by line. Some spending is deemed statutory; some is waved through as mere administrative cost. A phantom line does not need a conspiracy to survive — it only needs a system with no registry to check it against.</p>
+    <p class="reveal cipher">We already know this pattern by another name: ghost workers. Nigeria has been purging payrolls of names that draw salaries but do not exist for decades. What we are looking at now is the same trick, taken to a graduated level — not a ghost worker this time, but an entire ghost agency.</p>
+    <p class="pull reveal">A few bad eggs. One <em>analogue</em> loophole. That is all a heist needs.</p>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-head reveal"><h2>I met this door in 2013</h2><span class="hash">awaiting…</span></div>
+  <div class="prose">
+    <p class="reveal cipher">As a young graduate, through my then company YSTN — Yula Security Technologies Network — I wrote a proposal for a public-private partnership on citizen emergency rescue, between YSTN, the Nigeria Police and the Federal Government. I carried it myself to the gate of the Presidential Villa, addressed to then-President Goodluck Jonathan through the office of the Chief of Staff, Chief Mike Oghiadomhe, now of blessed memory.</p>
+    <div class="letter reveal">
+      <div class="mini-stamp">Received · OCoS</div>
+      <div class="from">From: <b>private email — not @statehouse.gov.ng</b></div>
+      <p class="cipher">"We have received your letter. We are looking into it. One of my staff will contact you."</p>
+    </div>
+    <p class="reveal cipher">Then came the demand: money, to "encourage" a favourable report. I asked for proof. He sent a photograph of my own proposal — stamped RECEIVED by the Office of the Chief of Staff. A document I submitted at the gate of Aso Rock and nowhere else.</p>
+    <p class="reveal cipher">I am certain that message never came from Chief Oghiadomhe. Somewhere along the file's journey, someone inside photographed it and passed it to a scammer to impersonate his office. The document went in through the front gate — and its contents walked out through a side door. Thirteen years later, only the scale has changed. Perhaps the person who photographed my proposal has simply graduated.</p>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-head reveal"><h2>Plug the loopholes</h2><span class="hash">awaiting…</span></div>
+  <p class="reveal" style="max-width:680px;margin-bottom:12px">Loopholes are an engineering problem, and engineering problems have engineering solutions. Each item below locks as you read it. That is the point: verification should be this effortless.</p>
+  <div class="fixes">
+    <div class="fix reveal"><div class="box"><svg viewBox="0 0 24 24"><path d="M4 13l5 5L20 6"/></svg></div><div><h3>Verified domains only<span class="tag">policy</span></h3><p>Official correspondence exists only on government domains. Anything else is void on arrival.</p></div></div>
+    <div class="fix reveal"><div class="box"><svg viewBox="0 0 24 24"><path d="M4 13l5 5L20 6"/></svg></div><div><h3>Access-logged documents<span class="tag">encryption</span></h3><p>Every file movement leaves a fingerprint. A photograph at a desk becomes a name in a log.</p></div></div>
+    <div class="fix reveal"><div class="box"><svg viewBox="0 0 24 24"><path d="M4 13l5 5L20 6"/></svg></div><div><h3>Signed appointments<span class="tag">blockchain</span></h3><p>Cryptographically signed letters, anchored on tamper-proof ledgers, verifiable by anyone in seconds.</p></div></div>
+    <div class="fix reveal"><div class="box"><svg viewBox="0 0 24 24"><path d="M4 13l5 5L20 6"/></svg></div><div><h3>A public agency registry<span class="tag">transparency</span></h3><p>So any budget officer can ask the only question that matters: which law created this body?</p></div></div>
+    <div class="fix reveal"><div class="box"><svg viewBox="0 0 24 24"><path d="M4 13l5 5L20 6"/></svg></div><div><h3>Digital skills as a condition<span class="tag">capacity</span></h3><p>Cybersecurity training before anyone handles government records — not after the scandal.</p></div></div>
+  </div>
+  <div class="prose" style="margin-top:44px">
+    <p class="reveal cipher">This is not theory. At RAIN we built Open Secret Communication, an encrypted solution for high-level public communication. With it, even printed documents can be encrypted and the paper originals shredded — leaving nothing on a desk to photograph, and nothing in a file to leak. I demonstrated it to the UN Deputy Secretary-General, Her Excellency Amina J. Mohammed, during her 2021 visit. The technology exists. It is Nigerian. It is ready.</p>
+  </div>
+
+  <div class="offer reveal">
+    <h2>I hereby submit my name</h2>
+    <p class="big">For the office of Chief Technology Officer of the State House, I, Dr. Olusola Sayeed Ayoola, hereby submit my name — this time electronically, with an encrypted, verifiable trail.</p>
+    <p>From day one I will implement workflow automation, end-to-end encryption, access-logged document management and full audit trails across official communication — and that side door closes for good.</p>
+    <div class="sig">Digitally signed · <b id="offer-sig">signing…</b></div>
+  </div>
+</section>
+
+</main>
+
+<div class="marq"><span id="mq">A country that cannot verify its own paperwork will keep meeting its own ghost <em>◆</em> Same door. Time to lock it — with technology <em>◆</em> </span></div>
+
+<footer>
+  <div><b>Dr. Olusola Sayeed Ayoola</b> · Founder &amp; CEO, RAIN</div>
+  <div>rainigeria.com · Ibadan, Nigeria</div>
+  <div class="vr">■ Sections are SHA-256 hashed &amp; decrypted live as you read — scroll past, and they seal again</div>
+</footer>
+
+<script>
+(function(){
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* clock */
+  const clock=document.getElementById('clock');
+  setInterval(()=>{clock.textContent=new Date().toLocaleTimeString('en-GB',{hour12:false});},1000);
+
+  /* hero load sequence */
+  window.addEventListener('load',()=>{
+    document.getElementById('title').classList.add('in');
+    document.querySelector('.deck').classList.add('in');
+    document.querySelector('.byline').classList.add('in');
+    setTimeout(()=>{
+      document.getElementById('stamp').classList.add('slam');
+      if(!reduced) document.body.classList.add('shake');
+      audit('DOCUMENT RECEIVED — GATE 1');
+    }, reduced?0:900);
+  });
+
+  /* marquee duplicate */
+  const mq=document.getElementById('mq'); mq.innerHTML+=mq.innerHTML;
+
+  /* progress rail */
+  const fill=document.getElementById('rail-fill');
+  addEventListener('scroll',()=>{
+    const h=document.documentElement;
+    fill.style.height=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  },{passive:true});
+
+  /* audit trail */
+  const auditBox=document.getElementById('audit');
+  function audit(msg){
+    const t=new Date().toLocaleTimeString('en-GB',{hour12:false});
+    const e=document.createElement('div');e.className='entry';
+    e.innerHTML=t+' <span class="ok">✓</span> '+msg;
+    auditBox.appendChild(e);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>e.classList.add('on')));
+    while(auditBox.children.length>6) auditBox.removeChild(auditBox.firstChild);
+  }
+
+  /* generic reveal */
+  const io=new IntersectionObserver(es=>{
+    es.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target);} });
+  },{threshold:.18});
+  document.querySelectorAll('.reveal,.fix').forEach(el=>io.observe(el));
+
+  /* ============ REAL CIPHER LAYER ============ */
+  const GLYPHS='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghkmnpqrstuvwxyz0123456789#%&@$+=/\\';
+  function g(){return GLYPHS[Math.random()*GLYPHS.length|0];}
+  function scrambleText(txt){
+    let out='';
+    for(const ch of txt) out += /[A-Za-z0-9]/.test(ch) ? g() : ch;
+    return out;
+  }
+
+  const cipherEls=[...document.querySelectorAll('.cipher')];
+  cipherEls.forEach(el=>{
+    el.dataset.plain=el.textContent;
+    if(!reduced){ el.textContent=scrambleText(el.dataset.plain); el.classList.add('locked'); }
+    el._state='locked'; el._raf=null;
+  });
+
+  function animateTo(el, decrypt){
+    if(reduced){ el.textContent=el.dataset.plain; el.classList.remove('locked'); return; }
+    if(el._raf) cancelAnimationFrame(el._raf);
+    const plain=el.dataset.plain, len=plain.length;
+    const dur=Math.min(1600, 420+len*3.2);
+    const t0=performance.now();
+    function frame(t){
+      const p=Math.min((t-t0)/dur,1);
+      const edge=Math.floor(len*(decrypt?p:1-p)); // chars 0..edge are plain
+      let out='';
+      for(let i=0;i<len;i++){
+        const ch=plain[i];
+        if(!/[A-Za-z0-9]/.test(ch)){ out+=ch; continue; }
+        out += i<edge ? ch : (i<edge+14 ? g() : (decrypt? g() : (el._state==='locked'? g(): g())));
+      }
+      el.textContent=out;
+      if(p<1){ el._raf=requestAnimationFrame(frame); }
+      else{
+        el.textContent = decrypt ? plain : scrambleText(plain);
+        el.classList.toggle('locked', !decrypt);
+        el._state = decrypt ? 'open' : 'locked';
+        el._raf=null;
+      }
+    }
+    el._raf=requestAnimationFrame(frame);
+  }
+
+  const cipherIO=new IntersectionObserver(es=>{
+    es.forEach(en=>{
+      const el=en.target;
+      if(en.isIntersecting && el._state!=='open'){ animateTo(el,true); }
+      else if(!en.isIntersecting && el._state==='open'){ animateTo(el,false); }
+    });
+  },{threshold:.35,rootMargin:'0px 0px -5% 0px'});
+  cipherEls.forEach(el=>cipherIO.observe(el));
+
+  /* ============ REAL SHA-256 SECTION SIGNATURES ============ */
+  const HEXC='0123456789abcdef';
+  function hx(){return HEXC[Math.random()*16|0];}
+  async function sha256hex(str){
+    try{
+      const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    }catch(e){
+      let h=0; for(const c of str){h=(h*31+c.charCodeAt(0))>>>0;}
+      return h.toString(16).padStart(8,'0').repeat(8).slice(0,64);
+    }
+  }
+  function scrambleHash(el,final){
+    const short=final.slice(0,12);
+    let i=0;
+    const iv=setInterval(()=>{
+      let out='';
+      for(let j=0;j<short.length;j++) out += j<i ? short[j] : hx();
+      el.textContent='sha256:'+out+'…';
+      el.title='sha256:'+final;
+      if(i++>=short.length){clearInterval(iv);el.classList.add('signed');}
+    }, reduced?1:36);
+  }
+  document.querySelectorAll('section').forEach(sec=>{
+    const badge=sec.querySelector('.hash');
+    if(!badge) return;
+    const sIO=new IntersectionObserver(async es=>{
+      for(const en of es){
+        if(!en.isIntersecting) continue;
+        sIO.unobserve(en.target);
+        const text=[...sec.querySelectorAll('.cipher, h2, .fix h3')].map(e=>e.dataset.plain||e.textContent).join('\n');
+        const hash=await sha256hex(text);
+        scrambleHash(badge,hash);
+        audit('SECTION SIGNED — '+sec.querySelector('h2').textContent.toUpperCase().slice(0,34));
+      }
+    },{threshold:.35});
+    sIO.observe(badge);
+  });
+
+  /* counters */
+  function count(el){
+    const target=parseFloat(el.dataset.count), dec=+(el.dataset.dec||0);
+    const dur=reduced?1:1400, t0=performance.now();
+    function tick(t){
+      const p=Math.min((t-t0)/dur,1), e=1-Math.pow(1-p,3);
+      el.textContent=(target*e).toFixed(dec);
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const cIO=new IntersectionObserver(es=>{
+    es.forEach(en=>{if(en.isIntersecting){count(en.target);cIO.unobserve(en.target);}});
+  },{threshold:.6});
+  document.querySelectorAll('[data-count]').forEach(el=>cIO.observe(el));
+
+  /* offer signature — real hash of the offer text */
+  const oIO=new IntersectionObserver(async es=>{
+    for(const en of es){
+      if(!en.isIntersecting) continue;
+      oIO.unobserve(en.target);
+      const offer=document.querySelector('.offer');
+      const hash=await sha256hex(offer.innerText);
+      scrambleHash(document.getElementById('offer-sig'),hash);
+      audit('OFFER SIGNED — CTO, STATE HOUSE');
+    }
+  },{threshold:.5});
+  oIO.observe(document.querySelector('.offer'));
+})();
+</script>
+</body>
+</html>
