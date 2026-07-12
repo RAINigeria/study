@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VROS — Symbolic Mathematics Engine</title>
+<title>RIDE — Symbolic Mathematics Engine</title>
 <style>/* ═══════════════════════════════════════════════════
-   VROS THEME SYSTEM — RAIN Nigeria
+   RIDE THEME SYSTEM — RAIN Nigeria
    Default: DARK (roboticists & GenZ preference)
    Persisted via localStorage
    Toggle via .theme-toggle button
@@ -283,7 +283,7 @@ a{text-decoration:none;color:inherit}
   <div class="brand-div"></div>
   <div class="mod-title-wrap">
     <div class="mod-title">∑ Symbolic Mathematics Engine</div>
-    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
   </div>
   <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
   <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
@@ -439,12 +439,12 @@ a{text-decoration:none;color:inherit}
   <div class="sb-item"><span class="sb-label">MODULE</span>&nbsp;<span id="sb-mod">DH / FK</span></div>
   <div class="sb-item"><span class="sb-label">DOF</span>&nbsp;<span id="sb-dof">3</span></div>
   <div class="sb-item"><span class="sb-label">μ (manip)</span>&nbsp;<span id="sb-mu">—</span></div>
-  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">VROS Symbolic Mathematics Engine v1.0</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">RIDE Symbolic Mathematics Engine v1.0</span></div>
 </div>
 </div>
 
 <script>
-function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+function initTheme(){const t=localStorage.getItem("RIDE-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("RIDE-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 // DH params: {theta (deg), a (m), d, alpha (deg)}
 let dhParams=[
   {theta:30,a:0.5,d:0,alpha:0},
