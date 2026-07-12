@@ -2,58 +2,307 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>VROS — Swarm Robotics Engine</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
-#app{display:flex;flex-direction:column;height:100vh}
-#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
-.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
-.back-btn:hover{color:#e0e0e8;border-color:#c84fc8}
-.mod-title{font-size:13px;font-weight:700;color:#c84fc8;letter-spacing:1px}
-#main{display:flex;flex:1;overflow:hidden}
-#sb{width:200px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28}
-.ss{border-bottom:1px solid #141420;padding:8px 10px}
-.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
-.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
-.row label{flex:1;color:#888}
-.row input[type=range]{flex:1;height:3px;accent-color:#c84fc8;cursor:pointer}
-.val{min-width:34px;text-align:right;font-size:9px;color:#c84fc8;font-family:monospace}
-.btn{padding:3px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s}
-.btn:hover{background:#222;color:#fff}.btn.on{background:#c84fc8;color:#fff;border-color:#c84fc8}
-.bg{display:flex;flex-wrap:wrap;gap:3px}
-.ab{padding:3px 8px;border-radius:4px;border:1px solid #222;background:#181824;color:#666;font-size:9px;cursor:pointer;transition:all .12s}
-.ab.active{background:#1a0a1e;color:#c84fc8;border-color:#c84fc8}
-select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.sc{background:#181824;border-radius:4px;padding:3px 6px;border:1px solid #181830}
-.sk{font-size:8px;color:#444}.sv{font-size:11px;font-weight:700;color:#e0e0e8;font-family:monospace}
-#ca{flex:1;overflow:hidden}
-#sim{display:block;width:100%;height:100%}
-#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:32px;align-items:center}
-.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
-.sb-item span{color:#c84fc8;font-family:monospace;font-weight:600}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Swarm Robotics Engine — VROS | RAIN Nigeria</title>
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */</style>
 </head>
 <body>
-<div id="app">
-<div id="topbar">
-  <a href="VROS_Home.html" class="back-btn">← Home</a>
-  <span class="mod-title">🐝 Swarm Robotics Engine</span>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🐝 Swarm Robotics Engine</div>
+    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
 </div>
-<div id="main">
-<div id="sb">
-  <div class="ss"><div class="st">Swarm Size</div>
-    <div class="bg">
-      <button class="ab active" id="sw10" onclick="setSize(10)">10</button>
-      <button class="ab" id="sw30" onclick="setSize(30)">30</button>
-      <button class="ab" id="sw100" onclick="setSize(100)">100</button>
-      <button class="ab" id="sw300" onclick="setSize(300)">300</button>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div class="mod-layout">
+<div class="mod-sidebar" id="mod-sidebar">
+  <div class="sb-sec"><div class="sb-hd">Swarm Size</div>
+    <div class="btn-grp">
+      <button class="gb active" id="sw10" onclick="setSize(10)">10</button>
+      <button class="gb" id="sw30" onclick="setSize(30)">30</button>
+      <button class="gb" id="sw100" onclick="setSize(100)">100</button>
+      <button class="gb" id="sw300" onclick="setSize(300)">300</button>
     </div>
   </div>
-  <div class="ss"><div class="st">Behaviour</div>
-    <select onchange="sw.mode=this.value">
+  <div class="sb-sec"><div class="sb-hd">Behaviour</div>
+    <select class="sb-sel" onchange="sw.mode=this.value">
       <option value="flock">Flocking (Reynolds)</option>
       <option value="leader">Leader-Follower</option>
       <option value="formation">Formation Grid</option>
@@ -61,139 +310,129 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
       <option value="orbit">Orbital</option>
     </select>
   </div>
-  <div class="ss"><div class="st">Reynolds Rules</div>
-    <div class="row"><label>Separation</label><input type="range" min="0" max="5" step="0.1" value="1.5" oninput="sw.sep=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.5</span></div>
-    <div class="row"><label>Alignment</label><input type="range" min="0" max="5" step="0.1" value="1.0" oninput="sw.ali=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.0</span></div>
-    <div class="row"><label>Cohesion</label><input type="range" min="0" max="5" step="0.1" value="0.8" oninput="sw.coh=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">0.8</span></div>
-    <div class="row"><label>Max speed</label><input type="range" min="0.5" max="8" step="0.1" value="2.5" oninput="sw.maxspd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">2.5</span></div>
-    <div class="row"><label>Perception R</label><input type="range" min="20" max="150" value="65" oninput="sw.pr=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">65</span></div>
-    <div class="row"><label>Sep radius</label><input type="range" min="5" max="40" value="22" oninput="sw.sr=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">22</span></div>
+  <div class="sb-sec"><div class="sb-hd">Reynolds Rules</div>
+    <div class="sb-row"><label>Separation</label><input type="range" min="0" max="5" step="0.1" value="1.5" oninput="sw.sep=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.5</span></div>
+    <div class="sb-row"><label>Alignment</label><input type="range" min="0" max="5" step="0.1" value="1.0" oninput="sw.ali=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.0</span></div>
+    <div class="sb-row"><label>Cohesion</label><input type="range" min="0" max="5" step="0.1" value="0.8" oninput="sw.coh=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">0.8</span></div>
+    <div class="sb-row"><label>Max speed</label><input type="range" min="0.5" max="8" step="0.1" value="2.5" oninput="sw.maxspd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">2.5</span></div>
+    <div class="sb-row"><label>Perception R</label><input type="range" min="20" max="150" value="65" oninput="sw.pr=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">65</span></div>
+    <div class="sb-row"><label>Sep radius</label><input type="range" min="5" max="40" value="22" oninput="sw.sr=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">22</span></div>
   </div>
-  <div class="ss"><div class="st">Obstacles</div>
-    <div class="bg">
-      <button class="btn" onclick="addObs()">+ Obstacle</button>
-      <button class="btn" onclick="clearObs()">Clear Obs</button>
-    </div>
-    <div class="row" style="margin-top:4px"><label>Avoid strength</label><input type="range" min="0" max="5" step="0.1" value="2" oninput="sw.avoid=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">2.0</span></div>
+  <div class="sb-sec"><div class="sb-hd">Obstacles</div>
+    <div class="btn-grp"><button class="gb" onclick="addObs()">+ Obstacle</button><button class="gb" onclick="clearObs()">Clear</button></div>
+    <div class="sb-row" style="margin-top:5px"><label>Avoid strength</label><input type="range" min="0" max="5" step="0.1" value="2" oninput="sw.avoid=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">2.0</span></div>
   </div>
-  <div class="ss"><div class="st">Communication</div>
-    <div class="row"><label>Show comm rings</label><input type="checkbox" onchange="sw.rings=this.checked"></div>
-    <div class="row"><label>Packet loss %</label><input type="range" min="0" max="100" value="0" oninput="sw.loss=+this.value;this.nextElementSibling.textContent=this.value+'%'"><span class="val">0%</span></div>
+  <div class="sb-sec"><div class="sb-hd">Communication</div>
+    <div class="sb-row"><label>Comm rings</label><input type="checkbox" onchange="sw.rings=this.checked"></div>
+    <div class="sb-row"><label>Packet loss %</label><input type="range" min="0" max="100" value="0" oninput="sw.loss=+this.value;this.nextElementSibling.textContent=this.value+'%'"><span class="sb-val">0%</span></div>
   </div>
-  <div class="ss"><div class="st">Display</div>
-    <div class="row"><label>Velocity arrows</label><input type="checkbox" checked onchange="sw.vel=this.checked"></div>
-    <div class="row"><label>Trails</label><input type="checkbox" onchange="sw.trails=this.checked"></div>
-    <div class="row"><label>Density map</label><input type="checkbox" onchange="sw.density=this.checked"></div>
-    <div class="row"><label>Colour by speed</label><input type="checkbox" onchange="sw.colorspd=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Display</div>
+    <div class="sb-row"><label>Velocity arrows</label><input type="checkbox" checked onchange="sw.vel=this.checked"></div>
+    <div class="sb-row"><label>Trails</label><input type="checkbox" onchange="sw.trails=this.checked"></div>
+    <div class="sb-row"><label>Density heatmap</label><input type="checkbox" onchange="sw.density=this.checked"></div>
+    <div class="sb-row"><label>Colour by speed</label><input type="checkbox" onchange="sw.colorspd=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">Live Metrics</div>
-    <div class="sg">
-      <div class="sc"><div class="sk">Agents</div><div class="sv" id="m-n">0</div></div>
-      <div class="sc"><div class="sk">Avg speed</div><div class="sv" id="m-spd">0</div></div>
-      <div class="sc"><div class="sk">Cohesion</div><div class="sv" id="m-coh">0</div></div>
-      <div class="sc"><div class="sk">FPS</div><div class="sv" id="m-fps">0</div></div>
+  <div class="sb-sec"><div class="sb-hd">Live Metrics</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">Agents</div><div class="mc-val" id="m-n">0</div></div>
+      <div class="mc"><div class="mc-lbl">Avg speed</div><div class="mc-val" id="m-spd">0</div></div>
+      <div class="mc"><div class="mc-lbl">Cohesion</div><div class="mc-val" id="m-coh">0</div></div>
+      <div class="mc"><div class="mc-lbl">FPS</div><div class="mc-val" id="m-fps">0</div></div>
     </div>
   </div>
-  <div class="ss"><div class="st">Controls</div>
-    <div class="bg">
-      <button class="btn" id="pbtn" onclick="togglePause()">⏸ Pause</button>
-      <button class="btn" onclick="initSwarm(sw.agents.length)">↺ Reset</button>
+  <div class="sb-sec"><div class="sb-hd">Controls</div>
+    <div class="btn-grp">
+      <button class="gb" id="pbtn" onclick="togglePause()">⏸ Pause</button>
+      <button class="gb" onclick="initSwarm(sw.agents.length)">↺ Reset</button>
     </div>
-    <div class="row" style="margin-top:4px"><label>Speed mult</label><input type="range" min="1" max="5" value="1" oninput="simSpd=+this.value;this.nextElementSibling.textContent=this.value+'x'"><span class="val">1x</span></div>
+    <div class="sb-row" style="margin-top:6px"><label>Speed mult</label><input type="range" min="1" max="5" value="1" oninput="simSpd=+this.value;this.nextElementSibling.textContent=this.value+'x'"><span class="sb-val">1x</span></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:6px;line-height:1.5">Click canvas → move target<br>Right-click → add obstacle</p>
   </div>
 </div>
-<div id="ca"><canvas id="sim"></canvas></div>
+<div class="mod-canvas-wrap">
+  <canvas class="mod-canvas" id="sim"></canvas>
+  <div class="legend-bar">
+    <span class="li"><span class="ld" style="background:#f59e0b"></span>Leader</span>
+    <span class="li"><span class="ld" style="background:#a78bfa"></span>Agents</span>
+    <span class="li"><span class="ld" style="background:#f59e0b"></span>Target</span>
+    <span class="li"><span class="ld" style="background:#ef4444"></span>Obstacle</span>
+  </div>
 </div>
-<div id="statusbar">
-  <div class="sb-item"><span class="sb-label">AGENTS</span>&nbsp;<span id="sb-n">0</span></div>
-  <div class="sb-item"><span class="sb-label">MODE</span>&nbsp;<span id="sb-mode">Flocking</span></div>
-  <div class="sb-item"><span class="sb-label">AVG SPD</span>&nbsp;<span id="sb-spd">0</span></div>
-  <div class="sb-item" style="flex:1;text-align:right;justify-content:flex-end;border-right:none"><span class="sb-label">Click canvas → move target | VROS Swarm Engine v2.0</span></div>
 </div>
+<div class="mod-btmbar">
+  <div class="bbi">Agents <strong id="sb-n">0</strong></div>
+  <div class="bbi">Mode <strong id="sb-mode">Flocking</strong></div>
+  <div class="bbi">Avg Spd <strong id="sb-spd">0</strong></div>
+  <div class="bb-space"></div>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; AI Nigeria (RAIN)</div>
 </div>
 <script>
+function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 let W,H,paused=false,simSpd=1,fps=0,fcnt=0,ft=0,lastT=0;
 const sw={agents:[],mode:'flock',sep:1.5,ali:1.0,coh:0.8,maxspd:2.5,pr:65,sr:22,avoid:2,rings:false,vel:true,trails:false,density:false,colorspd:false,loss:0,target:{x:0,y:0},obstacles:[],trails_arr:[]};
 
-function resize(){const ca=document.getElementById('ca');sim.width=ca.clientWidth;sim.height=ca.clientHeight;W=sim.width;H=sim.height;sw.target={x:W*.65,y:H*.4};}
-window.addEventListener('resize',()=>{resize();});
+function resize(){const ca=document.querySelector('.mod-canvas-wrap');sim.width=ca.clientWidth;sim.height=ca.clientHeight-document.querySelector('.legend-bar').offsetHeight;W=sim.width;H=sim.height;sw.target={x:W*.65,y:H*.4};}
+window.addEventListener('resize',resize);
 
-function setSize(n){
-  ['10','30','100','300'].forEach(s=>{const el=document.getElementById('sw'+s);if(el)el.classList.toggle('active',+s===n);});
-  initSwarm(n);
-}
-
-function initSwarm(n){
-  sw.agents=Array.from({length:n},(_,i)=>({x:W*.2+Math.random()*W*.6,y:H*.2+Math.random()*H*.6,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,lead:i===0,trail:[]}));
-  sw.trails_arr=[];
-  document.getElementById('m-n').textContent=n;document.getElementById('sb-n').textContent=n;
-}
-
+function getCS(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+function setSize(n){['10','30','100','300'].forEach(s=>{const el=document.getElementById('sw'+s);if(el)el.classList.toggle('active',+s===n);});initSwarm(n);}
+function initSwarm(n){sw.agents=Array.from({length:n},(_,i)=>({x:W*.2+Math.random()*W*.6,y:H*.2+Math.random()*H*.6,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,lead:i===0,trail:[]}));sw.trails_arr=[];document.getElementById('m-n').textContent=n;document.getElementById('sb-n').textContent=n;}
 function addObs(){sw.obstacles.push({x:Math.random()*W*.8+W*.1,y:Math.random()*H*.8+H*.1,r:20+Math.random()*30});}
 function clearObs(){sw.obstacles=[];}
+function togglePause(){paused=!paused;document.getElementById('pbtn').textContent=paused?'▶ Resume':'⏸ Pause';setPaused(paused);}
 
 function step(){
-  const A=sw.agents,N=A.length;
-  let totalSpd=0,cx=0,cy=0;
+  const A=sw.agents,N=A.length;let totalSpd=0,cx=0,cy=0;
   A.forEach(a=>{totalSpd+=Math.sqrt(a.vx**2+a.vy**2);cx+=a.x;cy+=a.y;});
-  const avgX=cx/N,avgY=cy/N;
-  const cohDist=Math.sqrt((A.reduce((s,a)=>s+(a.x-avgX)**2+(a.y-avgY)**2,0)/N));
-  document.getElementById('m-spd').textContent=(totalSpd/N).toFixed(1);document.getElementById('sb-spd').textContent=(totalSpd/N).toFixed(1);
-  document.getElementById('m-coh').textContent=cohDist.toFixed(0);
+  const avgX=cx/N,avgY=cy/N;const cohDist=Math.sqrt(A.reduce((s,a)=>s+(a.x-avgX)**2+(a.y-avgY)**2,0)/N);
+  document.getElementById('m-spd').textContent=(totalSpd/N).toFixed(1);document.getElementById('sb-spd').textContent=(totalSpd/N).toFixed(1);document.getElementById('m-coh').textContent=cohDist.toFixed(0);
   A.forEach((a,i)=>{
-    const skip=Math.random()<sw.loss/100;
-    let sx=0,sy=0,alx=0,aly=0,cox=0,coy=0,nc=0;
+    const skip=Math.random()<sw.loss/100;let sx=0,sy=0,alx=0,aly=0,cox=0,coy=0,nc=0;
     if(!skip)A.forEach((b,j)=>{if(i===j)return;const dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx**2+dy**2);if(d<sw.pr){nc++;alx+=b.vx;aly+=b.vy;cox+=b.x;coy+=b.y;}if(d<sw.sr&&d>0){sx-=dx/d;sy-=dy/d;}});
     let fx=0,fy=0;
     if(sx||sy){const m=Math.sqrt(sx**2+sy**2);fx+=(sx/m*sw.maxspd-a.vx)*sw.sep;fy+=(sy/m*sw.maxspd-a.vy)*sw.sep;}
     if(nc>0){alx/=nc;aly/=nc;const m=Math.sqrt(alx**2+aly**2)||1;fx+=(alx/m*sw.maxspd-a.vx)*sw.ali;fy+=(aly/m*sw.maxspd-a.vy)*sw.ali;cox/=nc;coy/=nc;const dx2=cox-a.x,dy2=coy-a.y,m2=Math.sqrt(dx2**2+dy2**2)||1;fx+=(dx2/m2*sw.maxspd-a.vx)*sw.coh;fy+=(dy2/m2*sw.maxspd-a.vy)*sw.coh;}
-    // Obstacle avoidance
     sw.obstacles.forEach(o=>{const dx=a.x-o.x,dy=a.y-o.y,d=Math.sqrt(dx**2+dy**2);if(d<o.r+30&&d>0){const rep=sw.avoid*sw.maxspd*(o.r+30-d)/(o.r+30);fx+=dx/d*rep;fy+=dy/d*rep;}});
-    // Target / behaviour
-    if(sw.mode==='flock'||sw.mode==='explore'){const tdx=sw.target.x-a.x,tdy=sw.target.y-a.y,td=Math.sqrt(tdx**2+tdy**2)||1;if(td>15){fx+=(tdx/td*sw.maxspd-a.vx)*0.2;fy+=(tdy/td*sw.maxspd-a.vy)*0.2;}}
-    else if(sw.mode==='leader'&&!a.lead){const l=A[0];const ldx=l.x-a.x,ldy=l.y-a.y,ld=Math.sqrt(ldx**2+ldy**2)||1;if(ld>20){fx+=(ldx/ld*sw.maxspd-a.vx)*0.45;fy+=(ldy/ld*sw.maxspd-a.vy)*0.45;}}
-    else if(sw.mode==='leader'&&a.lead){const tdx=sw.target.x-a.x,tdy=sw.target.y-a.y,td=Math.sqrt(tdx**2+tdy**2)||1;fx+=(tdx/td*sw.maxspd-a.vx)*0.4;fy+=(tdy/td*sw.maxspd-a.vy)*0.4;}
-    else if(sw.mode==='formation'){const cols=Math.ceil(Math.sqrt(N));const row=Math.floor(i/cols),col=i%cols;const gx=sw.target.x+(col-cols/2)*35,gy=sw.target.y+(row-Math.ceil(N/cols)/2)*35;const dx=gx-a.x,dy=gy-a.y,d=Math.sqrt(dx**2+dy**2)||1;fx+=(dx/d*sw.maxspd-a.vx)*0.5;fy+=(dy/d*sw.maxspd-a.vy)*0.5;}
-    else if(sw.mode==='orbit'){const tdx=a.x-sw.target.x,tdy=a.y-sw.target.y,td=Math.sqrt(tdx**2+tdy**2)||1;const targetR=100;const radial=(td-targetR)/targetR;fx+=(-tdx/td*radial+(-tdy/td))*sw.maxspd*.3-a.vx*.1;fy+=(-tdy/td*radial+(tdx/td))*sw.maxspd*.3-a.vy*.1;}
-    const fm=Math.sqrt(fx**2+fy**2);const mxF=0.15;if(fm>mxF){fx=fx/fm*mxF;fy=fy/fm*mxF;}
+    const td=Math.sqrt((sw.target.x-a.x)**2+(sw.target.y-a.y)**2)||1;
+    if(sw.mode==='flock'||sw.mode==='explore'){fx+=(sw.target.x-a.x)/td*sw.maxspd*.2-a.vx*.2;fy+=(sw.target.y-a.y)/td*sw.maxspd*.2-a.vy*.2;}
+    else if(sw.mode==='leader'&&!a.lead){const l=A[0];const ld=Math.sqrt((l.x-a.x)**2+(l.y-a.y)**2)||1;if(ld>20){fx+=(l.x-a.x)/ld*sw.maxspd*.45-a.vx*.45;fy+=(l.y-a.y)/ld*sw.maxspd*.45-a.vy*.45;}}
+    else if(sw.mode==='leader'&&a.lead){fx+=(sw.target.x-a.x)/td*sw.maxspd*.4-a.vx*.4;fy+=(sw.target.y-a.y)/td*sw.maxspd*.4-a.vy*.4;}
+    else if(sw.mode==='formation'){const cols=Math.ceil(Math.sqrt(N));const row=Math.floor(i/cols),col=i%cols;const gx=sw.target.x+(col-cols/2)*35,gy=sw.target.y+(row-Math.ceil(N/cols)/2)*35;const dx=gx-a.x,dy=gy-a.y,d=Math.sqrt(dx**2+dy**2)||1;fx+=(dx/d*sw.maxspd-a.vx)*.5;fy+=(dy/d*sw.maxspd-a.vy)*.5;}
+    else if(sw.mode==='orbit'){const tdx=a.x-sw.target.x,tdy=a.y-sw.target.y,td2=Math.sqrt(tdx**2+tdy**2)||1;const R=100,rad=(td2-R)/R;fx+=(-tdx/td2*rad+(-tdy/td2))*sw.maxspd*.3-a.vx*.1;fy+=(-tdy/td2*rad+(tdx/td2))*sw.maxspd*.3-a.vy*.1;}
+    const fm=Math.sqrt(fx**2+fy**2);if(fm>0.15){fx=fx/fm*.15;fy=fy/fm*.15;}
     a.vx+=fx;a.vy+=fy;const vm=Math.sqrt(a.vx**2+a.vy**2);if(vm>sw.maxspd){a.vx=a.vx/vm*sw.maxspd;a.vy=a.vy/vm*sw.maxspd;}
-    if(a.x<10)a.vx+=0.3;if(a.x>W-10)a.vx-=0.3;if(a.y<10)a.vy+=0.3;if(a.y>H-10)a.vy-=0.3;
+    if(a.x<10)a.vx+=.3;if(a.x>W-10)a.vx-=.3;if(a.y<10)a.vy+=.3;if(a.y>H-10)a.vy-=.3;
     a.x=Math.max(2,Math.min(W-2,a.x+a.vx));a.y=Math.max(2,Math.min(H-2,a.y+a.vy));
   });
-  if(sw.trails){sw.agents.forEach(a=>sw.trails_arr.push({x:a.x,y:a.y,age:0,c:a.lead?'#eda100':'#c84fc8'}));sw.trails_arr.forEach(t=>t.age++);sw.trails_arr=sw.trails_arr.filter(t=>t.age<100);}
+  if(sw.trails){sw.agents.forEach(a=>sw.trails_arr.push({x:a.x,y:a.y,age:0,c:a.lead?'#f59e0b':'#a78bfa'}));sw.trails_arr.forEach(t=>t.age++);sw.trails_arr=sw.trails_arr.filter(t=>t.age<100);}
 }
 
 function draw(){
-  ctx.clearRect(0,0,W,H);ctx.fillStyle='#07070d';ctx.fillRect(0,0,W,H);
-  // Density map
-  if(sw.density){const gs=40,cols2=Math.ceil(W/gs),rows=Math.ceil(H/gs);const grid=new Array(cols2*rows).fill(0);sw.agents.forEach(a=>{const gc=Math.floor(a.x/gs),gr=Math.floor(a.y/gs);if(gc>=0&&gc<cols2&&gr>=0&&gr<rows)grid[gr*cols2+gc]++;});const maxD=Math.max(...grid)||1;for(let r=0;r<rows;r++)for(let c=0;c<cols2;c++){const d=grid[r*cols2+c];if(d>0){ctx.fillStyle=`rgba(200,79,200,${d/maxD*0.25})`;ctx.fillRect(c*gs,r*gs,gs,gs);}}}
-  // Trails
-  if(sw.trails){sw.trails_arr.forEach(t=>{ctx.fillStyle=t.c.replace(')',`,${.08*(1-t.age/100)})`).replace('rgb','rgba');ctx.beginPath();ctx.arc(t.x,t.y,1.5,0,Math.PI*2);ctx.fill();});}
-  // Obstacles
-  sw.obstacles.forEach(o=>{ctx.strokeStyle='rgba(227,73,72,0.5)';ctx.lineWidth=2;ctx.fillStyle='rgba(227,73,72,0.1)';ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();ctx.stroke();});
-  // Target
-  ctx.strokeStyle='rgba(237,161,0,0.35)';ctx.lineWidth=1;for(let r=12;r<=55;r+=14){ctx.beginPath();ctx.arc(sw.target.x,sw.target.y,r,0,Math.PI*2);ctx.stroke();}
-  ctx.fillStyle='#eda100';ctx.beginPath();ctx.arc(sw.target.x,sw.target.y,6,0,Math.PI*2);ctx.fill();
-  // Agents
+  ctx.clearRect(0,0,W,H);ctx.fillStyle=getCS('--canvas-bg');ctx.fillRect(0,0,W,H);
+  if(sw.density){const gs=40,gc=Math.ceil(W/gs),gr=Math.ceil(H/gs);const g=new Array(gc*gr).fill(0);sw.agents.forEach(a=>{const c=Math.floor(a.x/gs),r=Math.floor(a.y/gs);if(c>=0&&c<gc&&r>=0&&r<gr)g[r*gc+c]++;});const mx=Math.max(...g)||1;for(let r=0;r<gr;r++)for(let c=0;c<gc;c++){const d=g[r*gc+c];if(d>0){ctx.fillStyle='rgba(167,139,250,'+(d/mx*.25)+')';ctx.fillRect(c*gs,r*gs,gs,gs);}}}
+  if(sw.trails){sw.trails_arr.forEach(t=>{ctx.fillStyle=t.c.replace(')',','+(0.08*(1-t.age/100))+')').replace('rgb','rgba')||'rgba(167,139,250,0.05)';ctx.beginPath();ctx.arc(t.x,t.y,1.5,0,Math.PI*2);ctx.fill();});}
+  sw.obstacles.forEach(o=>{ctx.strokeStyle='rgba(239,68,68,0.5)';ctx.lineWidth=2;ctx.fillStyle='rgba(239,68,68,0.1)';ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill();ctx.stroke();});
+  ctx.strokeStyle='rgba(245,158,11,0.3)';ctx.lineWidth=1;[14,28,44].forEach(r=>{ctx.beginPath();ctx.arc(sw.target.x,sw.target.y,r,0,Math.PI*2);ctx.stroke();});
+  ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(sw.target.x,sw.target.y,6,0,Math.PI*2);ctx.fill();
   sw.agents.forEach((a,i)=>{
-    const ang=Math.atan2(a.vy,a.vx);const spd=Math.sqrt(a.vx**2+a.vy**2);
-    if(sw.rings){ctx.strokeStyle='rgba(200,79,200,0.05)';ctx.lineWidth=.5;ctx.beginPath();ctx.arc(a.x,a.y,sw.sr,0,Math.PI*2);ctx.stroke();}
+    const ang=Math.atan2(a.vy,a.vx),spd=Math.sqrt(a.vx**2+a.vy**2);
+    if(sw.rings){ctx.strokeStyle='rgba(167,139,250,0.05)';ctx.lineWidth=.5;ctx.beginPath();ctx.arc(a.x,a.y,sw.sr,0,Math.PI*2);ctx.stroke();}
     ctx.save();ctx.translate(a.x,a.y);ctx.rotate(ang);
-    const col=sw.colorspd?`hsl(${280-spd/sw.maxspd*120},70%,55%)`:a.lead?'#eda100':'#c84fc8';
+    const col=sw.colorspd?'hsl('+(280-spd/sw.maxspd*120)+',70%,65%)':a.lead?'#f59e0b':'#a78bfa';
     ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(7,0);ctx.lineTo(-5,-3.5);ctx.lineTo(-5,3.5);ctx.closePath();ctx.fill();
-    if(sw.vel){ctx.strokeStyle=col.replace(')',',0.35)').replace('rgb','rgba');ctx.lineWidth=.8;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(spd*8,0);ctx.stroke();}
+    if(sw.vel){ctx.strokeStyle=col;ctx.lineWidth=.8;ctx.globalAlpha=.4;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(spd*8,0);ctx.stroke();ctx.globalAlpha=1;}
     ctx.restore();
   });
-  // HUD
-  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.font='9px monospace';ctx.fillText(`N=${sw.agents.length}  mode=${sw.mode}  Sep=${sw.sep.toFixed(1)} Ali=${sw.ali.toFixed(1)} Coh=${sw.coh.toFixed(1)}`,10,H-8);
+  fcnt++;
 }
 
 sim.addEventListener('click',e=>{const r=sim.getBoundingClientRect();sw.target={x:e.clientX-r.left,y:e.clientY-r.top};});
 sim.addEventListener('contextmenu',e=>{e.preventDefault();const r=sim.getBoundingClientRect();sw.obstacles.push({x:e.clientX-r.left,y:e.clientY-r.top,r:25});});
+sim.addEventListener('touchend',e=>{e.preventDefault();const r=sim.getBoundingClientRect();const t=e.changedTouches[0];sw.target={x:t.clientX-r.left,y:t.clientY-r.top};},{passive:false});
 
-function togglePause(){paused=!paused;document.getElementById('pbtn').textContent=paused?'▶ Resume':'⏸ Pause';}
-function loop(ts){requestAnimationFrame(loop);fcnt++;if(ts-ft>1000){fps=fcnt;fcnt=0;ft=ts;document.getElementById('m-fps').textContent=fps;}const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;if(!paused){const s=simSpd||1;for(let i=0;i<s;i++)step();}draw();}
+function loop(ts){requestAnimationFrame(loop);if(ts-ft>1000){fps=fcnt;fcnt=0;ft=ts;document.getElementById('m-fps').textContent=fps;}if(!paused){const s=simSpd||1;for(let i=0;i<s;i++)step();}draw();}
 resize();initSwarm(10);requestAnimationFrame(loop);
 </script>
-</body></html>
+</body>
+</html>

@@ -3,100 +3,312 @@
 <head>
 <meta charset="UTF-8">
 <title>VROS — Symbolic Mathematics Engine</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
-#app{display:flex;flex-direction:column;height:100vh}
-#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
-.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
-.back-btn:hover{color:#e0e0e8;border-color:#3987e5}
-.mod-title{font-size:13px;font-weight:700;color:#3987e5;letter-spacing:1px}
-#main{display:flex;flex:1;overflow:hidden}
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
 
-/* LEFT SIDEBAR */
-#sb{width:200px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28}
-.ss{border-bottom:1px solid #141420;padding:8px 10px}
-.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
-.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
-.row label{flex:1;color:#888}
-.row input[type=range]{flex:1;height:3px;accent-color:#3987e5;cursor:pointer}
-.val{min-width:30px;text-align:right;font-size:9px;color:#3987e5;font-family:monospace}
-.btn{padding:4px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s;width:100%;margin-bottom:3px;text-align:left}
-.btn:hover{background:#1e1e30;color:#fff}
-.btn.active{background:#142035;color:#3987e5;border-color:#3987e5;font-weight:600}
-select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
 
-/* MAIN CONTENT */
-#content{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#tabs{display:flex;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0}
-.tab{padding:6px 16px;font-size:11px;cursor:pointer;color:#555;border-bottom:2px solid transparent;transition:all .13s;border:none;background:none}
-.tab.active{color:#3987e5;border-bottom-color:#3987e5}
-.tab:hover:not(.active){color:#aaa}
-#panels{flex:1;overflow:hidden;position:relative}
-.panel{position:absolute;inset:0;overflow-y:auto;padding:20px 24px;display:none}
-.panel.active{display:block}
-.panel::-webkit-scrollbar{width:4px}
-.panel::-webkit-scrollbar-thumb{background:#1a1a28}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
 
-/* Math display */
-.math-section{margin-bottom:28px}
-.math-section h2{font-size:12px;color:#3987e5;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #1a1a28}
-.math-section h3{font-size:11px;color:#888;margin-bottom:8px;font-weight:600}
-.eq-block{background:#0e0e18;border:1px solid #1a1a28;border-radius:8px;padding:14px 18px;margin-bottom:10px;position:relative}
-.eq-label{font-size:8px;color:#444;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.eq-body{font-family:'Courier New',monospace;font-size:13px;color:#c8d8f8;line-height:1.9;white-space:pre-wrap}
-.eq-body .kw{color:#3987e5}       /* keyword / matrix bracket */
-.eq-body .num{color:#1baf7a}      /* numbers */
-.eq-body .sym{color:#eda100}      /* symbols / variables */
-.eq-body .op{color:#e34948}       /* operators */
-.eq-body .comment{color:#444}     /* comments */
-.eq-body .result{color:#c84fc8;font-weight:700}  /* final result */
-.explain-btn{font-size:8px;padding:2px 8px;border-radius:3px;border:1px solid #3987e5;background:none;color:#3987e5;cursor:pointer;position:absolute;top:10px;right:10px}
-.explain-box{margin-top:8px;padding:8px 10px;background:#0a1420;border-radius:5px;border:1px solid #1a2035;font-size:9px;color:#666;line-height:1.7;display:none}
-.step-num{font-size:8px;color:#3987e5;font-weight:700;margin-bottom:2px}
-.numeric-badge{display:inline-block;padding:1px 7px;border-radius:10px;background:#142035;color:#3987e5;font-size:9px;font-family:monospace;margin-left:8px}
-.warn{color:#eda100;font-size:9px;margin-top:4px}
-canvas.mini{width:100%;height:160px;border-radius:6px;background:#0a0a12;margin-top:8px;display:block}
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
 
-/* Input controls */
-.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:18px}
-.calc-card{background:#0e0e18;border:1px solid #1a1a28;border-radius:8px;padding:12px 14px}
-.calc-card label{font-size:9px;color:#666;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px}
-.calc-card input{width:100%;background:#111;color:#bbb;border:1px solid #222;border-radius:4px;padding:4px 8px;font-size:11px;font-family:monospace}
-.calc-card .hint{font-size:8px;color:#333;margin-top:3px}
-.compute-btn{padding:6px 18px;border-radius:5px;border:1px solid #3987e5;background:#142035;color:#3987e5;font-size:11px;cursor:pointer;font-weight:600;transition:all .13s;margin-bottom:16px}
-.compute-btn:hover{background:#1a3050}
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
 
-/* Status bar */
-#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:30px;align-items:center}
-.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
-.sb-item span{color:#3987e5;font-family:monospace;font-weight:600}
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
 </style>
 </head>
 <body>
-<div id="app">
-<div id="topbar">
-  <a href="VROS_Home.html" class="back-btn">← Home</a>
-  <span class="mod-title">∑ Symbolic Mathematics Engine</span>
-  <span style="font-size:10px;color:#444;margin-left:6px">Step-by-step derivations · Live numerical evaluation · Explain This</span>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">∑ Symbolic Mathematics Engine</div>
+    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
 </div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div id="app">
+
 <div id="main">
 
 <!-- SIDEBAR -->
 <div id="sb">
-  <div class="ss"><div class="st">Module</div>
+  <div class="sb-sec"><div class="sb-hd">Module</div>
     <button class="btn active" id="nav-dh" onclick="showPanel('dh')">🔗 DH / Forward Kinematics</button>
-    <button class="btn" id="nav-jac" onclick="showPanel('jac')">∂ Jacobian Matrix</button>
-    <button class="btn" id="nav-lagrange" onclick="showPanel('lagrange')">⚡ Lagrangian Dynamics</button>
-    <button class="btn" id="nav-tf" onclick="showPanel('tf')">📊 Transfer Functions</button>
-    <button class="btn" id="nav-pid" onclick="showPanel('pid')">🎛 PID Symbolic</button>
-    <button class="btn" id="nav-eigen" onclick="showPanel('eigen')">λ Eigenvalues / Stability</button>
-    <button class="btn" id="nav-state" onclick="showPanel('state')">📐 State Space</button>
-    <button class="btn" id="nav-kalman" onclick="showPanel('kalman')">🔵 Kalman Filter</button>
+    <button class="gb" id="nav-jac" onclick="showPanel('jac')">∂ Jacobian Matrix</button>
+    <button class="gb" id="nav-lagrange" onclick="showPanel('lagrange')">⚡ Lagrangian Dynamics</button>
+    <button class="gb" id="nav-tf" onclick="showPanel('tf')">📊 Transfer Functions</button>
+    <button class="gb" id="nav-pid" onclick="showPanel('pid')">🎛 PID Symbolic</button>
+    <button class="gb" id="nav-eigen" onclick="showPanel('eigen')">λ Eigenvalues / Stability</button>
+    <button class="gb" id="nav-state" onclick="showPanel('state')">📐 State Space</button>
+    <button class="gb" id="nav-kalman" onclick="showPanel('kalman')">🔵 Kalman Filter</button>
   </div>
-  <div class="ss"><div class="st">Robot Config (DH)</div>
-    <div class="row"><label>DOF (n)</label>
+  <div class="sb-sec"><div class="sb-hd">Robot Config (DH)</div>
+    <div class="sb-row"><label>DOF (n)</label>
       <select id="dof-sel" onchange="computeDH()">
         <option value="2">2 — 2R Planar</option>
         <option value="3" selected>3 — 3R Planar</option>
@@ -104,14 +316,14 @@ canvas.mini{width:100%;height:160px;border-radius:6px;background:#0a0a12;margin-
         <option value="6">6 — 6-DOF Arm</option>
       </select>
     </div>
-    <div class="row"><label>θ₁ (°)</label><input type="range" min="-180" max="180" value="30" oninput="dhParams[0].theta=+this.value;this.nextElementSibling.textContent=this.value+'°';computeDH()"><span class="val">30°</span></div>
-    <div class="row"><label>θ₂ (°)</label><input type="range" min="-180" max="180" value="45" oninput="dhParams[1].theta=+this.value;this.nextElementSibling.textContent=this.value+'°';computeDH()"><span class="val">45°</span></div>
-    <div class="row"><label>θ₃ (°)</label><input type="range" min="-180" max="180" value="-30" oninput="dhParams[2].theta=+this.value;this.nextElementSibling.textContent=this.value+'°';computeDH()"><span class="val">-30°</span></div>
-    <div class="row"><label>L₁</label><input type="range" min="0.1" max="1" step="0.05" value="0.5" oninput="dhParams[0].a=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)+'m';computeDH()"><span class="val">0.50m</span></div>
-    <div class="row"><label>L₂</label><input type="range" min="0.1" max="1" step="0.05" value="0.4" oninput="dhParams[1].a=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)+'m';computeDH()"><span class="val">0.40m</span></div>
-    <div class="row"><label>L₃</label><input type="range" min="0.1" max="1" step="0.05" value="0.3" oninput="dhParams[2].a=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)+'m';computeDH()"><span class="val">0.30m</span></div>
+    <div class="sb-row"><label>θ₁ (°)</label><input type="range" min="-180" max="180" value="30" oninput="dhParams[0].theta=+this.value;this.nextElementSibling.textContent=this.value+'°';computeDH()"><span class="sb-val">30°</span></div>
+    <div class="sb-row"><label>θ₂ (°)</label><input type="range" min="-180" max="180" value="45" oninput="dhParams[1].theta=+this.value;this.nextElementSibling.textContent=this.value+'°';computeDH()"><span class="sb-val">45°</span></div>
+    <div class="sb-row"><label>θ₃ (°)</label><input type="range" min="-180" max="180" value="-30" oninput="dhParams[2].theta=+this.value;this.nextElementSibling.textContent=this.value+'°';computeDH()"><span class="sb-val">-30°</span></div>
+    <div class="sb-row"><label>L₁</label><input type="range" min="0.1" max="1" step="0.05" value="0.5" oninput="dhParams[0].a=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)+'m';computeDH()"><span class="sb-val">0.50m</span></div>
+    <div class="sb-row"><label>L₂</label><input type="range" min="0.1" max="1" step="0.05" value="0.4" oninput="dhParams[1].a=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)+'m';computeDH()"><span class="sb-val">0.40m</span></div>
+    <div class="sb-row"><label>L₃</label><input type="range" min="0.1" max="1" step="0.05" value="0.3" oninput="dhParams[2].a=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)+'m';computeDH()"><span class="sb-val">0.30m</span></div>
   </div>
-  <div class="ss"><div class="st">Controls</div>
+  <div class="sb-sec"><div class="sb-hd">Controls</div>
     <button class="compute-btn" style="width:100%;margin:0" onclick="computeAll()">⟳ Recompute All</button>
   </div>
 </div>
@@ -232,6 +444,7 @@ canvas.mini{width:100%;height:160px;border-radius:6px;background:#0a0a12;margin-
 </div>
 
 <script>
+function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 // DH params: {theta (deg), a (m), d, alpha (deg)}
 let dhParams=[
   {theta:30,a:0.5,d:0,alpha:0},
@@ -338,7 +551,7 @@ function computeDH(){
 function drawDHCanvas(params,Ts){
   const canvas=document.getElementById('dh-canvas');if(!canvas)return;
   const W=canvas.offsetWidth||700,H=160;canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0a12';ctx.fillRect(0,0,W,H);
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   const ox=W/2,oy=H*.75,sc=Math.min(W,H)/(params.reduce((s,p)=>s+p.a,0)*2.5+0.01);
   ctx.translate(ox,oy);
   const cols=['#e34948','#1baf7a','#3987e5','#9055d4','#eda100','#c84fc8'];
@@ -408,7 +621,7 @@ ${singular?`<span class="op">⚠ SINGULARITY: μ → 0. Robot cannot move EE in 
 function drawJacCanvas(params,J,mu){
   const canvas=document.getElementById('jac-canvas');if(!canvas)return;
   const W=canvas.offsetWidth||700,H=160;canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0a12';ctx.fillRect(0,0,W,H);
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   const ox=W/2,oy=H*.7,sc=Math.min(W,H)/(params.reduce((s,p)=>s+p.a,0)*2.5+0.01);
   ctx.translate(ox,oy);
   let x=0,y=0,cum=0;
@@ -519,7 +732,7 @@ function findRoots(coeffs){
 function drawTFCanvas(){
   const canvas=document.getElementById('tf-canvas');if(!canvas)return;
   const W=canvas.offsetWidth||700,H=160;canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0a12';ctx.fillRect(0,0,W,H);
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   const kp=+document.getElementById('tf-kp').value,ki=+document.getElementById('tf-ki').value,kd=+document.getElementById('tf-kd').value;
   const den=[1,2*0.5*5,25];// fixed 2nd order plant for preview
   const n2=600,tend=5;let y=0,yd=0;
@@ -567,7 +780,7 @@ function computeEigen(){
 function drawEigCanvas(r1,i1,r2,i2,stable){
   const canvas=document.getElementById('eig-canvas');if(!canvas)return;
   const W=canvas.offsetWidth||700,H=160;canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0a12';ctx.fillRect(0,0,W,H);
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   const cx=W/2,cy=H/2;
   ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
   ctx.fillStyle='rgba(27,175,122,0.04)';ctx.fillRect(0,0,cx,H);ctx.fillStyle='rgba(227,73,72,0.04)';ctx.fillRect(cx,0,W-cx,H);
@@ -674,7 +887,7 @@ H = ∂h/∂x |_{x̂}    (Jacobian of observation model)</span>
 function drawKalmanCanvas(){
   const canvas=document.getElementById('kalman-canvas');if(!canvas)return;
   const W=canvas.offsetWidth||700,H=160;canvas.width=W;canvas.height=H;
-  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0a12';ctx.fillRect(0,0,W,H);
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   // Simulate 1D Kalman
   let x=0,P=5,Q=0.1,R_meas=2,F=1,H2=1;
   const truth=[],pred=[],est=[],meas_arr=[];
@@ -706,4 +919,5 @@ function computeAll(){
 computeAll();
 showPanel('dh');
 </script>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
 </body></html>

@@ -3,67 +3,301 @@
 <head>
 <meta charset="UTF-8">
 <title>VROS — Robot Builder</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
-#app{display:flex;flex-direction:column;height:100vh}
-#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
-.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
-.back-btn:hover{color:#e0e0e8;border-color:#c84fc8}
-.mod-title{font-size:13px;font-weight:700;color:#c84fc8;letter-spacing:1px}
-#main{display:flex;flex:1;overflow:hidden}
-/* LEFT PANEL */
-#left{width:180px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-#left::-webkit-scrollbar{width:3px}#left::-webkit-scrollbar-thumb{background:#1a1a28}
-.ss{border-bottom:1px solid #141420;padding:8px 10px}
-.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
-.comp-btn{display:block;width:100%;padding:5px 8px;border-radius:5px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;margin-bottom:3px;text-align:left;transition:all .12s}
-.comp-btn:hover{background:#1e1e30;color:#fff;border-color:#c84fc8}
-.comp-btn .ci{font-size:13px;margin-right:5px}
-.btn{padding:4px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s;width:100%;margin-bottom:3px}
-.btn:hover{background:#222;color:#fff}
-.btn.primary{background:#c84fc8;color:#fff;border-color:#c84fc8;font-weight:600}
-.btn.primary:hover{background:#a030a0}
-.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
-.row label{flex:1;color:#888}
-.row input[type=range]{flex:1;height:3px;accent-color:#c84fc8;cursor:pointer}
-.val{min-width:28px;text-align:right;font-size:9px;color:#c84fc8;font-family:monospace}
-select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
-/* CANVAS */
-#ca{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;background:#08080f}
-#sim{display:block;width:100%;flex:1}
-#grid-overlay{position:absolute;inset:0;pointer-events:none}
-/* RIGHT PANEL */
-#right{width:220px;background:#0e0e18;border-left:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-#right::-webkit-scrollbar{width:3px}#right::-webkit-scrollbar-thumb{background:#1a1a28}
-.prop-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;font-size:10px}
-.prop-row label{width:70px;color:#666;flex-shrink:0}
-.prop-row input[type=number]{flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px}
-.prop-row input[type=text]{flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px}
-.prop-row select{flex:1;margin:0}
-/* CODE PANEL */
-#codepanel{position:absolute;bottom:0;left:0;right:0;height:0;background:rgba(8,8,18,0.98);border-top:1px solid #2a2a40;transition:height .2s;overflow:hidden;z-index:50}
-#codepanel.open{height:260px}
-#codepanel .cph{display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid #1a1a28}
-#codepanel .cph span{font-size:11px;font-weight:700;color:#c84fc8;flex:1}
-#codepanel pre{padding:10px 14px;font-family:monospace;font-size:10px;color:#c8d8f8;overflow:auto;height:calc(100%-35px);line-height:1.6}
-#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:30px;align-items:center}
-.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
-.sb-item span{color:#c84fc8;font-family:monospace;font-weight:600}
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
 </style>
 </head>
 <body>
-<div id="app">
-<div id="topbar">
-  <a href="VROS_Home.html" class="back-btn">← Home</a>
-  <span class="mod-title">🤖 Robot Builder</span>
-  <span style="font-size:10px;color:#444;margin-left:4px">Drag components onto canvas · Click to select · Delete key to remove</span>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🤖 Robot Builder</div>
+    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
 </div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div id="app">
+
 <div id="main">
 
 <!-- LEFT: Component palette -->
 <div id="left">
-  <div class="ss"><div class="st">Chassis</div>
+  <div class="sb-sec"><div class="sb-hd">Chassis</div>
     <button class="comp-btn" onclick="addComp('diff_drive')"><span class="ci">⚙</span>Differential Drive</button>
     <button class="comp-btn" onclick="addComp('ackermann')"><span class="ci">🚗</span>Ackermann (Car)</button>
     <button class="comp-btn" onclick="addComp('omni')"><span class="ci">⭕</span>Omnidirectional</button>
@@ -71,7 +305,7 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
     <button class="comp-btn" onclick="addComp('arm_base')"><span class="ci">🦾</span>Robot Arm Base</button>
     <button class="comp-btn" onclick="addComp('quadruped')"><span class="ci">🐾</span>Quadruped Body</button>
   </div>
-  <div class="ss"><div class="st">Sensors</div>
+  <div class="sb-sec"><div class="sb-hd">Sensors</div>
     <button class="comp-btn" onclick="addComp('lidar2d')"><span class="ci">📡</span>2D LiDAR</button>
     <button class="comp-btn" onclick="addComp('lidar3d')"><span class="ci">🔵</span>3D LiDAR</button>
     <button class="comp-btn" onclick="addComp('camera')"><span class="ci">📷</span>RGB Camera</button>
@@ -82,29 +316,29 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
     <button class="comp-btn" onclick="addComp('ultrasonic')"><span class="ci">〰</span>Ultrasonic</button>
     <button class="comp-btn" onclick="addComp('ir')"><span class="ci">🔴</span>IR Sensor</button>
   </div>
-  <div class="ss"><div class="st">Actuators</div>
+  <div class="sb-sec"><div class="sb-hd">Actuators</div>
     <button class="comp-btn" onclick="addComp('dc_motor')"><span class="ci">🔄</span>DC Motor</button>
     <button class="comp-btn" onclick="addComp('servo')"><span class="ci">🔧</span>Servo Motor</button>
     <button class="comp-btn" onclick="addComp('stepper')"><span class="ci">📏</span>Stepper Motor</button>
   </div>
-  <div class="ss"><div class="st">Electronics</div>
+  <div class="sb-sec"><div class="sb-hd">Electronics</div>
     <button class="comp-btn" onclick="addComp('arduino')"><span class="ci">💡</span>Arduino Mega</button>
     <button class="comp-btn" onclick="addComp('rpi')"><span class="ci">🍓</span>Raspberry Pi</button>
     <button class="comp-btn" onclick="addComp('jetson')"><span class="ci">⚡</span>Jetson Nano</button>
     <button class="comp-btn" onclick="addComp('battery')"><span class="ci">🔋</span>Battery Pack</button>
     <button class="comp-btn" onclick="addComp('motor_driver')"><span class="ci">🎛</span>Motor Driver</button>
   </div>
-  <div class="ss"><div class="st">Canvas</div>
-    <button class="btn" onclick="clearAll()">🗑 Clear All</button>
-    <button class="btn" onclick="autoLayout()">⟳ Auto Layout</button>
-    <div class="row" style="margin-top:4px"><label>Grid snap</label><input type="checkbox" checked onchange="snapOn=this.checked"></div>
-    <div class="row"><label>Grid size</label><input type="range" min="10" max="40" value="20" oninput="GRID=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">20</span></div>
-    <div class="row"><label>Show grid</label><input type="checkbox" checked onchange="showGrid=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Canvas</div>
+    <button class="gb" onclick="clearAll()">🗑 Clear All</button>
+    <button class="gb" onclick="autoLayout()">⟳ Auto Layout</button>
+    <div class="sb-row" style="margin-top:4px"><label>Grid snap</label><input type="checkbox" checked onchange="snapOn=this.checked"></div>
+    <div class="sb-row"><label>Grid size</label><input type="range" min="10" max="40" value="20" oninput="GRID=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">20</span></div>
+    <div class="sb-row"><label>Show grid</label><input type="checkbox" checked onchange="showGrid=this.checked"></div>
   </div>
 </div>
 
 <!-- CANVAS -->
-<div id="ca">
+<div class="mod-canvas-wrap" id="ca">
   <canvas id="sim"></canvas>
   <div id="codepanel">
     <div class="cph">
@@ -117,7 +351,7 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
 
 <!-- RIGHT: Properties + Export -->
 <div id="right">
-  <div class="ss"><div class="st">Selected Component</div>
+  <div class="sb-sec"><div class="sb-hd">Selected Component</div>
     <div id="sel-none" style="font-size:10px;color:#444;padding:4px 0">Click a component to edit its properties.</div>
     <div id="sel-props" style="display:none">
       <div class="prop-row"><label>Name</label><input type="text" id="p-name" oninput="updateSelProp('name',this.value)"></div>
@@ -125,11 +359,11 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
       <div class="prop-row"><label>Y (px)</label><input type="number" id="p-y" oninput="updateSelProp('y',+this.value)"></div>
       <div class="prop-row"><label>Rotation°</label><input type="number" id="p-rot" oninput="updateSelProp('rot',+this.value)"></div>
       <div class="prop-row"><label>Scale</label><input type="number" id="p-sc" step="0.1" oninput="updateSelProp('scale',+this.value)"></div>
-      <button class="btn" onclick="deleteSelected()" style="margin-top:4px;color:#e34948;border-color:#e3494833">🗑 Delete</button>
-      <button class="btn" onclick="duplicateSelected()" style="margin-top:2px">⧉ Duplicate</button>
+      <button class="gb" onclick="deleteSelected()" style="margin-top:4px;color:#e34948;border-color:#e3494833">🗑 Delete</button>
+      <button class="gb" onclick="duplicateSelected()" style="margin-top:2px">⧉ Duplicate</button>
     </div>
   </div>
-  <div class="ss"><div class="st">Robot Spec</div>
+  <div class="sb-sec"><div class="sb-hd">Robot Spec</div>
     <div class="prop-row"><label>Name</label><input type="text" id="r-name" value="MyRobot" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
     <div class="prop-row"><label>Drive</label>
       <select id="r-drive" style="flex:1;margin:0">
@@ -140,15 +374,15 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
     <div class="prop-row"><label>Wheelbase</label><input type="number" id="r-wb" value="0.3" step="0.01" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
     <div class="prop-row"><label>Max RPM</label><input type="number" id="r-rpm" value="200" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
   </div>
-  <div class="ss"><div class="st">Export Code</div>
+  <div class="sb-sec"><div class="sb-hd">Export Code</div>
     <button class="btn primary" onclick="exportCode('urdf')">📄 Export URDF</button>
-    <button class="btn" onclick="exportCode('arduino')" style="margin-top:2px">💡 Export Arduino (.ino)</button>
-    <button class="btn" onclick="exportCode('ros2')" style="margin-top:2px">🤖 Export ROS2 Launch</button>
-    <button class="btn" onclick="exportCode('bom')" style="margin-top:2px">📋 Bill of Materials</button>
-    <button class="btn" onclick="copyCode()" style="margin-top:6px">📋 Copy to Clipboard</button>
-    <button class="btn" onclick="downloadCode()" style="margin-top:2px">💾 Download File</button>
+    <button class="gb" onclick="exportCode('arduino')" style="margin-top:2px">💡 Export Arduino (.ino)</button>
+    <button class="gb" onclick="exportCode('ros2')" style="margin-top:2px">🤖 Export ROS2 Launch</button>
+    <button class="gb" onclick="exportCode('bom')" style="margin-top:2px">📋 Bill of Materials</button>
+    <button class="gb" onclick="copyCode()" style="margin-top:6px">📋 Copy to Clipboard</button>
+    <button class="gb" onclick="downloadCode()" style="margin-top:2px">💾 Download File</button>
   </div>
-  <div class="ss"><div class="st">Component Summary</div>
+  <div class="sb-sec"><div class="sb-hd">Component Summary</div>
     <div id="comp-summary" style="font-size:9px;color:#555;line-height:1.8">No components placed.</div>
   </div>
 </div>
@@ -163,6 +397,7 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
 </div>
 
 <script>
+function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 let W,H,GRID=20,snapOn=true,showGrid=true;
 let components=[],selected=null,dragging=false,dragOff={x:0,y:0};
@@ -262,13 +497,13 @@ function drawComp(c,isSelected){
     });
 
   } else if(shape==='lidar2d'){
-    ctx.fillStyle='#0a2010';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=cssV('--canvas-bg');ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.stroke();
     for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.strokeStyle='rgba(27,175,122,0.4)';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*sw*0.8,Math.sin(a)*sw*0.8);ctx.stroke();}
     ctx.fillStyle='#1baf7a';ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);ctx.fill();
 
   } else if(shape==='lidar3d'){
-    ctx.fillStyle='#0a2010';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=cssV('--canvas-bg');ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
     ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.stroke();
     ctx.strokeStyle='rgba(27,175,122,0.3)';ctx.lineWidth=0.8;
     for(let i=0;i<16;i++){const a=i*Math.PI/8;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*sw*0.75,Math.sin(a)*sw*0.75);ctx.stroke();}
@@ -297,7 +532,7 @@ function drawComp(c,isSelected){
     ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(0,0,3,0,Math.PI*2);ctx.fill();
 
   } else if(shape==='gps'){
-    ctx.fillStyle='#0a200a';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(-sw/2,-sh/2,sw,sh);
     ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
     ctx.strokeStyle='rgba(27,175,122,0.4)';ctx.lineWidth=0.8;
     for(let i=1;i<=2;i++){ctx.beginPath();ctx.arc(0,0,sw/2*i/2,0,Math.PI*2);ctx.stroke();}
@@ -404,7 +639,7 @@ function drawComp(c,isSelected){
 }
 
 function draw(){
-  ctx.clearRect(0,0,W,H);ctx.fillStyle='#08080f';ctx.fillRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   if(showGrid){
     ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=0.5;
     for(let x=0;x<W;x+=GRID){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
@@ -760,4 +995,5 @@ function downloadCode(){
 function loop(){requestAnimationFrame(loop);draw();}
 resize();loop();
 </script>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
 </body></html>

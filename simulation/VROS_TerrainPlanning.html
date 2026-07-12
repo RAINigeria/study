@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Terrain-Aware Path Planning — VROS | RAIN Nigeria</title>
+<style>
+/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
+</style>
+</head>
+<body>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🌍 Terrain-Aware Path Planning</div>
+    <div class="mod-subtitle">VROS · Real-world terrain costs · Traffic lights · Weighted A* · RAIN Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+<div class="mod-layout">
+<div class="mod-sidebar" id="mod-sidebar">
+
+  <div class="sb-sec">
+    <div class="sb-hd">Algorithm</div>
+    <div class="btn-grp">
+      <button class="gb active" id="aa-astar" onclick="setAlgo('astar')">A*</button>
+      <button class="gb" id="aa-dijkstra" onclick="setAlgo('dijkstra')">Dijkstra</button>
+      <button class="gb" id="aa-theta" onclick="setAlgo('theta')">Theta*</button>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:5px;line-height:1.5">Weighted A* uses terrain cost multipliers. Higher cost = robot prefers to avoid.</p>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Draw Terrain</div>
+    <div class="btn-grp" id="terrain-btns">
+      <button class="gb active" id="t-road" onclick="setTerrain('road')">🛣 Road</button>
+      <button class="gb" id="t-grass" onclick="setTerrain('grass')">🌿 Grass</button>
+      <button class="gb" id="t-gravel" onclick="setTerrain('gravel')">🪨 Gravel</button>
+      <button class="gb" id="t-sand" onclick="setTerrain('sand')">🏜 Sand</button>
+      <button class="gb" id="t-water" onclick="setTerrain('water')">💧 Water</button>
+      <button class="gb" id="t-mud" onclick="setTerrain('mud')">🟫 Mud</button>
+      <button class="gb" id="t-wall" onclick="setTerrain('wall')">⬛ Wall</button>
+      <button class="gb" id="t-erase" onclick="setTerrain('erase')">⌫ Erase</button>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-top:5px">Drag to paint. Right-click = erase.</p>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Terrain Cost Weights</div>
+    <div class="sb-row"><label>🛣 Road</label><input type="range" min="1" max="3" step="0.1" value="1" oninput="costs.road=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)+'×';plan()"><span class="sb-val">1.0×</span></div>
+    <div class="sb-row"><label>🌿 Grass</label><input type="range" min="1" max="10" step="0.5" value="3" oninput="costs.grass=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)+'×';plan()"><span class="sb-val">3.0×</span></div>
+    <div class="sb-row"><label>🪨 Gravel</label><input type="range" min="1" max="10" step="0.5" value="4" oninput="costs.gravel=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)+'×';plan()"><span class="sb-val">4.0×</span></div>
+    <div class="sb-row"><label>🏜 Sand</label><input type="range" min="1" max="15" step="0.5" value="6" oninput="costs.sand=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)+'×';plan()"><span class="sb-val">6.0×</span></div>
+    <div class="sb-row"><label>💧 Water</label><input type="range" min="1" max="30" step="1" value="20" oninput="costs.water=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(0)+'×';plan()"><span class="sb-val">20×</span></div>
+    <div class="sb-row"><label>🟫 Mud</label><input type="range" min="1" max="15" step="0.5" value="8" oninput="costs.mud=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)+'×';plan()"><span class="sb-val">8.0×</span></div>
+    <p style="font-size:10px;color:var(--text3);margin-top:4px">1× = fast, 30× = slow, wall = impassable. Adjust to see path change.</p>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Traffic Lights</div>
+    <div class="btn-grp">
+      <button class="gb" onclick="addLight()">+ Add Light</button>
+      <button class="gb" onclick="clearLights()">Clear</button>
+    </div>
+    <div class="sb-row" style="margin-top:6px"><label>Cycle time (s)</label><input type="range" min="5" max="60" value="20" oninput="lightCycle=+this.value*60;this.nextElementSibling.textContent=this.value+'s'"><span class="sb-val">20s</span></div>
+    <div class="sb-row"><label>Red = blocked</label><input type="checkbox" checked onchange="lightsBlock=this.checked;plan()"></div>
+    <p style="font-size:11px;color:var(--text3);margin-top:4px">Red lights add a large cost penalty. Robot re-plans when light changes.</p>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Environments</div>
+    <div class="btn-grp">
+      <button class="gb" onclick="loadEnv('city')">City</button>
+      <button class="gb" onclick="loadEnv('offroad')">Off-road</button>
+      <button class="gb" onclick="loadEnv('mixed')">Mixed</button>
+      <button class="gb" onclick="clearAll()">Clear</button>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Goal Tool</div>
+    <div class="btn-grp">
+      <button class="gb active" id="tool-move" onclick="setTool('move')">✏ Paint</button>
+      <button class="gb" id="tool-goal" onclick="setTool('goal')">🎯 Set Goal</button>
+      <button class="gb" id="tool-start" onclick="setTool('start')">🟢 Set Start</button>
+      <button class="gb" id="tool-light" onclick="setTool('light')">🚦 Add Light</button>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Robot</div>
+    <div class="sb-row"><label>Speed</label><input type="range" min="1" max="10" value="5" oninput="rSpd=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">5</span></div>
+    <div class="sb-row"><label>Show cost heatmap</label><input type="checkbox" checked onchange="showHeat=this.checked"></div>
+    <div class="sb-row"><label>Show explored</label><input type="checkbox" checked onchange="showExp=this.checked"></div>
+    <div class="sb-row"><label>Grid lines</label><input type="checkbox" checked onchange="showGrid=this.checked"></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Metrics</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">Path cost</div><div class="mc-val" id="m-cost">—</div></div>
+      <div class="mc"><div class="mc-lbl">Path nodes</div><div class="mc-val" id="m-plen">—</div></div>
+      <div class="mc"><div class="mc-lbl">Explored</div><div class="mc-val" id="m-exp">0</div></div>
+      <div class="mc"><div class="mc-lbl">Plan ms</div><div class="mc-val" id="m-time">—</div></div>
+    </div>
+    <div class="status-tag" id="m-status" style="margin-top:8px">Ready</div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Controls</div>
+    <div class="btn-grp">
+      <button class="gb" id="pbtn" onclick="togglePause()">⏸ Pause</button>
+      <button class="gb" onclick="resetRobot()">↺ Reset Robot</button>
+    </div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<div class="mod-canvas-wrap">
+  <canvas class="mod-canvas" id="sim"></canvas>
+  <div class="legend-bar">
+    <span class="li"><span class="ldsq" style="background:#374151"></span>Wall</span>
+    <span class="li"><span class="ldsq" style="background:#6b7280"></span>Road 1×</span>
+    <span class="li"><span class="ldsq" style="background:#4ade80"></span>Grass 3×</span>
+    <span class="li"><span class="ldsq" style="background:#a8a29e"></span>Gravel 4×</span>
+    <span class="li"><span class="ldsq" style="background:#fbbf24"></span>Sand 6×</span>
+    <span class="li"><span class="ldsq" style="background:#60a5fa"></span>Water 20×</span>
+    <span class="li"><span class="ldsq" style="background:#92400e"></span>Mud 8×</span>
+    <span class="li"><span class="ld" style="background:#22c55e"></span>Path</span>
+    <span class="li"><span class="ld" style="background:#3b82f6"></span>Robot</span>
+    <span class="li">🚦 Traffic light</span>
+  </div>
+</div>
+</div>
+
+<div class="mod-btmbar">
+  <div class="bbi">Algo <strong id="sb-algo">A*</strong></div>
+  <div class="bbi">Terrain <strong id="sb-terrain">Road</strong></div>
+  <div class="bbi">Path cost <strong id="sb-cost">—</strong></div>
+  <div class="bbi">FPS <strong id="sb-fps">0</strong></div>
+  <div class="bb-space"></div>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
+</div>
+
+<script>
+function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,COLS,ROWS;
+const CELL=22;
+let algo='astar',currentTerrain='road',currentTool='move';
+let showHeat=true,showExp=true,showGrid=true,showCost=true;
+let rSpd=5,paused=false,lightsBlock=true,lightCycle=20*60;
+let fps=0,fcnt=0,ft=0,lastT=0;
+
+// Terrain types
+const TERRAIN={empty:0,road:1,grass:2,gravel:3,sand:4,water:5,mud:6,wall:7,light_g:8,light_r:9};
+const TERRAIN_COLORS={
+  0:'transparent',1:'#4b5563',2:'#16a34a',3:'#78716c',4:'#ca8a04',5:'#2563eb',6:'#78350f',7:'#1f2937',
+  8:'transparent',9:'transparent'
+};
+const TERRAIN_COLORS_LT={
+  0:'transparent',1:'#9ca3af',2:'#4ade80',3:'#a8a29e',4:'#fbbf24',5:'#60a5fa',6:'#92400e',7:'#374151',
+  8:'transparent',9:'transparent'
+};
+const costs={road:1,grass:3,gravel:4,sand:6,water:20,mud:8};
+const BASE_COSTS={empty:1,road:1,grass:3,gravel:4,sand:6,water:20,mud:8,wall:Infinity,light_g:1,light_r:999};
+
+let grid=[], path=[], explored=[], treeEdges=[];
+let lights=[], lightFrame=0;
+let robot={x:2,y:2,angle:0,vx:0,vy:0};
+let goalCell={x:0,y:0},startCell={x:2,y:2};
+let pathIdx=0;
+
+function cssV(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+function resize(){
+  const ca=document.querySelector('.mod-canvas-wrap');
+  const leg=document.querySelector('.legend-bar');
+  sim.width=ca.clientWidth;sim.height=ca.clientHeight-(leg?leg.offsetHeight:0);
+  W=sim.width;H=sim.height;
+  COLS=Math.floor(W/CELL);ROWS=Math.floor(H/CELL);
+  initGrid();
+}
+window.addEventListener('resize',resize);
+
+function initGrid(){
+  grid=Array.from({length:ROWS},()=>new Array(COLS).fill(TERRAIN.empty));
+  goalCell={x:COLS-3,y:ROWS-3};startCell={x:2,y:2};
+  robot={x:2,y:2,angle:0,vx:0,vy:0};
+  path=[];explored=[];treeEdges=[];pathIdx=0;
+}
+
+function getCost(x,y){
+  if(x<0||y<0||x>=COLS||y>=ROWS)return Infinity;
+  const t=grid[y][x];
+  if(t===TERRAIN.wall)return Infinity;
+  if(t===TERRAIN.light_r&&lightsBlock)return 200;
+  if(t===TERRAIN.light_g)return costs.road||1;
+  const tname=Object.keys(TERRAIN).find(k=>TERRAIN[k]===t)||'road';
+  const c=costs[tname]||BASE_COSTS[tname]||1;
+  return isFinite(c)?c:Infinity;
+}
+function isFree(x,y){return getCost(x,y)<Infinity;}
+
+function getDirs(){
+  return[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1},
+         {x:1,y:1},{x:-1,y:1},{x:1,y:-1},{x:-1,y:-1}];
+}
+function heur(ax,ay,bx,by){return Math.sqrt((ax-bx)**2+(ay-by)**2);}
+function hasLOS(x1,y1,x2,y2){let dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),sx=x1<x2?1:-1,sy=y1<y2?1:-1,err=dx-dy,cx=x1,cy=y1;while(true){if(!isFree(cx,cy))return false;if(cx===x2&&cy===y2)return true;const e2=2*err;if(e2>-dy){err-=dy;cx+=sx;}if(e2<dx){err+=dx;cy+=sy;}}}
+
+function plan(){
+  explored=[];treeEdges=[];path=[];pathIdx=0;
+  const sx=Math.round(robot.x),sy=Math.round(robot.y);
+  const ex=goalCell.x,ey=goalCell.y;
+  if(!isFree(sx,sy)||!isFree(ex,ey)){setStatus('Start/Goal blocked','error');return;}
+  setStatus('Planning…','warn');
+  const t0=performance.now();
+  const key=(x,y)=>y*COLS+x;
+  const dirs=getDirs();
+  const open=[{x:sx,y:sy,g:0,f:heur(sx,sy,ex,ey)}];
+  const closed=new Uint8Array(ROWS*COLS);
+  const gScore=new Float32Array(ROWS*COLS).fill(Infinity);
+  const parentX=new Int16Array(ROWS*COLS).fill(-1);
+  const parentY=new Int16Array(ROWS*COLS).fill(-1);
+  gScore[key(sx,sy)]=0;
+  let it=0,totalCost=0;
+  while(open.length&&it<COLS*ROWS*4){
+    it++;open.sort((a,b)=>a.f-b.f);
+    const cur=open.shift();const ck=key(cur.x,cur.y);
+    if(closed[ck])continue;closed[ck]=1;explored.push({x:cur.x,y:cur.y,g:cur.g});
+    if(cur.x===ex&&cur.y===ey){
+      path=[];let cx=ex,cy=ey;
+      while(cx!==-1&&cy!==-1){path.unshift({x:cx,y:cy});const pk=key(cx,cy);const nx=parentX[pk],ny=parentY[pk];cx=nx;cy=ny;}
+      totalCost=cur.g;break;
+    }
+    for(const d of dirs){
+      const nx=cur.x+d.x,ny=cur.y+d.y;
+      if(nx<0||ny<0||nx>=COLS||ny>=ROWS)continue;
+      const nk=key(nx,ny);if(closed[nk])continue;
+      const tc=getCost(nx,ny);if(!isFinite(tc))continue;
+      const diag=d.x!==0&&d.y!==0;
+      if(diag&&(!isFree(cur.x+d.x,cur.y)||!isFree(cur.x,cur.y+d.y)))continue;
+      let ng=gScore[ck]+tc*(diag?1.414:1);
+      // Theta* LOS
+      if(algo==='theta'&&parentX[ck]!==-1){const ppx=parentX[ck],ppy=parentY[ck];if(hasLOS(ppx,ppy,nx,ny)){const ppk=key(ppx,ppy);const d2=Math.sqrt((nx-ppx)**2+(ny-ppy)**2);const ng2=gScore[ppk]+tc*d2;if(ng2<ng){ng=ng2;if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=ppx;parentY[nk]=ppy;open.push({x:nx,y:ny,g:ng,f:ng+heur(nx,ny,ex,ey)});treeEdges.push({x1:ppx,y1:ppy,x2:nx,y2:ny});}continue;}}}
+      if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=cur.x;parentY[nk]=cur.y;open.push({x:nx,y:ny,g:ng,f:ng+(algo==='dijkstra'?0:heur(nx,ny,ex,ey))});treeEdges.push({x1:cur.x,y1:cur.y,x2:nx,y2:ny});}
+    }
+  }
+  const dt=performance.now()-t0;
+  document.getElementById('m-exp').textContent=explored.length;
+  document.getElementById('m-plen').textContent=path.length?path.length:'No path';
+  document.getElementById('m-time').textContent=dt.toFixed(1);
+  document.getElementById('m-cost').textContent=totalCost?totalCost.toFixed(1):'—';
+  document.getElementById('sb-cost').textContent=totalCost?totalCost.toFixed(1):'—';
+  if(path.length){setStatus('Path found ✓','good');pathIdx=0;}else setStatus('No path found','error');
+}
+
+function setStatus(t,cls){const el=document.getElementById('m-status');el.textContent=t;el.className='status-tag'+(cls==='good'?'':cls==='warn'?' warn':' error');}
+
+function addLight(){
+  const x=3+Math.floor(Math.random()*(COLS-6)),y=3+Math.floor(Math.random()*(ROWS-6));
+  lights.push({x,y,state:'green',t:Math.floor(Math.random()*lightCycle)});
+  updateLightGrid();plan();
+}
+function clearLights(){lights=[];updateLightGrid();plan();}
+function updateLightGrid(){
+  // Clear old light cells
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(grid[r][c]===TERRAIN.light_g||grid[r][c]===TERRAIN.light_r)grid[r][c]=TERRAIN.empty;
+  lights.forEach(l=>{if(l.y>=0&&l.y<ROWS&&l.x>=0&&l.x<COLS)grid[l.y][l.x]=l.state==='green'?TERRAIN.light_g:TERRAIN.light_r;});
+}
+function stepLights(){
+  lightFrame++;
+  let changed=false;
+  lights.forEach(l=>{l.t++;if(l.t>=lightCycle){l.t=0;l.state=l.state==='green'?'red':'green';changed=true;}});
+  if(changed){updateLightGrid();plan();}
+}
+
+function moveRobot(){
+  if(!path.length||pathIdx>=path.length-1){robot.vx*=0.85;robot.vy*=0.85;return;}
+  const tgt=path[Math.min(pathIdx+1,path.length-1)];
+  const dx=tgt.x-robot.x,dy=tgt.y-robot.y,dist=Math.sqrt(dx**2+dy**2);
+  if(dist<0.3){pathIdx++;return;}
+  const spd=rSpd*0.025;
+  robot.vx=dx/dist*spd;robot.vy=dy/dist*spd;
+  robot.x+=robot.vx;robot.y+=robot.vy;
+  robot.angle=Math.atan2(robot.vy,robot.vx);
+  if(pathIdx>=path.length-1){let nx,ny,t=0;do{nx=2+Math.floor(Math.random()*(COLS-4));ny=2+Math.floor(Math.random()*(ROWS-4));t++;}while(!isFree(nx,ny)&&t<100);goalCell={x:nx,y:ny};plan();}
+}
+
+function getTerrainColor(t){
+  const isDark=document.documentElement.getAttribute('data-theme')!=='light';
+  return(isDark?TERRAIN_COLORS:TERRAIN_COLORS_LT)[t]||'transparent';
+}
+
+function draw(ts){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
+
+  // Draw terrain
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const t=grid[r][c];
+    const col=getTerrainColor(t);
+    if(col&&col!=='transparent'){ctx.fillStyle=col;ctx.fillRect(c*CELL,r*CELL,CELL,CELL);}
+    // Cost heatmap overlay on non-wall non-empty
+    if(showHeat&&t!==TERRAIN.wall&&t!==TERRAIN.empty&&t!==TERRAIN.light_g&&t!==TERRAIN.light_r){
+      const tc=getCost(c,r);if(isFinite(tc)&&tc>1){const intensity=Math.min((tc-1)/25,.7);ctx.fillStyle='rgba(239,68,68,'+intensity*.3+')';ctx.fillRect(c*CELL,r*CELL,CELL,CELL);}
+    }
+  }
+
+  // Grid
+  if(showGrid){ctx.strokeStyle='rgba(128,128,128,0.07)';ctx.lineWidth=.5;for(let x=0;x<=W;x+=CELL){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<=H;y+=CELL){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+
+  // Explored
+  if(showExp){explored.forEach(e=>{ctx.fillStyle='rgba(59,130,246,0.1)';ctx.fillRect(e.x*CELL+1,e.y*CELL+1,CELL-2,CELL-2);});}
+
+  // Path
+  if(path.length>1){
+    ctx.strokeStyle='#22c55e';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.beginPath();path.forEach((p,i)=>{const px=p.x*CELL+CELL/2,py=p.y*CELL+CELL/2;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.3)';ctx.lineWidth=1;ctx.setLineDash([5,10]);ctx.lineDashOffset=-(ts/60)%15;
+    ctx.beginPath();path.forEach((p,i)=>{const px=p.x*CELL+CELL/2,py=p.y*CELL+CELL/2;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});ctx.stroke();ctx.setLineDash([]);
+  }
+
+  // Traffic lights
+  lights.forEach(l=>{
+    const lx=l.x*CELL+CELL/2,ly=l.y*CELL+CELL/2;
+    // Post
+    ctx.fillStyle='#6b7280';ctx.fillRect(lx-2,ly-CELL*.8,4,CELL*.8);
+    // Box
+    ctx.fillStyle='#1f2937';ctx.fillRect(lx-8,ly-CELL*.9,16,22);ctx.strokeStyle='#374151';ctx.lineWidth=1;ctx.strokeRect(lx-8,ly-CELL*.9,16,22);
+    // Red
+    ctx.fillStyle=l.state==='red'?'#ef4444':'#7f1d1d';ctx.beginPath();ctx.arc(lx,ly-CELL*.8+5,4,0,Math.PI*2);ctx.fill();
+    // Green
+    ctx.fillStyle=l.state==='green'?'#22c55e':'#14532d';ctx.beginPath();ctx.arc(lx,ly-CELL*.8+15,4,0,Math.PI*2);ctx.fill();
+    // Glow
+    if(l.state==='green'){ctx.fillStyle='rgba(34,197,94,0.15)';ctx.beginPath();ctx.arc(lx,ly,CELL*.8,0,Math.PI*2);ctx.fill();}
+    else{ctx.fillStyle='rgba(239,68,68,0.2)';ctx.beginPath();ctx.arc(lx,ly,CELL*.8,0,Math.PI*2);ctx.fill();}
+  });
+
+  // Goal & Start
+  const gx2=goalCell.x*CELL+CELL/2,gy2=goalCell.y*CELL+CELL/2;
+  ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx2-CELL,gy2);ctx.lineTo(gx2+CELL,gy2);ctx.stroke();ctx.beginPath();ctx.moveTo(gx2,gy2-CELL);ctx.lineTo(gx2,gy2+CELL);ctx.stroke();
+  ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(gx2,gy2,5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#a78bfa';ctx.font='bold 11px -apple-system,sans-serif';ctx.fillText('GOAL',gx2+8,gy2-8);
+  const sx2=startCell.x*CELL+CELL/2,sy2=startCell.y*CELL+CELL/2;
+  ctx.strokeStyle='#22c55e';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(sx2,sy2,CELL*.55,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#22c55e';ctx.font='bold 10px -apple-system,sans-serif';ctx.fillText('START',sx2+7,sy2-6);
+
+  // Robot
+  const rx=robot.x*CELL+CELL/2,ry=robot.y*CELL+CELL/2;
+  ctx.save();ctx.translate(rx,ry);ctx.rotate(robot.angle);
+  ctx.fillStyle='#3b82f6';ctx.beginPath();ctx.moveTo(CELL*.5,0);ctx.lineTo(-CELL*.4,-CELL*.28);ctx.lineTo(-CELL*.2,0);ctx.lineTo(-CELL*.4,CELL*.28);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+  // Trail
+  ctx.strokeStyle='rgba(59,130,246,0.3)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx-robot.vx*CELL*5,ry-robot.vy*CELL*5);ctx.stroke();
+}
+
+// ── ENV LOADERS ──
+function loadEnv(type){
+  initGrid();
+  if(type==='city'){
+    // Roads
+    const roadRows=[2,Math.floor(ROWS/2),ROWS-3];const roadCols=[2,Math.floor(COLS/2),COLS-3];
+    for(let c=0;c<COLS;c++)roadRows.forEach(r=>{if(r<ROWS)grid[r][c]=TERRAIN.road;});
+    for(let r=0;r<ROWS;r++)roadCols.forEach(c=>{if(c<COLS)grid[r][c]=TERRAIN.road;});
+    // Grass blocks between roads
+    for(let r=3;r<ROWS-3;r++)for(let c=3;c<COLS-3;c++){if(grid[r][c]===TERRAIN.empty)grid[r][c]=TERRAIN.grass;}
+    // Some buildings (walls)
+    [[5,3,8,5],[5,8,8,10],[12,3,16,7],[12,9,15,12]].forEach(([x1,y1,x2,y2])=>{for(let r=y1;r<y2&&r<ROWS;r++)for(let c=x1;c<x2&&c<COLS;c++)grid[r][c]=TERRAIN.wall;});
+    // Traffic lights at intersections
+    lights=[];roadRows.forEach(r=>roadCols.forEach(c=>{if(r>0&&c>0&&r<ROWS-1&&c<COLS-1)lights.push({x:c+1,y:r-1,state:Math.random()>.5?'green':'red',t:Math.floor(Math.random()*lightCycle)});
+    }));
+  } else if(type==='offroad'){
+    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+      const noise=Math.sin(r*.7+c*.5)*Math.cos(r*.3-c*.4);
+      if(noise>.3)grid[r][c]=TERRAIN.grass;
+      else if(noise>.1)grid[r][c]=TERRAIN.gravel;
+      else if(noise>-.1)grid[r][c]=TERRAIN.sand;
+      else if(noise<-.4)grid[r][c]=TERRAIN.water;
+      else grid[r][c]=TERRAIN.mud;
+    }
+    // One dirt track
+    for(let c=0;c<COLS;c++){const r=Math.floor(ROWS*.5+Math.sin(c*.3)*2);if(r>=0&&r<ROWS)grid[r][c]=TERRAIN.road;for(let i=-1;i<=1;i++){const rr=r+i;if(rr>=0&&rr<ROWS&&grid[rr][c]!==TERRAIN.road)grid[rr][c]=TERRAIN.gravel;}}
+    lights=[];
+  } else if(type==='mixed'){
+    for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+      if(c<COLS*.4)grid[r][c]=TERRAIN.road;
+      else if(c<COLS*.55)grid[r][c]=TERRAIN.grass;
+      else if(r<ROWS*.4)grid[r][c]=TERRAIN.sand;
+      else grid[r][c]=TERRAIN.gravel;
+    }
+    // Water barrier
+    for(let r=2;r<ROWS-2;r++){const c=Math.floor(COLS*.55);grid[r][c]=TERRAIN.water;grid[r][c+1]=TERRAIN.water;}
+    // Mud patch
+    for(let r=Math.floor(ROWS*.3);r<Math.floor(ROWS*.6);r++)for(let c=Math.floor(COLS*.3);c<Math.floor(COLS*.4);c++)grid[r][c]=TERRAIN.mud;
+    lights=[];
+  }
+  updateLightGrid();plan();
+}
+
+function clearAll(){initGrid();lights=[];plan();}
+function resetRobot(){robot={x:startCell.x,y:startCell.y,angle:0,vx:0,vy:0};pathIdx=0;plan();}
+
+// ── TOOLS ──
+function setAlgo(a){algo=a;document.querySelectorAll('#aa-astar,#aa-dijkstra,#aa-theta').forEach(b=>b.classList.remove('active'));document.getElementById('aa-'+a).classList.add('active');document.getElementById('sb-algo').textContent=a.charAt(0).toUpperCase()+a.slice(1);plan();}
+function setTerrain(t){currentTerrain=t;document.querySelectorAll('[id^=t-]').forEach(b=>b.classList.remove('active'));const el=document.getElementById('t-'+t);if(el)el.classList.add('active');document.getElementById('sb-terrain').textContent=t.charAt(0).toUpperCase()+t.slice(1);}
+function setTool(t){currentTool=t;['move','goal','start','light'].forEach(tt=>{const el=document.getElementById('tool-'+tt);if(el)el.classList.toggle('active',tt===t);});}
+
+// ── INTERACTION ──
+let isDrawing=false;
+function canvasCell(e){const rect=sim.getBoundingClientRect();const cx=e.clientX!==undefined?e.clientX:e.touches[0].clientX;const cy=e.clientY!==undefined?e.clientY:e.touches[0].clientY;return{col:Math.floor((cx-rect.left)/CELL),row:Math.floor((cy-rect.top)/CELL)};}
+function paintAt(e,erase=false){
+  const {col,row}=canvasCell(e);if(col<0||row<0||col>=COLS||row>=ROWS)return;
+  if(currentTool==='goal'){goalCell={x:col,y:row};plan();return;}
+  if(currentTool==='start'){startCell={x:col,y:row};robot.x=col;robot.y=row;plan();return;}
+  if(currentTool==='light'){lights.push({x:col,y:row,state:'green',t:0});updateLightGrid();plan();return;}
+  const t=erase?TERRAIN.empty:TERRAIN[currentTerrain]||TERRAIN.empty;
+  if(!(Math.abs(col-startCell.x)<1&&Math.abs(row-startCell.y)<1)&&!(Math.abs(col-goalCell.x)<1&&Math.abs(row-goalCell.y)<1)){grid[row][col]=t;}
+}
+sim.addEventListener('mousedown',e=>{isDrawing=true;paintAt(e,e.button===2);});
+sim.addEventListener('mousemove',e=>{if(isDrawing)paintAt(e,e.button===2);});
+sim.addEventListener('mouseup',()=>{if(isDrawing){isDrawing=false;plan();}});
+sim.addEventListener('contextmenu',e=>e.preventDefault());
+sim.addEventListener('touchstart',e=>{e.preventDefault();isDrawing=true;paintAt(e);},{passive:false});
+sim.addEventListener('touchmove',e=>{e.preventDefault();if(isDrawing)paintAt(e);},{passive:false});
+sim.addEventListener('touchend',e=>{e.preventDefault();if(isDrawing){isDrawing=false;plan();}},{passive:false});
+
+function togglePause(){paused=!paused;document.getElementById('pbtn').textContent=paused?'▶ Resume':'⏸ Pause';setPaused(paused);}
+
+let loopC=0;
+function loop(ts){
+  requestAnimationFrame(loop);
+  fcnt++;if(ts-ft>1000){fps=fcnt;fcnt=0;ft=ts;document.getElementById('sb-fps').textContent=fps;}
+  if(!paused){moveRobot();loopC++;if(loopC%30===0)stepLights();}
+  draw(ts);
+}
+resize();loadEnv('city');requestAnimationFrame(loop);
+</script>
+</body>
+</html>

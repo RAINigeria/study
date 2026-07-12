@@ -4,63 +4,299 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VROS — Kinematics Laboratory</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
-#app{display:flex;flex-direction:column;height:100vh}
-#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
-.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
-.back-btn:hover{color:#e0e0e8;border-color:#e34948}
-.mod-title{font-size:13px;font-weight:700;color:#e34948;letter-spacing:1px}
-.tbadge{margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#1e0a0a;color:#e34948;border:1px solid #e3494833;font-family:monospace}
-#main{display:flex;flex:1;overflow:hidden}
-#sb{width:210px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28}
-.ss{border-bottom:1px solid #141420;padding:8px 10px}
-.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
-.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
-.row label{flex:1;color:#888}
-.row input[type=range]{flex:1;height:3px;accent-color:#e34948;cursor:pointer}
-.val{min-width:34px;text-align:right;font-size:9px;color:#e34948;font-family:monospace}
-.btn{padding:3px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s}
-.btn:hover{background:#222;color:#fff}.btn.on{background:#e34948;color:#fff;border-color:#e34948}
-.bg{display:flex;flex-wrap:wrap;gap:3px}
-select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.sc{background:#181824;border-radius:4px;padding:3px 6px;border:1px solid #181830}
-.sk{font-size:8px;color:#444}.sv{font-size:10px;font-weight:700;color:#e0e0e8;font-family:monospace}
-#ca{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
-#sim{display:block;width:100%;flex:1}
-#mathpanel{position:absolute;right:8px;top:8px;width:320px;max-height:calc(100%-16px);background:rgba(10,10,20,0.97);border:1px solid #2a2a40;border-radius:10px;display:none;flex-direction:column;z-index:100;overflow:hidden}
-#mathpanel.open{display:flex}
-.mph{display:flex;align-items:center;padding:8px 12px;border-bottom:1px solid #1a1a28}
-.mph span{font-size:11px;font-weight:700;color:#e34948;flex:1}
-.mph button{background:none;border:none;color:#555;cursor:pointer;font-size:14px}
-#mathbody{flex:1;overflow-y:auto;padding:10px;font-family:monospace;font-size:10px}
-#mathbody::-webkit-scrollbar{width:3px}#mathbody::-webkit-scrollbar-thumb{background:#222}
-.eq{background:#181824;border-radius:6px;padding:8px;margin-bottom:8px;border:1px solid #1e1e30}
-.eql{font-size:8px;color:#555;margin-bottom:4px;text-transform:uppercase;letter-spacing:.6px}
-.eqv{color:#c8d8f8;line-height:1.8;white-space:pre-wrap}
-.step{border-left:2px solid #e34948;padding-left:8px;margin-bottom:6px}
-.sn{font-size:8px;color:#e34948;font-weight:700}
-.se{color:#c8d8f8;font-size:9px;line-height:1.6}
-.explain-btn{font-size:8px;padding:1px 6px;border-radius:3px;border:1px solid #e34948;background:none;color:#e34948;cursor:pointer;margin-top:3px}
-.explain-txt{font-size:9px;color:#666;line-height:1.5;margin-top:4px;display:none}
-#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:32px;align-items:center}
-.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
-.sb-item span{color:#e34948;font-family:monospace;font-weight:600}
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
 </style>
 </head>
 <body>
-<div id="app">
-<div id="topbar">
-  <a href="VROS_Home.html" class="back-btn">← Home</a>
-  <span class="mod-title">🦾 Kinematics Laboratory</span>
-  <span class="tbadge">▶ LIVE</span>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🦾 Kinematics Laboratory</div>
+    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
 </div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div id="app">
+
 <div id="main">
 <div id="sb">
-  <div class="ss"><div class="st">Robot Type</div>
+  <div class="sb-sec"><div class="sb-hd">Robot Type</div>
     <select onchange="kin.type=this.value;resetKin()">
       <option value="2r">2R Planar Arm</option>
       <option value="3r">3R Planar Arm</option>
@@ -68,57 +304,57 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
       <option value="rp">R-P (Revolute-Prismatic)</option>
     </select>
   </div>
-  <div class="ss"><div class="st">Joint Angles θ (degrees)</div>
-    <div class="row"><label>θ₁</label><input id="q1s" type="range" min="-180" max="180" value="30" oninput="kin.q[0]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="val">30°</span></div>
-    <div class="row"><label>θ₂</label><input id="q2s" type="range" min="-160" max="160" value="60" oninput="kin.q[1]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="val">60°</span></div>
-    <div class="row" id="q3r"><label>θ₃</label><input id="q3s" type="range" min="-160" max="160" value="-40" oninput="kin.q[2]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="val">-40°</span></div>
-    <div class="row" id="q4r" style="display:none"><label>θ₄</label><input id="q4s" type="range" min="-160" max="160" value="20" oninput="kin.q[3]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="val">20°</span></div>
+  <div class="sb-sec"><div class="sb-hd">Joint Angles θ (degrees)</div>
+    <div class="sb-row"><label>θ₁</label><input id="q1s" type="range" min="-180" max="180" value="30" oninput="kin.q[0]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="sb-val">30°</span></div>
+    <div class="sb-row"><label>θ₂</label><input id="q2s" type="range" min="-160" max="160" value="60" oninput="kin.q[1]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="sb-val">60°</span></div>
+    <div class="sb-row" id="q3r"><label>θ₃</label><input id="q3s" type="range" min="-160" max="160" value="-40" oninput="kin.q[2]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="sb-val">-40°</span></div>
+    <div class="sb-row" id="q4r" style="display:none"><label>θ₄</label><input id="q4s" type="range" min="-160" max="160" value="20" oninput="kin.q[3]=+this.value*Math.PI/180;kin.anim=false;this.nextElementSibling.textContent=this.value+'°'"><span class="sb-val">20°</span></div>
   </div>
-  <div class="ss"><div class="st">Link Lengths</div>
-    <div class="row"><label>L₁</label><input type="range" min="40" max="140" value="90" oninput="kin.L[0]=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">90</span></div>
-    <div class="row"><label>L₂</label><input type="range" min="30" max="120" value="70" oninput="kin.L[1]=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">70</span></div>
-    <div class="row" id="L3r"><label>L₃</label><input type="range" min="20" max="100" value="50" oninput="kin.L[2]=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">50</span></div>
-    <div class="row" id="L4r" style="display:none"><label>L₄</label><input type="range" min="15" max="80" value="35" oninput="kin.L[3]=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">35</span></div>
+  <div class="sb-sec"><div class="sb-hd">Link Lengths</div>
+    <div class="sb-row"><label>L₁</label><input type="range" min="40" max="140" value="90" oninput="kin.L[0]=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">90</span></div>
+    <div class="sb-row"><label>L₂</label><input type="range" min="30" max="120" value="70" oninput="kin.L[1]=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">70</span></div>
+    <div class="sb-row" id="L3r"><label>L₃</label><input type="range" min="20" max="100" value="50" oninput="kin.L[2]=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">50</span></div>
+    <div class="sb-row" id="L4r" style="display:none"><label>L₄</label><input type="range" min="15" max="80" value="35" oninput="kin.L[3]=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">35</span></div>
   </div>
-  <div class="ss"><div class="st">IK — Drag End-Effector</div>
-    <div class="row"><label>IK method</label></div>
+  <div class="sb-sec"><div class="sb-hd">IK — Drag End-Effector</div>
+    <div class="sb-row"><label>IK method</label></div>
     <select onchange="kin.ikMethod=this.value">
       <option value="jt">Jacobian Transpose</option>
       <option value="jpi">Jacobian Pseudo-Inverse</option>
       <option value="dls">Damped Least Squares</option>
     </select>
-    <div class="row"><label>IK drag</label><input type="checkbox" id="ik-on" onchange="kin.ikDrag=this.checked"></div>
+    <div class="sb-row"><label>IK drag</label><input type="checkbox" id="ik-on" onchange="kin.ikDrag=this.checked"></div>
     <div style="font-size:9px;color:#444;line-height:1.5">With IK drag on: click & drag canvas to move end-effector. Joints update in real time.</div>
   </div>
-  <div class="ss"><div class="st">Display</div>
-    <div class="row"><label>Workspace</label><input type="checkbox" checked onchange="kin.ws=this.checked"></div>
-    <div class="row"><label>DH frames</label><input type="checkbox" checked onchange="kin.fr=this.checked"></div>
-    <div class="row"><label>Jacobian ellipsoid</label><input type="checkbox" checked onchange="kin.jac=this.checked"></div>
-    <div class="row"><label>Trajectory trail</label><input type="checkbox" checked onchange="kin.traj=this.checked"></div>
-    <div class="row"><label>Force ellipsoid</label><input type="checkbox" onchange="kin.force=this.checked"></div>
-    <div class="row"><label>Singularity</label><input type="checkbox" checked onchange="kin.sing=this.checked"></div>
-    <div class="row"><label>Animate joints</label><input type="checkbox" checked onchange="kin.anim=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Display</div>
+    <div class="sb-row"><label>Workspace</label><input type="checkbox" checked onchange="kin.ws=this.checked"></div>
+    <div class="sb-row"><label>DH frames</label><input type="checkbox" checked onchange="kin.fr=this.checked"></div>
+    <div class="sb-row"><label>Jacobian ellipsoid</label><input type="checkbox" checked onchange="kin.jac=this.checked"></div>
+    <div class="sb-row"><label>Trajectory trail</label><input type="checkbox" checked onchange="kin.traj=this.checked"></div>
+    <div class="sb-row"><label>Force ellipsoid</label><input type="checkbox" onchange="kin.force=this.checked"></div>
+    <div class="sb-row"><label>Singularity</label><input type="checkbox" checked onchange="kin.sing=this.checked"></div>
+    <div class="sb-row"><label>Animate joints</label><input type="checkbox" checked onchange="kin.anim=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">Jacobian (live)</div>
-    <div class="sg">
-      <div class="sc"><div class="sk">J[0][0]</div><div class="sv" id="j00">—</div></div>
-      <div class="sc"><div class="sk">J[0][1]</div><div class="sv" id="j01">—</div></div>
-      <div class="sc"><div class="sk">J[1][0]</div><div class="sv" id="j10">—</div></div>
-      <div class="sc"><div class="sk">J[1][1]</div><div class="sv" id="j11">—</div></div>
+  <div class="sb-sec"><div class="sb-hd">Jacobian (live)</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">J[0][0]</div><div class="mc-val" id="j00">—</div></div>
+      <div class="mc"><div class="mc-lbl">J[0][1]</div><div class="mc-val" id="j01">—</div></div>
+      <div class="mc"><div class="mc-lbl">J[1][0]</div><div class="mc-val" id="j10">—</div></div>
+      <div class="mc"><div class="mc-lbl">J[1][1]</div><div class="mc-val" id="j11">—</div></div>
     </div>
-    <div style="margin-top:5px" class="sg">
-      <div class="sc"><div class="sk">EE X</div><div class="sv" id="ee-x">—</div></div>
-      <div class="sc"><div class="sk">EE Y</div><div class="sv" id="ee-y">—</div></div>
-      <div class="sc"><div class="sk">μ (manip)</div><div class="sv" id="manip">—</div></div>
-      <div class="sc"><div class="sk">|det J|</div><div class="sv" id="detj">—</div></div>
+    <div style="margin-top:5px" class="metric-grid">
+      <div class="mc"><div class="mc-lbl">EE X</div><div class="mc-val" id="ee-x">—</div></div>
+      <div class="mc"><div class="mc-lbl">EE Y</div><div class="mc-val" id="ee-y">—</div></div>
+      <div class="mc"><div class="mc-lbl">μ (manip)</div><div class="mc-val" id="manip">—</div></div>
+      <div class="mc"><div class="mc-lbl">|det J|</div><div class="mc-val" id="detj">—</div></div>
     </div>
     <div id="sing-warn" style="font-size:9px;color:#e34948;margin-top:4px;font-weight:600;display:none">⚠ SINGULARITY DETECTED</div>
   </div>
-  <div class="ss"><div class="st">Symbolic Math</div>
-    <button class="btn" onclick="toggleMath()" style="width:100%">∑ Show DH Derivation</button>
+  <div class="sb-sec"><div class="sb-hd">Symbolic Math</div>
+    <button class="gb" onclick="toggleMath()" style="width:100%">∑ Show DH Derivation</button>
   </div>
 </div>
-<div id="ca">
+<div class="mod-canvas-wrap" id="ca">
   <canvas id="sim"></canvas>
   <div id="mathpanel">
     <div class="mph"><span>∑ DH Matrix Derivation</span><button onclick="toggleMath()">✕</button></div>
@@ -135,6 +371,7 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
 </div>
 </div>
 <script>
+function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 let W,H;
 const kin={type:'2r',q:[.523,1.047,-.698,.35],L:[90,70,50,35],ws:true,fr:true,jac:true,traj:true,force:false,sing:true,anim:true,ikDrag:false,ikMethod:'jt',traj_pts:[],t:0};
@@ -198,7 +435,7 @@ sim.addEventListener('mousemove',e=>{if(dragging&&kin.ikDrag){const r=sim.getBou
 sim.addEventListener('mouseup',()=>dragging=false);
 
 function draw(){
-  ctx.clearRect(0,0,W,H);ctx.fillStyle='#07070d';ctx.fillRect(0,0,W,H);
+  ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='rgba(255,255,255,0.02)';ctx.lineWidth=.5;
   for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
   for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
@@ -292,4 +529,5 @@ function loop(ts){
 }
 resize();resetKin();requestAnimationFrame(loop);
 </script>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
 </body></html>

@@ -3,45 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <title>VROS — Traffic & AV Simulator</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
-#app{display:flex;flex-direction:column;height:100vh}
-#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
-.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
-.back-btn:hover{color:#e0e0e8;border-color:#1baf7a}
-.mod-title{font-size:13px;font-weight:700;color:#1baf7a;letter-spacing:1px}
-#main{display:flex;flex:1;overflow:hidden}
-#sb{width:200px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
-#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28}
-.ss{border-bottom:1px solid #141420;padding:8px 10px}
-.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
-.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
-.row label{flex:1;color:#888}
-.row input[type=range]{flex:1;height:3px;accent-color:#1baf7a;cursor:pointer}
-.val{min-width:34px;text-align:right;font-size:9px;color:#1baf7a;font-family:monospace}
-.btn{padding:3px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s}
-.btn:hover{background:#222;color:#fff}.btn.on{background:#1baf7a;color:#000;border-color:#1baf7a}
-select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.sc{background:#181824;border-radius:4px;padding:3px 6px;border:1px solid #181830}
-.sk{font-size:8px;color:#444}.sv{font-size:11px;font-weight:700;color:#e0e0e8;font-family:monospace}
-#ca{flex:1;overflow:hidden}
-#sim{display:block;width:100%;height:100%}
-#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:32px;align-items:center}
-.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
-.sb-item span{color:#1baf7a;font-family:monospace;font-weight:600}
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
 </style>
 </head>
 <body>
-<div id="app">
-<div id="topbar">
-  <a href="VROS_Home.html" class="back-btn">← Home</a>
-  <span class="mod-title">🚗 Traffic & AV Simulator</span>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🚗 Traffic & AV Simulator</div>
+    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
 </div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div id="app">
+
 <div id="main">
 <div id="sb">
-  <div class="ss"><div class="st">Environment</div>
+  <div class="sb-sec"><div class="sb-hd">Environment</div>
     <select id="env-sel" onchange="traf.env=this.value;init()">
       <option value="city">City Grid</option>
       <option value="highway">Highway (4 lanes)</option>
@@ -49,44 +303,44 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
       <option value="intersection">Smart Intersection</option>
     </select>
   </div>
-  <div class="ss"><div class="st">Traffic Volume</div>
-    <div class="row"><label>Cars</label><input type="range" min="0" max="50" value="20" oninput="traf.nCars=+this.value;this.nextElementSibling.textContent=this.value;spawnCars()"><span class="val">20</span></div>
-    <div class="row"><label>Pedestrians</label><input type="range" min="0" max="30" value="10" oninput="traf.nPeds=+this.value;this.nextElementSibling.textContent=this.value;spawnPeds()"><span class="val">10</span></div>
-    <div class="row"><label>AV Robot</label><input type="checkbox" checked onchange="traf.avOn=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Traffic Volume</div>
+    <div class="sb-row"><label>Cars</label><input type="range" min="0" max="50" value="20" oninput="traf.nCars=+this.value;this.nextElementSibling.textContent=this.value;spawnCars()"><span class="sb-val">20</span></div>
+    <div class="sb-row"><label>Pedestrians</label><input type="range" min="0" max="30" value="10" oninput="traf.nPeds=+this.value;this.nextElementSibling.textContent=this.value;spawnPeds()"><span class="sb-val">10</span></div>
+    <div class="sb-row"><label>AV Robot</label><input type="checkbox" checked onchange="traf.avOn=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">Driver Behaviour</div>
-    <div class="row"><label>Aggressiveness</label><input type="range" min="0.5" max="3" step="0.1" value="1" oninput="traf.aggr=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.0</span></div>
-    <div class="row"><label>Random stops</label><input type="checkbox" onchange="traf.stops=this.checked"></div>
-    <div class="row"><label>Jaywalking</label><input type="checkbox" onchange="traf.jwalk=this.checked"></div>
-    <div class="row"><label>Lane changes</label><input type="checkbox" checked onchange="traf.lanes=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Driver Behaviour</div>
+    <div class="sb-row"><label>Aggressiveness</label><input type="range" min="0.5" max="3" step="0.1" value="1" oninput="traf.aggr=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.0</span></div>
+    <div class="sb-row"><label>Random stops</label><input type="checkbox" onchange="traf.stops=this.checked"></div>
+    <div class="sb-row"><label>Jaywalking</label><input type="checkbox" onchange="traf.jwalk=this.checked"></div>
+    <div class="sb-row"><label>Lane changes</label><input type="checkbox" checked onchange="traf.lanes=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">Traffic Lights</div>
-    <div class="row"><label>Smart lights</label><input type="checkbox" checked onchange="traf.smartL=this.checked"></div>
-    <div class="row"><label>Cycle time (s)</label><input type="range" min="20" max="120" value="60" oninput="traf.cycleT=+this.value;this.nextElementSibling.textContent=this.value+'s'"><span class="val">60s</span></div>
-    <div class="row"><label>Emergency preempt</label><input type="checkbox" onchange="traf.preempt=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Traffic Lights</div>
+    <div class="sb-row"><label>Smart lights</label><input type="checkbox" checked onchange="traf.smartL=this.checked"></div>
+    <div class="sb-row"><label>Cycle time (s)</label><input type="range" min="20" max="120" value="60" oninput="traf.cycleT=+this.value;this.nextElementSibling.textContent=this.value+'s'"><span class="sb-val">60s</span></div>
+    <div class="sb-row"><label>Emergency preempt</label><input type="checkbox" onchange="traf.preempt=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">Environment</div>
-    <div class="row"><label>Rain mode</label><input type="checkbox" onchange="traf.rain=this.checked"></div>
-    <div class="row"><label>Night mode</label><input type="checkbox" onchange="traf.night=this.checked"></div>
-    <div class="row"><label>Terrain costs</label><input type="checkbox" checked onchange="traf.costs=this.checked"></div>
-    <div class="row"><label>Show speeds</label><input type="checkbox" onchange="traf.showSpd=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">Environment</div>
+    <div class="sb-row"><label>Rain mode</label><input type="checkbox" onchange="traf.rain=this.checked"></div>
+    <div class="sb-row"><label>Night mode</label><input type="checkbox" onchange="traf.night=this.checked"></div>
+    <div class="sb-row"><label>Terrain costs</label><input type="checkbox" checked onchange="traf.costs=this.checked"></div>
+    <div class="sb-row"><label>Show speeds</label><input type="checkbox" onchange="traf.showSpd=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">AV Settings</div>
-    <div class="row"><label>AV speed</label><input type="range" min="0.5" max="4" step="0.1" value="1.8" oninput="traf.avSpd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.8</span></div>
-    <div class="row"><label>AV LiDAR range</label><input type="range" min="40" max="180" value="90" oninput="traf.avRange=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">90</span></div>
-    <div class="row"><label>Show AV path</label><input type="checkbox" checked onchange="traf.showAVPath=this.checked"></div>
-    <div class="row"><label>Show LiDAR</label><input type="checkbox" checked onchange="traf.showLidar=this.checked"></div>
+  <div class="sb-sec"><div class="sb-hd">AV Settings</div>
+    <div class="sb-row"><label>AV speed</label><input type="range" min="0.5" max="4" step="0.1" value="1.8" oninput="traf.avSpd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.8</span></div>
+    <div class="sb-row"><label>AV LiDAR range</label><input type="range" min="40" max="180" value="90" oninput="traf.avRange=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">90</span></div>
+    <div class="sb-row"><label>Show AV path</label><input type="checkbox" checked onchange="traf.showAVPath=this.checked"></div>
+    <div class="sb-row"><label>Show LiDAR</label><input type="checkbox" checked onchange="traf.showLidar=this.checked"></div>
   </div>
-  <div class="ss"><div class="st">Flow Metrics</div>
-    <div class="sg">
-      <div class="sc"><div class="sk">Cars</div><div class="sv" id="m-cars">0</div></div>
-      <div class="sc"><div class="sk">Peds</div><div class="sv" id="m-peds">0</div></div>
-      <div class="sc"><div class="sk">Lights</div><div class="sv" id="m-lights">0</div></div>
-      <div class="sc"><div class="sk">AV stops</div><div class="sv" id="m-avst">0</div></div>
+  <div class="sb-sec"><div class="sb-hd">Flow Metrics</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">Cars</div><div class="mc-val" id="m-cars">0</div></div>
+      <div class="mc"><div class="mc-lbl">Peds</div><div class="mc-val" id="m-peds">0</div></div>
+      <div class="mc"><div class="mc-lbl">Lights</div><div class="mc-val" id="m-lights">0</div></div>
+      <div class="mc"><div class="mc-lbl">AV stops</div><div class="mc-val" id="m-avst">0</div></div>
     </div>
   </div>
 </div>
-<div id="ca"><canvas id="sim"></canvas></div>
+<div class="mod-canvas-wrap" id="ca"><canvas id="sim"></canvas></div>
 </div>
 <div id="statusbar">
   <div class="sb-item"><span class="sb-label">ENV</span>&nbsp;<span id="sb-env">City</span></div>
@@ -96,6 +350,9 @@ select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-
 </div>
 </div>
 <script>
+function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+function cssV(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 let W,H,lastT=0,fps=0,fcnt=0,ft=0,avStops=0,frame=0;
 const traf={env:'city',nCars:20,nPeds:10,avOn:true,aggr:1,stops:false,jwalk:false,lanes:true,smartL:true,cycleT:60,preempt:false,rain:false,night:false,costs:true,showSpd:false,avSpd:1.8,avRange:90,showAVPath:true,showLidar:true,cars:[],peds:[],lights:[],roads:[],av:{x:0,y:0,angle:0,path:[],pathIdx:0,stopped:false}};
@@ -244,4 +501,5 @@ sim.addEventListener('contextmenu',e=>{e.preventDefault();const r=sim.getBoundin
 function loop(ts){requestAnimationFrame(loop);const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;stepTraffic();draw();}
 resize();requestAnimationFrame(loop);
 </script>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
 </body></html>
