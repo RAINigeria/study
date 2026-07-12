@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VROS — Robot Builder</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
+#app{display:flex;flex-direction:column;height:100vh}
+#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
+.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
+.back-btn:hover{color:#e0e0e8;border-color:#c84fc8}
+.mod-title{font-size:13px;font-weight:700;color:#c84fc8;letter-spacing:1px}
+#main{display:flex;flex:1;overflow:hidden}
+/* LEFT PANEL */
+#left{width:180px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#left::-webkit-scrollbar{width:3px}#left::-webkit-scrollbar-thumb{background:#1a1a28}
+.ss{border-bottom:1px solid #141420;padding:8px 10px}
+.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
+.comp-btn{display:block;width:100%;padding:5px 8px;border-radius:5px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;margin-bottom:3px;text-align:left;transition:all .12s}
+.comp-btn:hover{background:#1e1e30;color:#fff;border-color:#c84fc8}
+.comp-btn .ci{font-size:13px;margin-right:5px}
+.btn{padding:4px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s;width:100%;margin-bottom:3px}
+.btn:hover{background:#222;color:#fff}
+.btn.primary{background:#c84fc8;color:#fff;border-color:#c84fc8;font-weight:600}
+.btn.primary:hover{background:#a030a0}
+.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
+.row label{flex:1;color:#888}
+.row input[type=range]{flex:1;height:3px;accent-color:#c84fc8;cursor:pointer}
+.val{min-width:28px;text-align:right;font-size:9px;color:#c84fc8;font-family:monospace}
+select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
+/* CANVAS */
+#ca{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;background:#08080f}
+#sim{display:block;width:100%;flex:1}
+#grid-overlay{position:absolute;inset:0;pointer-events:none}
+/* RIGHT PANEL */
+#right{width:220px;background:#0e0e18;border-left:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#right::-webkit-scrollbar{width:3px}#right::-webkit-scrollbar-thumb{background:#1a1a28}
+.prop-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;font-size:10px}
+.prop-row label{width:70px;color:#666;flex-shrink:0}
+.prop-row input[type=number]{flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px}
+.prop-row input[type=text]{flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px}
+.prop-row select{flex:1;margin:0}
+/* CODE PANEL */
+#codepanel{position:absolute;bottom:0;left:0;right:0;height:0;background:rgba(8,8,18,0.98);border-top:1px solid #2a2a40;transition:height .2s;overflow:hidden;z-index:50}
+#codepanel.open{height:260px}
+#codepanel .cph{display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid #1a1a28}
+#codepanel .cph span{font-size:11px;font-weight:700;color:#c84fc8;flex:1}
+#codepanel pre{padding:10px 14px;font-family:monospace;font-size:10px;color:#c8d8f8;overflow:auto;height:calc(100%-35px);line-height:1.6}
+#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:30px;align-items:center}
+.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
+.sb-item span{color:#c84fc8;font-family:monospace;font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="topbar">
+  <a href="VROS_Home.html" class="back-btn">← Home</a>
+  <span class="mod-title">🤖 Robot Builder</span>
+  <span style="font-size:10px;color:#444;margin-left:4px">Drag components onto canvas · Click to select · Delete key to remove</span>
+</div>
+<div id="main">
+
+<!-- LEFT: Component palette -->
+<div id="left">
+  <div class="ss"><div class="st">Chassis</div>
+    <button class="comp-btn" onclick="addComp('diff_drive')"><span class="ci">⚙</span>Differential Drive</button>
+    <button class="comp-btn" onclick="addComp('ackermann')"><span class="ci">🚗</span>Ackermann (Car)</button>
+    <button class="comp-btn" onclick="addComp('omni')"><span class="ci">⭕</span>Omnidirectional</button>
+    <button class="comp-btn" onclick="addComp('mecanum')"><span class="ci">🔘</span>Mecanum Wheel</button>
+    <button class="comp-btn" onclick="addComp('arm_base')"><span class="ci">🦾</span>Robot Arm Base</button>
+    <button class="comp-btn" onclick="addComp('quadruped')"><span class="ci">🐾</span>Quadruped Body</button>
+  </div>
+  <div class="ss"><div class="st">Sensors</div>
+    <button class="comp-btn" onclick="addComp('lidar2d')"><span class="ci">📡</span>2D LiDAR</button>
+    <button class="comp-btn" onclick="addComp('lidar3d')"><span class="ci">🔵</span>3D LiDAR</button>
+    <button class="comp-btn" onclick="addComp('camera')"><span class="ci">📷</span>RGB Camera</button>
+    <button class="comp-btn" onclick="addComp('depthcam')"><span class="ci">👁</span>Depth Camera</button>
+    <button class="comp-btn" onclick="addComp('imu')"><span class="ci">📐</span>IMU</button>
+    <button class="comp-btn" onclick="addComp('gps')"><span class="ci">🛰</span>GPS</button>
+    <button class="comp-btn" onclick="addComp('encoder')"><span class="ci">🔢</span>Encoder</button>
+    <button class="comp-btn" onclick="addComp('ultrasonic')"><span class="ci">〰</span>Ultrasonic</button>
+    <button class="comp-btn" onclick="addComp('ir')"><span class="ci">🔴</span>IR Sensor</button>
+  </div>
+  <div class="ss"><div class="st">Actuators</div>
+    <button class="comp-btn" onclick="addComp('dc_motor')"><span class="ci">🔄</span>DC Motor</button>
+    <button class="comp-btn" onclick="addComp('servo')"><span class="ci">🔧</span>Servo Motor</button>
+    <button class="comp-btn" onclick="addComp('stepper')"><span class="ci">📏</span>Stepper Motor</button>
+  </div>
+  <div class="ss"><div class="st">Electronics</div>
+    <button class="comp-btn" onclick="addComp('arduino')"><span class="ci">💡</span>Arduino Mega</button>
+    <button class="comp-btn" onclick="addComp('rpi')"><span class="ci">🍓</span>Raspberry Pi</button>
+    <button class="comp-btn" onclick="addComp('jetson')"><span class="ci">⚡</span>Jetson Nano</button>
+    <button class="comp-btn" onclick="addComp('battery')"><span class="ci">🔋</span>Battery Pack</button>
+    <button class="comp-btn" onclick="addComp('motor_driver')"><span class="ci">🎛</span>Motor Driver</button>
+  </div>
+  <div class="ss"><div class="st">Canvas</div>
+    <button class="btn" onclick="clearAll()">🗑 Clear All</button>
+    <button class="btn" onclick="autoLayout()">⟳ Auto Layout</button>
+    <div class="row" style="margin-top:4px"><label>Grid snap</label><input type="checkbox" checked onchange="snapOn=this.checked"></div>
+    <div class="row"><label>Grid size</label><input type="range" min="10" max="40" value="20" oninput="GRID=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">20</span></div>
+    <div class="row"><label>Show grid</label><input type="checkbox" checked onchange="showGrid=this.checked"></div>
+  </div>
+</div>
+
+<!-- CANVAS -->
+<div id="ca">
+  <canvas id="sim"></canvas>
+  <div id="codepanel">
+    <div class="cph">
+      <span id="code-title">Code Export</span>
+      <button onclick="closeCode()" style="background:none;border:none;color:#555;cursor:pointer;font-size:14px">✕</button>
+    </div>
+    <pre id="code-content">// Select export type</pre>
+  </div>
+</div>
+
+<!-- RIGHT: Properties + Export -->
+<div id="right">
+  <div class="ss"><div class="st">Selected Component</div>
+    <div id="sel-none" style="font-size:10px;color:#444;padding:4px 0">Click a component to edit its properties.</div>
+    <div id="sel-props" style="display:none">
+      <div class="prop-row"><label>Name</label><input type="text" id="p-name" oninput="updateSelProp('name',this.value)"></div>
+      <div class="prop-row"><label>X (px)</label><input type="number" id="p-x" oninput="updateSelProp('x',+this.value)"></div>
+      <div class="prop-row"><label>Y (px)</label><input type="number" id="p-y" oninput="updateSelProp('y',+this.value)"></div>
+      <div class="prop-row"><label>Rotation°</label><input type="number" id="p-rot" oninput="updateSelProp('rot',+this.value)"></div>
+      <div class="prop-row"><label>Scale</label><input type="number" id="p-sc" step="0.1" oninput="updateSelProp('scale',+this.value)"></div>
+      <button class="btn" onclick="deleteSelected()" style="margin-top:4px;color:#e34948;border-color:#e3494833">🗑 Delete</button>
+      <button class="btn" onclick="duplicateSelected()" style="margin-top:2px">⧉ Duplicate</button>
+    </div>
+  </div>
+  <div class="ss"><div class="st">Robot Spec</div>
+    <div class="prop-row"><label>Name</label><input type="text" id="r-name" value="MyRobot" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
+    <div class="prop-row"><label>Drive</label>
+      <select id="r-drive" style="flex:1;margin:0">
+        <option>Differential</option><option>Ackermann</option><option>Omni</option><option>Mecanum</option>
+      </select>
+    </div>
+    <div class="prop-row"><label>Wheel R (m)</label><input type="number" id="r-wr" value="0.05" step="0.01" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
+    <div class="prop-row"><label>Wheelbase</label><input type="number" id="r-wb" value="0.3" step="0.01" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
+    <div class="prop-row"><label>Max RPM</label><input type="number" id="r-rpm" value="200" style="flex:1;background:#111;color:#bbb;border:1px solid #222;border-radius:3px;padding:2px 5px;font-size:10px"></div>
+  </div>
+  <div class="ss"><div class="st">Export Code</div>
+    <button class="btn primary" onclick="exportCode('urdf')">📄 Export URDF</button>
+    <button class="btn" onclick="exportCode('arduino')" style="margin-top:2px">💡 Export Arduino (.ino)</button>
+    <button class="btn" onclick="exportCode('ros2')" style="margin-top:2px">🤖 Export ROS2 Launch</button>
+    <button class="btn" onclick="exportCode('bom')" style="margin-top:2px">📋 Bill of Materials</button>
+    <button class="btn" onclick="copyCode()" style="margin-top:6px">📋 Copy to Clipboard</button>
+    <button class="btn" onclick="downloadCode()" style="margin-top:2px">💾 Download File</button>
+  </div>
+  <div class="ss"><div class="st">Component Summary</div>
+    <div id="comp-summary" style="font-size:9px;color:#555;line-height:1.8">No components placed.</div>
+  </div>
+</div>
+
+</div>
+<div id="statusbar">
+  <div class="sb-item"><span class="sb-label">COMPONENTS</span>&nbsp;<span id="sb-n">0</span></div>
+  <div class="sb-item"><span class="sb-label">SELECTED</span>&nbsp;<span id="sb-sel">None</span></div>
+  <div class="sb-item"><span class="sb-label">CANVAS</span>&nbsp;<span id="sb-pos">—</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">VROS Robot Builder v1.0</span></div>
+</div>
+</div>
+
+<script>
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,GRID=20,snapOn=true,showGrid=true;
+let components=[],selected=null,dragging=false,dragOff={x:0,y:0};
+let codeOpen=false,lastCode='',lastCodeType='';
+
+// Component definitions
+const COMP_DEFS={
+  diff_drive:{label:'Diff. Drive',cat:'chassis',color:'#3987e5',w:100,h:70,shape:'chassis_diff'},
+  ackermann:{label:'Ackermann',cat:'chassis',color:'#3987e5',w:120,h:65,shape:'chassis_car'},
+  omni:{label:'Omni Drive',cat:'chassis',color:'#3987e5',w:80,h:80,shape:'chassis_omni'},
+  mecanum:{label:'Mecanum',cat:'chassis',color:'#3987e5',w:100,h:70,shape:'chassis_mecanum'},
+  arm_base:{label:'Arm Base',cat:'chassis',color:'#9055d4',w:60,h:60,shape:'arm_base'},
+  quadruped:{label:'Quadruped',cat:'chassis',color:'#3987e5',w:110,h:80,shape:'quadruped'},
+  lidar2d:{label:'2D LiDAR',cat:'sensor',color:'#1baf7a',w:30,h:30,shape:'lidar2d'},
+  lidar3d:{label:'3D LiDAR',cat:'sensor',color:'#1baf7a',w:34,h:34,shape:'lidar3d'},
+  camera:{label:'Camera',cat:'sensor',color:'#eda100',w:28,h:20,shape:'camera'},
+  depthcam:{label:'Depth Cam',cat:'sensor',color:'#eda100',w:32,h:20,shape:'depthcam'},
+  imu:{label:'IMU',cat:'sensor',color:'#e34948',w:22,h:22,shape:'imu'},
+  gps:{label:'GPS',cat:'sensor',color:'#1baf7a',w:26,h:26,shape:'gps'},
+  encoder:{label:'Encoder',cat:'sensor',color:'#888',w:18,h:18,shape:'encoder'},
+  ultrasonic:{label:'Ultrasonic',cat:'sensor',color:'#c84fc8',w:28,h:18,shape:'ultrasonic'},
+  ir:{label:'IR Sensor',cat:'sensor',color:'#e34948',w:16,h:16,shape:'ir'},
+  dc_motor:{label:'DC Motor',cat:'actuator',color:'#e06020',w:30,h:22,shape:'motor_dc'},
+  servo:{label:'Servo',cat:'actuator',color:'#e06020',w:24,h:22,shape:'motor_servo'},
+  stepper:{label:'Stepper',cat:'actuator',color:'#e06020',w:26,h:26,shape:'motor_step'},
+  arduino:{label:'Arduino',cat:'electronics',color:'#1baf7a',w:60,h:40,shape:'board_ard'},
+  rpi:{label:'Raspberry Pi',cat:'electronics',color:'#e34948',w:55,h:38,shape:'board_rpi'},
+  jetson:{label:'Jetson Nano',cat:'electronics',color:'#76b900',w:55,h:40,shape:'board_jet'},
+  battery:{label:'Battery',cat:'electronics',color:'#eda100',w:50,h:30,shape:'battery'},
+  motor_driver:{label:'Motor Driver',cat:'electronics',color:'#888',w:38,h:28,shape:'motor_drv'},
+};
+
+let idCtr=1;
+function addComp(type){
+  const def=COMP_DEFS[type];if(!def)return;
+  const c={id:idCtr++,type,name:def.label,x:snap(W/2-def.w/2),y:snap(H/2-def.h/2),w:def.w,h:def.h,rot:0,scale:1,color:def.color,shape:def.shape,cat:def.cat,label:def.label};
+  components.push(c);selectComp(c);updateSummary();
+}
+
+function snap(v){return snapOn?Math.round(v/GRID)*GRID:v;}
+
+function resize(){const ca=document.getElementById('ca');sim.width=ca.clientWidth;sim.height=ca.clientHeight;W=sim.width;H=sim.height;}
+window.addEventListener('resize',resize);
+
+function drawComp(c,isSelected){
+  const s=c.scale||1;const sw=c.w*s,sh=c.h*s;
+  ctx.save();ctx.translate(c.x+sw/2,c.y+sh/2);ctx.rotate(c.rot*Math.PI/180);
+
+  const shape=c.shape;
+  // Shadow
+  if(isSelected){ctx.shadowBlur=16;ctx.shadowColor=c.color;}
+
+  if(shape==='chassis_diff'){
+    ctx.fillStyle='#1e2040';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    // Wheels
+    ctx.fillStyle=c.color;
+    [[-sw/2-8,-sh/3],[sw/2-2,-sh/3],[-sw/2-8,sh/5],[sw/2-2,sh/5]].forEach(([wx,wy])=>ctx.fillRect(wx,wy,10,sh/3));
+    // Arrow
+    ctx.fillStyle='rgba(255,255,255,0.6)';ctx.beginPath();ctx.moveTo(sw/4,0);ctx.lineTo(-sw/6,-sh/5);ctx.lineTo(-sw/6,sh/5);ctx.closePath();ctx.fill();
+
+  } else if(shape==='chassis_car'){
+    ctx.fillStyle='#1e2040';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle=c.color;ctx.fillRect(-sw*0.3,-sh/2-5,sw*0.4,5);// spoiler
+    [[-sw*0.3,-sh/2-3],[sw*0.1,-sh/2-3],[-sw*0.3,sh/2-3],[sw*0.1,sh/2-3]].forEach(([wx,wy])=>{ctx.fillStyle='#333';ctx.fillRect(wx,wy,sw*0.2,6);});
+
+  } else if(shape==='chassis_omni'){
+    ctx.fillStyle='#1e2040';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.stroke();
+    for(let i=0;i<4;i++){const a=i*Math.PI/2;ctx.fillStyle=c.color;ctx.save();ctx.rotate(a);ctx.fillRect(sw/2-2,-5,10,10);ctx.restore();}
+
+  } else if(shape==='chassis_mecanum'){
+    ctx.fillStyle='#1e2040';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    [[-sw/2-8,-sh/3],[sw/2-2,-sh/3],[-sw/2-8,sh/5],[sw/2-2,sh/5]].forEach(([wx,wy])=>{
+      ctx.fillStyle='#333';ctx.fillRect(wx,wy,10,sh/3);
+      ctx.strokeStyle=c.color;ctx.lineWidth=1;ctx.strokeRect(wx,wy,10,sh/3);
+      // Mecanum roller lines
+      for(let i=0;i<4;i++){ctx.beginPath();ctx.moveTo(wx+i*2.5,wy);ctx.lineTo(wx+i*2.5+5,wy+sh/3);ctx.stroke();}
+    });
+
+  } else if(shape==='arm_base'){
+    ctx.fillStyle='#2a1040';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.stroke();
+    ctx.strokeStyle='rgba(144,85,212,0.5)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.arc(0,0,sw/3,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,6,0,Math.PI*2);ctx.fill();
+
+  } else if(shape==='quadruped'){
+    ctx.fillStyle='#1e2040';ctx.fillRect(-sw/2,-sh/3,sw,sh*0.66);
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.strokeRect(-sw/2,-sh/3,sw,sh*0.66);
+    // 4 legs
+    [[-sw*0.35,-sh/3],[-sw*0.35,sh/3-10],[sw*0.15,-sh/3],[sw*0.15,sh/3-10]].forEach(([lx,ly])=>{
+      ctx.strokeStyle=c.color;ctx.lineWidth=3;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx-8,ly+(ly<0?-16:16));ctx.stroke();
+    });
+
+  } else if(shape==='lidar2d'){
+    ctx.fillStyle='#0a2010';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.stroke();
+    for(let i=0;i<8;i++){const a=i*Math.PI/4;ctx.strokeStyle='rgba(27,175,122,0.4)';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*sw*0.8,Math.sin(a)*sw*0.8);ctx.stroke();}
+    ctx.fillStyle='#1baf7a';ctx.beginPath();ctx.arc(0,0,4,0,Math.PI*2);ctx.fill();
+
+  } else if(shape==='lidar3d'){
+    ctx.fillStyle='#0a2010';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.stroke();
+    ctx.strokeStyle='rgba(27,175,122,0.3)';ctx.lineWidth=0.8;
+    for(let i=0;i<16;i++){const a=i*Math.PI/8;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(Math.cos(a)*sw*0.75,Math.sin(a)*sw*0.75);ctx.stroke();}
+    ctx.fillStyle='#1baf7a';ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(27,175,122,0.3)';ctx.beginPath();ctx.arc(0,0,sw/2+4,0,Math.PI*2);ctx.stroke();
+
+  } else if(shape==='camera'){
+    ctx.fillStyle='#1a1000';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle='#223';ctx.beginPath();ctx.arc(0,0,sh/2-2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c.color;ctx.stroke();ctx.fillStyle='rgba(100,150,255,0.4)';ctx.beginPath();ctx.arc(0,0,sh/4,0,Math.PI*2);ctx.fill();
+
+  } else if(shape==='depthcam'){
+    ctx.fillStyle='#1a1000';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    // Two lenses
+    [-sw/6,sw/6].forEach(lx=>{ctx.fillStyle='#223';ctx.beginPath();ctx.arc(lx,0,sh/3,0,Math.PI*2);ctx.fill();ctx.strokeStyle=c.color;ctx.stroke();ctx.fillStyle='rgba(100,150,255,0.3)';ctx.beginPath();ctx.arc(lx,0,sh/6,0,Math.PI*2);ctx.fill();});
+
+  } else if(shape==='imu'){
+    ctx.fillStyle='#1a0000';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    // Axis lines
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(-sw/3,0);ctx.lineTo(sw/3,0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,-sh/3);ctx.lineTo(0,sh/3);ctx.stroke();
+    ctx.fillStyle=c.color;ctx.beginPath();ctx.arc(0,0,3,0,Math.PI*2);ctx.fill();
+
+  } else if(shape==='gps'){
+    ctx.fillStyle='#0a200a';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle='rgba(27,175,122,0.4)';ctx.lineWidth=0.8;
+    for(let i=1;i<=2;i++){ctx.beginPath();ctx.arc(0,0,sw/2*i/2,0,Math.PI*2);ctx.stroke();}
+    ctx.fillStyle=c.color;ctx.font='10px monospace';ctx.textAlign='center';ctx.fillText('GPS',0,4);ctx.textAlign='left';
+
+  } else if(shape==='encoder'){
+    ctx.fillStyle='#111';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#888';ctx.lineWidth=1.5;ctx.stroke();
+    for(let i=0;i<12;i++){const a=i*Math.PI/6;ctx.strokeStyle=i%3===0?'#fff':'#555';ctx.lineWidth=i%3===0?2:1;ctx.beginPath();ctx.moveTo(Math.cos(a)*sw*0.25,Math.sin(a)*sw*0.25);ctx.lineTo(Math.cos(a)*sw*0.45,Math.sin(a)*sw*0.45);ctx.stroke();}
+
+  } else if(shape==='ultrasonic'){
+    ctx.fillStyle='#1a0a1e';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    // Two transducers
+    [-sw/5,sw/5].forEach(ux=>{ctx.fillStyle='#333';ctx.beginPath();ctx.arc(ux,0,sh*0.35,0,Math.PI*2);ctx.fill();ctx.strokeStyle=c.color;ctx.stroke();});
+    // Range arcs
+    ctx.strokeStyle='rgba(200,79,200,0.3)';ctx.lineWidth=0.8;
+    for(let r=1;r<=2;r++){ctx.beginPath();ctx.arc(0,0,sw/2+r*8,-Math.PI/3,Math.PI/3);ctx.stroke();}
+
+  } else if(shape==='ir'){
+    ctx.fillStyle='#1a0000';ctx.beginPath();ctx.arc(0,0,sw/2,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.strokeStyle='rgba(227,73,72,0.4)';ctx.lineWidth=0.8;ctx.beginPath();ctx.arc(0,0,sw*0.8,-.3,.3);ctx.stroke();
+
+  } else if(shape==='motor_dc'){
+    ctx.fillStyle='#1a0800';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle='rgba(224,96,32,0.5)';ctx.lineWidth=2;
+    for(let y=-sh/4;y<=sh/4;y+=4){ctx.beginPath();ctx.moveTo(-sw/4,y);ctx.lineTo(sw/4,y);ctx.stroke();}
+    ctx.strokeStyle=c.color;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(sw/2,0);ctx.lineTo(sw/2+6,0);ctx.stroke();// shaft
+
+  } else if(shape==='motor_servo'){
+    ctx.fillStyle='#1a0800';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle=c.color;ctx.fillRect(sw*0.1,-sh/3,sw*0.4,sh*0.66);// horn mount
+    ctx.strokeStyle='#fff';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(sw*0.3,0);ctx.lineTo(sw*0.3+8,0);ctx.stroke();
+
+  } else if(shape==='motor_step'){
+    ctx.fillStyle='#1a0800';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle='rgba(224,96,32,0.2)';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle=c.color;ctx.font='7px monospace';ctx.textAlign='center';ctx.fillText('STEP',0,3);ctx.textAlign='left';
+
+  } else if(shape==='board_ard'){
+    ctx.fillStyle='#00562a';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle='#1baf7a';ctx.lineWidth=1;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    // Pin headers
+    ctx.fillStyle='#111';
+    for(let i=0;i<14;i++)ctx.fillRect(-sw/2+4+i*3.5,-sh/2-2,2,4);
+    for(let i=0;i<6;i++)ctx.fillRect(-sw/2+4+i*3.5,sh/2-2,2,4);
+    ctx.fillStyle='#1baf7a';ctx.font='7px monospace';ctx.textAlign='center';ctx.fillText('ARDUINO',0,3);ctx.textAlign='left';
+    ctx.fillStyle='#333';ctx.fillRect(-sw/2+4,sh/2-14,10,12);// USB
+
+  } else if(shape==='board_rpi'){
+    ctx.fillStyle='#6a003a';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle='#e34948';ctx.lineWidth=1;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle='#333';ctx.fillRect(-sw/2+4,-sh/2+4,12,10);// CPU
+    ctx.fillStyle='#e34948';ctx.font='7px monospace';ctx.textAlign='center';ctx.fillText('RPi',0,3);ctx.textAlign='left';
+    for(let i=0;i<20;i++)ctx.fillRect(-sw/2-2,(-sh/2)+i*3.5,2,2);
+
+  } else if(shape==='board_jet'){
+    ctx.fillStyle='#1a2a00';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle='#76b900';ctx.lineWidth=1;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle='#333';ctx.fillRect(-sw/2+6,-sh/2+4,16,14);
+    ctx.fillStyle='rgba(118,185,0,0.3)';ctx.fillRect(-sw/2+22,-sh/2+4,18,14);
+    ctx.fillStyle='#76b900';ctx.font='7px monospace';ctx.textAlign='center';ctx.fillText('JETSON',0,3);ctx.textAlign='left';
+
+  } else if(shape==='battery'){
+    ctx.fillStyle='#1a1000';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    const pct=0.75;ctx.fillStyle=`rgba(${255-Math.round(pct*200)},${Math.round(pct*160)},0,0.6)`;
+    ctx.fillRect(-sw/2+2,-sh/2+2,sw*pct-4,sh-4);
+    ctx.fillStyle=c.color;ctx.fillRect(sw/2,0-4,5,8);// terminal
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='7px monospace';ctx.textAlign='center';ctx.fillText('75%',0,3);ctx.textAlign='left';
+
+  } else if(shape==='motor_drv'){
+    ctx.fillStyle='#111';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle='#888';ctx.lineWidth=1;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+    ctx.fillStyle='#555';ctx.fillRect(-sw/2+3,-sh/2+3,sw-6,sh-6);
+    ctx.fillStyle='#aaa';ctx.font='6px monospace';ctx.textAlign='center';ctx.fillText('DRV',0,3);ctx.textAlign='left';
+
+  } else {
+    ctx.fillStyle=c.color+'33';ctx.fillRect(-sw/2,-sh/2,sw,sh);
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;ctx.strokeRect(-sw/2,-sh/2,sw,sh);
+  }
+
+  ctx.shadowBlur=0;
+
+  // Selection overlay
+  if(isSelected){
+    ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([4,3]);
+    ctx.strokeRect(-sw/2-3,-sh/2-3,sw+6,sh+6);ctx.setLineDash([]);
+    // Handles
+    [[-sw/2,-sh/2],[sw/2,-sh/2],[-sw/2,sh/2],[sw/2,sh/2]].forEach(([hx,hy])=>{
+      ctx.fillStyle='#fff';ctx.fillRect(hx-3,hy-3,6,6);
+    });
+  }
+
+  // Label
+  ctx.fillStyle='rgba(255,255,255,0.55)';ctx.font='bold 8px monospace';ctx.textAlign='center';
+  ctx.fillText(c.name,0,sh/2+11);ctx.textAlign='left';
+
+  ctx.restore();
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#08080f';ctx.fillRect(0,0,W,H);
+  if(showGrid){
+    ctx.strokeStyle='rgba(255,255,255,0.03)';ctx.lineWidth=0.5;
+    for(let x=0;x<W;x+=GRID){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=GRID){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }
+  // Draw connections (wires between chassis and sensors)
+  const chassis=components.filter(c=>c.cat==='chassis');
+  const others=components.filter(c=>c.cat!=='chassis');
+  if(chassis.length){
+    const ch=chassis[0];const cx=ch.x+ch.w*ch.scale/2,cy=ch.y+ch.h*ch.scale/2;
+    others.forEach(c=>{
+      const ox=c.x+c.w*c.scale/2,oy=c.y+c.h*c.scale/2;
+      ctx.strokeStyle='rgba(100,100,140,0.18)';ctx.lineWidth=1;ctx.setLineDash([3,5]);
+      ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(ox,oy);ctx.stroke();ctx.setLineDash([]);
+    });
+  }
+  // Non-selected first
+  components.filter(c=>c!==selected).forEach(c=>drawComp(c,false));
+  if(selected)drawComp(selected,true);
+
+  // Mini coordinate label
+  ctx.fillStyle='rgba(255,255,255,0.1)';ctx.font='8px monospace';ctx.fillText(`canvas ${W}×${H}`,6,H-6);
+}
+
+// Interaction
+sim.addEventListener('mousedown',e=>{
+  const rect=sim.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  let hit=null;
+  for(let i=components.length-1;i>=0;i--){
+    const c=components[i];const s=c.scale||1;
+    if(mx>=c.x&&mx<=c.x+c.w*s&&my>=c.y&&my<=c.y+c.h*s){hit=c;break;}
+  }
+  if(hit){selectComp(hit);dragging=true;dragOff={x:mx-hit.x,y:my-hit.y};}
+  else{selectComp(null);}
+});
+sim.addEventListener('mousemove',e=>{
+  const rect=sim.getBoundingClientRect();const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  document.getElementById('sb-pos').textContent=`${Math.round(mx)},${Math.round(my)}`;
+  if(dragging&&selected){selected.x=snap(mx-dragOff.x);selected.y=snap(my-dragOff.y);updatePropsPanel();}
+});
+sim.addEventListener('mouseup',()=>{dragging=false;});
+window.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&selected&&document.activeElement===document.body)deleteSelected();});
+
+function selectComp(c){
+  selected=c;
+  document.getElementById('sel-none').style.display=c?'none':'';
+  document.getElementById('sel-props').style.display=c?'':'none';
+  document.getElementById('sb-sel').textContent=c?c.name:'None';
+  if(c)updatePropsPanel();
+  updateSummary();
+}
+function updatePropsPanel(){
+  if(!selected)return;
+  document.getElementById('p-name').value=selected.name;
+  document.getElementById('p-x').value=Math.round(selected.x);
+  document.getElementById('p-y').value=Math.round(selected.y);
+  document.getElementById('p-rot').value=selected.rot;
+  document.getElementById('p-sc').value=selected.scale||1;
+}
+function updateSelProp(k,v){if(selected){selected[k]=v;updateSummary();}}
+function deleteSelected(){if(!selected)return;components=components.filter(c=>c!==selected);selectComp(null);updateSummary();}
+function duplicateSelected(){if(!selected)return;const c={...selected,id:idCtr++,x:selected.x+20,y:selected.y+20};components.push(c);selectComp(c);}
+function clearAll(){components=[];selected=null;selectComp(null);}
+function autoLayout(){
+  const chassis=components.filter(c=>c.cat==='chassis');
+  const sensors=components.filter(c=>c.cat==='sensor');
+  const act=components.filter(c=>c.cat==='actuator');
+  const elec=components.filter(c=>c.cat==='electronics');
+  if(chassis.length)chassis[0].x=W/2-50,chassis[0].y=H/2-35;
+  const rings=[{comps:sensors,r:130},{comps:act,r:90},{comps:elec,r:170}];
+  rings.forEach(({comps,r})=>{comps.forEach((c,i)=>{const a=i/comps.length*Math.PI*2;c.x=snap(W/2+Math.cos(a)*r-c.w/2);c.y=snap(H/2+Math.sin(a)*r-c.h/2);});});
+}
+
+function updateSummary(){
+  document.getElementById('sb-n').textContent=components.length;
+  const cats={};components.forEach(c=>{cats[c.cat]=(cats[c.cat]||0)+1;});
+  document.getElementById('comp-summary').innerHTML=Object.keys(cats).length?
+    Object.entries(cats).map(([k,v])=>`<b style="color:#888">${k}</b>: ${v}`).join('<br>'):
+    'No components placed.';
+}
+
+// ── CODE EXPORT ──────────────────────────────────────
+function exportCode(type){
+  const rname=document.getElementById('r-name').value||'MyRobot';
+  const drive=document.getElementById('r-drive').value;
+  const wr=document.getElementById('r-wr').value;
+  const wb=document.getElementById('r-wb').value;
+  const rpm=document.getElementById('r-rpm').value;
+  let code='';
+
+  if(type==='urdf'){
+    document.getElementById('code-title').textContent='URDF Export';
+    const sensors=components.filter(c=>c.cat==='sensor');
+    code=`<?xml version="1.0"?>
+<robot name="${rname}">
+  <!-- Generated by VROS Robot Builder -->
+
+  <!-- BASE LINK -->
+  <link name="base_link">
+    <visual>
+      <geometry><box size="0.3 0.2 0.1"/></geometry>
+      <material name="blue"><color rgba="0.2 0.4 0.8 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="0.3 0.2 0.1"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="2.0"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.02"/>
+    </inertial>
+  </link>
+
+  <!-- WHEELS -->
+  <link name="left_wheel">
+    <visual>
+      <geometry><cylinder radius="${wr}" length="0.04"/></geometry>
+      <material name="dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+    <inertial><mass value="0.3"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+  </link>
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/><child link="left_wheel"/>
+    <origin xyz="0 ${+wb/2} 0" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="right_wheel">
+    <visual>
+      <geometry><cylinder radius="${wr}" length="0.04"/></geometry>
+      <material name="dark"><color rgba="0.1 0.1 0.1 1"/></material>
+    </visual>
+    <inertial><mass value="0.3"/><inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/></inertial>
+  </link>
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/><child link="right_wheel"/>
+    <origin xyz="0 -${+wb/2} 0" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+${sensors.map((s,i)=>`  <!-- SENSOR: ${s.name} -->
+  <link name="${s.name.replace(/\s/g,'_').toLowerCase()}_link">
+    <visual>
+      <geometry><box size="0.04 0.04 0.03"/></geometry>
+      <material name="sensor_col"><color rgba="0.1 0.8 0.4 1"/></material>
+    </visual>
+  </link>
+  <joint name="${s.name.replace(/\s/g,'_').toLowerCase()}_joint" type="fixed">
+    <parent link="base_link"/><child link="${s.name.replace(/\s/g,'_').toLowerCase()}_link"/>
+    <origin xyz="${(0.1+i*0.05).toFixed(2)} 0 0.06"/>
+  </joint>`).join('\n\n')}
+
+</robot>`;
+  } else if(type==='arduino'){
+    document.getElementById('code-title').textContent='Arduino Export (.ino)';
+    const motors=components.filter(c=>c.cat==='actuator');
+    const enc=components.find(c=>c.type==='encoder');
+    code=`// ${rname} — Generated by VROS Robot Builder
+// Drive: ${drive} | Wheel radius: ${wr}m | Wheelbase: ${wb}m
+
+// ── PIN DEFINITIONS ──────────────────────────────────
+#define LEFT_MOTOR_IN1   5
+#define LEFT_MOTOR_IN2   6
+#define LEFT_MOTOR_ENA   9
+#define RIGHT_MOTOR_IN1  7
+#define RIGHT_MOTOR_IN2  8
+#define RIGHT_MOTOR_ENB  10
+${enc?'#define ENC_LEFT_A  2\n#define ENC_LEFT_B  3\n#define ENC_RIGHT_A 18\n#define ENC_RIGHT_B 19':''}
+
+// ── CONSTANTS ────────────────────────────────────────
+const float WHEEL_RADIUS = ${wr};   // metres
+const float WHEELBASE    = ${wb};   // metres
+const int   MAX_RPM      = ${rpm};
+const int   TICKS_PER_REV = 20;    // adjust for your encoder
+
+// ── STATE ────────────────────────────────────────────
+volatile long leftTicks = 0, rightTicks = 0;
+float leftSpeed = 0, rightSpeed = 0;  // m/s
+float heading = 0;                    // radians
+float posX = 0, posY = 0;
+
+void setup() {
+  Serial.begin(115200);
+  // Motor pins
+  pinMode(LEFT_MOTOR_IN1, OUTPUT); pinMode(LEFT_MOTOR_IN2, OUTPUT);
+  pinMode(LEFT_MOTOR_ENA, OUTPUT);
+  pinMode(RIGHT_MOTOR_IN1, OUTPUT); pinMode(RIGHT_MOTOR_IN2, OUTPUT);
+  pinMode(RIGHT_MOTOR_ENB, OUTPUT);
+  ${enc?'// Encoder interrupts\n  attachInterrupt(digitalPinToInterrupt(ENC_LEFT_A),  encLeftISR,  RISING);\n  attachInterrupt(digitalPinToInterrupt(ENC_RIGHT_A), encRightISR, RISING);':''}
+  Serial.println("${rname} ready.");
+}
+
+void loop() {
+  // Read serial commands: "L<speed>,R<speed>\\n" (speed -255..255)
+  if (Serial.available()) {
+    String cmd = Serial.readStringUntil('\\n');
+    if (cmd.startsWith("L")) {
+      int comma = cmd.indexOf(',');
+      int L = cmd.substring(1, comma).toInt();
+      int R = cmd.substring(comma + 2).toInt();
+      setMotors(L, R);
+    }
+  }
+  // Odometry update (call every 50ms from timer or here)
+  updateOdometry();
+  delay(50);
+}
+
+// ── MOTOR CONTROL ────────────────────────────────────
+void setMotors(int left, int right) {
+  // Left
+  if (left >= 0) { digitalWrite(LEFT_MOTOR_IN1, HIGH); digitalWrite(LEFT_MOTOR_IN2, LOW); }
+  else           { digitalWrite(LEFT_MOTOR_IN1, LOW);  digitalWrite(LEFT_MOTOR_IN2, HIGH); }
+  analogWrite(LEFT_MOTOR_ENA, constrain(abs(left), 0, 255));
+  // Right
+  if (right >= 0) { digitalWrite(RIGHT_MOTOR_IN1, HIGH); digitalWrite(RIGHT_MOTOR_IN2, LOW); }
+  else            { digitalWrite(RIGHT_MOTOR_IN1, LOW);  digitalWrite(RIGHT_MOTOR_IN2, HIGH); }
+  analogWrite(RIGHT_MOTOR_ENB, constrain(abs(right), 0, 255));
+}
+
+// ── ODOMETRY ─────────────────────────────────────────
+void updateOdometry() {
+  float dL = (leftTicks  / (float)TICKS_PER_REV) * 2 * PI * WHEEL_RADIUS;
+  float dR = (rightTicks / (float)TICKS_PER_REV) * 2 * PI * WHEEL_RADIUS;
+  leftTicks = 0; rightTicks = 0;
+  float dC = (dL + dR) / 2.0;
+  float dH = (dR - dL) / WHEELBASE;
+  heading += dH;
+  posX += dC * cos(heading);
+  posY += dC * sin(heading);
+  Serial.print("POS:"); Serial.print(posX, 3);
+  Serial.print(","); Serial.print(posY, 3);
+  Serial.print(",H:"); Serial.println(heading, 3);
+}
+
+${enc?'// ── ENCODER ISR ─────────────────────────────────────\nvoid encLeftISR()  { leftTicks++;  }\nvoid encRightISR() { rightTicks++; }':''}`;
+  } else if(type==='ros2'){
+    document.getElementById('code-title').textContent='ROS2 Launch File';
+    const sensors=components.filter(c=>c.cat==='sensor');
+    code=`# ${rname} — ROS2 Launch File
+# Generated by VROS Robot Builder
+# Drive: ${drive}
+
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from ament_index_python.packages import get_package_share_directory
+import os
+
+def generate_launch_description():
+    return LaunchDescription([
+        # ── Robot State Publisher ──────────────────────
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            parameters=[{'robot_description': '${rname.toLowerCase()}.urdf'}]
+        ),
+
+        # ── Differential Drive Controller ──────────────
+        Node(
+            package='diff_drive_controller',
+            executable='diff_drive_controller',
+            name='diff_drive',
+            parameters=[{
+                'left_wheel_names':  ['left_wheel_joint'],
+                'right_wheel_names': ['right_wheel_joint'],
+                'wheel_separation':  ${wb},
+                'wheel_radius':      ${wr},
+                'use_stamped_vel':   False,
+            }]
+        ),
+
+${sensors.map(s=>{
+  const type2=s.type;
+  if(type2==='lidar2d')return`        # ── 2D LiDAR ────────────────────────────────
+        Node(
+            package='rplidar_ros',
+            executable='rplidar_composition',
+            name='rplidar_node',
+            parameters=[{
+                'serial_port': '/dev/ttyUSB0',
+                'serial_baudrate': 115200,
+                'frame_id': 'laser',
+                'angle_compensate': True,
+            }]
+        ),`;
+  if(type2==='camera')return`        # ── Camera ──────────────────────────────────
+        Node(
+            package='v4l2_camera',
+            executable='v4l2_camera_node',
+            name='camera_node',
+            parameters=[{'image_size': [640, 480], 'camera_frame_id': 'camera_link'}]
+        ),`;
+  if(type2==='imu')return`        # ── IMU ─────────────────────────────────────
+        Node(
+            package='imu_tools',
+            executable='imu_filter_madgwick_node',
+            name='imu_filter',
+            parameters=[{'use_mag': False, 'world_frame': 'enu'}]
+        ),`;
+  return`        # ── ${s.name} ─────────────────────────────
+        # (configure appropriate package for ${s.name})`;
+}).join('\n\n')}
+
+        # ── Navigation2 ───────────────────────────────
+        Node(
+            package='nav2_bringup',
+            executable='bringup_launch',
+            name='nav2',
+        ),
+
+        # ── SLAM Toolbox ──────────────────────────────
+        Node(
+            package='slam_toolbox',
+            executable='async_slam_toolbox_node',
+            name='slam_toolbox',
+            parameters=[{'use_sim_time': False}]
+        ),
+    ])`;
+  } else if(type==='bom'){
+    document.getElementById('code-title').textContent='Bill of Materials';
+    const bomPrices={diff_drive:25,ackermann:35,omni:40,mecanum:50,arm_base:30,quadruped:80,
+      lidar2d:80,lidar3d:400,camera:15,depthcam:120,imu:12,gps:25,encoder:8,ultrasonic:5,ir:2,
+      dc_motor:8,servo:12,stepper:15,arduino:35,rpi:45,jetson:99,battery:30,motor_driver:15};
+    let total=0;
+    code=`# ${rname} — Bill of Materials\n# Generated by VROS Robot Builder\n\n`;
+    code+=`${'COMPONENT'.padEnd(20)} ${'TYPE'.padEnd(16)} ${'QTY'.padEnd(5)} ${'UNIT USD'.padEnd(10)} TOTAL\n`;
+    code+='-'.repeat(65)+'\n';
+    const grouped={};components.forEach(c=>{grouped[c.type]=(grouped[c.type]||{count:0,label:c.label,cat:c.cat});grouped[c.type].count++;});
+    Object.entries(grouped).forEach(([type3,{count,label,cat}])=>{
+      const price=bomPrices[type3]||10;const sub=price*count;total+=sub;
+      code+=`${label.padEnd(20)} ${cat.padEnd(16)} ${String(count).padEnd(5)} $${String(price).padEnd(9)} $${sub}\n`;
+    });
+    code+='-'.repeat(65)+'\n';
+    code+=`${'TOTAL'.padEnd(20)} ${' '.repeat(21)} $${total}\n\n`;
+    code+=`# Notes:\n# - Prices are approximate USD retail.\n# - Chassis parts (motors, frame) not itemised separately.\n# - Additional: wiring, connectors, mounting hardware ~$15–30.\n`;
+  }
+  lastCode=code;lastCodeType=type;
+  document.getElementById('code-content').textContent=code;
+  document.getElementById('codepanel').classList.add('open');
+}
+
+function closeCode(){document.getElementById('codepanel').classList.remove('open');}
+function copyCode(){navigator.clipboard.writeText(lastCode).then(()=>alert('Code copied to clipboard!'));}
+function downloadCode(){
+  const exts={urdf:'urdf',arduino:'ino',ros2:'launch.py',bom:'txt'};
+  const ext=exts[lastCodeType]||'txt';
+  const a=document.createElement('a');a.href='data:text/plain,'+encodeURIComponent(lastCode);
+  a.download=`${document.getElementById('r-name').value||'robot'}.${ext}`;a.click();
+}
+
+// ── MAIN LOOP ─────────────────────────────────────────
+function loop(){requestAnimationFrame(loop);draw();}
+resize();loop();
+</script>
+</body></html>
