@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VROS — Visual Robotics Operating System</title>
+<title>RIDE — Robotics Intelligence Development Environment</title>
 <style>
 /* ── RESET & BASE ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -462,7 +462,7 @@ img { display: block; max-width: 100%; }
 
 <!-- ── TOPNAV ── -->
 <nav id="topnav">
-  <div class="nav-logo">VROS <span>Visual Robotics OS</span></div>
+  <div class="nav-logo">RIDE <span>Robotics Intelligence Development Environment</span></div>
   <div class="nav-links">
     <button class="nav-link" onclick="scrollToModules()">Modules</button>
     
@@ -478,12 +478,12 @@ img { display: block; max-width: 100%; }
 <!-- ── HERO ── -->
 <section id="hero">
   <div class="hero-text">
-    <div class="hero-badge">Browser-native · Zero install · Fully offline</div>
-    <h1 class="hero-title">Robotics engineering,<br>right in your <span class="accent">browser.</span></h1>
-    <p class="hero-sub">VROS is a full robotics simulation studio. Path planning, control systems, kinematics, SLAM, swarm AI — all running live in a single HTML file.</p>
+    
+    <h1 class="hero-title">Robot Development<br>has never been <span class="accent">more fun.</span></h1>
+    <p class="hero-sub">RIDE is a full robotics simulation studio built by RAIN for Path planning, control systems, kinematics, SLAM, swarm AI — all running live in a single HTML file.</p>
     <div class="hero-actions">
       <button class="btn-primary" onclick="scrollToModules()">▶ Launch a Module</button>
-      <a href="VROS_PathPlanning.html" class="btn-secondary" target="_blank">Try Path Planning →</a>
+      <a href="RIDE_PathPlanning.html" class="btn-secondary" target="_blank">Try Path Planning →</a>
     </div>
     <div class="hero-stats">
       <div><div class="hero-stat-n">12</div><div class="hero-stat-l">Modules</div></div>
@@ -535,7 +535,7 @@ img { display: block; max-width: 100%; }
 
   <div id="module-grid">
 
-    <a class="mod-card" href="VROS_PathPlanning.html" target="_blank" data-cat="planning" data-search="path planning astar dijkstra rrt theta jps dstar potential field lidar floor plan cspace">
+    <a class="mod-card" href="RIDE_PathPlanning.html" target="_blank" data-cat="planning" data-search="path planning astar dijkstra rrt theta jps dstar potential field lidar floor plan cspace">
       <div class="mod-card-thumb">
         <canvas id="c-path"></canvas>
         <span class="mod-card-cat">Planning</span>
@@ -549,7 +549,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v3.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_SLAM.html" target="_blank" data-cat="planning" data-search="slam particle filter ekf occupancy grid mapping localisation loop closure">
+    <a class="mod-card" href="RIDE_SLAM.html" target="_blank" data-cat="planning" data-search="slam particle filter ekf occupancy grid mapping localisation loop closure">
       <div class="mod-card-thumb">
         <canvas id="c-slam"></canvas>
         <span class="mod-card-cat">Planning</span>
@@ -563,7 +563,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_Traffic.html" target="_blank" data-cat="planning ai" data-search="autonomous vehicle traffic city road smart lights pedestrians IDM car following">
+    <a class="mod-card" href="RIDE_Traffic.html" target="_blank" data-cat="planning ai" data-search="autonomous vehicle traffic city road smart lights pedestrians IDM car following">
       <div class="mod-card-thumb">
         <canvas id="c-traffic"></canvas>
         <span class="mod-card-cat">Autonomous Vehicles</span>
@@ -577,7 +577,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_PID.html" target="_blank" data-cat="control" data-search="pid controller tuning kp ki kd overshoot settle rise time lqr mpc bode step response">
+    <a class="mod-card" href="RIDE_PID.html" target="_blank" data-cat="control" data-search="pid controller tuning kp ki kd overshoot settle rise time lqr mpc bode step response">
       <div class="mod-card-thumb">
         <canvas id="c-pid"></canvas>
         <span class="mod-card-cat">Control</span>
@@ -591,7 +591,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v2.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_ControlSystems.html" target="_blank" data-cat="control" data-search="bode nyquist root locus step response pole zero nichols transfer function stability gain margin phase margin">
+    <a class="mod-card" href="RIDE_ControlSystems.html" target="_blank" data-cat="control" data-search="bode nyquist root locus step response pole zero nichols transfer function stability gain margin phase margin">
       <div class="mod-card-thumb">
         <canvas id="c-ctrl"></canvas>
         <span class="mod-card-cat">Control</span>
@@ -605,7 +605,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v2.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_Process.html" target="_blank" data-cat="control" data-search="process control water tank heat exchanger reactor conveyor boiler industrial pid dead time">
+    <a class="mod-card" href="RIDE_Process.html" target="_blank" data-cat="control" data-search="process control water tank heat exchanger reactor conveyor boiler industrial pid dead time">
       <div class="mod-card-thumb">
         <canvas id="c-proc"></canvas>
         <span class="mod-card-cat">Control</span>
@@ -619,7 +619,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_Kinematics.html" target="_blank" data-cat="kinematics" data-search="kinematics forward inverse DH jacobian manipulability singularity workspace 2R 3R SCARA">
+    <a class="mod-card" href="RIDE_Kinematics.html" target="_blank" data-cat="kinematics" data-search="kinematics forward inverse DH jacobian manipulability singularity workspace 2R 3R SCARA">
       <div class="mod-card-thumb">
         <canvas id="c-kin"></canvas>
         <span class="mod-card-cat">Kinematics</span>
@@ -633,7 +633,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v2.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_Swarm.html" target="_blank" data-cat="ai" data-search="swarm robotics flocking reynolds formation leader follower multi agent orca separation alignment cohesion">
+    <a class="mod-card" href="RIDE_Swarm.html" target="_blank" data-cat="ai" data-search="swarm robotics flocking reynolds formation leader follower multi agent orca separation alignment cohesion">
       <div class="mod-card-thumb">
         <canvas id="c-swarm"></canvas>
         <span class="mod-card-cat">AI & Swarm</span>
@@ -647,7 +647,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_RobotBuilder.html" target="_blank" data-cat="build" data-search="robot builder chassis sensor urdf arduino ros2 differential ackermann mecanum drag drop export">
+    <a class="mod-card" href="RIDE_RobotBuilder.html" target="_blank" data-cat="build" data-search="robot builder chassis sensor urdf arduino ros2 differential ackermann mecanum drag drop export">
       <div class="mod-card-thumb">
         <canvas id="c-rb"></canvas>
         <span class="mod-card-cat">Build</span>
@@ -661,7 +661,7 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
     </a>
 
-    <a class="mod-card" href="VROS_Math.html" target="_blank" data-cat="build" data-search="symbolic math DH jacobian lagrangian dynamics transfer function kalman filter eigenvalues state space explain">
+    <a class="mod-card" href="RIDE_Math.html" target="_blank" data-cat="build" data-search="symbolic math DH jacobian lagrangian dynamics transfer function kalman filter eigenvalues state space explain">
       <div class="mod-card-thumb">
         <canvas id="c-math"></canvas>
         <span class="mod-card-cat">Mathematics</span>
@@ -677,7 +677,7 @@ img { display: block; max-width: 100%; }
 
   </div>
 
-    <a class="mod-card" href="VROS_TerrainPlanning.html" target="_blank" data-cat="planning" data-search="terrain path planning weighted astar road grass water mud sand traffic light cost">
+    <a class="mod-card" href="RIDE_TerrainPlanning.html" target="_blank" data-cat="planning" data-search="terrain path planning weighted astar road grass water mud sand traffic light cost">
       <div class="mod-card-thumb">
         <canvas id="c-terrain"></canvas>
         <span class="mod-card-cat">Terrain Planning</span>
@@ -696,14 +696,14 @@ img { display: block; max-width: 100%; }
 <!-- ── FOOTER ── -->
 <footer id="footer">
   <div>
-    <div class="footer-logo">VROS <span>Visual Robotics Operating System</span></div>
+    <div class="footer-logo">RIDE <span>Robotics Intelligence Development Environment</span></div>
     <div style="font-size:12px;margin-top:8px;color:var(--gray-600)">Built by Robotics and Artificial Intelligence Nigeria (RAIN) · rainigeria.com</div>
   </div>
   <div class="footer-links">
-    <a href="VROS_PathPlanning.html" target="_blank">Path Planning</a>
-    <a href="VROS_Kinematics.html" target="_blank">Kinematics</a>
-    <a href="VROS_Math.html" target="_blank">Math Engine</a>
-    <a href="VROS_RobotBuilder.html" target="_blank">Robot Builder</a>
+    <a href="RIDE_PathPlanning.html" target="_blank">Path Planning</a>
+    <a href="RIDE_Kinematics.html" target="_blank">Kinematics</a>
+    <a href="RIDE_Math.html" target="_blank">Math Engine</a>
+    <a href="RIDE_RobotBuilder.html" target="_blank">Robot Builder</a>
   </div>
 </footer>
 
