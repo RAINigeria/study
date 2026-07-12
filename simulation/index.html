@@ -423,30 +423,7 @@ img { display: block; max-width: 100%; }
 .mod-card:hover .open-link::after { transform: translateX(3px); }
 .mod-card-meta { font-size: 11px; color: var(--gray-400); }
 
-/* ── HOW IT WORKS ── */
-#how { background: var(--gray-50); border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); }
-.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 40px; }
-.step {
-  background: white;
-  border: 1px solid var(--gray-200);
-  border-radius: 12px;
-  padding: 28px;
-}
-.step-num {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--blue-lt);
-  color: var(--blue);
-  font-size: 15px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-}
-.step h3 { font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; }
-.step p { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+
 
 /* ── FOOTER ── */
 #footer {
@@ -488,7 +465,7 @@ img { display: block; max-width: 100%; }
   <div class="nav-logo">VROS <span>Visual Robotics OS</span></div>
   <div class="nav-links">
     <button class="nav-link" onclick="scrollToModules()">Modules</button>
-    <button class="nav-link" onclick="scrollToHow()">How it works</button>
+    
     <a href="https://rainigeria.com" class="nav-link" target="_blank">RAIN Nigeria</a>
   </div>
   <div class="search-box" style="margin-left:auto">
@@ -715,32 +692,6 @@ img { display: block; max-width: 100%; }
     </a>
 
   </div>
-
-<!-- ── HOW IT WORKS ── -->
-<div id="how">
-  <div class="section">
-    <div class="section-label">How it works</div>
-    <h2 class="section-title">Open a file. Start learning.</h2>
-    <p class="section-sub">VROS needs no server, no install, no internet. Download the folder and open any file.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Download the folder</h3>
-        <p>All files are standalone HTML. Save them all into one folder on your computer or a USB drive.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Open index.html</h3>
-        <p>Open this file in any modern browser. No installation, no Python server, no dependencies needed.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Pick a module and explore</h3>
-        <p>Click any module card to open it. Adjust parameters in real time, export code, share with students.</p>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ── FOOTER ── -->
 <footer id="footer">
