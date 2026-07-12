@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VROS — Traffic & AV Simulator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
+#app{display:flex;flex-direction:column;height:100vh}
+#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
+.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
+.back-btn:hover{color:#e0e0e8;border-color:#1baf7a}
+.mod-title{font-size:13px;font-weight:700;color:#1baf7a;letter-spacing:1px}
+#main{display:flex;flex:1;overflow:hidden}
+#sb{width:200px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28}
+.ss{border-bottom:1px solid #141420;padding:8px 10px}
+.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
+.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
+.row label{flex:1;color:#888}
+.row input[type=range]{flex:1;height:3px;accent-color:#1baf7a;cursor:pointer}
+.val{min-width:34px;text-align:right;font-size:9px;color:#1baf7a;font-family:monospace}
+.btn{padding:3px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s}
+.btn:hover{background:#222;color:#fff}.btn.on{background:#1baf7a;color:#000;border-color:#1baf7a}
+select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.sc{background:#181824;border-radius:4px;padding:3px 6px;border:1px solid #181830}
+.sk{font-size:8px;color:#444}.sv{font-size:11px;font-weight:700;color:#e0e0e8;font-family:monospace}
+#ca{flex:1;overflow:hidden}
+#sim{display:block;width:100%;height:100%}
+#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:32px;align-items:center}
+.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
+.sb-item span{color:#1baf7a;font-family:monospace;font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="topbar">
+  <a href="VROS_Home.html" class="back-btn">← Home</a>
+  <span class="mod-title">🚗 Traffic & AV Simulator</span>
+</div>
+<div id="main">
+<div id="sb">
+  <div class="ss"><div class="st">Environment</div>
+    <select id="env-sel" onchange="traf.env=this.value;init()">
+      <option value="city">City Grid</option>
+      <option value="highway">Highway (4 lanes)</option>
+      <option value="roundabout">Roundabout</option>
+      <option value="intersection">Smart Intersection</option>
+    </select>
+  </div>
+  <div class="ss"><div class="st">Traffic Volume</div>
+    <div class="row"><label>Cars</label><input type="range" min="0" max="50" value="20" oninput="traf.nCars=+this.value;this.nextElementSibling.textContent=this.value;spawnCars()"><span class="val">20</span></div>
+    <div class="row"><label>Pedestrians</label><input type="range" min="0" max="30" value="10" oninput="traf.nPeds=+this.value;this.nextElementSibling.textContent=this.value;spawnPeds()"><span class="val">10</span></div>
+    <div class="row"><label>AV Robot</label><input type="checkbox" checked onchange="traf.avOn=this.checked"></div>
+  </div>
+  <div class="ss"><div class="st">Driver Behaviour</div>
+    <div class="row"><label>Aggressiveness</label><input type="range" min="0.5" max="3" step="0.1" value="1" oninput="traf.aggr=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.0</span></div>
+    <div class="row"><label>Random stops</label><input type="checkbox" onchange="traf.stops=this.checked"></div>
+    <div class="row"><label>Jaywalking</label><input type="checkbox" onchange="traf.jwalk=this.checked"></div>
+    <div class="row"><label>Lane changes</label><input type="checkbox" checked onchange="traf.lanes=this.checked"></div>
+  </div>
+  <div class="ss"><div class="st">Traffic Lights</div>
+    <div class="row"><label>Smart lights</label><input type="checkbox" checked onchange="traf.smartL=this.checked"></div>
+    <div class="row"><label>Cycle time (s)</label><input type="range" min="20" max="120" value="60" oninput="traf.cycleT=+this.value;this.nextElementSibling.textContent=this.value+'s'"><span class="val">60s</span></div>
+    <div class="row"><label>Emergency preempt</label><input type="checkbox" onchange="traf.preempt=this.checked"></div>
+  </div>
+  <div class="ss"><div class="st">Environment</div>
+    <div class="row"><label>Rain mode</label><input type="checkbox" onchange="traf.rain=this.checked"></div>
+    <div class="row"><label>Night mode</label><input type="checkbox" onchange="traf.night=this.checked"></div>
+    <div class="row"><label>Terrain costs</label><input type="checkbox" checked onchange="traf.costs=this.checked"></div>
+    <div class="row"><label>Show speeds</label><input type="checkbox" onchange="traf.showSpd=this.checked"></div>
+  </div>
+  <div class="ss"><div class="st">AV Settings</div>
+    <div class="row"><label>AV speed</label><input type="range" min="0.5" max="4" step="0.1" value="1.8" oninput="traf.avSpd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.8</span></div>
+    <div class="row"><label>AV LiDAR range</label><input type="range" min="40" max="180" value="90" oninput="traf.avRange=+this.value;this.nextElementSibling.textContent=this.value"><span class="val">90</span></div>
+    <div class="row"><label>Show AV path</label><input type="checkbox" checked onchange="traf.showAVPath=this.checked"></div>
+    <div class="row"><label>Show LiDAR</label><input type="checkbox" checked onchange="traf.showLidar=this.checked"></div>
+  </div>
+  <div class="ss"><div class="st">Flow Metrics</div>
+    <div class="sg">
+      <div class="sc"><div class="sk">Cars</div><div class="sv" id="m-cars">0</div></div>
+      <div class="sc"><div class="sk">Peds</div><div class="sv" id="m-peds">0</div></div>
+      <div class="sc"><div class="sk">Lights</div><div class="sv" id="m-lights">0</div></div>
+      <div class="sc"><div class="sk">AV stops</div><div class="sv" id="m-avst">0</div></div>
+    </div>
+  </div>
+</div>
+<div id="ca"><canvas id="sim"></canvas></div>
+</div>
+<div id="statusbar">
+  <div class="sb-item"><span class="sb-label">ENV</span>&nbsp;<span id="sb-env">City</span></div>
+  <div class="sb-item"><span class="sb-label">AV POS</span>&nbsp;<span id="sb-avpos">(—,—)</span></div>
+  <div class="sb-item"><span class="sb-label">TRAFFIC</span>&nbsp;<span id="sb-flow">Normal</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">Right-click → add AV waypoint | VROS Traffic & AV Simulator v2.0</span></div>
+</div>
+</div>
+<script>
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,lastT=0,fps=0,fcnt=0,ft=0,avStops=0,frame=0;
+const traf={env:'city',nCars:20,nPeds:10,avOn:true,aggr:1,stops:false,jwalk:false,lanes:true,smartL:true,cycleT:60,preempt:false,rain:false,night:false,costs:true,showSpd:false,avSpd:1.8,avRange:90,showAVPath:true,showLidar:true,cars:[],peds:[],lights:[],roads:[],av:{x:0,y:0,angle:0,path:[],pathIdx:0,stopped:false}};
+
+function resize(){const ca=document.getElementById('ca');sim.width=ca.clientWidth;sim.height=ca.clientHeight;W=sim.width;H=sim.height;init();}
+window.addEventListener('resize',resize);
+
+function init(){
+  traf.roads=[];traf.lights=[];traf.cars=[];traf.peds=[];avStops=0;
+  document.getElementById('sb-env').textContent=traf.env.charAt(0).toUpperCase()+traf.env.slice(1);
+  if(traf.env==='city'){
+    for(let i=1;i<=3;i++){traf.roads.push({type:'h',y:H*i/4});traf.roads.push({type:'v',x:W*i/4});}
+    for(let i=1;i<=3;i++)for(let j=1;j<=3;j++)traf.lights.push({x:W*j/4,y:H*i/4,state:Math.random()>.5?'green':'red',t:Math.random()*traf.cycleT*60,phase:i*3+j});
+  } else if(traf.env==='highway'){
+    for(let i=1;i<=4;i++)traf.roads.push({type:'h',y:H*i/5,w:38});
+    traf.lights.push({x:W*.5,y:H*.4,state:'green',t:0,phase:0});
+  } else if(traf.env==='roundabout'){
+    traf.roads.push({type:'circle',cx:W/2,cy:H/2,r:Math.min(W,H)*.2});
+    [0,1,2,3].forEach(a=>traf.roads.push({type:'spoke',cx:W/2,cy:H/2,ang:a*Math.PI/2,len:Math.min(W,H)*.35}));
+  } else {
+    traf.roads.push({type:'h',y:H/2});traf.roads.push({type:'v',x:W/2});
+    traf.lights.push({x:W/2-20,y:H/2-20,state:'green',t:0,phase:0});
+    traf.lights.push({x:W/2+20,y:H/2-20,state:'red',t:traf.cycleT*30,phase:0});
+    traf.lights.push({x:W/2-20,y:H/2+20,state:'red',t:traf.cycleT*30,phase:0});
+    traf.lights.push({x:W/2+20,y:H/2+20,state:'green',t:0,phase:0});
+  }
+  spawnCars();spawnPeds();
+  // AV
+  traf.av={x:W*.1,y:H/4,angle:0,path:[{x:W*.9,y:H/4},{x:W*.9,y:3*H/4},{x:W*.1,y:3*H/4},{x:W*.1,y:H/4}],pathIdx:0,stopped:false,vx:0,vy:0};
+  document.getElementById('m-lights').textContent=traf.lights.length;
+}
+
+function spawnCars(){
+  traf.cars=[];
+  for(let i=0;i<traf.nCars;i++){
+    const road=traf.roads[Math.floor(Math.random()*traf.roads.length)];if(!road)continue;
+    const spd=(0.5+Math.random()*1.5)*traf.aggr;const dir=Math.random()>.5?1:-1;
+    const laneOff=(Math.random()-.5)*16;
+    if(road.type==='h')traf.cars.push({x:Math.random()*W,y:road.y+laneOff,vx:spd*dir,vy:0,w:24,h:12,color:`hsl(${Math.random()*360},60%,55%)`,stopped:false,stopT:0,roadY:road.y,roadX:null});
+    else if(road.type==='v')traf.cars.push({x:road.x+laneOff,y:Math.random()*H,vx:0,vy:spd*dir,w:12,h:24,color:`hsl(${Math.random()*360},60%,55%)`,stopped:false,stopT:0,roadY:null,roadX:road.x});
+  }
+  document.getElementById('m-cars').textContent=traf.cars.length;
+}
+
+function spawnPeds(){
+  traf.peds=[];
+  for(let i=0;i<traf.nPeds;i++){
+    traf.peds.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,phase:Math.random()*Math.PI*2});
+  }
+  document.getElementById('m-peds').textContent=traf.peds.length;
+}
+
+function stepTraffic(){
+  frame++;
+  // Update lights
+  traf.lights.forEach(l=>{l.t++;if(l.t>=traf.cycleT*60/2){l.t=0;l.state=l.state==='green'?'red':'green';}});
+  // Move cars
+  traf.cars.forEach(c=>{
+    if(traf.stops&&!c.stopped&&Math.random()<.0005){c.stopped=true;c.stopT=120+Math.floor(Math.random()*180);}
+    if(c.stopped){c.stopT--;if(c.stopT<=0)c.stopped=false;return;}
+    // Red light stop
+    let atRed=false;if(traf.smartL){traf.lights.forEach(l=>{if(l.state==='red'){const d=Math.sqrt((c.x-l.x)**2+(c.y-l.y)**2);if(d<55)atRed=true;}});}
+    // AV avoidance
+    let avClose=false;if(traf.avOn){const d=Math.sqrt((c.x-traf.av.x)**2+(c.y-traf.av.y)**2);if(d<50)avClose=true;}
+    if(!atRed&&!avClose){c.x+=c.vx;c.y+=c.vy;}
+    // Lane change
+    if(traf.lanes&&Math.random()<.001){c.vx+=(Math.random()-.5)*.3;c.vy+=(Math.random()-.5)*.3;const s=Math.sqrt(c.vx**2+c.vy**2);if(s>0){c.vx/=s*0.5;c.vy/=s*0.5;}}
+    if(c.x<-40)c.x=W+40;if(c.x>W+40)c.x=-40;if(c.y<-40)c.y=H+40;if(c.y>H+40)c.y=-40;
+  });
+  // Pedestrians
+  traf.peds.forEach(p=>{
+    if(traf.jwalk&&Math.random()<.003){p.vx=(Math.random()-.5)*.8;p.vy=(Math.random()-.5)*.8;}
+    p.x+=p.vx;p.y+=p.vy;p.phase+=.05;
+    if(p.x<5)p.vx=.3;if(p.x>W-5)p.vx=-.3;if(p.y<5)p.vy=.3;if(p.y>H-5)p.vy=-.3;
+  });
+  // AV
+  if(traf.avOn&&traf.av.path.length){
+    const av=traf.av;const tgt=av.path[av.pathIdx];
+    const dx=tgt.x-av.x,dy=tgt.y-av.y,d=Math.sqrt(dx**2+dy**2);
+    if(d<10){av.pathIdx=(av.pathIdx+1)%av.path.length;return;}
+    let clear=true;
+    traf.cars.forEach(c=>{if(Math.sqrt((av.x-c.x)**2+(av.y-c.y)**2)<55)clear=false;});
+    traf.lights.forEach(l=>{if(l.state==='red'&&Math.sqrt((av.x-l.x)**2+(av.y-l.y)**2)<65)clear=false;});
+    traf.peds.forEach(p=>{if(Math.sqrt((av.x-p.x)**2+(av.y-p.y)**2)<40)clear=false;});
+    if(!clear){av.stopped=true;avStops++;document.getElementById('m-avst').textContent=avStops;}
+    else{av.stopped=false;av.x+=dx/d*traf.avSpd;av.y+=dy/d*traf.avSpd;}
+    av.angle=Math.atan2(dy,dx);
+    document.getElementById('sb-avpos').textContent=`(${av.x.toFixed(0)},${av.y.toFixed(0)})`;
+    document.getElementById('sb-flow').textContent=av.stopped?'AV stopped':'Flowing';
+  }
+}
+
+function draw(){
+  ctx.fillStyle=traf.night?'#04040a':'#0f0f14';ctx.fillRect(0,0,W,H);
+  // Rain
+  if(traf.rain){for(let i=0;i<60;i++){ctx.strokeStyle='rgba(100,150,255,0.1)';ctx.lineWidth=1;const rx=Math.random()*W,ry=Math.random()*H;ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx+3,ry+10);ctx.stroke();}}
+  // Terrain cost overlay
+  if(traf.costs){ctx.fillStyle='rgba(50,120,50,0.05)';ctx.fillRect(0,0,W,H);}
+  // Roads
+  traf.roads.forEach(r=>{
+    const rw=r.w||32;ctx.strokeStyle=traf.night?'#181828':'#1e1e28';ctx.lineWidth=rw;
+    if(r.type==='h'){ctx.beginPath();ctx.moveTo(0,r.y);ctx.lineTo(W,r.y);ctx.stroke();ctx.strokeStyle=traf.night?'#1e1e38':'#2a2a38';ctx.lineWidth=1;ctx.setLineDash([14,14]);ctx.beginPath();ctx.moveTo(0,r.y);ctx.lineTo(W,r.y);ctx.stroke();ctx.setLineDash([]);}
+    else if(r.type==='v'){ctx.beginPath();ctx.moveTo(r.x,0);ctx.lineTo(r.x,H);ctx.stroke();ctx.strokeStyle=traf.night?'#1e1e38':'#2a2a38';ctx.lineWidth=1;ctx.setLineDash([14,14]);ctx.beginPath();ctx.moveTo(r.x,0);ctx.lineTo(r.x,H);ctx.stroke();ctx.setLineDash([]);}
+    else if(r.type==='circle'){ctx.strokeStyle=traf.night?'#181828':'#1e1e28';ctx.lineWidth=38;ctx.beginPath();ctx.arc(r.cx,r.cy,r.r,0,Math.PI*2);ctx.stroke();}
+    else if(r.type==='spoke'){ctx.strokeStyle=traf.night?'#181828':'#1e1e28';ctx.lineWidth=32;ctx.beginPath();ctx.moveTo(r.cx,r.cy);ctx.lineTo(r.cx+Math.cos(r.ang)*r.len,r.cy+Math.sin(r.ang)*r.len);ctx.stroke();}
+  });
+  // Lights
+  traf.lights.forEach(l=>{
+    const col=l.state==='green'?'#1baf7a':'#e34948';ctx.fillStyle=col;ctx.beginPath();ctx.arc(l.x,l.y,8,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1.5;ctx.stroke();
+    if(traf.night){ctx.fillStyle=l.state==='green'?'rgba(27,175,122,0.08)':'rgba(227,73,72,0.08)';ctx.beginPath();ctx.arc(l.x,l.y,60,0,Math.PI*2);ctx.fill();}
+  });
+  // Cars
+  traf.cars.forEach(c=>{
+    const ang=Math.atan2(c.vy,c.vx);ctx.save();ctx.translate(c.x,c.y);ctx.rotate(ang);
+    ctx.fillStyle=c.stopped?'#555':c.color;ctx.fillRect(-c.w/2,-c.h/2,c.w,c.h);ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.strokeRect(-c.w/2,-c.h/2,c.w,c.h);
+    // Headlights
+    if(traf.night){ctx.fillStyle='rgba(255,240,180,0.7)';ctx.fillRect(c.w/2-2,-c.h/2+1,3,3);ctx.fillRect(c.w/2-2,c.h/2-4,3,3);}
+    if(traf.showSpd){ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='7px monospace';ctx.fillText(Math.sqrt(c.vx**2+c.vy**2).toFixed(1),0,-c.h/2-4);}
+    ctx.restore();
+  });
+  // Pedestrians
+  traf.peds.forEach(p=>{
+    ctx.fillStyle='#c84fc8';ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(200,79,200,0.35)';ctx.lineWidth=1;ctx.stroke();
+  });
+  // AV
+  if(traf.avOn){
+    const av=traf.av;
+    if(traf.showAVPath){ctx.strokeStyle='rgba(57,135,229,0.25)';ctx.lineWidth=1;ctx.setLineDash([4,6]);ctx.beginPath();av.path.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.closePath();ctx.stroke();ctx.setLineDash([]);}
+    if(traf.showLidar){ctx.strokeStyle='rgba(57,135,229,0.08)';ctx.lineWidth=.8;for(let b=0;b<20;b++){const a=av.angle+b/20*Math.PI*2;ctx.beginPath();ctx.moveTo(av.x,av.y);ctx.lineTo(av.x+Math.cos(a)*traf.avRange,av.y+Math.sin(a)*traf.avRange);ctx.stroke();}}
+    ctx.save();ctx.translate(av.x,av.y);ctx.rotate(av.angle);
+    ctx.fillStyle=av.stopped?'#e34948':'#3987e5';ctx.strokeStyle='rgba(57,135,229,0.8)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-13,-8);ctx.lineTo(-13,8);ctx.closePath();ctx.fill();ctx.stroke();
+    if(traf.night){ctx.fillStyle='rgba(57,135,229,0.15)';ctx.beginPath();ctx.moveTo(20,0);ctx.arc(20,0,traf.avRange*.4,-.3,.3);ctx.closePath();ctx.fill();}
+    ctx.restore();
+    ctx.fillStyle=av.stopped?'#e34948':'rgba(57,135,229,0.8)';ctx.font='8px monospace';ctx.fillText('AV'+(av.stopped?' STOPPED':''),av.x+16,av.y-10);
+  }
+  // HUD
+  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.font='9px monospace';ctx.fillText(`Cars:${traf.cars.length}  Peds:${traf.peds.length}  Lights:${traf.lights.length}  AV stops:${avStops}`,10,H-8);
+}
+
+sim.addEventListener('click',e=>{const r=sim.getBoundingClientRect();traf.av.path.push({x:e.clientX-r.left,y:e.clientY-r.top});});
+sim.addEventListener('contextmenu',e=>{e.preventDefault();const r=sim.getBoundingClientRect();traf.av.path.push({x:e.clientX-r.left,y:e.clientY-r.top});});
+
+function loop(ts){requestAnimationFrame(loop);const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;stepTraffic();draw();}
+resize();requestAnimationFrame(loop);
+</script>
+</body></html>
