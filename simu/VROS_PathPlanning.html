@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VROS — Path Planning Laboratory</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
+#app{display:flex;flex-direction:column;height:100vh}
+
+/* TOP BAR */
+#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px;flex-wrap:wrap}
+.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:4px}
+.back-btn:hover{color:#e0e0e8;border-color:#3987e5}
+.mod-title{font-size:13px;font-weight:700;color:#3987e5;letter-spacing:1px}
+.mod-sub{font-size:10px;color:#444;margin-left:4px}
+.tbadge{margin-left:auto;font-size:9px;padding:2px 8px;border-radius:8px;background:#0a1e10;color:#1baf7a;border:1px solid #1baf7a33;font-family:monospace}
+
+/* LAYOUT */
+#main{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+#sb{width:200px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28;border-radius:2px}
+.ss{border-bottom:1px solid #141420;padding:8px 10px}
+.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
+.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
+.row label{flex:1;color:#888}
+.row input[type=range]{flex:1;height:3px;accent-color:#3987e5;cursor:pointer}
+.val{min-width:30px;text-align:right;font-size:9px;color:#3987e5;font-family:monospace}
+.btn{padding:3px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s;text-align:center}
+.btn:hover{background:#222;color:#fff}.btn.on{background:#3987e5;color:#fff;border-color:#3987e5}
+.bg{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:2px}
+.ab{padding:3px 7px;border-radius:4px;border:1px solid #222;background:#181824;color:#666;font-size:9px;cursor:pointer;transition:all .12s}
+.ab.active{background:#142035;color:#3987e5;border-color:#3987e5}
+.ab:hover:not(.active){background:#1e1e2a;color:#ccc}
+select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:3px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.sc{background:#181824;border-radius:4px;padding:3px 6px;border:1px solid #181830}
+.sk{font-size:8px;color:#444}.sv{font-size:11px;font-weight:700;color:#e0e0e8;font-family:monospace}
+.divider{height:1px;background:#141420;margin:4px 0}
+input[type=file]{display:none}
+.upload-btn{display:block;width:100%;padding:5px;border-radius:4px;border:1px dashed #2a2a40;background:#111118;color:#666;font-size:9px;cursor:pointer;text-align:center;transition:all .13s}
+.upload-btn:hover{border-color:#3987e5;color:#3987e5}
+
+/* CANVAS AREA */
+#ca{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+#sim{display:block;width:100%;flex:1;background:#07070d}
+
+/* BOTTOM STATUS */
+#statusbar{display:flex;gap:0;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:36px;align-items:center}
+.sb-item{padding:0 14px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
+.sb-item span{color:#3987e5;font-family:monospace;font-weight:600}
+.sb-label{color:#444;font-size:9px}
+
+/* LEGEND */
+#legend{display:flex;gap:10px;flex-wrap:wrap;font-size:9px;color:#555;padding:4px 12px;border-top:1px solid #141420;flex-shrink:0;background:#0e0e18}
+.li{display:flex;align-items:center;gap:3px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ld-sq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* HELP TOOLTIP */
+#help{font-size:9px;color:#333;padding:2px 12px;text-align:center;flex-shrink:0;background:#07070d;border-top:1px solid #0e0e18}
+
+/* MICROSCOPE OVERLAY */
+#micro{position:absolute;bottom:42px;left:50%;transform:translateX(-50%);background:rgba(14,14,24,0.95);border:1px solid #2a2a40;border-radius:8px;padding:8px 14px;display:none;z-index:50;align-items:center;gap:10px;flex-wrap:wrap}
+#micro.open{display:flex}
+.micro-label{font-size:9px;color:#888}
+#micro-scrub{width:180px;height:3px;accent-color:#3987e5}
+.micro-val{font-size:10px;font-family:monospace;color:#3987e5;min-width:50px}
+
+/* TOOL CURSOR */
+.cursor-wall{cursor:crosshair}
+.cursor-erase{cursor:cell}
+.cursor-goal{cursor:pointer}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <a href="VROS_Home.html" class="back-btn">← Home</a>
+  <span class="mod-title">🗺 Path Planning Laboratory</span>
+  <span class="mod-sub">VROS Module 01</span>
+  <span class="tbadge" id="runbadge">▶ RUNNING</span>
+</div>
+
+<div id="main">
+
+<!-- SIDEBAR -->
+<div id="sb">
+
+  <!-- ALGORITHM -->
+  <div class="ss">
+    <div class="st">Algorithm</div>
+    <div class="bg">
+      <button class="ab active" id="aa-astar" onclick="setAlgo('astar')">A*</button>
+      <button class="ab" id="aa-dijkstra" onclick="setAlgo('dijkstra')">Dijkstra</button>
+      <button class="ab" id="aa-rrt" onclick="setAlgo('rrt')">RRT</button>
+      <button class="ab" id="aa-rrtstar" onclick="setAlgo('rrtstar')">RRT*</button>
+      <button class="ab" id="aa-theta" onclick="setAlgo('theta')">Theta*</button>
+      <button class="ab" id="aa-jps" onclick="setAlgo('jps')">JPS</button>
+      <button class="ab" id="aa-dlite" onclick="setAlgo('dlite')">D* Lite</button>
+      <button class="ab" id="aa-pfield" onclick="setAlgo('pfield')">Pot. Field</button>
+    </div>
+  </div>
+
+  <!-- MOVEMENT -->
+  <div class="ss">
+    <div class="st">Movement Degrees</div>
+    <div class="bg">
+      <button class="ab active" id="mv-4" onclick="setMovement(4)">4-Way</button>
+      <button class="ab" id="mv-8" onclick="setMovement(8)">8-Way (Diagonal)</button>
+    </div>
+    <div style="font-size:9px;color:#444;margin-top:4px;line-height:1.5">4-Way: Up/Down/Left/Right only.<br>8-Way: includes diagonals.</div>
+  </div>
+
+  <!-- ROBOT -->
+  <div class="ss">
+    <div class="st">Robot</div>
+    <div class="row">
+      <label>Shape</label>
+      <select onchange="setRobotShape(this.value)" style="flex:1">
+        <option value="arrow">Arrow</option>
+        <option value="circle">Mobile Robot</option>
+        <option value="car">Car</option>
+        <option value="diff">Diff. Drive</option>
+        <option value="square">UGV</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Size (cells)</label>
+      <input type="range" min="1" max="5" value="1" step="1"
+        oninput="setRobotSize(+this.value);this.nextElementSibling.textContent=this.value">
+      <span class="val">1</span>
+    </div>
+    <div style="font-size:9px;color:#555;line-height:1.5;margin-top:2px">
+      Size inflates obstacles. A wide robot cannot fit through narrow gaps.
+    </div>
+    <div class="row" style="margin-top:4px">
+      <label>Speed</label>
+      <input type="range" min="1" max="12" value="4"
+        oninput="rSpd=+this.value;this.nextElementSibling.textContent=this.value">
+      <span class="val">4</span>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="ss">
+    <div class="st">Draw Tool</div>
+    <div class="bg">
+      <button class="ab active" id="tool-wall" onclick="setTool('wall')">✏ Wall</button>
+      <button class="ab" id="tool-erase" onclick="setTool('erase')">⌫ Erase</button>
+      <button class="ab" id="tool-goal" onclick="setTool('goal')">🎯 Goal</button>
+      <button class="ab" id="tool-start" onclick="setTool('start')">🟢 Start</button>
+    </div>
+    <div style="font-size:9px;color:#444;margin-top:4px">Drag to draw walls. Click to set goal/start.</div>
+  </div>
+
+  <!-- ENVIRONMENT -->
+  <div class="ss">
+    <div class="st">Environment</div>
+    <div class="bg">
+      <button class="btn" onclick="randEnv()">Random</button>
+      <button class="btn" onclick="clearAll()">Clear</button>
+      <button class="btn" onclick="addMaze()">Maze</button>
+      <button class="btn" onclick="addRoom()">Rooms</button>
+    </div>
+    <div class="divider"></div>
+    <div class="st" style="margin-top:4px">Floor Plan Upload</div>
+    <label class="upload-btn" for="floor-upload">📂 Upload PNG / JPG</label>
+    <input type="file" id="floor-upload" accept="image/*" onchange="loadFloorPlan(event)">
+    <div style="font-size:9px;color:#444;margin-top:3px;line-height:1.5">Dark pixels → walls. Light pixels → free space.</div>
+  </div>
+
+  <!-- AGENTS -->
+  <div class="ss">
+    <div class="st">Dynamic Agents</div>
+    <div class="bg">
+      <button class="btn" onclick="addAgent()">+ Agent</button>
+      <button class="btn" onclick="clearAgents()">Clear</button>
+    </div>
+    <div class="row" style="margin-top:4px">
+      <label>Agent speed</label>
+      <input type="range" min="1" max="8" value="2"
+        oninput="agentSpd=+this.value;this.nextElementSibling.textContent=this.value">
+      <span class="val">2</span>
+    </div>
+    <div style="font-size:9px;color:#444;margin-top:2px;line-height:1.5">Agents follow planned paths. They avoid walls and trigger robot replanning.</div>
+  </div>
+
+  <!-- LIDAR / DISPLAY -->
+  <div class="ss">
+    <div class="st">Display</div>
+    <div class="row"><label>LiDAR rays</label><input type="checkbox" checked onchange="sLidar=this.checked"></div>
+    <div class="row"><label>Explored nodes</label><input type="checkbox" checked onchange="sExp=this.checked"></div>
+    <div class="row"><label>Frontier</label><input type="checkbox" checked onchange="sFront=this.checked"></div>
+    <div class="row"><label>Search tree</label><input type="checkbox" checked onchange="sTree=this.checked"></div>
+    <div class="row"><label>C-Space overlay</label><input type="checkbox" onchange="sCspace=this.checked"></div>
+    <div class="row"><label>Heatmap</label><input type="checkbox" onchange="sHeat=this.checked"></div>
+    <div class="row"><label>Grid lines</label><input type="checkbox" checked onchange="sGrid=this.checked"></div>
+  </div>
+
+  <!-- MICROSCOPE -->
+  <div class="ss">
+    <div class="st">Algorithm Microscope</div>
+    <div class="bg" style="margin-bottom:5px">
+      <button class="btn" onclick="microStep(-50)">⏮</button>
+      <button class="btn" id="pbtn" onclick="togglePause()">⏸</button>
+      <button class="btn" onclick="microStep(50)">⏭</button>
+      <button class="btn" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div class="row">
+      <label>Anim speed</label>
+      <input type="range" min="1" max="30" value="10"
+        oninput="simSpd=+this.value;this.nextElementSibling.textContent=this.value+'x'">
+      <span class="val">10x</span>
+    </div>
+    <div class="row"><label>Frame</label><span class="val" id="frctr">0</span></div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="ss">
+    <div class="st">Metrics</div>
+    <div class="sg">
+      <div class="sc"><div class="sk">Explored</div><div class="sv" id="m-exp">0</div></div>
+      <div class="sc"><div class="sk">Path len</div><div class="sv" id="m-plen">—</div></div>
+      <div class="sc"><div class="sk">Plan time</div><div class="sv" id="m-time">—</div></div>
+      <div class="sc"><div class="sk">Replans</div><div class="sv" id="m-replan">0</div></div>
+      <div class="sc"><div class="sk">Robot X</div><div class="sv" id="m-rx">0</div></div>
+      <div class="sc"><div class="sk">Robot Y</div><div class="sv" id="m-ry">0</div></div>
+    </div>
+    <div style="font-size:9px;margin-top:5px;padding:4px 6px;background:#181824;border-radius:4px;border:1px solid #1e1e30">
+      Status: <span style="color:#1baf7a;font-family:monospace;font-weight:600" id="m-status">Ready</span>
+    </div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<!-- CANVAS -->
+<div id="ca">
+  <canvas id="sim"></canvas>
+  <div id="legend">
+    <span class="li"><span class="ld-sq" style="background:#8a1a1a"></span>Wall</span>
+    <span class="li"><span class="ld-sq" style="background:rgba(227,73,72,0.15)"></span>C-Space inflate</span>
+    <span class="li"><span class="ld-sq" style="background:rgba(57,135,229,0.22)"></span>Explored</span>
+    <span class="li"><span class="ld-sq" style="background:rgba(237,161,0,0.28)"></span>Frontier</span>
+    <span class="li"><span class="ld" style="background:#1baf7a"></span>Path</span>
+    <span class="li"><span class="ld" style="background:#fff"></span>Robot</span>
+    <span class="li"><span class="ld" style="background:#c84fc8"></span>Goal</span>
+    <span class="li"><span class="ld" style="background:#1baf7a"></span>Start</span>
+    <span class="li"><span class="ld" style="background:#e06020"></span>Agent</span>
+  </div>
+  <div id="help" id="helpbar">✏ Drag → draw walls &nbsp;|&nbsp; 🎯 Click Goal tool → set destination &nbsp;|&nbsp; Right-click → erase &nbsp;|&nbsp; Upload floor plan PNG to import a real map</div>
+</div>
+
+</div><!-- /main -->
+
+<!-- STATUS BAR -->
+<div id="statusbar">
+  <div class="sb-item"><span class="sb-label">ALGO</span>&nbsp;<span id="sb-algo">A*</span></div>
+  <div class="sb-item"><span class="sb-label">MOVE</span>&nbsp;<span id="sb-move">4-Way</span></div>
+  <div class="sb-item"><span class="sb-label">ROBOT SIZE</span>&nbsp;<span id="sb-rsize">1 cell</span></div>
+  <div class="sb-item"><span class="sb-label">FPS</span>&nbsp;<span id="sb-fps">0</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none">
+    <span class="sb-label">VROS Path Planning Laboratory v2.0</span>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ════════════════════════════════════════════════
+// VROS PATH PLANNING LABORATORY v2.0
+// - Path NEVER crosses obstacles (proper A* on grid)
+// - C-Space inflation: robot size blocks narrow gaps
+// - 4-way (default) or 8-way movement
+// - Wall drawing by drag
+// - Dynamic agents follow paths, avoid walls
+// - Robot shape choices
+// - Floor plan image upload
+// ════════════════════════════════════════════════
+
+const sim = document.getElementById('sim');
+const ctx = sim.getContext('2d');
+let W, H, COLS, ROWS;
+const CELL = 20;
+
+// State
+let algo = 'astar';
+let movement = 4; // 4 or 8
+let robotSize = 1; // in cells (radius for inflation)
+let robotShape = 'arrow';
+let rSpd = 4;
+let simSpd = 10;
+let paused = false;
+let tool = 'wall';
+let sLidar = true, sExp = true, sFront = true, sTree = true;
+let sCspace = false, sHeat = false, sGrid = true;
+let agentSpd = 2;
+
+// Grid: 0=free, 1=wall
+let rawGrid = []; // user-drawn walls only
+let cGrid = [];  // C-space inflated (what planner sees)
+let hmap = [];
+
+// Path planning state
+let path = [], explored = [], frontier = [], treeEdges = [];
+let pathIdx = 0, planning = false;
+let replanCount = 0;
+let frameStep = 0;
+
+// Robot
+let robot = { x: 2, y: 2, angle: 0, vx: 0, vy: 0 };
+let goalCell = { x: 0, y: 0 };
+let startCell = { x: 2, y: 2 };
+
+// Dynamic agents
+let agents = [];
+
+// FPS
+let fps = 0, fcnt = 0, ftimer = 0, lastT = 0;
+
+// ── RESIZE ──────────────────────────────────────
+function resize() {
+  const area = document.getElementById('ca');
+  const leg = document.getElementById('legend');
+  const hlp = document.getElementById('help');
+  sim.width = area.clientWidth;
+  sim.height = area.clientHeight - leg.offsetHeight - hlp.offsetHeight;
+  W = sim.width; H = sim.height;
+  COLS = Math.floor(W / CELL);
+  ROWS = Math.floor(H / CELL);
+  initGrid();
+}
+window.addEventListener('resize', resize);
+
+// ── GRID INIT ───────────────────────────────────
+function initGrid() {
+  rawGrid = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  cGrid = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  hmap = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
+  goalCell = { x: COLS - 3, y: ROWS - 3 };
+  startCell = { x: 2, y: 2 };
+  robot = { x: 2, y: 2, angle: 0, vx: 0, vy: 0 };
+  path = []; explored = []; frontier = []; treeEdges = [];
+  pathIdx = 0; replanCount = 0; frameStep = 0;
+}
+
+// ── C-SPACE INFLATION ────────────────────────────
+// Expand each wall cell by robotSize cells in all directions.
+// This means a robot of radius R cannot pass through gaps narrower than 2R.
+function buildCGrid() {
+  const radius = Math.floor(robotSize / 2); // half-size in cells
+  cGrid = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (rawGrid[r][c] === 1) {
+        // Inflate this wall cell by robot radius
+        for (let dr = -radius; dr <= radius; dr++) {
+          for (let dc = -radius; dc <= radius; dc++) {
+            const nr = r + dr, nc = c + dc;
+            if (nr >= 0 && nr < ROWS && nc >= 0 && nc < COLS) {
+              cGrid[nr][nc] = 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ── MOVEMENT DIRECTIONS ──────────────────────────
+function getDirs() {
+  const d4 = [
+    { x: 1, y: 0, cost: 1 }, { x: -1, y: 0, cost: 1 },
+    { x: 0, y: 1, cost: 1 }, { x: 0, y: -1, cost: 1 }
+  ];
+  const d8 = [
+    ...d4,
+    { x: 1, y: 1, cost: 1.414 }, { x: -1, y: 1, cost: 1.414 },
+    { x: 1, y: -1, cost: 1.414 }, { x: -1, y: -1, cost: 1.414 }
+  ];
+  return movement === 8 ? d8 : d4;
+}
+
+// ── HEURISTIC ────────────────────────────────────
+function heur(a, b) {
+  if (algo === 'dijkstra') return 0;
+  // Manhattan for 4-way, Euclidean for 8-way
+  if (movement === 4) return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+  return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+}
+
+// ── IS CELL FREE ────────────────────────────────
+function isFree(x, y) {
+  if (x < 0 || y < 0 || x >= COLS || y >= ROWS) return false;
+  return cGrid[y][x] === 0;
+}
+
+// ── LINE OF SIGHT (for Theta*) ───────────────────
+function hasLOS(x1, y1, x2, y2) {
+  // Bresenham line check
+  let dx = Math.abs(x2 - x1), dy = Math.abs(y2 - y1);
+  let sx = x1 < x2 ? 1 : -1, sy = y1 < y2 ? 1 : -1;
+  let err = dx - dy;
+  let cx = x1, cy = y1;
+  while (true) {
+    if (!isFree(cx, cy)) return false;
+    if (cx === x2 && cy === y2) return true;
+    let e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; cx += sx; }
+    if (e2 < dx) { err += dx; cy += sy; }
+  }
+}
+
+// ── PLAN ─────────────────────────────────────────
+function plan() {
+  if (planning) return;
+  planning = true;
+  explored = []; frontier = []; treeEdges = []; path = [];
+  frameStep = 0;
+
+  buildCGrid();
+
+  const sx = Math.round(robot.x), sy = Math.round(robot.y);
+  const ex = goalCell.x, ey = goalCell.y;
+
+  // Safety: if start or goal is in obstacle, abort
+  if (!isFree(sx, sy) || !isFree(ex, ey)) {
+    document.getElementById('m-status').textContent = 'Start/Goal blocked';
+    document.getElementById('m-status').style.color = '#e34948';
+    planning = false; return;
+  }
+
+  document.getElementById('m-status').textContent = 'Planning...';
+  document.getElementById('m-status').style.color = '#eda100';
+
+  const t0 = performance.now();
+
+  if (algo === 'rrt' || algo === 'rrtstar') runRRT(algo === 'rrtstar');
+  else if (algo === 'pfield') runPotField();
+  else runGridSearch(); // A*, Dijkstra, Theta*, JPS, D*Lite all use grid search
+
+  const dt = performance.now() - t0;
+
+  document.getElementById('m-exp').textContent = explored.length;
+  document.getElementById('m-plen').textContent = path.length ? path.length + ' nodes' : 'No path';
+  document.getElementById('m-time').textContent = dt.toFixed(1) + 'ms';
+
+  if (path.length) {
+    document.getElementById('m-status').textContent = '✓ Path found';
+    document.getElementById('m-status').style.color = '#1baf7a';
+    pathIdx = 0;
+  } else {
+    document.getElementById('m-status').textContent = '✗ No path found';
+    document.getElementById('m-status').style.color = '#e34948';
+  }
+  planning = false;
+}
+
+// ── GRID SEARCH (A* / Dijkstra / Theta*) ─────────
+function runGridSearch() {
+  const sx = Math.round(robot.x), sy = Math.round(robot.y);
+  const ex = goalCell.x, ey = goalCell.y;
+  const key = (x, y) => y * COLS + x;
+  const dirs = getDirs();
+
+  // Min-heap via sorted array (adequate for demo sizes)
+  const open = [{ x: sx, y: sy, g: 0, h: heur({ x: sx, y: sy }, { x: ex, y: ey }), f: heur({ x: sx, y: sy }, { x: ex, y: ey }), par: null, px: -1, py: -1 }];
+  const closed = new Uint8Array(ROWS * COLS);
+  const gScore = new Float32Array(ROWS * COLS).fill(Infinity);
+  const parentX = new Int16Array(ROWS * COLS).fill(-1);
+  const parentY = new Int16Array(ROWS * COLS).fill(-1);
+  gScore[key(sx, sy)] = 0;
+
+  explored = []; frontier = []; treeEdges = [];
+  hmap = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
+
+  let iterations = 0;
+  const MAX_ITER = COLS * ROWS * 2;
+
+  while (open.length && iterations < MAX_ITER) {
+    iterations++;
+    open.sort((a, b) => a.f - b.f);
+    const cur = open.shift();
+    const ck = key(cur.x, cur.y);
+
+    if (closed[ck]) continue;
+    closed[ck] = 1;
+    explored.push({ x: cur.x, y: cur.y });
+    hmap[cur.y][cur.x] = cur.h;
+
+    if (cur.x === ex && cur.y === ey) {
+      // Reconstruct path
+      path = [];
+      let cx = ex, cy = ey;
+      while (cx !== -1 && cy !== -1) {
+        path.unshift({ x: cx, y: cy });
+        const pk = key(cx, cy);
+        const nx = parentX[pk], ny = parentY[pk];
+        cx = nx; cy = ny;
+      }
+      return;
+    }
+
+    for (const d of dirs) {
+      const nx = cur.x + d.x, ny = cur.y + d.y;
+      if (!isFree(nx, ny)) continue;
+      if (closed[key(nx, ny)]) continue;
+
+      // For diagonal moves in 4-way mode, skip (already handled by dirs)
+      // For 8-way diagonal, also check that we don't cut corners through walls
+      if (movement === 8 && d.cost > 1) {
+        if (!isFree(cur.x + d.x, cur.y) || !isFree(cur.x, cur.y + d.y)) continue;
+      }
+
+      let ng = gScore[ck] + d.cost;
+
+      // Theta*: try line-of-sight shortcut to grandparent
+      if (algo === 'theta' && parentX[ck] !== -1) {
+        const ppx = parentX[ck], ppy = parentY[ck];
+        if (hasLOS(ppx, ppy, nx, ny)) {
+          const ppk = key(ppx, ppy);
+          const ngpp = gScore[ppk] + Math.sqrt((nx - ppx) ** 2 + (ny - ppy) ** 2);
+          if (ngpp < ng) {
+            ng = ngpp;
+            const h = heur({ x: nx, y: ny }, { x: ex, y: ey });
+            if (ng < gScore[key(nx, ny)]) {
+              gScore[key(nx, ny)] = ng;
+              parentX[key(nx, ny)] = ppx;
+              parentY[key(nx, ny)] = ppy;
+              open.push({ x: nx, y: ny, g: ng, h, f: ng + h, par: cur });
+              frontier.push({ x: nx, y: ny });
+              treeEdges.push({ x1: ppx, y1: ppy, x2: nx, y2: ny });
+            }
+            continue;
+          }
+        }
+      }
+
+      const nk = key(nx, ny);
+      if (ng < gScore[nk]) {
+        gScore[nk] = ng;
+        parentX[nk] = cur.x;
+        parentY[nk] = cur.y;
+        const h = heur({ x: nx, y: ny }, { x: ex, y: ey });
+        open.push({ x: nx, y: ny, g: ng, h, f: ng + h, par: cur });
+        frontier.push({ x: nx, y: ny });
+        treeEdges.push({ x1: cur.x, y1: cur.y, x2: nx, y2: ny });
+      }
+    }
+  }
+  // No path found
+}
+
+// ── RRT / RRT* ──────────────────────────────────
+function runRRT(star) {
+  const sx = Math.round(robot.x), sy = Math.round(robot.y);
+  const ex = goalCell.x, ey = goalCell.y;
+  const nodes = [{ x: sx, y: sy, par: -1, cost: 0 }];
+  explored = []; treeEdges = []; frontier = []; path = [];
+  const step = 3, gb = 0.1, maxIt = 2000;
+
+  for (let i = 0; i < maxIt; i++) {
+    let rx, ry;
+    if (Math.random() < gb) { rx = ex; ry = ey; }
+    else { rx = Math.random() * COLS; ry = Math.random() * ROWS; }
+
+    let nearIdx = 0, minD = Infinity;
+    nodes.forEach((n, idx) => {
+      const d = (n.x - rx) ** 2 + (n.y - ry) ** 2;
+      if (d < minD) { minD = d; nearIdx = idx; }
+    });
+    const near = nodes[nearIdx];
+    const ang = Math.atan2(ry - near.y, rx - near.x);
+    const nx = near.x + Math.cos(ang) * step;
+    const ny = near.y + Math.sin(ang) * step;
+
+    if (nx < 0 || ny < 0 || nx >= COLS || ny >= ROWS) continue;
+
+    // Check path for collisions
+    let blocked = false;
+    const steps = Math.ceil(step * 2);
+    for (let t = 0; t <= steps; t++) {
+      const cx = Math.round(near.x + (nx - near.x) * t / steps);
+      const cy = Math.round(near.y + (ny - near.y) * t / steps);
+      if (!isFree(cx, cy)) { blocked = true; break; }
+    }
+    if (blocked) continue;
+
+    let parIdx = nearIdx;
+    let cost = near.cost + step;
+
+    if (star) {
+      const r2 = step * 4;
+      nodes.forEach((n, idx) => {
+        const d = Math.sqrt((n.x - nx) ** 2 + (n.y - ny) ** 2);
+        if (d < r2 && n.cost + d < cost) {
+          // Check LOS
+          let ok = true;
+          const ss = Math.ceil(d * 2);
+          for (let t = 0; t <= ss; t++) {
+            const ccx = Math.round(n.x + (nx - n.x) * t / ss);
+            const ccy = Math.round(n.y + (ny - n.y) * t / ss);
+            if (!isFree(ccx, ccy)) { ok = false; break; }
+          }
+          if (ok) { parIdx = idx; cost = n.cost + d; }
+        }
+      });
+    }
+
+    const newIdx = nodes.length;
+    nodes.push({ x: nx, y: ny, par: parIdx, cost });
+    treeEdges.push({ x1: nodes[parIdx].x, y1: nodes[parIdx].y, x2: nx, y2: ny });
+    explored.push({ x: Math.round(nx), y: Math.round(ny) });
+
+    if (Math.sqrt((nx - ex) ** 2 + (ny - ey) ** 2) < step + 0.5) {
+      path = [];
+      let idx = newIdx;
+      while (idx !== -1) {
+        path.unshift({ x: nodes[idx].x, y: nodes[idx].y });
+        idx = nodes[idx].par;
+      }
+      path.push({ x: ex, y: ey });
+      return;
+    }
+  }
+}
+
+// ── POTENTIAL FIELD ──────────────────────────────
+function runPotField() {
+  const sx = Math.round(robot.x), sy = Math.round(robot.y);
+  const ex = goalCell.x, ey = goalCell.y;
+  path = [{ x: sx, y: sy }]; explored = []; treeEdges = []; frontier = [];
+  let cx = sx, cy = sy;
+  const ka = 4, kr = 300, d0 = 6;
+
+  for (let it = 0; it < 1500; it++) {
+    const dd = Math.sqrt((cx - ex) ** 2 + (cy - ey) ** 2);
+    if (dd < 1.2) { path.push({ x: ex, y: ey }); return; }
+    let fx = (ex - cx) / dd * ka, fy = (ey - cy) / dd * ka;
+
+    // Repulsive forces from nearby walls
+    for (let dr = -d0; dr <= d0; dr++) {
+      for (let dc = -d0; dc <= d0; dc++) {
+        const wr = Math.round(cy) + dr, wc = Math.round(cx) + dc;
+        if (wr >= 0 && wr < ROWS && wc >= 0 && wc < COLS && rawGrid[wr][wc]) {
+          const d = Math.sqrt(dc ** 2 + dr ** 2);
+          if (d < d0 && d > 0.01) {
+            const rep = kr * (1 / d - 1 / d0) / (d * d);
+            fx += (cx - wc) / d * rep;
+            fy += (cy - wr) / d * rep;
+          }
+        }
+      }
+    }
+
+    const mag = Math.sqrt(fx ** 2 + fy ** 2);
+    if (mag > 0.001) { cx += fx / mag * 0.5; cy += fy / mag * 0.5; }
+    cx = Math.max(0.5, Math.min(COLS - 1.5, cx));
+    cy = Math.max(0.5, Math.min(ROWS - 1.5, cy));
+    if (it % 2 === 0) {
+      path.push({ x: cx, y: cy });
+      explored.push({ x: Math.round(cx), y: Math.round(cy) });
+    }
+  }
+}
+
+// ── DYNAMIC AGENTS ───────────────────────────────
+function addAgent() {
+  // Find a free random position away from robot and goal
+  let ax, ay, tries = 0;
+  do {
+    ax = 3 + Math.floor(Math.random() * (COLS - 6));
+    ay = 3 + Math.floor(Math.random() * (ROWS - 6));
+    tries++;
+  } while ((rawGrid[ay]?.[ax] || cGrid[ay]?.[ax]) && tries < 100);
+
+  // Give agent a random goal to walk to
+  let gax, gay, tries2 = 0;
+  do {
+    gax = 3 + Math.floor(Math.random() * (COLS - 6));
+    gay = 3 + Math.floor(Math.random() * (ROWS - 6));
+    tries2++;
+  } while ((rawGrid[gay]?.[gax] || cGrid[gay]?.[gax]) && tries2 < 100);
+
+  // Plan a path for the agent using A*
+  const agentPath = planForAgent(ax, ay, gax, gay);
+
+  agents.push({
+    x: ax, y: ay, ax: ax, ay: ay,
+    gx: gax, gy: gay,
+    path: agentPath,
+    pathIdx: 0,
+    vx: 0, vy: 0,
+    color: `hsl(${30 + Math.random() * 40},80%,60%)` // orange-ish
+  });
+}
+
+function planForAgent(sx, sy, ex, ey) {
+  // Lightweight A* for agents (uses cGrid)
+  if (!isFree(sx, sy) || !isFree(ex, ey)) return [];
+  const key = (x, y) => y * COLS + x;
+  const dirs = getDirs();
+  const open = [{ x: sx, y: sy, g: 0, f: heur({ x: sx, y: sy }, { x: ex, y: ey }), par: null }];
+  const closed = new Uint8Array(ROWS * COLS);
+  const gScore = new Float32Array(ROWS * COLS).fill(Infinity);
+  gScore[key(sx, sy)] = 0;
+  const parentMap = new Map();
+  let it = 0;
+  while (open.length && it < 3000) {
+    it++;
+    open.sort((a, b) => a.f - b.f);
+    const cur = open.shift();
+    const ck = key(cur.x, cur.y);
+    if (closed[ck]) continue;
+    closed[ck] = 1;
+    if (cur.x === ex && cur.y === ey) {
+      const p = [];
+      let cx = ex, cy = ey;
+      while (!(cx === sx && cy === sy)) {
+        p.unshift({ x: cx, y: cy });
+        const prev = parentMap.get(key(cx, cy));
+        if (!prev) break;
+        cx = prev.x; cy = prev.y;
+      }
+      p.unshift({ x: sx, y: sy });
+      return p;
+    }
+    for (const d of dirs) {
+      const nx = cur.x + d.x, ny = cur.y + d.y;
+      if (!isFree(nx, ny)) continue;
+      const nk = key(nx, ny);
+      if (closed[nk]) continue;
+      if (movement === 8 && d.cost > 1) {
+        if (!isFree(cur.x + d.x, cur.y) || !isFree(cur.x, cur.y + d.y)) continue;
+      }
+      const ng = gScore[ck] + d.cost;
+      if (ng < gScore[nk]) {
+        gScore[nk] = ng;
+        parentMap.set(nk, { x: cur.x, y: cur.y });
+        open.push({ x: nx, y: ny, g: ng, f: ng + heur({ x: nx, y: ny }, { x: ex, y: ey }), par: cur });
+      }
+    }
+  }
+  return [];
+}
+
+function clearAgents() { agents = []; }
+
+function stepAgents() {
+  agents.forEach(a => {
+    if (!a.path.length || a.pathIdx >= a.path.length - 1) {
+      // Pick new goal
+      let gax, gay, tries = 0;
+      do {
+        gax = 3 + Math.floor(Math.random() * (COLS - 6));
+        gay = 3 + Math.floor(Math.random() * (ROWS - 6));
+        tries++;
+      } while ((rawGrid[gay]?.[gax] || cGrid[gay]?.[gax]) && tries < 50);
+      const newPath = planForAgent(Math.round(a.x), Math.round(a.y), gax, gay);
+      if (newPath.length) { a.path = newPath; a.pathIdx = 0; a.gx = gax; a.gy = gay; }
+      return;
+    }
+    const tgt = a.path[Math.min(a.pathIdx + 1, a.path.length - 1)];
+    const dx = tgt.x - a.x, dy = tgt.y - a.y;
+    const dist = Math.sqrt(dx ** 2 + dy ** 2);
+    if (dist < 0.4) { a.pathIdx++; return; }
+    const spd = agentSpd * 0.025;
+    a.vx = dx / dist * spd; a.vy = dy / dist * spd;
+    a.x += a.vx; a.y += a.vy;
+  });
+}
+
+// Check if any agent is blocking robot's path → replan
+function checkAgentBlock() {
+  if (!path.length || pathIdx >= path.length - 1) return;
+  const lookahead = path.slice(pathIdx, Math.min(pathIdx + 6, path.length));
+  for (const a of agents) {
+    for (const p of lookahead) {
+      const d = Math.sqrt((a.x - p.x) ** 2 + (a.y - p.y) ** 2);
+      if (d < 1.2) {
+        // Replan
+        replanCount++;
+        document.getElementById('m-replan').textContent = replanCount;
+        plan();
+        return;
+      }
+    }
+  }
+}
+
+// ── ROBOT MOVEMENT ───────────────────────────────
+function moveRobot() {
+  if (!path.length || pathIdx >= path.length - 1) {
+    robot.vx *= 0.85; robot.vy *= 0.85;
+    return;
+  }
+  const tgt = path[Math.min(pathIdx + 1, path.length - 1)];
+  const dx = tgt.x - robot.x, dy = tgt.y - robot.y;
+  const dist = Math.sqrt(dx ** 2 + dy ** 2);
+  if (dist < 0.35) { pathIdx++; return; }
+  const spd = rSpd * 0.03;
+  robot.vx = dx / dist * spd;
+  robot.vy = dy / dist * spd;
+  robot.x += robot.vx;
+  robot.y += robot.vy;
+  robot.angle = Math.atan2(robot.vy, robot.vx);
+
+  document.getElementById('m-rx').textContent = (robot.x * CELL).toFixed(0);
+  document.getElementById('m-ry').textContent = (robot.y * CELL).toFixed(0);
+
+  // If reached goal, pick new random goal
+  if (pathIdx >= path.length - 1) {
+    let nx, ny, tries = 0;
+    do {
+      nx = 2 + Math.floor(Math.random() * (COLS - 4));
+      ny = 2 + Math.floor(Math.random() * (ROWS - 4));
+      tries++;
+    } while ((rawGrid[ny]?.[nx] || cGrid[ny]?.[nx]) && tries < 100);
+    goalCell = { x: nx, y: ny };
+    plan();
+  }
+}
+
+// ── DRAW ─────────────────────────────────────────
+function draw(ts) {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#07070d';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  if (sGrid) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x <= W; x += CELL) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += CELL) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  }
+
+  // C-Space overlay
+  if (sCspace) {
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (cGrid[r][c] && !rawGrid[r][c]) {
+          ctx.fillStyle = 'rgba(227,73,72,0.12)';
+          ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+        }
+      }
+    }
+  }
+
+  // Heatmap
+  if (sHeat) {
+    let maxH = 1;
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) if (hmap[r][c] < Infinity) maxH = Math.max(maxH, hmap[r][c]);
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        if (hmap[r][c] < Infinity) {
+          const t = hmap[r][c] / maxH;
+          ctx.fillStyle = `rgba(${Math.round(t * 180)},${Math.round((1 - t) * 60)},200,0.13)`;
+          ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+        }
+      }
+    }
+  }
+
+  // Walls (rawGrid)
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      if (rawGrid[r][c]) {
+        ctx.fillStyle = '#2a0a0a';
+        ctx.fillRect(c * CELL, r * CELL, CELL, CELL);
+        ctx.fillStyle = '#8a1a1a';
+        ctx.fillRect(c * CELL + 1, r * CELL + 1, CELL - 2, CELL - 2);
+        // Slight 3D bevel
+        ctx.fillStyle = 'rgba(255,100,100,0.08)';
+        ctx.fillRect(c * CELL + 1, r * CELL + 1, CELL - 2, 3);
+        ctx.fillRect(c * CELL + 1, r * CELL + 1, 3, CELL - 2);
+      }
+    }
+  }
+
+  // Search tree
+  if (sTree) {
+    const lim = frameStep > 0 ? frameStep : treeEdges.length;
+    ctx.strokeStyle = 'rgba(57,135,229,0.12)';
+    ctx.lineWidth = 0.5;
+    treeEdges.slice(0, lim).forEach(e => {
+      ctx.beginPath();
+      ctx.moveTo(e.x1 * CELL + CELL / 2, e.y1 * CELL + CELL / 2);
+      ctx.lineTo(e.x2 * CELL + CELL / 2, e.y2 * CELL + CELL / 2);
+      ctx.stroke();
+    });
+  }
+
+  // Explored nodes
+  if (sExp) {
+    const lim = frameStep > 0 ? frameStep : explored.length;
+    explored.slice(0, lim).forEach(e => {
+      ctx.fillStyle = 'rgba(57,135,229,0.22)';
+      ctx.fillRect(e.x * CELL + 2, e.y * CELL + 2, CELL - 4, CELL - 4);
+    });
+  }
+
+  // Frontier
+  if (sFront) {
+    const lim = frameStep > 0 ? frameStep : frontier.length;
+    frontier.slice(0, lim).forEach(f => {
+      ctx.fillStyle = 'rgba(237,161,0,0.28)';
+      ctx.fillRect(f.x * CELL + 1, f.y * CELL + 1, CELL - 2, CELL - 2);
+    });
+  }
+
+  // Path
+  if (path.length > 1) {
+    ctx.strokeStyle = '#1baf7a';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    path.forEach((p, i) => {
+      const px = p.x * CELL + CELL / 2, py = p.y * CELL + CELL / 2;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+
+    // Animated direction dashes
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 12]);
+    ctx.lineDashOffset = -(ts / 60) % 17;
+    ctx.beginPath();
+    path.forEach((p, i) => {
+      const px = p.x * CELL + CELL / 2, py = p.y * CELL + CELL / 2;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Goal marker
+  drawGoal(goalCell.x * CELL + CELL / 2, goalCell.y * CELL + CELL / 2);
+
+  // Start marker
+  drawStart(startCell.x * CELL + CELL / 2, startCell.y * CELL + CELL / 2);
+
+  // Dynamic agents — drawn BEFORE robot
+  agents.forEach(a => {
+    const ax = a.x * CELL + CELL / 2, ay = a.y * CELL + CELL / 2;
+    // Agent path (subtle)
+    if (a.path.length > 1) {
+      ctx.strokeStyle = `${a.color}33`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 5]);
+      ctx.beginPath();
+      a.path.forEach((p, i) => {
+        const px = p.x * CELL + CELL / 2, py = p.y * CELL + CELL / 2;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // Agent body
+    const aang = Math.atan2(a.vy, a.vx);
+    ctx.save();
+    ctx.translate(ax, ay);
+    ctx.rotate(aang);
+    ctx.fillStyle = a.color;
+    ctx.beginPath();
+    ctx.moveTo(CELL * 0.45, 0);
+    ctx.lineTo(-CELL * 0.35, -CELL * 0.3);
+    ctx.lineTo(-CELL * 0.35, CELL * 0.3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  // LiDAR
+  const rx2 = robot.x * CELL + CELL / 2, ry2 = robot.y * CELL + CELL / 2;
+  if (sLidar) {
+    const numRays = 24;
+    ctx.strokeStyle = 'rgba(57,135,229,0.1)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < numRays; i++) {
+      const ang = robot.angle + (i / numRays) * Math.PI * 2;
+      let rayLen = CELL * 8;
+      for (let t = CELL * 0.6; t < CELL * 8; t += CELL * 0.5) {
+        const lx = Math.floor(robot.x + Math.cos(ang) * t / CELL);
+        const ly = Math.floor(robot.y + Math.sin(ang) * t / CELL);
+        if (lx >= 0 && lx < COLS && ly >= 0 && ly < ROWS && rawGrid[ly][lx]) {
+          rayLen = t; break;
+        }
+      }
+      ctx.beginPath();
+      ctx.moveTo(rx2, ry2);
+      ctx.lineTo(rx2 + Math.cos(ang) * rayLen, ry2 + Math.sin(ang) * rayLen);
+      ctx.stroke();
+    }
+  }
+
+  // Safety ring (C-space visualisation on robot)
+  if (robotSize > 1) {
+    const inflRadius = (robotSize * CELL) / 2;
+    ctx.strokeStyle = 'rgba(227,73,72,0.25)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(rx2, ry2, inflRadius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Robot
+  drawRobot(rx2, ry2, robot.angle);
+
+  // Frame counter
+  document.getElementById('frctr').textContent = Math.min(frameStep || explored.length, explored.length);
+}
+
+function drawGoal(x, y) {
+  // Crosshair
+  ctx.strokeStyle = '#c84fc8';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x - CELL, y); ctx.lineTo(x + CELL, y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x, y - CELL); ctx.lineTo(x, y + CELL); ctx.stroke();
+  // Rings
+  ctx.strokeStyle = 'rgba(200,79,200,0.3)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(x, y, CELL * 0.7, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x, y, CELL * 1.2, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = '#c84fc8';
+  ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(200,79,200,0.6)';
+  ctx.font = '9px monospace';
+  ctx.fillText('GOAL', x + 8, y - 8);
+}
+
+function drawStart(x, y) {
+  ctx.strokeStyle = '#1baf7a';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.arc(x, y, CELL * 0.6, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(27,175,122,0.6)';
+  ctx.font = '8px monospace';
+  ctx.fillText('START', x + 6, y - 6);
+}
+
+function drawRobot(x, y, angle) {
+  const s = CELL * 0.55;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(angle);
+
+  if (robotShape === 'arrow') {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.moveTo(s, 0); ctx.lineTo(-s, -s * 0.65); ctx.lineTo(-s * 0.4, 0); ctx.lineTo(-s, s * 0.65);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(57,135,229,0.8)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  } else if (robotShape === 'circle') {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(0, 0, s, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#3987e5'; ctx.lineWidth = 2; ctx.stroke();
+    // Direction indicator
+    ctx.strokeStyle = '#3987e5'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(s, 0); ctx.stroke();
+
+  } else if (robotShape === 'car') {
+    ctx.fillStyle = '#e0e0e8';
+    ctx.fillRect(-s, -s * 0.55, s * 2, s * 1.1);
+    ctx.fillStyle = '#3987e5';
+    ctx.fillRect(-s * 0.8, -s * 0.58, s * 0.5, s * 0.18); // windscreen
+    ctx.fillRect(-s * 0.8, s * 0.38, s * 0.5, s * 0.18);
+    ctx.fillStyle = '#eda100'; // headlights
+    ctx.fillRect(s * 0.82, -s * 0.4, s * 0.2, s * 0.28);
+    ctx.fillRect(s * 0.82, s * 0.12, s * 0.2, s * 0.28);
+    ctx.strokeStyle = '#888'; ctx.lineWidth = 1;
+    ctx.strokeRect(-s, -s * 0.55, s * 2, s * 1.1);
+
+  } else if (robotShape === 'diff') {
+    // Differential drive robot
+    ctx.fillStyle = '#1e1e30';
+    ctx.strokeStyle = '#3987e5'; ctx.lineWidth = 2;
+    ctx.fillRect(-s, -s * 0.7, s * 2, s * 1.4);
+    ctx.strokeRect(-s, -s * 0.7, s * 2, s * 1.4);
+    // Wheels
+    ctx.fillStyle = '#3987e5';
+    ctx.fillRect(-s - s * 0.25, -s * 0.7, s * 0.25, s * 0.6);
+    ctx.fillRect(-s - s * 0.25, s * 0.1, s * 0.25, s * 0.6);
+    ctx.fillRect(s, -s * 0.7, s * 0.25, s * 0.6);
+    ctx.fillRect(s, s * 0.1, s * 0.25, s * 0.6);
+    // Front indicator
+    ctx.fillStyle = '#eda100';
+    ctx.fillRect(s * 0.7, -s * 0.15, s * 0.25, s * 0.3);
+
+  } else if (robotShape === 'square') {
+    ctx.fillStyle = '#334';
+    ctx.strokeStyle = '#1baf7a'; ctx.lineWidth = 2;
+    ctx.fillRect(-s, -s, s * 2, s * 2);
+    ctx.strokeRect(-s, -s, s * 2, s * 2);
+    ctx.fillStyle = '#1baf7a';
+    ctx.fillRect(s * 0.5, -s * 0.2, s * 0.4, s * 0.4);
+  }
+
+  ctx.restore();
+
+  // Velocity arrow
+  const spd = Math.sqrt(robot.vx ** 2 + robot.vy ** 2);
+  if (spd > 0.005) {
+    ctx.strokeStyle = 'rgba(27,175,122,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + robot.vx * CELL * 3, y + robot.vy * CELL * 3);
+    ctx.stroke();
+  }
+}
+
+// ── ENVIRONMENT GENERATION ───────────────────────
+function randEnv() {
+  clearAll();
+  for (let i = 0; i < 12; i++) {
+    const ox = 2 + Math.floor(Math.random() * (COLS - 4));
+    const oy = 2 + Math.floor(Math.random() * (ROWS - 4));
+    const ow = 2 + Math.floor(Math.random() * 6);
+    const oh = 1 + Math.floor(Math.random() * 4);
+    for (let dx = 0; dx < ow; dx++) {
+      for (let dy = 0; dy < oh; dy++) {
+        const nx = ox + dx, ny = oy + dy;
+        if (nx > 0 && nx < COLS - 1 && ny > 0 && ny < ROWS - 1) {
+          // Don't block start or goal
+          if (Math.abs(nx - startCell.x) < 2 && Math.abs(ny - startCell.y) < 2) continue;
+          if (Math.abs(nx - goalCell.x) < 2 && Math.abs(ny - goalCell.y) < 2) continue;
+          rawGrid[ny][nx] = 1;
+        }
+      }
+    }
+  }
+  buildCGrid(); plan();
+}
+
+function clearAll() {
+  rawGrid = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  buildCGrid();
+  path = []; explored = []; frontier = []; treeEdges = []; pathIdx = 0;
+  hmap = Array.from({ length: ROWS }, () => new Array(COLS).fill(Infinity));
+  plan();
+}
+
+function addMaze() {
+  clearAll();
+  // Corridor maze
+  const gap = 4;
+  for (let r = gap; r < ROWS - gap; r += gap) {
+    const opening = 1 + Math.floor(Math.random() * (COLS - 4));
+    for (let c = 1; c < COLS - 1; c++) {
+      if (Math.abs(c - opening) > 1) rawGrid[r][c] = 1;
+    }
+  }
+  buildCGrid(); plan();
+}
+
+function addRoom() {
+  clearAll();
+  // Rooms with doorways
+  const midC = Math.floor(COLS / 2), midR = Math.floor(ROWS / 2);
+  // Vertical divider
+  for (let r = 1; r < ROWS - 1; r++) {
+    if (Math.abs(r - midR) > 1) rawGrid[r][midC] = 1;
+  }
+  // Horizontal divider
+  for (let c = 1; c < COLS - 1; c++) {
+    if (Math.abs(c - midC) > 1) rawGrid[midR][c] = 1;
+  }
+  buildCGrid(); plan();
+}
+
+// ── FLOOR PLAN UPLOAD ────────────────────────────
+function loadFloorPlan(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    // Draw image to offscreen canvas, sample pixels
+    const oc = document.createElement('canvas');
+    oc.width = COLS; oc.height = ROWS;
+    const octx = oc.getContext('2d');
+    octx.drawImage(img, 0, 0, COLS, ROWS);
+    const data = octx.getImageData(0, 0, COLS, ROWS).data;
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const idx = (r * COLS + c) * 4;
+        const brightness = (data[idx] + data[idx + 1] + data[idx + 2]) / 3;
+        // Dark pixels = walls, light pixels = free
+        rawGrid[r][c] = brightness < 128 ? 1 : 0;
+      }
+    }
+    // Clear start/goal area
+    [startCell, goalCell].forEach(p => {
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        if (rawGrid[p.y + dr]?.[p.x + dc] !== undefined) rawGrid[p.y + dr][p.x + dc] = 0;
+      }
+    });
+    buildCGrid(); plan();
+    document.getElementById('m-status').textContent = 'Floor plan loaded';
+    document.getElementById('m-status').style.color = '#3987e5';
+    URL.revokeObjectURL(url);
+  };
+  img.src = url;
+}
+
+// ── SETTERS ──────────────────────────────────────
+function setAlgo(a) {
+  algo = a;
+  document.querySelectorAll('.ab').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('aa-' + a);
+  if (el) el.classList.add('active');
+  const names = { astar: 'A*', dijkstra: 'Dijkstra', rrt: 'RRT', rrtstar: 'RRT*', theta: 'Theta*', jps: 'JPS (A* base)', dlite: 'D* Lite (A* base)', pfield: 'Pot.Field' };
+  document.getElementById('sb-algo').textContent = names[a] || a;
+  plan();
+}
+
+function setMovement(m) {
+  movement = m;
+  document.getElementById('mv-4').classList.toggle('active', m === 4);
+  document.getElementById('mv-8').classList.toggle('active', m === 8);
+  document.getElementById('sb-move').textContent = m === 4 ? '4-Way' : '8-Way';
+  plan();
+}
+
+function setRobotSize(s) {
+  robotSize = s;
+  document.getElementById('sb-rsize').textContent = s + ' cell' + (s > 1 ? 's' : '');
+  buildCGrid();
+  plan();
+}
+
+function setRobotShape(s) { robotShape = s; }
+
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('[id^=tool-]').forEach(b => b.classList.remove('active'));
+  document.getElementById('tool-' + t).classList.add('active');
+}
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pbtn').textContent = paused ? '▶' : '⏸';
+  document.getElementById('runbadge').textContent = paused ? '⏸ PAUSED' : '▶ RUNNING';
+}
+
+function microStep(n) {
+  frameStep = Math.max(0, Math.min((frameStep || explored.length) + n, explored.length));
+}
+
+function resetAll() {
+  robot = { x: startCell.x, y: startCell.y, angle: 0, vx: 0, vy: 0 };
+  agents = [];
+  replanCount = 0;
+  document.getElementById('m-replan').textContent = '0';
+  clearAll();
+}
+
+// ── CANVAS INTERACTION ───────────────────────────
+let isDrawing = false;
+let lastDragCell = { x: -1, y: -1 };
+
+sim.addEventListener('mousedown', e => {
+  const rect = sim.getBoundingClientRect();
+  const cx = Math.floor((e.clientX - rect.left) / CELL);
+  const cy = Math.floor((e.clientY - rect.top) / CELL);
+  if (cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS) return;
+
+  if (e.button === 2) {
+    // Right click = erase
+    rawGrid[cy][cx] = 0;
+    buildCGrid(); plan();
+    return;
+  }
+
+  if (tool === 'goal') {
+    if (rawGrid[cy]?.[cx] === 0) { goalCell = { x: cx, y: cy }; plan(); }
+    return;
+  }
+  if (tool === 'start') {
+    if (rawGrid[cy]?.[cx] === 0) {
+      startCell = { x: cx, y: cy };
+      robot.x = cx; robot.y = cy;
+      plan();
+    }
+    return;
+  }
+  isDrawing = true;
+  lastDragCell = { x: cx, y: cy };
+  paintCell(cx, cy);
+});
+
+sim.addEventListener('mousemove', e => {
+  if (!isDrawing) return;
+  const rect = sim.getBoundingClientRect();
+  const cx = Math.floor((e.clientX - rect.left) / CELL);
+  const cy = Math.floor((e.clientY - rect.top) / CELL);
+  if (cx < 0 || cy < 0 || cx >= COLS || cy >= ROWS) return;
+  if (cx === lastDragCell.x && cy === lastDragCell.y) return;
+  lastDragCell = { x: cx, y: cy };
+  paintCell(cx, cy);
+});
+
+sim.addEventListener('mouseup', () => {
+  if (isDrawing) { isDrawing = false; buildCGrid(); plan(); }
+});
+sim.addEventListener('contextmenu', e => e.preventDefault());
+
+function paintCell(cx, cy) {
+  // Don't paint over start or goal
+  if (Math.abs(cx - startCell.x) < 1 && Math.abs(cy - startCell.y) < 1) return;
+  if (Math.abs(cx - goalCell.x) < 1 && Math.abs(cy - goalCell.y) < 1) return;
+  if (tool === 'wall') rawGrid[cy][cx] = 1;
+  else if (tool === 'erase') rawGrid[cy][cx] = 0;
+}
+
+// ── MAIN LOOP ─────────────────────────────────────
+let loopCounter = 0;
+function loop(ts) {
+  requestAnimationFrame(loop);
+  // FPS
+  fcnt++;
+  if (ts - ftimer > 1000) { fps = fcnt; fcnt = 0; ftimer = ts; document.getElementById('sb-fps').textContent = fps; }
+  const dt = Math.min((ts - lastT) / 1000, 0.05);
+  lastT = ts;
+
+  if (!paused) {
+    const steps = Math.max(1, Math.round(simSpd / 5));
+    for (let i = 0; i < steps; i++) {
+      moveRobot();
+      stepAgents();
+    }
+    // Check agent collision every 30 frames
+    loopCounter++;
+    if (loopCounter % 30 === 0) checkAgentBlock();
+  }
+
+  draw(ts);
+}
+
+// ── INIT ──────────────────────────────────────────
+resize();
+randEnv();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
