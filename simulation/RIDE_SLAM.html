@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>SLAM Laboratory — VROS | RAIN Nigeria</title>
+<title>SLAM Laboratory — RIDE | RAIN Nigeria</title>
 <style>/* ═══════════════════════════════════════════════════
-   VROS THEME SYSTEM — RAIN Nigeria
+   RIDE THEME SYSTEM — RAIN Nigeria
    Default: DARK (roboticists & GenZ preference)
    Persisted via localStorage
    Toggle via .theme-toggle button
@@ -285,7 +285,7 @@ a{text-decoration:none;color:inherit}
   <div class="brand-div"></div>
   <div class="mod-title-wrap">
     <div class="mod-title">🧭 SLAM Laboratory</div>
-    <div class="mod-subtitle">VROS · Robotics &amp; Artificial Intelligence Nigeria</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
   </div>
   <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
   <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
@@ -358,7 +358,7 @@ a{text-decoration:none;color:inherit}
   <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; AI Nigeria (RAIN)</div>
 </div>
 <script>
-function initTheme(){const t=localStorage.getItem("vros-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("vros-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+function initTheme(){const t=localStorage.getItem("RIDE-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("RIDE-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 function resize(){const ca=document.querySelector('.mod-canvas-wrap');const leg=document.querySelector('.legend-bar');sim.width=ca.clientWidth;sim.height=ca.clientHeight-(leg?leg.offsetHeight:0);W=sim.width;H=sim.height;}
 window.addEventListener('resize',resize);
