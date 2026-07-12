@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VROS — Process Control Laboratory</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#07070d;color:#e0e0e8}
+#app{display:flex;flex-direction:column;height:100vh}
+#topbar{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#0e0e18;border-bottom:1px solid #1a1a28;flex-shrink:0;min-height:42px}
+.back-btn{padding:3px 10px;border-radius:5px;border:1px solid #222230;background:#181824;color:#888;font-size:10px;cursor:pointer;text-decoration:none}
+.back-btn:hover{color:#e0e0e8;border-color:#e06020}
+.mod-title{font-size:13px;font-weight:700;color:#e06020;letter-spacing:1px}
+#main{display:flex;flex:1;overflow:hidden}
+#sb{width:200px;background:#0e0e18;border-right:1px solid #1a1a28;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+#sb::-webkit-scrollbar{width:3px}#sb::-webkit-scrollbar-thumb{background:#1a1a28}
+.ss{border-bottom:1px solid #141420;padding:8px 10px}
+.st{font-size:9px;color:#444;text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;font-weight:600}
+.row{display:flex;align-items:center;gap:5px;margin-bottom:5px;font-size:10px}
+.row label{flex:1;color:#888}
+.row input[type=range]{flex:1;height:3px;accent-color:#e06020;cursor:pointer}
+.val{min-width:34px;text-align:right;font-size:9px;color:#e06020;font-family:monospace}
+.btn{padding:3px 8px;border-radius:4px;border:1px solid #222230;background:#181824;color:#bbb;font-size:10px;cursor:pointer;transition:all .12s}
+.btn:hover{background:#222;color:#fff}.btn.on{background:#e06020;color:#fff;border-color:#e06020}
+.bg{display:flex;flex-wrap:wrap;gap:3px}
+select{width:100%;background:#181824;color:#bbb;border:1px solid #222230;border-radius:4px;font-size:10px;padding:3px 5px;margin-bottom:4px}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.sc{background:#181824;border-radius:4px;padding:3px 6px;border:1px solid #181830}
+.sk{font-size:8px;color:#444}.sv{font-size:11px;font-weight:700;color:#e0e0e8;font-family:monospace}
+#ca{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#sim{display:block;width:100%;flex:1}
+#chartarea{height:160px;background:#0a0a12;border-top:1px solid #1a1a28;flex-shrink:0}
+#chartc{width:100%;height:100%}
+#statusbar{display:flex;background:#0e0e18;border-top:1px solid #1a1a28;flex-shrink:0;height:32px;align-items:center}
+.sb-item{padding:0 12px;border-right:1px solid #141420;font-size:10px;color:#555;display:flex;align-items:center;gap:5px;height:100%}
+.sb-item span{color:#e06020;font-family:monospace;font-weight:600}
+</style>
+</head>
+<body>
+<div id="app">
+<div id="topbar">
+  <a href="VROS_Home.html" class="back-btn">← Home</a>
+  <span class="mod-title">⚙️ Process Control Laboratory</span>
+</div>
+<div id="main">
+<div id="sb">
+  <div class="ss"><div class="st">Process Type</div>
+    <select onchange="proc.type=this.value;resetProc();updateDesc()">
+      <option value="tank">Water Tank (Level)</option>
+      <option value="heat">Heat Exchanger</option>
+      <option value="reactor">CSTR Reactor</option>
+      <option value="conveyor">Conveyor Speed</option>
+      <option value="boiler">Boiler / Furnace</option>
+    </select>
+    <div id="proc-desc" style="font-size:9px;color:#444;line-height:1.5;margin-top:3px">First-order integrating process. Outlet flow = f(valve). Level = ∫(inlet-outlet)dt.</div>
+  </div>
+  <div class="ss"><div class="st">Controller</div>
+    <select onchange="proc.ctrlMode=this.value">
+      <option value="pid">PID</option>
+      <option value="p">P only</option>
+      <option value="pi">PI</option>
+      <option value="manual">Manual (open-loop)</option>
+    </select>
+  </div>
+  <div class="ss"><div class="st">PID Gains</div>
+    <div class="row"><label>Kp</label><input type="range" min="0" max="10" step="0.05" value="2" oninput="proc.kp=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="val">2.00</span></div>
+    <div class="row"><label>Ki</label><input type="range" min="0" max="3" step="0.01" value="0.3" oninput="proc.ki=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="val">0.30</span></div>
+    <div class="row"><label>Kd</label><input type="range" min="0" max="2" step="0.01" value="0.1" oninput="proc.kd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="val">0.10</span></div>
+    <div class="row"><label>Manual output</label><input type="range" min="0" max="100" value="50" oninput="proc.manual=+this.value;this.nextElementSibling.textContent=this.value+'%'"><span class="val">50%</span></div>
+  </div>
+  <div class="ss"><div class="st">Setpoint</div>
+    <div class="row"><label>Target</label><input type="range" min="10" max="90" value="65" oninput="proc.sp=+this.value;this.nextElementSibling.textContent=this.value+'%'"><span class="val">65%</span></div>
+    <div class="row"><label>Ramp SP</label><input type="checkbox" onchange="proc.ramp=this.checked"></div>
+  </div>
+  <div class="ss"><div class="st">Disturbances</div>
+    <div class="bg">
+      <button class="btn" onclick="proc.dist=25;setTimeout(()=>proc.dist=0,600)">Load +</button>
+      <button class="btn" onclick="proc.dist=-25;setTimeout(()=>proc.dist=0,600)">Load −</button>
+    </div>
+    <div class="bg" style="margin-top:4px">
+      <button class="btn" id="noisbtn" onclick="proc.noisy=!proc.noisy;this.classList.toggle('on')">Noise</button>
+      <button class="btn" onclick="proc.deadTime=proc.deadTime?0:.5">Dead Time</button>
+    </div>
+    <div class="row" style="margin-top:4px"><label>Noise amp</label><input type="range" min="0.1" max="5" step="0.1" value="1" oninput="proc.noiseAmp=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="val">1.0</span></div>
+  </div>
+  <div class="ss"><div class="st">Metrics</div>
+    <div class="sg">
+      <div class="sc"><div class="sk">PV</div><div class="sv" id="pr-pv">0</div></div>
+      <div class="sc"><div class="sk">Error</div><div class="sv" id="pr-er">0</div></div>
+      <div class="sc"><div class="sk">Output</div><div class="sv" id="pr-out">0</div></div>
+      <div class="sc"><div class="sk">Integral</div><div class="sv" id="pr-int">0</div></div>
+      <div class="sc"><div class="sk">IAE</div><div class="sv" id="pr-iae">0</div></div>
+      <div class="sc"><div class="sk">Status</div><div class="sv" id="pr-st">OK</div></div>
+    </div>
+  </div>
+  <div class="ss"><div class="st">Controls</div>
+    <div class="bg">
+      <button class="btn" id="pbtn" onclick="togglePause()">⏸ Pause</button>
+      <button class="btn" onclick="resetProc()">↺ Reset</button>
+    </div>
+    <div class="row" style="margin-top:4px"><label>Sim speed</label><input type="range" min="1" max="5" value="1" oninput="simSpd=+this.value;this.nextElementSibling.textContent=this.value+'x'"><span class="val">1x</span></div>
+  </div>
+</div>
+<div id="ca">
+  <canvas id="sim"></canvas>
+  <div id="chartarea"><canvas id="chartc"></canvas></div>
+</div>
+</div>
+<div id="statusbar">
+  <div class="sb-item"><span class="sb-label">TYPE</span>&nbsp;<span id="sb-type">Water Tank</span></div>
+  <div class="sb-item"><span class="sb-label">PV</span>&nbsp;<span id="sb-pv">0%</span></div>
+  <div class="sb-item"><span class="sb-label">SP</span>&nbsp;<span id="sb-sp">65%</span></div>
+  <div class="sb-item"><span class="sb-label">ERROR</span>&nbsp;<span id="sb-err">0%</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">VROS Process Control Lab v2.0</span></div>
+</div>
+</div>
+<script>
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+const cc=document.getElementById('chartc'),cctx=cc.getContext('2d');
+let W,H,paused=false,simSpd=1,lastT=0;
+const proc={type:'tank',kp:2,ki:.3,kd:.1,sp:65,pv:20,integ:0,prevE:0,out:0,dist:0,noisy:false,noiseAmp:1,ctrlMode:'pid',manual:50,deadTime:0,ramp:false,hist:[],iae:0,t:0};
+const MAXH=250;
+
+const descs={tank:'First-order integrating process. Level = ∫(inlet−outlet)dt. Inlet = valve output, outlet = f(level).',heat:'Heat exchanger: temperature dynamics. Heat in = control output. Heat loss = f(temp). Second-order with lag.',reactor:'Continuous Stirred Tank Reactor. Exothermic reaction adds heat. Nonlinear plant — challenging to control.',conveyor:'Conveyor belt speed control. DC motor dynamics: speed = f(voltage). First-order with back-EMF.',boiler:'Boiler/furnace temperature. Large thermal mass, slow dynamics. Dead time from combustion lag.'};
+
+function updateDesc(){document.getElementById('proc-desc').textContent=descs[proc.type];document.getElementById('sb-type').textContent=proc.type.charAt(0).toUpperCase()+proc.type.slice(1);}
+function resize(){const ca=document.getElementById('ca');const ch=document.getElementById('chartarea');sim.width=ca.clientWidth;sim.height=ca.clientHeight-ch.offsetHeight;W=sim.width;H=sim.height;cc.width=ch.clientWidth;cc.height=ch.clientHeight;}
+window.addEventListener('resize',resize);
+
+function resetProc(){proc.pv=20;proc.integ=0;proc.prevE=0;proc.hist=[];proc.iae=0;proc.t=0;updateDesc();}
+function togglePause(){paused=!paused;document.getElementById('pbtn').textContent=paused?'▶ Resume':'⏸ Pause';}
+
+function stepProc(dt){
+  proc.t+=dt;if(proc.ramp)proc.sp=50+20*Math.sin(proc.t*.1);
+  const noise=proc.noisy?(Math.random()-.5)*proc.noiseAmp:0;
+  const err=proc.sp-proc.pv,me=err+noise;proc.integ+=me*dt;proc.iae+=Math.abs(err)*dt;
+  let u=0;
+  if(proc.ctrlMode==='manual')u=proc.manual;
+  else if(proc.ctrlMode==='p')u=50+proc.kp*me;
+  else if(proc.ctrlMode==='pi')u=50+proc.kp*me+proc.ki*Math.max(-50,Math.min(50,proc.integ));
+  else u=50+proc.kp*me+proc.ki*Math.max(-50,Math.min(50,proc.integ))+proc.kd*(me-proc.prevE)/Math.max(dt,.001);
+  proc.prevE=me;proc.out=Math.max(0,Math.min(100,u));
+  let dpv=0;
+  if(proc.type==='tank')dpv=(proc.out*.8-proc.pv*.06)*dt*.5;
+  else if(proc.type==='heat')dpv=(proc.out*.6-proc.pv*.04)*dt*.35;
+  else if(proc.type==='reactor')dpv=(proc.out*.5+proc.pv*.025*(1-proc.pv/150)-proc.pv*.055)*dt*.3;
+  else if(proc.type==='conveyor')dpv=(proc.out*.85-proc.pv*.07)*dt*.6;
+  else dpv=(proc.out*.5-proc.pv*.03)*dt*.25;
+  proc.pv=Math.max(0,Math.min(100,proc.pv+dpv+proc.dist*dt*.3+noise*.2));proc.dist*=.92;
+  proc.hist.push({sp:proc.sp,pv:proc.pv,out:proc.out,err:me});if(proc.hist.length>MAXH)proc.hist.shift();
+  document.getElementById('pr-pv').textContent=proc.pv.toFixed(1)+'%';document.getElementById('pr-er').textContent=Math.abs(err).toFixed(1)+'%';document.getElementById('pr-out').textContent=proc.out.toFixed(1)+'%';document.getElementById('pr-int').textContent=proc.integ.toFixed(1);document.getElementById('pr-iae').textContent=proc.iae.toFixed(1);
+  const ok=Math.abs(err)<4;document.getElementById('pr-st').textContent=ok?'OK':'Adj';document.getElementById('pr-st').style.color=ok?'#1baf7a':'#eda100';
+  document.getElementById('sb-pv').textContent=proc.pv.toFixed(1)+'%';document.getElementById('sb-sp').textContent=proc.sp.toFixed(0)+'%';document.getElementById('sb-err').textContent=err.toFixed(1)+'%';
+}
+
+function drawSim(){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#07070d';ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(255,255,255,0.02)';ctx.lineWidth=1;for(let x=0;x<W;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const cx=W*.35,cy=H*.1,tw=150,th=H*.7;
+  if(proc.type==='tank'){
+    // Tank outline
+    ctx.strokeStyle='#3987e5';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy+th);ctx.lineTo(cx+tw,cy+th);ctx.lineTo(cx+tw,cy);ctx.stroke();
+    // Fill level
+    const fh=proc.pv/100*th;const temp_col=proc.pv/100;ctx.fillStyle=`rgba(${Math.round(57+temp_col*100)},${Math.round(135-temp_col*50)},229,${.25+proc.pv/200})`;ctx.fillRect(cx+2,cy+th-fh+2,tw-4,fh-2);
+    // Wave animation
+    for(let i=0;i<3;i++){ctx.fillStyle='rgba(100,180,255,0.08)';ctx.beginPath();const wy=cy+th-fh+5+i*6;ctx.moveTo(cx+2,wy);for(let x2=0;x2<tw-4;x2+=10)ctx.lineTo(cx+2+x2,wy+(i%2?3:-3)*Math.sin((x2+proc.t*20)/15));ctx.lineTo(cx+tw-2,wy);ctx.fill();}
+    // Inlet pipe
+    ctx.strokeStyle='#3987e5';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(cx+40,cy-35);ctx.lineTo(cx+40,cy);ctx.stroke();
+    // Valve (inlet)
+    const valveOpen=proc.out/100;ctx.fillStyle=`rgba(57,135,229,${valveOpen*.8+.2})`;ctx.fillRect(cx+30,cy-36,20,10);ctx.strokeStyle='rgba(57,135,229,0.5)';ctx.lineWidth=1;ctx.strokeRect(cx+30,cy-36,20,10);
+    // Flow drops
+    for(let d=0;d<Math.ceil(valveOpen*4);d++){ctx.fillStyle='rgba(57,135,229,0.5)';ctx.beginPath();ctx.ellipse(cx+40+(d-1)*5,cy-10+(proc.t*30+d*20)%30,2,4,0,0,Math.PI*2);ctx.fill();}
+    // Outlet pipe
+    ctx.strokeStyle='#3987e5';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(cx+110,cy+th);ctx.lineTo(cx+110,cy+th+35);ctx.stroke();
+    ctx.fillStyle='rgba(237,161,0,0.6)';ctx.fillRect(cx+100,cy+th+8,20,10);
+    // Labels
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px monospace';ctx.fillText(`Level: ${proc.pv.toFixed(1)}%`,cx+tw+15,cy+th*.5-10);ctx.fillText(`Valve: ${proc.out.toFixed(0)}%`,cx+tw+15,cy+th*.5+10);ctx.fillText(`Error: ${(proc.sp-proc.pv).toFixed(1)}%`,cx+tw+15,cy+th*.5+30);
+    // SP line
+    const spY=cy+th-proc.sp/100*th;ctx.strokeStyle='rgba(57,135,229,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx,spY);ctx.lineTo(cx+tw,spY);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(57,135,229,0.7)';ctx.font='9px monospace';ctx.fillText('SP:'+proc.sp.toFixed(0)+'%',cx+tw+3,spY+3);
+  } else if(proc.type==='heat'||proc.type==='boiler'){
+    const temp=proc.pv/100;ctx.fillStyle=`rgba(${Math.round(50+temp*180)},${Math.round(80-temp*60)},${Math.round(80-temp*60)},0.18)`;ctx.fillRect(cx,cy,tw,th);ctx.strokeStyle=`rgb(${Math.round(100+temp*150)},${Math.round(80-temp*60)},80)`;ctx.lineWidth=3;ctx.strokeRect(cx,cy,tw,th);
+    for(let i=0;i<5;i++){ctx.strokeStyle=`rgba(${Math.round(80+temp*170)},50,50,0.35)`;ctx.lineWidth=2;const fx=cx+15+i*25,fTop=cy+th-proc.out/100*th*.8;ctx.beginPath();for(let y2=cy+th;y2>fTop;y2-=8){const wave=Math.sin(y2*.2+proc.t*3+i)*(2+temp*4);ctx.lineTo(fx+wave,y2);}ctx.stroke();}
+    const spY=cy+th-proc.sp/100*th;ctx.strokeStyle='rgba(57,135,229,0.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx,spY);ctx.lineTo(cx+tw,spY);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px monospace';ctx.fillText(`Temp: ${proc.pv.toFixed(1)}%`,cx+tw+15,cy+th*.4);ctx.fillText(`Heat: ${proc.out.toFixed(0)}%`,cx+tw+15,cy+th*.4+20);
+  } else if(proc.type==='reactor'){
+    const react=proc.pv/100;ctx.fillStyle=`rgba(${Math.round(50+react*100)},${Math.round(100+react*50)},${Math.round(150-react*80)},0.2)`;ctx.fillRect(cx,cy,tw,th);ctx.strokeStyle='#9055d4';ctx.lineWidth=3;ctx.strokeRect(cx,cy,tw,th);
+    // Stirrer
+    ctx.save();ctx.translate(cx+tw/2,cy+th/2);ctx.rotate(proc.t*3);ctx.strokeStyle='rgba(144,85,212,0.5)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-30,0);ctx.lineTo(30,0);ctx.moveTo(0,-30);ctx.lineTo(0,30);ctx.stroke();ctx.restore();
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px monospace';ctx.fillText(`Conc: ${proc.pv.toFixed(1)}%`,cx+tw+15,cy+th*.4);
+  } else {
+    // Conveyor
+    const beltY=cy+th*.6;ctx.fillStyle='#2a2a40';ctx.fillRect(cx,beltY,tw,20);ctx.strokeStyle='#3987e5';ctx.lineWidth=2;ctx.strokeRect(cx,beltY,tw,20);
+    for(let i=0;i<8;i++){const bx=(cx+i*22+(proc.t*proc.out*.3)%22)%tw+cx;ctx.strokeStyle='rgba(57,135,229,0.4)';ctx.beginPath();ctx.moveTo(bx,beltY);ctx.lineTo(bx,beltY+20);ctx.stroke();}
+    ctx.fillStyle='#e34948';ctx.fillRect(cx+tw*.4,beltY-15,25,15);// Item on belt
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px monospace';ctx.fillText(`Speed: ${proc.pv.toFixed(1)}%`,cx+tw+15,cy+th*.5);ctx.fillText(`Drive: ${proc.out.toFixed(0)}%`,cx+tw+15,cy+th*.5+20);
+  }
+}
+
+function drawChart(){
+  if(!cctx||!cc||proc.hist.length<2)return;
+  const cw=cc.width,ch=cc.height;cctx.clearRect(0,0,cw,ch);cctx.fillStyle='#0a0a12';cctx.fillRect(0,0,cw,ch);
+  cctx.strokeStyle='rgba(255,255,255,0.04)';cctx.lineWidth=1;for(let i=0;i<=4;i++){const y=ch*i/4;cctx.beginPath();cctx.moveTo(0,y);cctx.lineTo(cw,y);cctx.stroke();}
+  // Y axis labels
+  cctx.fillStyle='#333';cctx.font='8px monospace';for(let v=0;v<=100;v+=25){cctx.fillText(v+'%',2,ch-v/100*ch+3);}
+  const yv=v=>ch-v/100*ch;
+  // SP
+  cctx.strokeStyle='rgba(57,135,229,0.45)';cctx.lineWidth=1;cctx.setLineDash([4,4]);cctx.beginPath();proc.hist.forEach((p,i)=>{const x=i/MAXH*cw,y=yv(p.sp);i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();cctx.setLineDash([]);
+  // Out
+  cctx.strokeStyle='#eda100';cctx.lineWidth=1;cctx.beginPath();proc.hist.forEach((p,i)=>{const x=i/MAXH*cw,y=yv(p.out);i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();
+  // PV
+  cctx.strokeStyle='#1baf7a';cctx.lineWidth=2.5;cctx.beginPath();proc.hist.forEach((p,i)=>{const x=i/MAXH*cw,y=yv(p.pv);i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();
+  // Error fill
+  cctx.fillStyle='rgba(227,73,72,0.08)';cctx.beginPath();proc.hist.forEach((p,i)=>{const x=i/MAXH*cw;i===0?cctx.moveTo(x,yv(p.sp)):cctx.lineTo(x,yv(p.sp));});proc.hist.slice().reverse().forEach((p,i)=>{const x=(MAXH-i)/MAXH*cw;cctx.lineTo(x,yv(p.pv));});cctx.closePath();cctx.fill();
+  // Legend
+  [{c:'#3987e5',l:'— SP'},{c:'#1baf7a',l:'— PV'},{c:'#eda100',l:'— Output'}].forEach(({c,l},i)=>{cctx.fillStyle=c;cctx.font='8px monospace';cctx.fillText(l,4+i*55,10);});
+}
+
+function loop(ts){requestAnimationFrame(loop);const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;if(!paused){const s=simSpd||1;for(let i=0;i<s;i++)stepProc(dt/s);}drawSim();drawChart();}
+resize();resetProc();requestAnimationFrame(loop);
+</script>
+</body></html>
