@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RIDE — Control Systems Laboratory</title>
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
+</style>
+</head>
+<body>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">📊 Control Systems Laboratory</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div id="app">
+
+<div id="main">
+<div id="sb">
+  <div class="sb-sec"><div class="sb-hd">Analysis Mode</div>
+    <div class="btn-grp">
+      <button class="gb active" id="m-bode" onclick="setMode('bode')">Bode</button>
+      <button class="gb" id="m-nyquist" onclick="setMode('nyquist')">Nyquist</button>
+      <button class="gb" id="m-rlocus" onclick="setMode('rlocus')">Root Locus</button>
+      <button class="gb" id="m-step" onclick="setMode('step')">Step Resp</button>
+      <button class="gb" id="m-pzmap" onclick="setMode('pzmap')">PZ Map</button>
+      <button class="gb" id="m-nichols" onclick="setMode('nichols')">Nichols</button>
+    </div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Plant G(s) = K·ωₙ² / (s²+2ζωₙs+ωₙ²)</div>
+    <div class="sb-row"><label>Gain K</label><input type="range" min="0.1" max="10" step="0.1" value="1" oninput="ctrl.K=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.0</span></div>
+    <div class="sb-row"><label>ωₙ (nat. freq)</label><input type="range" min="0.5" max="20" step="0.1" value="5" oninput="ctrl.wn=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">5.0</span></div>
+    <div class="sb-row"><label>ζ (damping)</label><input type="range" min="0.01" max="2" step="0.01" value="0.5" oninput="ctrl.zeta=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.50</span></div>
+    <div class="sb-row"><label>Dead time τ</label><input type="range" min="0" max="2" step="0.05" value="0" oninput="ctrl.delay=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.00</span></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Controller C(s) = PID</div>
+    <div class="sb-row"><label>Kp</label><input type="range" min="0.1" max="20" step="0.1" value="2" oninput="ctrl.kp=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">2.0</span></div>
+    <div class="sb-row"><label>Ki</label><input type="range" min="0" max="5" step="0.05" value="0.5" oninput="ctrl.ki=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.50</span></div>
+    <div class="sb-row"><label>Kd</label><input type="range" min="0" max="5" step="0.05" value="1" oninput="ctrl.kd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">1.00</span></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Stability Analysis</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">Gain Margin</div><div class="mc-val" id="c-gm">—</div></div>
+      <div class="mc"><div class="mc-lbl">Phase Margin</div><div class="mc-val" id="c-pm">—</div></div>
+      <div class="mc"><div class="mc-lbl">Bandwidth</div><div class="mc-val" id="c-bw">—</div></div>
+      <div class="mc"><div class="mc-lbl">Stable?</div><div class="mc-val" id="c-st">—</div></div>
+      <div class="mc"><div class="mc-lbl">Resonant ω</div><div class="mc-val" id="c-wr">—</div></div>
+      <div class="mc"><div class="mc-lbl">Peak |G|</div><div class="mc-val" id="c-pk">—</div></div>
+    </div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Transfer Function</div>
+    <div class="math-block" id="tf-display">G(s) = 1·25/(s²+5s+25)</div>
+    <div class="math-block" id="cl-display">T(s) = C·G/(1+C·G)</div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Plot Range</div>
+    <div class="sb-row"><label>ω min</label><input type="range" min="-3" max="0" step="0.5" value="-2" oninput="ctrl.wmin=Math.pow(10,+this.value);this.nextElementSibling.textContent='10^'+this.value"><span class="sb-val">0.01</span></div>
+    <div class="sb-row"><label>ω max</label><input type="range" min="1" max="4" step="0.5" value="3" oninput="ctrl.wmax=Math.pow(10,+this.value);this.nextElementSibling.textContent='10^'+this.value"><span class="sb-val">1000</span></div>
+    <div class="sb-row"><label>Show grid</label><input type="checkbox" checked onchange="ctrl.grid=this.checked"></div>
+    <div class="sb-row"><label>Show margins</label><input type="checkbox" checked onchange="ctrl.margins=this.checked"></div>
+  </div>
+</div>
+<div class="mod-canvas-wrap" id="ca"><canvas id="sim"></canvas></div>
+</div>
+<div id="statusbar">
+  <div class="sb-item"><span class="sb-label">MODE</span>&nbsp;<span id="sb-mode">Bode</span></div>
+  <div class="sb-item"><span class="sb-label">GM</span>&nbsp;<span id="sb-gm">—</span></div>
+  <div class="sb-item"><span class="sb-label">PM</span>&nbsp;<span id="sb-pm">—</span></div>
+  <div class="sb-item"><span class="sb-label">STABLE</span>&nbsp;<span id="sb-st">—</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">VROS Control Systems Lab v2.0</span></div>
+</div>
+</div>
+<script>
+function initTheme(){const t=localStorage.getItem("ride-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("ride-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,plotMode='bode';
+const ctrl={K:1,wn:5,zeta:.5,delay:0,kp:2,ki:.5,kd:1,wmin:.01,wmax:1000,grid:true,margins:true};
+
+function resize(){const ca=document.getElementById('ca');sim.width=ca.clientWidth;sim.height=ca.clientHeight;W=sim.width;H=sim.height;draw();}
+window.addEventListener('resize',resize);
+
+function setMode(m){plotMode=m;document.querySelectorAll('.ab').forEach(b=>b.classList.remove('active'));document.getElementById('m-'+m).classList.add('active');document.getElementById('sb-mode').textContent=m.charAt(0).toUpperCase()+m.slice(1);draw();}
+
+function evalTF(w){
+  const wn2=ctrl.wn**2,re=wn2-w**2,im=2*ctrl.zeta*ctrl.wn*w,den2=re**2+im**2;
+  const Pr=ctrl.K*wn2*re/den2,Pi=-ctrl.K*wn2*im/den2;
+  const Cr=ctrl.kp-ctrl.kd*w**2/(w**2+0.0001),Ci=ctrl.ki/Math.max(w,.0001)-ctrl.kd*w;
+  let Lr=Cr*Pr-Ci*Pi,Li=Cr*Pi+Ci*Pr;
+  if(ctrl.delay>0){const phd=ctrl.delay*w;const cosd=Math.cos(-phd),sind=Math.sin(-phd);const tmp=Lr*cosd-Li*sind;Li=Lr*sind+Li*cosd;Lr=tmp;}
+  return{mag:Math.sqrt(Lr**2+Li**2),phase:Math.atan2(Li,Lr)*180/Math.PI,re:Lr,im:Li};
+}
+
+function updateTF(){
+  document.getElementById('tf-display').textContent=`G(s) = ${ctrl.K}·${ctrl.wn.toFixed(1)}²/(s²+${(2*ctrl.zeta*ctrl.wn).toFixed(1)}s+${(ctrl.wn**2).toFixed(1)})`;
+  document.getElementById('cl-display').textContent=`C(s) = ${ctrl.kp} + ${ctrl.ki}/s + ${ctrl.kd}s`;
+}
+
+function computeMargins(){
+  const pts=500;let gm='∞',pm='—',bw='—',stable=true,crossFreq=null,gainAt180=null,wr=null,pkMag=0;
+  for(let i=0;i<pts;i++){
+    const w=ctrl.wmin*Math.pow(ctrl.wmax/ctrl.wmin,i/(pts-1));
+    const r=evalTF(w);const db=20*Math.log10(Math.max(r.mag,1e-9));
+    if(db>pkMag){pkMag=db;wr=w;}
+    if(!crossFreq&&i>0){const prev=evalTF(ctrl.wmin*Math.pow(ctrl.wmax/ctrl.wmin,(i-1)/(pts-1)));if(prev.mag>=1&&r.mag<1)crossFreq=w;}
+    if(r.phase<-180&&gainAt180===null)gainAt180=db;
+  }
+  if(gainAt180!==null){gm=(-gainAt180).toFixed(1)+'dB';stable=gainAt180<0;}
+  if(crossFreq){const r=evalTF(crossFreq);pm=(r.phase+180).toFixed(1)+'°';bw=crossFreq.toFixed(2);}
+  document.getElementById('c-gm').textContent=gm;document.getElementById('c-pm').textContent=pm;document.getElementById('c-bw').textContent=bw?bw+'r/s':'—';
+  document.getElementById('c-st').textContent=stable?'✓ Yes':'✗ No';document.getElementById('c-st').className='sv '+(stable?'good':'bad');
+  document.getElementById('c-wr').textContent=wr?wr.toFixed(2)+'r/s':'—';document.getElementById('c-pk').textContent=pkMag.toFixed(1)+'dB';
+  document.getElementById('sb-gm').textContent=gm;document.getElementById('sb-pm').textContent=pm||'—';document.getElementById('sb-st').textContent=stable?'✓ Yes':'✗ No';
+  document.getElementById('sb-st').style.color=stable?'#1baf7a':'#e34948';
+  return{stable,gm:gainAt180,pm:crossFreq?evalTF(crossFreq).phase+180:null,crossFreq,wr,pkMag};
+}
+
+function drawBode(margins){
+  const pad={l:60,r:20,t:25,b:25};
+  const topH=Math.floor(H*.52),botH=H-topH;
+  // Backgrounds
+  ctx.fillStyle='rgba(57,135,229,0.03)';ctx.fillRect(pad.l,0,W-pad.l-pad.r,topH);
+  ctx.fillStyle='rgba(27,175,122,0.03)';ctx.fillRect(pad.l,topH,W-pad.l-pad.r,botH);
+  const wmin=ctrl.wmin,wmax=ctrl.wmax;
+  const wToX=w=>pad.l+(Math.log10(w)-Math.log10(wmin))/(Math.log10(wmax)-Math.log10(wmin))*(W-pad.l-pad.r);
+  const dbToY=db=>topH/2-db*(topH*.018);
+  const phToY=ph=>topH+(ph+270)/360*(botH*.8)+botH*.1;
+  // Grid
+  if(ctrl.grid){
+    ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+    for(let db=-60;db<=40;db+=20){ctx.beginPath();ctx.moveTo(pad.l,dbToY(db));ctx.lineTo(W-pad.r,dbToY(db));ctx.stroke();ctx.fillStyle='#333';ctx.font='8px monospace';ctx.fillText(db+'dB',2,dbToY(db)+3);}
+    for(let ph=-270;ph<=0;ph+=45){ctx.beginPath();ctx.moveTo(pad.l,phToY(ph));ctx.lineTo(W-pad.r,phToY(ph));ctx.stroke();ctx.fillStyle='#333';ctx.font='8px monospace';ctx.fillText(ph+'°',2,phToY(ph)+3);}
+    // Decade marks
+    for(let d=Math.floor(Math.log10(wmin));d<=Math.ceil(Math.log10(wmax));d++){const x=wToX(Math.pow(10,d));ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.fillStyle='#333';ctx.font='8px monospace';ctx.fillText('10^'+d,x-10,H-4);}
+  }
+  // 0dB and -180° lines
+  ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.setLineDash([5,5]);
+  ctx.beginPath();ctx.moveTo(pad.l,dbToY(0));ctx.lineTo(W-pad.r,dbToY(0));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,phToY(-180));ctx.lineTo(W-pad.r,phToY(-180));ctx.stroke();ctx.setLineDash([]);
+  // Plot
+  const pts=400;const mags=[],phases=[];
+  for(let i=0;i<pts;i++){const w=wmin*Math.pow(wmax/wmin,i/(pts-1));const r=evalTF(w);mags.push({w,db:20*Math.log10(Math.max(r.mag,1e-9))});phases.push({w,ph:r.phase});}
+  ctx.strokeStyle='#3987e5';ctx.lineWidth=2.5;ctx.beginPath();
+  mags.forEach((p,i)=>{const x=wToX(p.w),y=Math.max(5,Math.min(topH-5,dbToY(p.db)));i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+  ctx.strokeStyle='#1baf7a';ctx.lineWidth=2;ctx.beginPath();
+  phases.forEach((p,i)=>{const x=wToX(p.w),y=Math.max(topH+5,Math.min(H-5,phToY(p.ph)));i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();
+  // Margin markers
+  if(ctrl.margins&&margins.crossFreq){
+    const x=wToX(margins.crossFreq);ctx.strokeStyle='rgba(237,161,0,0.6)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#eda100';ctx.font='8px monospace';ctx.fillText('ωc='+margins.crossFreq.toFixed(1),x+3,topH-5);
+  }
+  // Labels
+  ctx.fillStyle='rgba(255,255,255,0.25)';ctx.font='10px monospace';ctx.fillText('|G| dB',pad.l+4,14);ctx.fillText('∠G °',pad.l+4,topH+14);
+  ctx.fillStyle='#3987e5';ctx.fillText('— Magnitude',W-120,14);ctx.fillStyle='#1baf7a';ctx.fillText('— Phase',W-120,26);
+}
+
+function drawNyquist(){
+  const cx=W/2,cy=H/2,sc=Math.min(W,H)*.28;
+  ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // Unit circle
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(cx,cy,sc,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  // Critical point
+  ctx.fillStyle='#e34948';ctx.beginPath();ctx.arc(cx-sc,cy,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(227,73,72,0.2)';ctx.beginPath();ctx.arc(cx-sc,cy,20,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#e34948';ctx.font='9px monospace';ctx.fillText('(-1,0j)',cx-sc-32,cy-12);
+  // Positive freq
+  ctx.strokeStyle='#3987e5';ctx.lineWidth=2;ctx.beginPath();let first=true;
+  for(let i=0;i<=500;i++){const w=.001+i/500*200;const r=evalTF(w);const x=cx+r.re*sc,y=cy-r.im*sc;if(isFinite(x)&&isFinite(y)&&Math.abs(x-cx)<W*.95&&Math.abs(y-cy)<H*.95){first?ctx.moveTo(x,y):ctx.lineTo(x,y);first=false;}}ctx.stroke();
+  // Negative freq (mirror)
+  ctx.strokeStyle='rgba(57,135,229,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();first=true;
+  for(let i=0;i<=500;i++){const w=.001+i/500*200;const r=evalTF(w);const x=cx+r.re*sc,y=cy+r.im*sc;if(isFinite(x)&&isFinite(y)&&Math.abs(x-cx)<W*.95&&Math.abs(y-cy)<H*.95){first?ctx.moveTo(x,y):ctx.lineTo(x,y);first=false;}}ctx.stroke();ctx.setLineDash([]);
+  // Axis labels
+  ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='9px monospace';ctx.fillText('Re →',W-40,cy-5);ctx.fillText('Im ↑',cx+5,14);
+  ctx.fillStyle='#888';ctx.font='9px monospace';ctx.fillText('Nyquist Diagram — Encirclements of (-1,0) → unstable',10,H-8);
+}
+
+function drawRootLocus(){
+  const cx=W/2,cy=H/2,sc=Math.min(W,H)/(ctrl.wn*4);
+  ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // Stability boundary label
+  ctx.fillStyle='rgba(227,73,72,0.15)';ctx.fillRect(cx,0,W-cx,H);
+  ctx.fillStyle='rgba(27,175,122,0.06)';ctx.fillRect(0,0,cx,H);
+  ctx.fillStyle='#e34948';ctx.font='9px monospace';ctx.fillText('UNSTABLE',cx+10,20);ctx.fillStyle='#1baf7a';ctx.fillText('STABLE',cx-60,20);
+  // Poles of open-loop plant
+  const zw=ctrl.zeta*ctrl.wn,disc=ctrl.zeta**2-1;
+  ctx.fillStyle='#e34948';ctx.font='18px serif';
+  if(disc<0){const ip=ctrl.wn*Math.sqrt(-disc);[{re:-zw,im:ip},{re:-zw,im:-ip}].forEach(p=>{const px=cx+p.re*sc,py=cy-p.im*sc;ctx.fillText('×',px-7,py+7);ctx.fillStyle='rgba(227,73,72,0.1)';ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e34948';});}
+  else{const rp=ctrl.wn*Math.sqrt(Math.max(0,disc));[{re:-zw+rp},{re:-zw-rp}].forEach(p=>{ctx.fillText('×',cx+p.re*sc-7,cy+7);});}
+  // Zeros of controller (integrator at origin)
+  ctx.strokeStyle='#3987e5';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.stroke();
+  // Locus sweep
+  ctx.strokeStyle='rgba(57,135,229,0.4)';ctx.lineWidth=1.5;ctx.beginPath();
+  for(let k=0;k<50;k+=0.2){const re=-zw-k*.05,im=disc<0?ctrl.wn*Math.sqrt(-disc)*(1-k*0.02):0;const px=cx+re*sc,py=cy-im*sc;if(k===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();
+  ctx.strokeStyle='rgba(57,135,229,0.4)';ctx.beginPath();for(let k=0;k<50;k+=0.2){const re=-zw-k*.05,im=-(disc<0?ctrl.wn*Math.sqrt(-disc)*(1-k*0.02):0);const px=cx+re*sc,py=cy-im*sc;if(k===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}ctx.stroke();
+  ctx.fillStyle='#888';ctx.font='9px monospace';ctx.fillText('Root Locus  × = open-loop pole  ○ = zero  Blue = locus as K→∞',10,H-8);ctx.fillText('σ →',W-30,cy-4);ctx.fillText('jω',cx+4,14);
+}
+
+function drawStep(){
+  const pad=50,n=600,tend=10;
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  for(let v=-0.5;v<=1.5;v+=0.5){const y=pad+(H-2*pad)*(1.2-v)/2.4;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-10,y);ctx.stroke();ctx.fillStyle='#333';ctx.font='8px monospace';ctx.fillText(v.toFixed(1),2,y+3);}
+  const tToX=t=>pad+t/tend*(W-pad-10);
+  const yToY=y=>pad+(H-2*pad)*(1.2-y)/2.4;
+  let y=0,yd=0;const dt=tend/n;const resp=[];
+  for(let i=0;i<n;i++){const ydd=-2*ctrl.zeta*ctrl.wn*yd-ctrl.wn**2*y+ctrl.K*ctrl.wn**2;yd+=ydd*dt;y+=yd*dt;resp.push({t:i*dt,y});}
+  const maxY=Math.max(...resp.map(r=>r.y));const ssVal=resp[n-1].y;
+  // Step input
+  ctx.strokeStyle='rgba(57,135,229,0.3)';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(tToX(0),yToY(1));ctx.lineTo(tToX(tend),yToY(1));ctx.stroke();ctx.setLineDash([]);
+  // SS value
+  ctx.strokeStyle='rgba(27,175,122,0.3)';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad,yToY(ssVal));ctx.lineTo(W-10,yToY(ssVal));ctx.stroke();ctx.setLineDash([]);
+  // Response
+  ctx.strokeStyle='#1baf7a';ctx.lineWidth=2.5;ctx.beginPath();resp.forEach((r,i)=>{const x=tToX(r.t),y2=yToY(r.y);i===0?ctx.moveTo(x,y2):ctx.lineTo(x,y2);});ctx.stroke();
+  // Annotations
+  const ov=Math.max(0,(maxY-ssVal)/ssVal*100);
+  let riseT=null,setT=null;
+  resp.forEach(r=>{if(!riseT&&r.y>ssVal*0.9)riseT=r.t;if(r.y>ssVal*0.98&&r.y<ssVal*1.02&&!setT&&riseT)setT=r.t;});
+  ctx.fillStyle='#eda100';ctx.font='9px monospace';ctx.fillText(`Overshoot: ${ov.toFixed(1)}%`,10,14);
+  ctx.fillText(`Steady-state: ${ssVal.toFixed(3)}`,10,26);
+  if(riseT)ctx.fillText(`Rise time: ${riseT.toFixed(2)}s`,10,38);
+  if(setT)ctx.fillText(`Settle time: ${setT.toFixed(2)}s`,10,50);
+  ctx.fillStyle='#3987e5';ctx.fillText('— Step input',W-120,14);ctx.fillStyle='#1baf7a';ctx.fillText('— Response',W-120,26);
+  ctx.fillStyle='#444';ctx.font='8px monospace';ctx.fillText('Time (s) →',W/2-25,H-5);
+}
+
+function drawPZmap(){
+  const cx=W/2,cy=H/2,sc=Math.min(W,H)/(ctrl.wn*3);
+  ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // Stability shading
+  ctx.fillStyle='rgba(27,175,122,0.04)';ctx.fillRect(0,0,cx,H);ctx.fillStyle='rgba(227,73,72,0.04)';ctx.fillRect(cx,0,W-cx,H);
+  // Grid circles
+  for(let r=ctrl.wn;r<=ctrl.wn*3;r+=ctrl.wn){ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;ctx.setLineDash([3,4]);ctx.beginPath();ctx.arc(cx,cy,r*sc,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#333';ctx.font='8px monospace';ctx.fillText(r.toFixed(0),cx+r*sc+2,cy-2);}
+  const zw=ctrl.zeta*ctrl.wn,disc=ctrl.zeta**2-1;
+  ctx.fillStyle='#e34948';ctx.font='20px serif';
+  if(disc<0){const ip=ctrl.wn*Math.sqrt(-disc);[{re:-zw,im:ip},{re:-zw,im:-ip}].forEach(p=>{const px=cx+p.re*sc,py=cy-p.im*sc;ctx.fillText('×',px-8,py+8);ctx.fillStyle='rgba(227,73,72,0.15)';ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='rgba(227,73,72,0.3)';ctx.lineWidth=1;ctx.stroke();ctx.fillStyle='#e34948';ctx.font='8px monospace';ctx.fillText(`${p.re.toFixed(1)}+j${p.im.toFixed(1)}`,px+10,py);ctx.font='20px serif';});}
+  else{const rp=ctrl.wn*Math.sqrt(disc);[{re:-zw+rp,label:'σ₁'},{re:-zw-rp,label:'σ₂'}].forEach(p=>{ctx.fillText('×',cx+p.re*sc-8,cy+8);ctx.fillStyle='#e34948';ctx.font='8px monospace';ctx.fillText(p.re.toFixed(1),cx+p.re*sc+6,cy-4);ctx.font='20px serif';});}
+  ctx.strokeStyle='#3987e5';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,9,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='#888';ctx.font='9px monospace';ctx.fillText('Pole-Zero Map  × = pole  ○ = zero  Poles in LHP → stable',10,H-8);ctx.fillText('σ →',W-30,cy-4);ctx.fillText('jω↑',cx+4,14);
+}
+
+function drawNichols(){
+  const cx=W*.55,cy=H*.4;
+  ctx.strokeStyle='rgba(255,255,255,0.06)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  ctx.strokeStyle='#3987e5';ctx.lineWidth=2;ctx.beginPath();let first=true;
+  for(let i=0;i<=500;i++){const w=.001+i/500*100;const r=evalTF(w);const db=20*Math.log10(Math.max(r.mag,1e-9));const x=cx+(r.phase+180)/270*W*.4,y=cy-db*(H*.018);if(isFinite(x)&&isFinite(y)&&x>0&&x<W&&y>0&&y<H){first?ctx.moveTo(x,y):ctx.lineTo(x,y);first=false;}}ctx.stroke();
+  ctx.fillStyle='#888';ctx.font='9px monospace';ctx.fillText('Nichols Chart — Phase (°) vs Magnitude (dB)',10,H-8);ctx.fillText('Phase →',W-60,cy-4);ctx.fillText('|G| dB',cx+4,14);
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
+  const m=computeMargins();updateTF();
+  if(plotMode==='bode')drawBode(m);
+  else if(plotMode==='nyquist')drawNyquist();
+  else if(plotMode==='rlocus')drawRootLocus();
+  else if(plotMode==='step')drawStep();
+  else if(plotMode==='pzmap')drawPZmap();
+  else if(plotMode==='nichols')drawNichols();
+}
+
+// Redraw on any input change
+document.querySelectorAll('input[type=range]').forEach(i=>i.addEventListener('input',draw));
+resize();
+</script>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
+</body></html>

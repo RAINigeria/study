@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>SLAM Laboratory — RIDE | RAIN Nigeria</title>
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
+
+</style>
+</head>
+<body>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🧭 SLAM Laboratory</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div class="mod-layout">
+<div class="mod-sidebar" id="mod-sidebar">
+<div class="sb-sec"><div class="sb-hd">Algorithm</div>
+  <select class="sb-sel" onchange="slam.algo=this.value;initSLAM()">
+    <option value="pf">Particle Filter (MCL)</option>
+    <option value="ekf">EKF-SLAM</option>
+    <option value="graph">Graph-Based SLAM</option>
+  </select>
+  <p style="font-size:11px;color:var(--text3);line-height:1.5;margin-top:4px">MCL: N particle hypotheses, resample toward high-likelihood poses.</p>
+</div>
+<div class="sb-sec"><div class="sb-hd">Sensor Model</div>
+  <div class="sb-row"><label>LiDAR range</label><input type="range" min="50" max="300" value="150" oninput="slam.range=+this.value;this.nextElementSibling.textContent=this.value+px"><span class="sb-val">150px</span></div>
+  <div class="sb-row"><label>Noise σ</label><input type="range" min="0" max="20" step=".5" value="3" oninput="slam.noise=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">3.0</span></div>
+  <div class="sb-row"><label>Beams</label><input type="range" min="8" max="72" step="8" value="32" oninput="slam.beams=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">32</span></div>
+  <div class="sb-row"><label>Particles</label><input type="range" min="10" max="300" step="10" value="100" oninput="slam.nP=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">100</span></div>
+</div>
+<div class="sb-sec"><div class="sb-hd">Robot Motion</div>
+  <div class="sb-row"><label>Speed</label><input type="range" min=".5" max="4" step=".1" value="1.5" oninput="slam.rspd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.5</span></div>
+  <div class="sb-row"><label>Odom noise</label><input type="range" min="0" max="1" step=".05" value=".1" oninput="slam.odomNoise=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.10</span></div>
+  <div class="sb-row"><label>Auto-explore</label><input type="checkbox" checked onchange="slam.auto=this.checked"></div>
+</div>
+<div class="sb-sec"><div class="sb-hd">Environment</div>
+  <div class="btn-grp">
+    <button class="gb" onclick="buildEnv('room')">Rooms</button>
+    <button class="gb" onclick="buildEnv('maze')">Maze</button>
+    <button class="gb" onclick="buildEnv('open')">Open</button>
+    <button class="gb" onclick="initSLAM()">↺ Reset</button>
+  </div>
+</div>
+<div class="sb-sec"><div class="sb-hd">Display Layers</div>
+  <div class="sb-row"><label>Particle cloud</label><input type="checkbox" checked onchange="slam.showP=this.checked"></div>
+  <div class="sb-row"><label>Occupancy grid</label><input type="checkbox" checked onchange="slam.showG=this.checked"></div>
+  <div class="sb-row"><label>True map</label><input type="checkbox" onchange="slam.showW=this.checked"></div>
+  <div class="sb-row"><label>Pose path</label><input type="checkbox" checked onchange="slam.showPth=this.checked"></div>
+  <div class="sb-row"><label>LiDAR beams</label><input type="checkbox" checked onchange="slam.showB=this.checked"></div>
+  <div class="sb-row"><label>EKF ellipses</label><input type="checkbox" checked onchange="slam.showEKF=this.checked"></div>
+</div>
+<div class="sb-sec"><div class="sb-hd">SLAM Metrics</div>
+  <div class="metric-grid">
+    <div class="mc"><div class="mc-lbl">Particles</div><div class="mc-val" id="m-p">100</div></div>
+    <div class="mc"><div class="mc-lbl">Map cells</div><div class="mc-val" id="m-mc">0</div></div>
+    <div class="mc"><div class="mc-lbl">Pose error</div><div class="mc-val" id="m-pe">0.0</div></div>
+    <div class="mc"><div class="mc-lbl">Eff. N</div><div class="mc-val" id="m-ep">100</div></div>
+  </div>
+</div>
+</div>
+<div class="mod-canvas-wrap">
+  <canvas class="mod-canvas" id="sim"></canvas>
+  <div class="legend-bar">
+  <span class="li"><span class="ld" style="background:#f59e0b"></span>True robot</span>
+  <span class="li"><span class="ld" style="background:#3b82f6"></span>Estimated</span>
+  <span class="li"><span class="ld" style="background:#3b82f6;opacity:.4"></span>Particles</span>
+  <span class="li"><span class="ldsq" style="background:rgba(239,68,68,.4)"></span>Occupied</span>
+  <span class="li"><span class="ldsq" style="background:rgba(34,197,94,.2)"></span>Free</span>
+</div>
+</div>
+</div>
+<div class="mod-btmbar">
+<div class="bbi">Algo <strong id="sb-algo">Particle Filter</strong></div>
+  <div class="bbi">True <strong id="sb-pos">(—,—)</strong></div>
+  <div class="bbi">Est <strong id="sb-est">(—,—)</strong></div>
+  <div class="bb-space"></div>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; AI Nigeria (RAIN)</div>
+</div>
+<script>
+function initTheme(){const t=localStorage.getItem("ride-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("ride-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+function resize(){const ca=document.querySelector('.mod-canvas-wrap');const leg=document.querySelector('.legend-bar');sim.width=ca.clientWidth;sim.height=ca.clientHeight-(leg?leg.offsetHeight:0);W=sim.width;H=sim.height;}
+window.addEventListener('resize',resize);
+function cssV(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,lastT=0;
+const slam={algo:'pf',range:150,noise:3,beams:32,nP:100,rspd:1.5,odomNoise:0.1,auto:true,
+  showP:true,showG:true,showW:false,showPth:true,showB:true,showEKF:true,
+  robot:{x:0,y:0,angle:0.4,vx:0,vy:0,targetAngle:.4},
+  walls:[],occ:null,path:[],pset:[],landmarks:[],poses:[]};
+let envType='room';
+
+function resize(){const ca=document.getElementById('ca');sim.width=ca.clientWidth;sim.height=ca.clientHeight;W=sim.width;H=sim.height;buildEnv(envType);initSLAM();}
+window.addEventListener('resize',resize);
+
+function buildEnv(type){
+  envType=type;slam.walls=[];
+  const gs=20,gcols=Math.floor(W/gs),grows=Math.floor(H/gs);
+  if(type==='room'){
+    const wp=[{x:2,y:2,w:gcols-4,h:1},{x:2,y:grows-3,w:gcols-4,h:1},{x:2,y:2,w:1,h:grows-5},{x:gcols-3,y:2,w:1,h:grows-5},
+      {x:Math.floor(gcols*.3),y:Math.floor(grows*.35),w:Math.floor(gcols*.2),h:1},
+      {x:Math.floor(gcols*.55),y:Math.floor(grows*.55),w:1,h:Math.floor(grows*.25)},
+      {x:Math.floor(gcols*.65),y:Math.floor(grows*.2),w:Math.floor(gcols*.12),h:1},
+      {x:Math.floor(gcols*.2),y:Math.floor(grows*.6),w:Math.floor(gcols*.15),h:1}];
+    wp.forEach(w=>{for(let dx=0;dx<w.w;dx++)for(let dy=0;dy<w.h;dy++)slam.walls.push({x:(w.x+dx)*gs,y:(w.y+dy)*gs});});
+  } else if(type==='maze'){
+    for(let r=4;r<grows-2;r+=4){const opening=3+Math.floor(Math.random()*(gcols-6));for(let c=2;c<gcols-2;c++)if(Math.abs(c-opening)>1)slam.walls.push({x:c*gs,y:r*gs});}
+    for(let c=4;c<gcols-2;c+=6){const opening=3+Math.floor(Math.random()*(grows-6));for(let r=2;r<grows-2;r++)if(Math.abs(r-opening)>1&&Math.floor(r/4)*4!==r)slam.walls.push({x:c*gs,y:r*gs});}
+  } else {
+    const wp=[{x:2,y:2,w:gcols-4,h:1},{x:2,y:grows-3,w:gcols-4,h:1},{x:2,y:2,w:1,h:grows-5},{x:gcols-3,y:2,w:1,h:grows-5}];
+    wp.forEach(w=>{for(let dx=0;dx<w.w;dx++)for(let dy=0;dy<w.h;dy++)slam.walls.push({x:(w.x+dx)*gs,y:(w.y+dy)*gs});});
+    // Random pillars
+    for(let i=0;i<8;i++){const px=(3+Math.floor(Math.random()*(gcols-6)))*gs,py=(3+Math.floor(Math.random()*(grows-6)))*gs;for(let a=-10;a<=10;a+=10)for(let b=-10;b<=10;b+=10)slam.walls.push({x:px+a,y:py+b});}
+  }
+  const gcols2=Math.floor(W/gs),grows2=Math.floor(H/gs);
+  slam.occ=Array.from({length:grows2+1},()=>new Array(gcols2+1).fill(.5));
+}
+
+function initSLAM(){
+  slam.path=[];slam.poses=[];slam.landmarks=[];
+  if(!slam.occ){const gs=20;slam.occ=Array.from({length:Math.floor(H/gs)+1},()=>new Array(Math.floor(W/gs)+1).fill(.5));}
+  else slam.occ.forEach(row=>row.fill(.5));
+  slam.robot={x:W*.15,y:H*.15,angle:.4,vx:slam.rspd*.9,vy:slam.rspd*.6,targetAngle:.4};
+  slam.pset=Array.from({length:slam.nP},()=>({x:slam.robot.x+(Math.random()-.5)*60,y:slam.robot.y+(Math.random()-.5)*60,angle:slam.robot.angle+(Math.random()-.5)*.5,w:1/slam.nP}));
+}
+
+function resample(){
+  if(slam.pset.length===slam.nP)return;
+  const np=[];for(let i=0;i<slam.nP;i++){const rv=Math.random();let cw=0,ch=slam.pset[0];for(const p of slam.pset){cw+=p.w;if(cw>=rv){ch=p;break;}}np.push({...ch,w:1/slam.nP});}slam.pset=np;
+}
+
+function wallHit(x,y){return slam.walls.some(w=>Math.abs(w.x-x)<12&&Math.abs(w.y-y)<12);}
+
+function stepSLAM(){
+  const r=slam.robot;
+  // Auto navigate
+  if(slam.auto){
+    if(Math.random()<0.02||wallHit(r.x+r.vx*15,r.y+r.vy*15)){r.targetAngle=Math.random()*Math.PI*2;}
+    r.angle+=(r.targetAngle-r.angle)*.05+(Math.random()-.5)*.02;
+    r.vx=Math.cos(r.angle)*slam.rspd;r.vy=Math.sin(r.angle)*slam.rspd;
+    if(r.x<30||r.x>W-30)r.targetAngle=Math.PI-r.angle;
+    if(r.y<30||r.y>H-30)r.targetAngle=-r.angle;
+    if(wallHit(r.x+r.vx*8,r.y+r.vy*8)){r.targetAngle=r.angle+Math.PI+(Math.random()-.5)*.8;}
+    r.x=Math.max(20,Math.min(W-20,r.x+r.vx));r.y=Math.max(20,Math.min(H-20,r.y+r.vy));
+  }
+  slam.path.push({x:r.x,y:r.y});if(slam.path.length>600)slam.path.shift();
+  // Motion update particles
+  slam.pset.forEach(p=>{
+    p.x+=r.vx+(Math.random()-.5)*slam.odomNoise*slam.rspd*3;
+    p.y+=r.vy+(Math.random()-.5)*slam.odomNoise*slam.rspd*3;
+    p.angle=r.angle+(Math.random()-.5)*slam.odomNoise*.3;
+    // Likelihood based on distance to true robot
+    const d=Math.sqrt((p.x-r.x)**2+(p.y-r.y)**2);
+    p.w=Math.exp(-d*d/(2*(slam.noise*4)**2));
+  });
+  // Normalise
+  const ws=slam.pset.reduce((a,p)=>a+p.w,0)||1;slam.pset.forEach(p=>p.w/=ws);
+  // Effective particle count
+  const n_eff=1/slam.pset.reduce((a,p)=>a+p.w**2,0);
+  document.getElementById('m-ep').textContent=n_eff.toFixed(0);
+  // Resample if n_eff < N/2
+  if(n_eff<slam.nP/2){
+    const np=[];for(let i=0;i<slam.nP;i++){const rv=Math.random();let cw=0,ch=slam.pset[0];for(const p of slam.pset){cw+=p.w;if(cw>=rv){ch=p;break;}}np.push({x:ch.x+(Math.random()-.5)*slam.noise*.5,y:ch.y+(Math.random()-.5)*slam.noise*.5,angle:ch.angle+(Math.random()-.5)*.05,w:1/slam.nP});}slam.pset=np;
+  }
+  // Occupancy update via ray casting
+  const gs=20;
+  for(let b=0;b<slam.beams;b++){
+    const a=r.angle+b/slam.beams*Math.PI*2;
+    for(let t=10;t<=slam.range;t+=gs){
+      const rx=r.x+Math.cos(a)*t,ry=r.y+Math.sin(a)*t;
+      const gx=Math.round(rx/gs),gy=Math.round(ry/gs);
+      if(gx<0||gy<0||gx>=slam.occ[0].length||gy>=slam.occ.length)break;
+      const hit=wallHit(rx,ry);
+      const noise=Math.random()<slam.noise/20;
+      slam.occ[gy][gx]=hit||noise?Math.min(.97,slam.occ[gy][gx]+.07):Math.max(.03,slam.occ[gy][gx]-.025);
+      if(hit)break;
+    }
+  }
+  // EKF landmark extraction
+  if(slam.algo==='ekf'&&Math.random()<.05){
+    for(let b=0;b<slam.beams;b+=4){
+      const a=r.angle+b/slam.beams*Math.PI*2;
+      for(let t=20;t<=slam.range;t+=20){
+        const rx=r.x+Math.cos(a)*t,ry=r.y+Math.sin(a)*t;
+        if(wallHit(rx,ry)){
+          const existing=slam.landmarks.find(l=>Math.sqrt((l.x-rx)**2+(l.y-ry)**2)<30);
+          if(!existing)slam.landmarks.push({x:rx+(Math.random()-.5)*slam.noise*2,y:ry+(Math.random()-.5)*slam.noise*2,sx:slam.noise*2,sy:slam.noise*2});
+          else{existing.x=existing.x*.9+rx*.1;existing.y=existing.y*.9+ry*.1;existing.sx=Math.max(1,existing.sx*.95);existing.sy=Math.max(1,existing.sy*.95);}
+          break;
+        }
+      }
+    }
+  }
+  // Estimate pose
+  let ex=0,ey=0;slam.pset.forEach(p=>{ex+=p.x*p.w;ey+=p.y*p.w;});
+  slam.poses.push({x:ex,y:ey});if(slam.poses.length>300)slam.poses.shift();
+  const err=Math.sqrt((ex-r.x)**2+(ey-r.y)**2);
+  document.getElementById('m-pe').textContent=err.toFixed(1);document.getElementById('m-p').textContent=slam.nP;
+  const mapped=slam.occ.flat().filter(v=>Math.abs(v-.5)>.1).length;document.getElementById('m-mc').textContent=mapped;
+  document.getElementById('sb-pos').textContent=`(${r.x.toFixed(0)},${r.y.toFixed(0)})`;
+  document.getElementById('sb-est').textContent=`(${ex.toFixed(0)},${ey.toFixed(0)})`;
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#07070d';ctx.fillRect(0,0,W,H);
+  // Occupancy grid
+  if(slam.showG&&slam.occ){const gs=20;slam.occ.forEach((row,gy)=>row.forEach((cell,gx)=>{if(Math.abs(cell-.5)<.04)return;ctx.fillStyle=cell>.5?`rgba(227,73,72,${(cell-.5)*2*.5})`:`rgba(27,175,122,${(.5-cell)*2*.22})`;ctx.fillRect(gx*gs,gy*gs,gs,gs);}));}
+  // True walls
+  if(slam.showW){ctx.fillStyle='rgba(255,100,100,0.4)';slam.walls.forEach(w=>ctx.fillRect(w.x-9,w.y-9,18,18));}
+  // LiDAR beams
+  if(slam.showB){const r=slam.robot;ctx.strokeStyle='rgba(57,135,229,0.09)';ctx.lineWidth=.7;for(let b=0;b<slam.beams;b++){const a=r.angle+b/slam.beams*Math.PI*2;let endX=r.x+Math.cos(a)*slam.range,endY=r.y+Math.sin(a)*slam.range;for(let t=10;t<=slam.range;t+=10){const rx=r.x+Math.cos(a)*t,ry=r.y+Math.sin(a)*t;if(wallHit(rx,ry)){endX=rx;endY=ry;break;}}ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.lineTo(endX,endY);ctx.stroke();}}
+  // EKF landmarks
+  if(slam.showEKF&&slam.algo==='ekf'){slam.landmarks.forEach(l=>{ctx.strokeStyle='rgba(237,161,0,0.5)';ctx.lineWidth=1.5;ctx.setLineDash([2,2]);ctx.beginPath();ctx.ellipse(l.x,l.y,l.sx*3,l.sy*3,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='rgba(237,161,0,0.6)';ctx.beginPath();ctx.arc(l.x,l.y,3,0,Math.PI*2);ctx.fill();});}
+  // Pose path
+  if(slam.showPth&&slam.poses.length>1){ctx.strokeStyle='rgba(237,161,0,0.45)';ctx.lineWidth=1.5;ctx.beginPath();slam.poses.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();}
+  // True path
+  if(slam.showPth&&slam.path.length>1){ctx.strokeStyle='rgba(27,175,122,0.2)';ctx.lineWidth=1;ctx.setLineDash([2,4]);ctx.beginPath();slam.path.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);}
+  // Particles
+  if(slam.showP){slam.pset.forEach(p=>{const alpha=Math.min(1,p.w*slam.nP*2);ctx.fillStyle=`rgba(57,135,229,${alpha*.7})`;ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fill();});}
+  // True robot
+  const r=slam.robot;
+  ctx.save();ctx.translate(r.x,r.y);ctx.rotate(r.angle);
+  ctx.fillStyle='#eda100';ctx.strokeStyle='rgba(237,161,0,0.7)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(14,0);ctx.lineTo(-10,-6);ctx.lineTo(-10,6);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.restore();
+  // Estimated position (mean of particles)
+  let ex=0,ey=0;slam.pset.forEach(p=>{ex+=p.x*p.w;ey+=p.y*p.w;});
+  ctx.strokeStyle='rgba(57,135,229,0.6)';ctx.lineWidth=2;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.arc(ex,ey,12,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  // Labels
+  ctx.fillStyle='rgba(237,161,0,0.6)';ctx.font='8px monospace';ctx.fillText('TRUE',r.x+14,r.y-8);
+  ctx.fillStyle='rgba(57,135,229,0.6)';ctx.fillText('EST',ex+14,ey-8);
+  // Algorithm label
+  ctx.fillStyle='rgba(57,135,229,0.3)';ctx.font='10px monospace';const labels={pf:'Particle Filter (MCL)',ekf:'EKF-SLAM',graph:'Graph-Based SLAM'};ctx.fillText(labels[slam.algo],10,H-8);
+}
+
+function loop(ts){requestAnimationFrame(loop);const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;stepSLAM();draw();}
+resize();requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Path Planning Laboratory — RIDE | RAIN Nigeria</title>
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
+</style>
+</head>
+<body>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🗺 Path Planning Laboratory</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+</a>
+  <div class="brand-divider"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🗺 Path Planning Laboratory</div>
+    <div class="mod-sub">RIDE · Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
+  </div>
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Controls</button>
+  <div class="status-pill" id="run-pill"><span class="status-dot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="home-btn">← Home</a>
+</div>
+<div class="sidebar-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+<div class="mod-layout">
+<div class="mod-sidebar" id="mod-sidebar">
+
+  <div class="sb-section">
+    <div class="sb-title">Algorithm</div>
+    <div class="btn-group">
+      <button class="gb active" id="aa-astar" onclick="setAlgo('astar')">A*</button>
+      <button class="gb" id="aa-dijkstra" onclick="setAlgo('dijkstra')">Dijkstra</button>
+      <button class="gb" id="aa-rrt" onclick="setAlgo('rrt')">RRT</button>
+      <button class="gb" id="aa-rrtstar" onclick="setAlgo('rrtstar')">RRT*</button>
+      <button class="gb" id="aa-theta" onclick="setAlgo('theta')">Theta*</button>
+      <button class="gb" id="aa-pfield" onclick="setAlgo('pfield')">Pot. Field</button>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Movement</div>
+    <div class="btn-group">
+      <button class="gb active" id="mv-4" onclick="setMovement(4)">4-Way (default)</button>
+      <button class="gb" id="mv-8" onclick="setMovement(8)">8-Way (diagonal)</button>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Robot</div>
+    <div class="sb-row">
+      <label>Shape</label>
+      <select class="sb-select" style="flex:1;margin:0" onchange="setRobotShape(this.value)">
+        <option value="arrow">Arrow</option>
+        <option value="circle">Mobile Robot</option>
+        <option value="car">Car</option>
+        <option value="diff">Diff. Drive</option>
+        <option value="square">UGV</option>
+      </select>
+    </div>
+    <div class="sb-row">
+      <label>Body size</label>
+      <input type="range" min="1" max="6" value="1" step="1" oninput="setRobotSize(+this.value);this.nextElementSibling.textContent=this.value+' cell'+(+this.value>1?'s':'')">
+      <span class="sb-val">1 cell</span>
+    </div>
+    <div class="sb-row">
+      <label>Speed</label>
+      <input type="range" min="1" max="12" value="4" oninput="rSpd=+this.value;this.nextElementSibling.textContent=this.value">
+      <span class="sb-val">4</span>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Draw Tool</div>
+    <div class="btn-group">
+      <button class="gb active" id="tool-wall" onclick="setTool('wall')">✏ Wall</button>
+      <button class="gb" id="tool-erase" onclick="setTool('erase')">⌫ Erase</button>
+      <button class="gb" id="tool-goal" onclick="setTool('goal')">🎯 Goal</button>
+      <button class="gb" id="tool-start" onclick="setTool('start')">🟢 Start</button>
+    </div>
+    <p style="font-size:11px;color:var(--gray-400);margin-top:4px;line-height:1.5">Drag to draw walls. Right-click erases. Robot body can touch walls at goal.</p>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Environment</div>
+    <div class="btn-group">
+      <button class="gb" onclick="randEnv()">Random</button>
+      <button class="gb" onclick="clearAll()">Clear</button>
+      <button class="gb" onclick="addMaze()">Maze</button>
+      <button class="gb" onclick="addRoom()">Rooms</button>
+    </div>
+    <label class="upload-label" for="floor-upload" style="margin-top:6px">📂 Upload Floor Plan (PNG/JPG)</label>
+    <input type="file" id="floor-upload" accept="image/*" style="display:none" onchange="loadFloorPlan(event)">
+    <p style="font-size:11px;color:var(--gray-400);margin-top:4px">Dark pixels become walls</p>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Dynamic Agents</div>
+    <div class="btn-group">
+      <button class="gb" onclick="addAgent()">+ Agent</button>
+      <button class="gb" onclick="clearAgents()">Clear All</button>
+    </div>
+    <div class="sb-row" style="margin-top:6px">
+      <label>Speed</label>
+      <input type="range" min="1" max="8" value="2" oninput="agentSpd=+this.value;this.nextElementSibling.textContent=this.value">
+      <span class="sb-val">2</span>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Display</div>
+    <div class="sb-row"><label>LiDAR rays</label><input type="checkbox" checked onchange="sLidar=this.checked"></div>
+    <div class="sb-row"><label>Explored nodes</label><input type="checkbox" checked onchange="sExp=this.checked"></div>
+    <div class="sb-row"><label>Search tree</label><input type="checkbox" checked onchange="sTree=this.checked"></div>
+    <div class="sb-row"><label>C-Space overlay</label><input type="checkbox" onchange="sCspace=this.checked"></div>
+    <div class="sb-row"><label>Grid lines</label><input type="checkbox" checked onchange="sGrid=this.checked"></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Playback</div>
+    <div class="btn-group">
+      <button class="gb" onclick="microStep(-50)">⏮</button>
+      <button class="gb" id="pbtn" onclick="togglePause()">⏸</button>
+      <button class="gb" onclick="microStep(50)">⏭</button>
+      <button class="gb" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div class="sb-row" style="margin-top:6px">
+      <label>Anim speed</label>
+      <input type="range" min="1" max="30" value="10" oninput="simSpd=+this.value;this.nextElementSibling.textContent=this.value+'x'">
+      <span class="sb-val">10x</span>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-title">Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card"><div class="metric-label">Explored</div><div class="metric-val" id="m-exp">0</div></div>
+      <div class="metric-card"><div class="metric-label">Path nodes</div><div class="metric-val" id="m-plen">—</div></div>
+      <div class="metric-card"><div class="metric-label">Plan time</div><div class="metric-val" id="m-time">—</div></div>
+      <div class="metric-card"><div class="metric-label">Replans</div><div class="metric-val" id="m-replan">0</div></div>
+    </div>
+    <div class="status-text" id="m-status" style="margin-top:8px">Ready</div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<div class="mod-canvas-area">
+  <canvas class="mod-canvas" id="sim"></canvas>
+  <div class="legend-bar">
+    <span class="legend-item"><span class="legend-sq" style="background:#d1d5db"></span>Wall</span>
+    <span class="legend-item"><span class="legend-sq" style="background:rgba(29,78,216,0.15)"></span>Explored</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#16a34a"></span>Path</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#1d4ed8"></span>Robot</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#7c3aed"></span>Goal</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#d97706"></span>Agent</span>
+  </div>
+</div>
+</div><!-- /layout -->
+
+<div class="mod-bottombar">
+  <div class="bb-item">Algo <strong id="sb-algo">A*</strong></div>
+  <div class="bb-item">Move <strong id="sb-move">4-Way</strong></div>
+  <div class="bb-item">Robot <strong id="sb-rsize">1 cell</strong></div>
+  <div class="bb-item">FPS <strong id="sb-fps">0</strong></div>
+  <div class="bb-spacer"></div>
+  <img src=https://study.rainigeria.com/static/rainlogo.jpg alt=RAIN style=height:18px;opacity:.5;margin-right:6px onerror=this.style.display='none'>
+  <div class="rain-footer-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">
+    Robotics &amp; Artificial Intelligence Nigeria (RAIN)
+  </div>
+</div>
+
+<script>
+function initTheme(){const t=localStorage.getItem("ride-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("ride-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,COLS,ROWS;
+const CELL=20;
+let algo='astar',movement=4,robotSize=1,robotShape='arrow';
+let rSpd=4,simSpd=10,paused=false,tool='wall';
+let sLidar=true,sExp=true,sTree=true,sCspace=false,sGrid=true;
+let agentSpd=2;
+let rawGrid=[],cGrid=[];
+let path=[],explored=[],treeEdges=[],pathIdx=0;
+let replanCount=0,frameStep=0;
+let robot={x:2,y:2,angle:0,vx:0,vy:0};
+let goalCell={x:0,y:0},startCell={x:2,y:2},goalPx={x:0,y:0};
+let agents=[];
+let fps=0,fcnt=0,ftimer=0,lastT=0;
+
+function resize(){
+  const ca=document.querySelector('.mod-canvas-area');
+  const leg=document.querySelector('.legend-bar');
+  sim.width=ca.clientWidth;
+  sim.height=ca.clientHeight-(leg?leg.offsetHeight:0);
+  W=sim.width;H=sim.height;
+  COLS=Math.floor(W/CELL);ROWS=Math.floor(H/CELL);
+  initGrid();
+}
+window.addEventListener('resize',resize);
+
+function initGrid(){
+  rawGrid=Array.from({length:ROWS},()=>new Array(COLS).fill(0));
+  cGrid=Array.from({length:ROWS},()=>new Array(COLS).fill(0));
+  goalCell={x:COLS-3,y:ROWS-3};startCell={x:2,y:2};
+  robot={x:2,y:2,angle:0,vx:0,vy:0};
+  agents=[];path=[];explored=[];treeEdges=[];pathIdx=0;
+  computeGoalPx();
+}
+function robotRadiusCells(){return Math.max(0,Math.floor(robotSize/2));}
+function robotRadiusPx(){return robotSize*CELL*0.5;}
+function buildCGrid(){
+  const r=robotRadiusCells();
+  cGrid=Array.from({length:ROWS},()=>new Array(COLS).fill(0));
+  for(let row=0;row<ROWS;row++)for(let col=0;col<COLS;col++)if(rawGrid[row][col])for(let dr=-r;dr<=r;dr++)for(let dc=-r;dc<=r;dc++){const nr=row+dr,nc=col+dc;if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS)cGrid[nr][nc]=1;}
+}
+function computeGoalPx(){
+  const gx=goalCell.x*CELL+CELL/2,gy=goalCell.y*CELL+CELL/2;
+  if(!cGrid[goalCell.y]?.[goalCell.x]){goalPx={x:gx,y:gy};return;}
+  for(let r=1;r<=8;r++)for(let dr=-r;dr<=r;dr++)for(let dc=-r;dc<=r;dc++){
+    if(Math.abs(dr)!==r&&Math.abs(dc)!==r)continue;
+    const nr=goalCell.y+dr,nc=goalCell.x+dc;
+    if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!cGrid[nr][nc]){goalPx={x:nc*CELL+CELL/2,y:nr*CELL+CELL/2};return;}
+  }
+  goalPx={x:gx,y:gy};
+}
+function bodyHitsWall(px,py,pr){
+  const cx0=Math.floor((px-pr)/CELL),cx1=Math.ceil((px+pr)/CELL);
+  const cy0=Math.floor((py-pr)/CELL),cy1=Math.ceil((py+pr)/CELL);
+  for(let row=cy0;row<=cy1;row++)for(let col=cx0;col<=cx1;col++){
+    if(row<0||col<0||row>=ROWS||col>=COLS||!rawGrid[row][col])continue;
+    const l=col*CELL,r=l+CELL,t=row*CELL,b=t+CELL;
+    const cx2=Math.max(l,Math.min(r,px)),cy2=Math.max(t,Math.min(b,py));
+    if(Math.sqrt((px-cx2)**2+(py-cy2)**2)<pr)return true;
+  }
+  return false;
+}
+function isFree(x,y){if(x<0||y<0||x>=COLS||y>=ROWS)return false;return cGrid[y][x]===0;}
+function getDirs(){const d4=[{x:1,y:0,cost:1},{x:-1,y:0,cost:1},{x:0,y:1,cost:1},{x:0,y:-1,cost:1}];const d8=[...d4,{x:1,y:1,cost:1.414},{x:-1,y:1,cost:1.414},{x:1,y:-1,cost:1.414},{x:-1,y:-1,cost:1.414}];return movement===8?d8:d4;}
+function heur(ax,ay,bx,by){if(algo==='dijkstra')return 0;return movement===4?Math.abs(ax-bx)+Math.abs(ay-by):Math.sqrt((ax-bx)**2+(ay-by)**2);}
+function hasLOS(x1,y1,x2,y2){let dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),sx=x1<x2?1:-1,sy=y1<y2?1:-1,err=dx-dy,cx=x1,cy=y1;while(true){if(!isFree(cx,cy))return false;if(cx===x2&&cy===y2)return true;const e2=2*err;if(e2>-dy){err-=dy;cx+=sx;}if(e2<dx){err+=dx;cy+=sy;}}}
+
+function plan(){
+  buildCGrid();computeGoalPx();explored=[];treeEdges=[];path=[];frameStep=0;
+  const sx=Math.round(robot.x),sy=Math.round(robot.y);
+  let ex=goalCell.x,ey=goalCell.y;
+  if(cGrid[ey]?.[ex]){
+    outer:for(let r=1;r<=10;r++)for(let dr=-r;dr<=r;dr++)for(let dc=-r;dc<=r;dc++){
+      if(Math.abs(dr)!==r&&Math.abs(dc)!==r)continue;
+      const nr=ey+dr,nc=ex+dc;
+      if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS&&!cGrid[nr][nc]){ex=nc;ey=nr;break outer;}
+    }
+  }
+  if(!isFree(sx,sy)||!isFree(ex,ey)){setStatus('Start/Goal blocked','error');return;}
+  setStatus('Planning…','warn');
+  const t0=performance.now();
+  if(algo==='rrt'||algo==='rrtstar')runRRT(algo==='rrtstar');
+  else if(algo==='pfield')runPotField();
+  else runGridSearch(sx,sy,ex,ey);
+  const dt=performance.now()-t0;
+  document.getElementById('m-exp').textContent=explored.length;
+  document.getElementById('m-plen').textContent=path.length?path.length+' nodes':'No path';
+  document.getElementById('m-time').textContent=dt.toFixed(1)+'ms';
+  if(path.length){setStatus('Path found ✓','good');pathIdx=0;}
+  else setStatus('No path found','error');
+}
+function setStatus(t,cls){
+  const el=document.getElementById('m-status');
+  el.textContent=t;el.className='status-text'+(cls==='good'?'':cls==='warn'?' warn':cls==='error'?' error':'');
+}
+
+function runGridSearch(sx,sy,ex,ey){
+  const key=(x,y)=>y*COLS+x,dirs=getDirs();
+  const open=[{x:sx,y:sy,g:0,f:heur(sx,sy,ex,ey)}];
+  const closed=new Uint8Array(ROWS*COLS),gScore=new Float32Array(ROWS*COLS).fill(Infinity);
+  const parentX=new Int16Array(ROWS*COLS).fill(-1),parentY=new Int16Array(ROWS*COLS).fill(-1);
+  gScore[key(sx,sy)]=0;let it=0;
+  while(open.length&&it<COLS*ROWS*3){
+    it++;open.sort((a,b)=>a.f-b.f);const cur=open.shift();const ck=key(cur.x,cur.y);
+    if(closed[ck])continue;closed[ck]=1;explored.push({x:cur.x,y:cur.y});
+    if(cur.x===ex&&cur.y===ey){path=[];let cx=ex,cy=ey;while(cx!==-1&&cy!==-1){path.unshift({x:cx,y:cy});const pk=key(cx,cy);const nx=parentX[pk],ny=parentY[pk];cx=nx;cy=ny;}return;}
+    for(const d of dirs){
+      const nx=cur.x+d.x,ny=cur.y+d.y;if(!isFree(nx,ny))continue;if(closed[key(nx,ny)])continue;
+      if(movement===8&&d.cost>1&&(!isFree(cur.x+d.x,cur.y)||!isFree(cur.x,cur.y+d.y)))continue;
+      let ng=gScore[ck]+d.cost;
+      if(algo==='theta'&&parentX[ck]!==-1){const ppx=parentX[ck],ppy=parentY[ck];if(hasLOS(ppx,ppy,nx,ny)){const ppk=key(ppx,ppy);const ng2=gScore[ppk]+Math.sqrt((nx-ppx)**2+(ny-ppy)**2);if(ng2<ng){ng=ng2;const nk=key(nx,ny);if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=ppx;parentY[nk]=ppy;open.push({x:nx,y:ny,g:ng,f:ng+heur(nx,ny,ex,ey)});treeEdges.push({x1:ppx,y1:ppy,x2:nx,y2:ny});}continue;}}}
+      const nk=key(nx,ny);if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=cur.x;parentY[nk]=cur.y;open.push({x:nx,y:ny,g:ng,f:ng+heur(nx,ny,ex,ey)});treeEdges.push({x1:cur.x,y1:cur.y,x2:nx,y2:ny});}
+    }
+  }
+}
+
+function runRRT(star){
+  const sx=Math.round(robot.x),sy=Math.round(robot.y),ex=goalCell.x,ey=goalCell.y;
+  const nodes=[{x:sx,y:sy,par:-1,cost:0}];const step=3,gb=0.12,maxIt=2500;
+  explored=[];treeEdges=[];path=[];
+  for(let i=0;i<maxIt;i++){
+    let rx,ry;if(Math.random()<gb){rx=ex;ry=ey;}else{rx=Math.random()*COLS;ry=Math.random()*ROWS;}
+    let nearIdx=0,minD=Infinity;nodes.forEach((n,idx)=>{const d=(n.x-rx)**2+(n.y-ry)**2;if(d<minD){minD=d;nearIdx=idx;}});
+    const near=nodes[nearIdx];const ang=Math.atan2(ry-near.y,rx-near.x);
+    const nx=near.x+Math.cos(ang)*step,ny=near.y+Math.sin(ang)*step;
+    if(nx<0||ny<0||nx>=COLS||ny>=ROWS)continue;
+    let blocked=false;const ss=Math.ceil(step*3);
+    for(let t=0;t<=ss;t++){const bx=Math.round(near.x+(nx-near.x)*t/ss),by=Math.round(near.y+(ny-near.y)*t/ss);if(!isFree(bx,by)){blocked=true;break;}}
+    if(blocked)continue;
+    let parIdx=nearIdx,cost=near.cost+step;
+    if(star){const r2=step*5;nodes.forEach((n,idx)=>{const d=Math.sqrt((n.x-nx)**2+(n.y-ny)**2);if(d<r2&&n.cost+d<cost){let ok=true;const ss2=Math.ceil(d*2);for(let t=0;t<=ss2;t++){const bx=Math.round(n.x+(nx-n.x)*t/ss2),by=Math.round(n.y+(ny-n.y)*t/ss2);if(!isFree(bx,by)){ok=false;break;}}if(ok){parIdx=idx;cost=n.cost+d;}}});}
+    const newIdx=nodes.length;nodes.push({x:nx,y:ny,par:parIdx,cost});
+    treeEdges.push({x1:nodes[parIdx].x,y1:nodes[parIdx].y,x2:nx,y2:ny});explored.push({x:Math.round(nx),y:Math.round(ny)});
+    if(Math.sqrt((nx-ex)**2+(ny-ey)**2)<step+0.5){path=[];let idx=newIdx;while(idx!==-1){path.unshift({x:nodes[idx].x,y:nodes[idx].y});idx=nodes[idx].par;}path.push({x:ex,y:ey});return;}
+  }
+}
+
+function runPotField(){
+  const sx=Math.round(robot.x),sy=Math.round(robot.y),ex=goalCell.x,ey=goalCell.y;
+  path=[{x:sx,y:sy}];explored=[];treeEdges=[];let cx=sx,cy=sy;
+  for(let it=0;it<1500;it++){
+    const dd=Math.sqrt((cx-ex)**2+(cy-ey)**2);if(dd<1.2){path.push({x:ex,y:ey});return;}
+    let fx=(ex-cx)/dd*4,fy=(ey-cy)/dd*4;
+    for(let dr=-6;dr<=6;dr++)for(let dc=-6;dc<=6;dc++){const wr=Math.round(cy)+dr,wc=Math.round(cx)+dc;if(wr>=0&&wr<ROWS&&wc>=0&&wc<COLS&&rawGrid[wr][wc]){const d=Math.sqrt(dc**2+dr**2);if(d<6&&d>0.01){const rep=300*(1/d-1/6)/(d*d);fx+=(cx-wc)/d*rep;fy+=(cy-wr)/d*rep;}}}
+    const mag=Math.sqrt(fx**2+fy**2);if(mag>0.001){cx+=fx/mag*0.5;cy+=fy/mag*0.5;}
+    cx=Math.max(0.5,Math.min(COLS-1.5,cx));cy=Math.max(0.5,Math.min(ROWS-1.5,cy));
+    if(it%2===0){path.push({x:cx,y:cy});explored.push({x:Math.round(cx),y:Math.round(cy)});}
+  }
+}
+
+function addAgent(){
+  buildCGrid();let ax,ay,tries=0;
+  do{ax=3+Math.floor(Math.random()*(COLS-6));ay=3+Math.floor(Math.random()*(ROWS-6));tries++;}while((cGrid[ay]?.[ax]||rawGrid[ay]?.[ax])&&tries<200);
+  if(tries>=200)return;
+  let gx,gy,tries2=0;
+  do{gx=3+Math.floor(Math.random()*(COLS-6));gy=3+Math.floor(Math.random()*(ROWS-6));tries2++;}while((cGrid[gy]?.[gx]||rawGrid[gy]?.[gx])&&tries2<200);
+  if(tries2>=200)return;
+  agents.push({x:ax,y:ay,gx,gy,path:planAgent(ax,ay,gx,gy),pathIdx:0,vx:0,vy:0,color:`hsl(${20+Math.random()*20},85%,50%)`});
+}
+function planAgent(sx,sy,ex,ey){
+  if(!isFree(sx,sy)||!isFree(ex,ey))return[];
+  const key=(x,y)=>y*COLS+x,dirs=getDirs();
+  const open=[{x:sx,y:sy,g:0,f:Math.abs(sx-ex)+Math.abs(sy-ey)}];
+  const closed=new Uint8Array(ROWS*COLS),gScore=new Float32Array(ROWS*COLS).fill(Infinity),parentMap=new Map();
+  gScore[key(sx,sy)]=0;let it=0;
+  while(open.length&&it<3000){it++;open.sort((a,b)=>a.f-b.f);const cur=open.shift();const ck=key(cur.x,cur.y);if(closed[ck])continue;closed[ck]=1;
+    if(cur.x===ex&&cur.y===ey){const p=[];let cx=ex,cy=ey;while(!(cx===sx&&cy===sy)){p.unshift({x:cx,y:cy});const prev=parentMap.get(key(cx,cy));if(!prev)break;cx=prev.x;cy=prev.y;}p.unshift({x:sx,y:sy});return p;}
+    for(const d of dirs){const nx=cur.x+d.x,ny=cur.y+d.y;if(!isFree(nx,ny))continue;const nk=key(nx,ny);if(closed[nk])continue;if(movement===8&&d.cost>1&&(!isFree(cur.x+d.x,cur.y)||!isFree(cur.x,cur.y+d.y)))continue;const ng=gScore[ck]+d.cost;if(ng<gScore[nk]){gScore[nk]=ng;parentMap.set(nk,{x:cur.x,y:cur.y});open.push({x:nx,y:ny,g:ng,f:ng+Math.abs(nx-ex)+Math.abs(ny-ey)});}}
+  }return[];
+}
+function clearAgents(){agents=[];}
+function purgeStuckAgents(){const r=CELL*0.45;agents=agents.filter(a=>!bodyHitsWall(a.x*CELL+CELL/2,a.y*CELL+CELL/2,r));}
+function stepAgents(){
+  purgeStuckAgents();
+  agents.forEach(a=>{
+    if(!a.path.length||a.pathIdx>=a.path.length-1){
+      let gx,gy,tries=0;do{gx=3+Math.floor(Math.random()*(COLS-6));gy=3+Math.floor(Math.random()*(ROWS-6));tries++;}while((rawGrid[gy]?.[gx]||cGrid[gy]?.[gx])&&tries<50);
+      const np=planAgent(Math.round(a.x),Math.round(a.y),gx,gy);if(np.length){a.path=np;a.pathIdx=0;a.gx=gx;a.gy=gy;}return;
+    }
+    const tgt=a.path[Math.min(a.pathIdx+1,a.path.length-1)];const dx=tgt.x-a.x,dy=tgt.y-a.y,dist=Math.sqrt(dx**2+dy**2);
+    if(dist<0.35){a.pathIdx++;return;}
+    const spd=agentSpd*0.025,nx=a.x+dx/dist*spd,ny=a.y+dy/dist*spd;
+    if(!bodyHitsWall(nx*CELL+CELL/2,ny*CELL+CELL/2,CELL*0.45)){a.vx=dx/dist*spd;a.vy=dy/dist*spd;a.x=nx;a.y=ny;}
+    else{a.path=[];a.pathIdx=0;}
+  });
+}
+function moveRobot(){
+  const rpx=robot.x*CELL+CELL/2,rpy=robot.y*CELL+CELL/2;
+  if(bodyHitsWall(rpx,rpy,robotRadiusPx()*0.9)){
+    for(let r=1;r<=6;r++){let found=false;for(let dr=-r;dr<=r&&!found;dr++)for(let dc=-r;dc<=r&&!found;dc++){if(Math.abs(dr)!==r&&Math.abs(dc)!==r)continue;const tx=robot.x+dc,ty=robot.y+dr;if(!bodyHitsWall(tx*CELL+CELL/2,ty*CELL+CELL/2,robotRadiusPx()*0.9)){robot.x=tx;robot.y=ty;found=true;}}if(found)break;}
+    path=[];return;
+  }
+  if(!path.length||pathIdx>=path.length-1){robot.vx*=0.85;robot.vy*=0.85;return;}
+  const tgt=path[Math.min(pathIdx+1,path.length-1)];const dx=tgt.x-robot.x,dy=tgt.y-robot.y,dist=Math.sqrt(dx**2+dy**2);
+  if(dist<0.35){pathIdx++;return;}
+  const spd=rSpd*0.03,nx=robot.x+dx/dist*spd,ny=robot.y+dy/dist*spd;
+  if(!bodyHitsWall(nx*CELL+CELL/2,ny*CELL+CELL/2,robotRadiusPx()*0.85)){robot.vx=dx/dist*spd;robot.vy=dy/dist*spd;robot.x=nx;robot.y=ny;robot.angle=Math.atan2(robot.vy,robot.vx);}
+  if(pathIdx>=path.length-1){
+    const fdx=goalPx.x/CELL-robot.x,fdy=goalPx.y/CELL-robot.y,fd=Math.sqrt(fdx**2+fdy**2);
+    if(fd>0.4){const fn=robot.x+fdx/fd*spd,fny=robot.y+fdy/fd*spd;if(!bodyHitsWall(fn*CELL+CELL/2,fny*CELL+CELL/2,robotRadiusPx()*0.85)){robot.x=fn;robot.y=fny;robot.angle=Math.atan2(fdy,fdx);}}
+    else{let nx,ny,tries=0;do{nx=2+Math.floor(Math.random()*(COLS-4));ny=2+Math.floor(Math.random()*(ROWS-4));tries++;}while(cGrid[ny]?.[nx]&&tries<100);goalCell={x:nx,y:ny};plan();}
+  }
+}
+function checkAgentBlock(){
+  if(!path.length||pathIdx>=path.length-1)return;
+  const la=path.slice(pathIdx,Math.min(pathIdx+6,path.length));
+  for(const a of agents)for(const p of la)if(Math.sqrt((a.x-p.x)**2+(a.y-p.y)**2)<1.5){replanCount++;document.getElementById('m-replan').textContent=replanCount;plan();return;}
+}
+
+function drawRobot(x,y,angle){
+  const s=robotRadiusPx(),S=Math.max(s,CELL*0.55);
+  ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+  if(robotShape==='arrow'){
+    ctx.fillStyle='#1d4ed8';ctx.beginPath();ctx.moveTo(S,0);ctx.lineTo(-S,-S*.65);ctx.lineTo(-S*.4,0);ctx.lineTo(-S,S*.65);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=1.5;ctx.stroke();
+  }else if(robotShape==='circle'){
+    ctx.fillStyle='#1d4ed8';ctx.beginPath();ctx.arc(0,0,S,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(S,0);ctx.stroke();
+  }else if(robotShape==='car'){
+    ctx.fillStyle='#dbeafe';ctx.fillRect(-S,-S*.6,S*2,S*1.2);
+    ctx.fillStyle='#1d4ed8';ctx.fillRect(-S*.6,-S*.62,S*.5,.15*S);ctx.fillRect(-S*.6,S*.45,S*.5,.15*S);
+    ctx.fillStyle='#d97706';ctx.fillRect(S*.8,-S*.3,S*.2,S*.25);ctx.fillRect(S*.8,S*.05,S*.2,S*.25);
+    ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;ctx.strokeRect(-S,-S*.6,S*2,S*1.2);
+    ctx.fillStyle='#1e3a8a';[[-S*.55,-S*.62],[S*.2,-S*.62],[-S*.55,S*.47],[S*.2,S*.47]].forEach(([wx,wy])=>ctx.fillRect(wx,wy,S*.3,S*.18));
+  }else if(robotShape==='diff'){
+    ctx.fillStyle='#eff6ff';ctx.fillRect(-S,-S*.7,S*2,S*1.4);ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;ctx.strokeRect(-S,-S*.7,S*2,S*1.4);
+    ctx.fillStyle='#1d4ed8';ctx.fillRect(-S-S*.28,-S*.65,S*.25,S*.6);ctx.fillRect(-S-S*.28,S*.05,S*.25,S*.6);ctx.fillRect(S,S*.05,S*.25,S*.6);ctx.fillRect(S,-S*.65,S*.25,S*.6);
+    ctx.fillStyle='#d97706';ctx.fillRect(S*.55,-S*.15,S*.35,S*.3);
+  }else{
+    ctx.fillStyle='#eff6ff';ctx.fillRect(-S,-S,S*2,S*2);ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;ctx.strokeRect(-S,-S,S*2,S*2);
+    ctx.strokeStyle='rgba(29,78,216,0.2)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-S,-S);ctx.lineTo(S,S);ctx.stroke();ctx.beginPath();ctx.moveTo(S,-S);ctx.lineTo(-S,S);ctx.stroke();
+    ctx.fillStyle='#1d4ed8';ctx.fillRect(S*.45,-S*.2,S*.5,S*.4);
+  }
+  ctx.restore();
+  const spd=Math.sqrt(robot.vx**2+robot.vy**2);
+  if(spd>0.005){ctx.strokeStyle='rgba(22,163,74,0.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+robot.vx*CELL*3,y+robot.vy*CELL*3);ctx.stroke();}
+}
+
+function draw(ts){
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#f9fafb';ctx.fillRect(0,0,W,H);
+  if(sGrid){ctx.strokeStyle='rgba(0,0,0,0.05)';ctx.lineWidth=.5;for(let x=0;x<=W;x+=CELL){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<=H;y+=CELL){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+  if(sCspace){for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(cGrid[r][c]&&!rawGrid[r][c]){ctx.fillStyle='rgba(220,38,38,0.1)';ctx.fillRect(c*CELL,r*CELL,CELL,CELL);}}
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(rawGrid[r][c]){ctx.fillStyle='#e5e7eb';ctx.fillRect(c*CELL,r*CELL,CELL,CELL);ctx.fillStyle='#d1d5db';ctx.fillRect(c*CELL+1,r*CELL+1,CELL-2,CELL-2);}
+  if(sTree){const lim=frameStep>0?frameStep:treeEdges.length;ctx.strokeStyle='rgba(29,78,216,0.1)';ctx.lineWidth=.5;treeEdges.slice(0,lim).forEach(e=>{ctx.beginPath();ctx.moveTo(e.x1*CELL+CELL/2,e.y1*CELL+CELL/2);ctx.lineTo(e.x2*CELL+CELL/2,e.y2*CELL+CELL/2);ctx.stroke();});}
+  if(sExp){const lim=frameStep>0?frameStep:explored.length;explored.slice(0,lim).forEach(e=>{ctx.fillStyle='rgba(29,78,216,0.12)';ctx.fillRect(e.x*CELL+1,e.y*CELL+1,CELL-2,CELL-2);});}
+  if(path.length>1){
+    ctx.strokeStyle='#16a34a';ctx.lineWidth=3;ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.beginPath();path.forEach((p,i)=>{const px=p.x*CELL+CELL/2,py=p.y*CELL+CELL/2;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1;ctx.setLineDash([5,12]);ctx.lineDashOffset=-(ts/60)%17;
+    ctx.beginPath();path.forEach((p,i)=>{const px=p.x*CELL+CELL/2,py=p.y*CELL+CELL/2;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});ctx.stroke();ctx.setLineDash([]);
+  }
+  // Goal
+  const gx2=goalCell.x*CELL+CELL/2,gy2=goalCell.y*CELL+CELL/2;
+  ctx.strokeStyle='#7c3aed';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(gx2-CELL,gy2);ctx.lineTo(gx2+CELL,gy2);ctx.stroke();ctx.beginPath();ctx.moveTo(gx2,gy2-CELL);ctx.lineTo(gx2,gy2+CELL);ctx.stroke();
+  ctx.strokeStyle='rgba(124,58,237,0.25)';ctx.lineWidth=1;[CELL*.7,CELL*1.2].forEach(r=>{ctx.beginPath();ctx.arc(gx2,gy2,r,0,Math.PI*2);ctx.stroke();});
+  ctx.fillStyle='#7c3aed';ctx.beginPath();ctx.arc(gx2,gy2,4,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#7c3aed';ctx.font='bold 10px -apple-system,sans-serif';ctx.fillText('GOAL',gx2+7,gy2-7);
+  // Start
+  const sx2=startCell.x*CELL+CELL/2,sy2=startCell.y*CELL+CELL/2;
+  ctx.strokeStyle='#16a34a';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.arc(sx2,sy2,CELL*.6,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#16a34a';ctx.font='bold 10px -apple-system,sans-serif';ctx.fillText('START',sx2+6,sy2-6);
+  // Agents
+  agents.forEach(a=>{
+    const ax=a.x*CELL+CELL/2,ay=a.y*CELL+CELL/2;
+    if(a.path.length>1){ctx.strokeStyle=a.color+'33';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.beginPath();a.path.forEach((p,i)=>{const px=p.x*CELL+CELL/2,py=p.y*CELL+CELL/2;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);});ctx.stroke();ctx.setLineDash([]);}
+    const aang=Math.atan2(a.vy,a.vx);ctx.save();ctx.translate(ax,ay);ctx.rotate(aang);
+    ctx.fillStyle=a.color;ctx.beginPath();ctx.moveTo(CELL*.42,0);ctx.lineTo(-CELL*.32,-CELL*.28);ctx.lineTo(-CELL*.32,CELL*.28);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='white';ctx.lineWidth=1;ctx.stroke();ctx.restore();
+  });
+  // LiDAR
+  const rx2=robot.x*CELL+CELL/2,ry2=robot.y*CELL+CELL/2;
+  if(sLidar){const nr=24;ctx.strokeStyle='rgba(29,78,216,0.08)';ctx.lineWidth=.8;for(let i=0;i<nr;i++){const ang=robot.angle+i/nr*Math.PI*2;let rayLen=CELL*8;for(let t=CELL*.6;t<CELL*8;t+=CELL*.5){const lx=Math.floor(robot.x+Math.cos(ang)*t/CELL),ly=Math.floor(robot.y+Math.sin(ang)*t/CELL);if(lx>=0&&lx<COLS&&ly>=0&&ly<ROWS&&rawGrid[ly][lx]){rayLen=t;break;}}ctx.beginPath();ctx.moveTo(rx2,ry2);ctx.lineTo(rx2+Math.cos(ang)*rayLen,ry2+Math.sin(ang)*rayLen);ctx.stroke();}}
+  if(robotSize>1){ctx.strokeStyle='rgba(220,38,38,0.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.arc(rx2,ry2,robotRadiusPx(),0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
+  drawRobot(rx2,ry2,robot.angle);
+}
+
+function randEnv(){clearAll();for(let i=0;i<12;i++){const ox=2+Math.floor(Math.random()*(COLS-4)),oy=2+Math.floor(Math.random()*(ROWS-4)),ow=2+Math.floor(Math.random()*6),oh=1+Math.floor(Math.random()*4);for(let dx=0;dx<ow;dx++)for(let dy=0;dy<oh;dy++){const nx=ox+dx,ny=oy+dy;if(nx>0&&nx<COLS-1&&ny>0&&ny<ROWS-1){if(Math.abs(nx-startCell.x)<2&&Math.abs(ny-startCell.y)<2)continue;if(Math.abs(nx-goalCell.x)<2&&Math.abs(ny-goalCell.y)<2)continue;rawGrid[ny][nx]=1;}}}buildCGrid();plan();}
+function clearAll(){rawGrid=Array.from({length:ROWS},()=>new Array(COLS).fill(0));buildCGrid();path=[];explored=[];treeEdges=[];pathIdx=0;plan();}
+function addMaze(){clearAll();const gap=4;for(let r=gap;r<ROWS-gap;r+=gap){const op=1+Math.floor(Math.random()*(COLS-4));for(let c=1;c<COLS-1;c++)if(Math.abs(c-op)>1)rawGrid[r][c]=1;}buildCGrid();plan();}
+function addRoom(){clearAll();const midC=Math.floor(COLS/2),midR=Math.floor(ROWS/2);for(let r=1;r<ROWS-1;r++)if(Math.abs(r-midR)>1)rawGrid[r][midC]=1;for(let c=1;c<COLS-1;c++)if(Math.abs(c-midC)>1)rawGrid[midR][c]=1;buildCGrid();plan();}
+function loadFloorPlan(event){const file=event.target.files[0];if(!file)return;const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{const oc=document.createElement('canvas');oc.width=COLS;oc.height=ROWS;const octx=oc.getContext('2d');octx.drawImage(img,0,0,COLS,ROWS);const data=octx.getImageData(0,0,COLS,ROWS).data;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const idx=(r*COLS+c)*4;rawGrid[r][c]=(data[idx]+data[idx+1]+data[idx+2])/3<128?1:0;}[startCell,goalCell].forEach(p=>{for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){const nr=p.y+dr,nc=p.x+dc;if(rawGrid[nr]?.[nc]!==undefined)rawGrid[nr][nc]=0;}});buildCGrid();plan();URL.revokeObjectURL(url);};img.src=url;}
+
+function setAlgo(a){algo=a;document.querySelectorAll('.gb').forEach(b=>b.classList.remove('active'));const el=document.getElementById('aa-'+a);if(el)el.classList.add('active');const names={astar:'A*',dijkstra:'Dijkstra',rrt:'RRT',rrtstar:'RRT*',theta:'Theta*',pfield:'Pot.Field'};document.getElementById('sb-algo').textContent=names[a]||a;plan();}
+function setMovement(m){movement=m;document.getElementById('mv-4').classList.toggle('active',m===4);document.getElementById('mv-8').classList.toggle('active',m===8);document.getElementById('sb-move').textContent=m===4?'4-Way':'8-Way';plan();}
+function setRobotSize(s){robotSize=s;document.getElementById('sb-rsize').textContent=s+' cell'+(s>1?'s':'');buildCGrid();plan();}
+function setRobotShape(s){robotShape=s;}
+function setTool(t){tool=t;document.querySelectorAll('[id^=tool-]').forEach(b=>b.classList.remove('active'));document.getElementById('tool-'+t).classList.add('active');}
+function togglePause(){paused=!paused;document.getElementById('pbtn').textContent=paused?'▶':'⏸';setPaused(paused);}
+function microStep(n){frameStep=Math.max(0,Math.min((frameStep||explored.length)+n,explored.length));}
+function resetAll(){robot={x:startCell.x,y:startCell.y,angle:0,vx:0,vy:0};agents=[];replanCount=0;document.getElementById('m-replan').textContent='0';clearAll();}
+function setPaused(p){document.getElementById('run-dot').className='status-dot'+(p?' paused':'');document.getElementById('run-txt').textContent=p?'Paused':'Running';document.getElementById('run-pill').style.cssText=p?'background:#fffbeb;color:#d97706;border-color:#fde68a':'';}
+function toggleSidebar(){document.getElementById('mod-sidebar').classList.toggle('open');document.getElementById('sb-overlay').classList.toggle('open');}
+
+let isDrawing=false,lastDC={x:-1,y:-1};
+sim.addEventListener('mousedown',e=>{const rect=sim.getBoundingClientRect(),cx=Math.floor((e.clientX-rect.left)/CELL),cy=Math.floor((e.clientY-rect.top)/CELL);if(cx<0||cy<0||cx>=COLS||cy>=ROWS)return;if(e.button===2){rawGrid[cy][cx]=0;buildCGrid();plan();return;}if(tool==='goal'){goalCell={x:cx,y:cy};buildCGrid();computeGoalPx();plan();return;}if(tool==='start'){if(!cGrid[cy]?.[cx]){startCell={x:cx,y:cy};robot.x=cx;robot.y=cy;plan();}return;}isDrawing=true;lastDC={x:cx,y:cy};paintCell(cx,cy);});
+sim.addEventListener('mousemove',e=>{if(!isDrawing)return;const rect=sim.getBoundingClientRect(),cx=Math.floor((e.clientX-rect.left)/CELL),cy=Math.floor((e.clientY-rect.top)/CELL);if(cx<0||cy<0||cx>=COLS||cy>=ROWS)return;if(cx===lastDC.x&&cy===lastDC.y)return;lastDC={x:cx,y:cy};paintCell(cx,cy);});
+sim.addEventListener('mouseup',()=>{if(isDrawing){isDrawing=false;buildCGrid();plan();}});
+sim.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];const rect=sim.getBoundingClientRect();const cx=Math.floor((t.clientX-rect.left)/CELL),cy=Math.floor((t.clientY-rect.top)/CELL);if(tool==='goal'){goalCell={x:cx,y:cy};buildCGrid();computeGoalPx();plan();}else if(tool==='start'){startCell={x:cx,y:cy};robot.x=cx;robot.y=cy;plan();}else{isDrawing=true;paintCell(cx,cy);}},{passive:false});
+sim.addEventListener('touchmove',e=>{e.preventDefault();if(!isDrawing)return;const t=e.touches[0];const rect=sim.getBoundingClientRect();paintCell(Math.floor((t.clientX-rect.left)/CELL),Math.floor((t.clientY-rect.top)/CELL));},{passive:false});
+sim.addEventListener('touchend',()=>{if(isDrawing){isDrawing=false;buildCGrid();plan();}});
+function paintCell(cx,cy){if(Math.abs(cx-startCell.x)<1&&Math.abs(cy-startCell.y)<1)return;if(Math.abs(cx-goalCell.x)<1&&Math.abs(cy-goalCell.y)<1)return;if(tool==='wall')rawGrid[cy][cx]=1;else if(tool==='erase')rawGrid[cy][cx]=0;}
+sim.addEventListener('contextmenu',e=>e.preventDefault());
+
+let loopCtr=0;
+function loop(ts){
+  requestAnimationFrame(loop);
+  fcnt++;if(ts-ftimer>1000){fps=fcnt;fcnt=0;ftimer=ts;document.getElementById('sb-fps').textContent=fps;}
+  if(!paused){const steps=Math.max(1,Math.round(simSpd/5));for(let i=0;i<steps;i++){moveRobot();stepAgents();}loopCtr++;if(loopCtr%30===0)checkAgentBlock();}
+  draw(ts);
+}
+resize();randEnv();requestAnimationFrame(loop);
+</script>
+</body>
+</html>

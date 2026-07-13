@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RIDE — Traffic & AV Simulator</title>
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */
+</style>
+</head>
+<body>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">🚗 Traffic & AV Simulator</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+<div id="app">
+
+<div id="main">
+<div id="sb">
+  <div class="sb-sec"><div class="sb-hd">Environment</div>
+    <select id="env-sel" onchange="traf.env=this.value;init()">
+      <option value="city">City Grid</option>
+      <option value="highway">Highway (4 lanes)</option>
+      <option value="roundabout">Roundabout</option>
+      <option value="intersection">Smart Intersection</option>
+    </select>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Traffic Volume</div>
+    <div class="sb-row"><label>Cars</label><input type="range" min="0" max="50" value="20" oninput="traf.nCars=+this.value;this.nextElementSibling.textContent=this.value;spawnCars()"><span class="sb-val">20</span></div>
+    <div class="sb-row"><label>Pedestrians</label><input type="range" min="0" max="30" value="10" oninput="traf.nPeds=+this.value;this.nextElementSibling.textContent=this.value;spawnPeds()"><span class="sb-val">10</span></div>
+    <div class="sb-row"><label>AV Robot</label><input type="checkbox" checked onchange="traf.avOn=this.checked"></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Driver Behaviour</div>
+    <div class="sb-row"><label>Aggressiveness</label><input type="range" min="0.5" max="3" step="0.1" value="1" oninput="traf.aggr=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.0</span></div>
+    <div class="sb-row"><label>Random stops</label><input type="checkbox" onchange="traf.stops=this.checked"></div>
+    <div class="sb-row"><label>Jaywalking</label><input type="checkbox" onchange="traf.jwalk=this.checked"></div>
+    <div class="sb-row"><label>Lane changes</label><input type="checkbox" checked onchange="traf.lanes=this.checked"></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Traffic Lights</div>
+    <div class="sb-row"><label>Smart lights</label><input type="checkbox" checked onchange="traf.smartL=this.checked"></div>
+    <div class="sb-row"><label>Cycle time (s)</label><input type="range" min="20" max="120" value="60" oninput="traf.cycleT=+this.value;this.nextElementSibling.textContent=this.value+'s'"><span class="sb-val">60s</span></div>
+    <div class="sb-row"><label>Emergency preempt</label><input type="checkbox" onchange="traf.preempt=this.checked"></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Environment</div>
+    <div class="sb-row"><label>Rain mode</label><input type="checkbox" onchange="traf.rain=this.checked"></div>
+    <div class="sb-row"><label>Night mode</label><input type="checkbox" onchange="traf.night=this.checked"></div>
+    <div class="sb-row"><label>Terrain costs</label><input type="checkbox" checked onchange="traf.costs=this.checked"></div>
+    <div class="sb-row"><label>Show speeds</label><input type="checkbox" onchange="traf.showSpd=this.checked"></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">AV Settings</div>
+    <div class="sb-row"><label>AV speed</label><input type="range" min="0.5" max="4" step="0.1" value="1.8" oninput="traf.avSpd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">1.8</span></div>
+    <div class="sb-row"><label>AV LiDAR range</label><input type="range" min="40" max="180" value="90" oninput="traf.avRange=+this.value;this.nextElementSibling.textContent=this.value"><span class="sb-val">90</span></div>
+    <div class="sb-row"><label>Show AV path</label><input type="checkbox" checked onchange="traf.showAVPath=this.checked"></div>
+    <div class="sb-row"><label>Show LiDAR</label><input type="checkbox" checked onchange="traf.showLidar=this.checked"></div>
+  </div>
+  <div class="sb-sec"><div class="sb-hd">Flow Metrics</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">Cars</div><div class="mc-val" id="m-cars">0</div></div>
+      <div class="mc"><div class="mc-lbl">Peds</div><div class="mc-val" id="m-peds">0</div></div>
+      <div class="mc"><div class="mc-lbl">Lights</div><div class="mc-val" id="m-lights">0</div></div>
+      <div class="mc"><div class="mc-lbl">AV stops</div><div class="mc-val" id="m-avst">0</div></div>
+    </div>
+  </div>
+</div>
+<div class="mod-canvas-wrap" id="ca"><canvas id="sim"></canvas></div>
+</div>
+<div id="statusbar">
+  <div class="sb-item"><span class="sb-label">ENV</span>&nbsp;<span id="sb-env">City</span></div>
+  <div class="sb-item"><span class="sb-label">AV POS</span>&nbsp;<span id="sb-avpos">(—,—)</span></div>
+  <div class="sb-item"><span class="sb-label">TRAFFIC</span>&nbsp;<span id="sb-flow">Normal</span></div>
+  <div class="sb-item" style="flex:1;justify-content:flex-end;border-right:none"><span class="sb-label">Right-click → add AV waypoint | VROS Traffic & AV Simulator v2.0</span></div>
+</div>
+</div>
+<script>
+function initTheme(){const t=localStorage.getItem("ride-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("ride-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+function cssV(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+let W,H,lastT=0,fps=0,fcnt=0,ft=0,avStops=0,frame=0;
+const traf={env:'city',nCars:20,nPeds:10,avOn:true,aggr:1,stops:false,jwalk:false,lanes:true,smartL:true,cycleT:60,preempt:false,rain:false,night:false,costs:true,showSpd:false,avSpd:1.8,avRange:90,showAVPath:true,showLidar:true,cars:[],peds:[],lights:[],roads:[],av:{x:0,y:0,angle:0,path:[],pathIdx:0,stopped:false}};
+
+function resize(){const ca=document.getElementById('ca');sim.width=ca.clientWidth;sim.height=ca.clientHeight;W=sim.width;H=sim.height;init();}
+window.addEventListener('resize',resize);
+
+function init(){
+  traf.roads=[];traf.lights=[];traf.cars=[];traf.peds=[];avStops=0;
+  document.getElementById('sb-env').textContent=traf.env.charAt(0).toUpperCase()+traf.env.slice(1);
+  if(traf.env==='city'){
+    for(let i=1;i<=3;i++){traf.roads.push({type:'h',y:H*i/4});traf.roads.push({type:'v',x:W*i/4});}
+    for(let i=1;i<=3;i++)for(let j=1;j<=3;j++)traf.lights.push({x:W*j/4,y:H*i/4,state:Math.random()>.5?'green':'red',t:Math.random()*traf.cycleT*60,phase:i*3+j});
+  } else if(traf.env==='highway'){
+    for(let i=1;i<=4;i++)traf.roads.push({type:'h',y:H*i/5,w:38});
+    traf.lights.push({x:W*.5,y:H*.4,state:'green',t:0,phase:0});
+  } else if(traf.env==='roundabout'){
+    traf.roads.push({type:'circle',cx:W/2,cy:H/2,r:Math.min(W,H)*.2});
+    [0,1,2,3].forEach(a=>traf.roads.push({type:'spoke',cx:W/2,cy:H/2,ang:a*Math.PI/2,len:Math.min(W,H)*.35}));
+  } else {
+    traf.roads.push({type:'h',y:H/2});traf.roads.push({type:'v',x:W/2});
+    traf.lights.push({x:W/2-20,y:H/2-20,state:'green',t:0,phase:0});
+    traf.lights.push({x:W/2+20,y:H/2-20,state:'red',t:traf.cycleT*30,phase:0});
+    traf.lights.push({x:W/2-20,y:H/2+20,state:'red',t:traf.cycleT*30,phase:0});
+    traf.lights.push({x:W/2+20,y:H/2+20,state:'green',t:0,phase:0});
+  }
+  spawnCars();spawnPeds();
+  // AV
+  traf.av={x:W*.1,y:H/4,angle:0,path:[{x:W*.9,y:H/4},{x:W*.9,y:3*H/4},{x:W*.1,y:3*H/4},{x:W*.1,y:H/4}],pathIdx:0,stopped:false,vx:0,vy:0};
+  document.getElementById('m-lights').textContent=traf.lights.length;
+}
+
+function spawnCars(){
+  traf.cars=[];
+  for(let i=0;i<traf.nCars;i++){
+    const road=traf.roads[Math.floor(Math.random()*traf.roads.length)];if(!road)continue;
+    const spd=(0.5+Math.random()*1.5)*traf.aggr;const dir=Math.random()>.5?1:-1;
+    const laneOff=(Math.random()-.5)*16;
+    if(road.type==='h')traf.cars.push({x:Math.random()*W,y:road.y+laneOff,vx:spd*dir,vy:0,w:24,h:12,color:`hsl(${Math.random()*360},60%,55%)`,stopped:false,stopT:0,roadY:road.y,roadX:null});
+    else if(road.type==='v')traf.cars.push({x:road.x+laneOff,y:Math.random()*H,vx:0,vy:spd*dir,w:12,h:24,color:`hsl(${Math.random()*360},60%,55%)`,stopped:false,stopT:0,roadY:null,roadX:road.x});
+  }
+  document.getElementById('m-cars').textContent=traf.cars.length;
+}
+
+function spawnPeds(){
+  traf.peds=[];
+  for(let i=0;i<traf.nPeds;i++){
+    traf.peds.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,phase:Math.random()*Math.PI*2});
+  }
+  document.getElementById('m-peds').textContent=traf.peds.length;
+}
+
+function stepTraffic(){
+  frame++;
+  // Update lights
+  traf.lights.forEach(l=>{l.t++;if(l.t>=traf.cycleT*60/2){l.t=0;l.state=l.state==='green'?'red':'green';}});
+  // Move cars
+  traf.cars.forEach(c=>{
+    if(traf.stops&&!c.stopped&&Math.random()<.0005){c.stopped=true;c.stopT=120+Math.floor(Math.random()*180);}
+    if(c.stopped){c.stopT--;if(c.stopT<=0)c.stopped=false;return;}
+    // Red light stop
+    let atRed=false;if(traf.smartL){traf.lights.forEach(l=>{if(l.state==='red'){const d=Math.sqrt((c.x-l.x)**2+(c.y-l.y)**2);if(d<55)atRed=true;}});}
+    // AV avoidance
+    let avClose=false;if(traf.avOn){const d=Math.sqrt((c.x-traf.av.x)**2+(c.y-traf.av.y)**2);if(d<50)avClose=true;}
+    if(!atRed&&!avClose){c.x+=c.vx;c.y+=c.vy;}
+    // Lane change
+    if(traf.lanes&&Math.random()<.001){c.vx+=(Math.random()-.5)*.3;c.vy+=(Math.random()-.5)*.3;const s=Math.sqrt(c.vx**2+c.vy**2);if(s>0){c.vx/=s*0.5;c.vy/=s*0.5;}}
+    if(c.x<-40)c.x=W+40;if(c.x>W+40)c.x=-40;if(c.y<-40)c.y=H+40;if(c.y>H+40)c.y=-40;
+  });
+  // Pedestrians
+  traf.peds.forEach(p=>{
+    if(traf.jwalk&&Math.random()<.003){p.vx=(Math.random()-.5)*.8;p.vy=(Math.random()-.5)*.8;}
+    p.x+=p.vx;p.y+=p.vy;p.phase+=.05;
+    if(p.x<5)p.vx=.3;if(p.x>W-5)p.vx=-.3;if(p.y<5)p.vy=.3;if(p.y>H-5)p.vy=-.3;
+  });
+  // AV
+  if(traf.avOn&&traf.av.path.length){
+    const av=traf.av;const tgt=av.path[av.pathIdx];
+    const dx=tgt.x-av.x,dy=tgt.y-av.y,d=Math.sqrt(dx**2+dy**2);
+    if(d<10){av.pathIdx=(av.pathIdx+1)%av.path.length;return;}
+    let clear=true;
+    traf.cars.forEach(c=>{if(Math.sqrt((av.x-c.x)**2+(av.y-c.y)**2)<55)clear=false;});
+    traf.lights.forEach(l=>{if(l.state==='red'&&Math.sqrt((av.x-l.x)**2+(av.y-l.y)**2)<65)clear=false;});
+    traf.peds.forEach(p=>{if(Math.sqrt((av.x-p.x)**2+(av.y-p.y)**2)<40)clear=false;});
+    if(!clear){av.stopped=true;avStops++;document.getElementById('m-avst').textContent=avStops;}
+    else{av.stopped=false;av.x+=dx/d*traf.avSpd;av.y+=dy/d*traf.avSpd;}
+    av.angle=Math.atan2(dy,dx);
+    document.getElementById('sb-avpos').textContent=`(${av.x.toFixed(0)},${av.y.toFixed(0)})`;
+    document.getElementById('sb-flow').textContent=av.stopped?'AV stopped':'Flowing';
+  }
+}
+
+function draw(){
+  ctx.fillStyle=traf.night?'#04040a':'#0f0f14';ctx.fillRect(0,0,W,H);
+  // Rain
+  if(traf.rain){for(let i=0;i<60;i++){ctx.strokeStyle='rgba(100,150,255,0.1)';ctx.lineWidth=1;const rx=Math.random()*W,ry=Math.random()*H;ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx+3,ry+10);ctx.stroke();}}
+  // Terrain cost overlay
+  if(traf.costs){ctx.fillStyle='rgba(50,120,50,0.05)';ctx.fillRect(0,0,W,H);}
+  // Roads
+  traf.roads.forEach(r=>{
+    const rw=r.w||32;ctx.strokeStyle=traf.night?'#181828':'#1e1e28';ctx.lineWidth=rw;
+    if(r.type==='h'){ctx.beginPath();ctx.moveTo(0,r.y);ctx.lineTo(W,r.y);ctx.stroke();ctx.strokeStyle=traf.night?'#1e1e38':'#2a2a38';ctx.lineWidth=1;ctx.setLineDash([14,14]);ctx.beginPath();ctx.moveTo(0,r.y);ctx.lineTo(W,r.y);ctx.stroke();ctx.setLineDash([]);}
+    else if(r.type==='v'){ctx.beginPath();ctx.moveTo(r.x,0);ctx.lineTo(r.x,H);ctx.stroke();ctx.strokeStyle=traf.night?'#1e1e38':'#2a2a38';ctx.lineWidth=1;ctx.setLineDash([14,14]);ctx.beginPath();ctx.moveTo(r.x,0);ctx.lineTo(r.x,H);ctx.stroke();ctx.setLineDash([]);}
+    else if(r.type==='circle'){ctx.strokeStyle=traf.night?'#181828':'#1e1e28';ctx.lineWidth=38;ctx.beginPath();ctx.arc(r.cx,r.cy,r.r,0,Math.PI*2);ctx.stroke();}
+    else if(r.type==='spoke'){ctx.strokeStyle=traf.night?'#181828':'#1e1e28';ctx.lineWidth=32;ctx.beginPath();ctx.moveTo(r.cx,r.cy);ctx.lineTo(r.cx+Math.cos(r.ang)*r.len,r.cy+Math.sin(r.ang)*r.len);ctx.stroke();}
+  });
+  // Lights
+  traf.lights.forEach(l=>{
+    const col=l.state==='green'?'#1baf7a':'#e34948';ctx.fillStyle=col;ctx.beginPath();ctx.arc(l.x,l.y,8,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1.5;ctx.stroke();
+    if(traf.night){ctx.fillStyle=l.state==='green'?'rgba(27,175,122,0.08)':'rgba(227,73,72,0.08)';ctx.beginPath();ctx.arc(l.x,l.y,60,0,Math.PI*2);ctx.fill();}
+  });
+  // Cars
+  traf.cars.forEach(c=>{
+    const ang=Math.atan2(c.vy,c.vx);ctx.save();ctx.translate(c.x,c.y);ctx.rotate(ang);
+    ctx.fillStyle=c.stopped?'#555':c.color;ctx.fillRect(-c.w/2,-c.h/2,c.w,c.h);ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=1;ctx.strokeRect(-c.w/2,-c.h/2,c.w,c.h);
+    // Headlights
+    if(traf.night){ctx.fillStyle='rgba(255,240,180,0.7)';ctx.fillRect(c.w/2-2,-c.h/2+1,3,3);ctx.fillRect(c.w/2-2,c.h/2-4,3,3);}
+    if(traf.showSpd){ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='7px monospace';ctx.fillText(Math.sqrt(c.vx**2+c.vy**2).toFixed(1),0,-c.h/2-4);}
+    ctx.restore();
+  });
+  // Pedestrians
+  traf.peds.forEach(p=>{
+    ctx.fillStyle='#c84fc8';ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(200,79,200,0.35)';ctx.lineWidth=1;ctx.stroke();
+  });
+  // AV
+  if(traf.avOn){
+    const av=traf.av;
+    if(traf.showAVPath){ctx.strokeStyle='rgba(57,135,229,0.25)';ctx.lineWidth=1;ctx.setLineDash([4,6]);ctx.beginPath();av.path.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));ctx.closePath();ctx.stroke();ctx.setLineDash([]);}
+    if(traf.showLidar){ctx.strokeStyle='rgba(57,135,229,0.08)';ctx.lineWidth=.8;for(let b=0;b<20;b++){const a=av.angle+b/20*Math.PI*2;ctx.beginPath();ctx.moveTo(av.x,av.y);ctx.lineTo(av.x+Math.cos(a)*traf.avRange,av.y+Math.sin(a)*traf.avRange);ctx.stroke();}}
+    ctx.save();ctx.translate(av.x,av.y);ctx.rotate(av.angle);
+    ctx.fillStyle=av.stopped?'#e34948':'#3987e5';ctx.strokeStyle='rgba(57,135,229,0.8)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-13,-8);ctx.lineTo(-13,8);ctx.closePath();ctx.fill();ctx.stroke();
+    if(traf.night){ctx.fillStyle='rgba(57,135,229,0.15)';ctx.beginPath();ctx.moveTo(20,0);ctx.arc(20,0,traf.avRange*.4,-.3,.3);ctx.closePath();ctx.fill();}
+    ctx.restore();
+    ctx.fillStyle=av.stopped?'#e34948':'rgba(57,135,229,0.8)';ctx.font='8px monospace';ctx.fillText('AV'+(av.stopped?' STOPPED':''),av.x+16,av.y-10);
+  }
+  // HUD
+  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.font='9px monospace';ctx.fillText(`Cars:${traf.cars.length}  Peds:${traf.peds.length}  Lights:${traf.lights.length}  AV stops:${avStops}`,10,H-8);
+}
+
+sim.addEventListener('click',e=>{const r=sim.getBoundingClientRect();traf.av.path.push({x:e.clientX-r.left,y:e.clientY-r.top});});
+sim.addEventListener('contextmenu',e=>{e.preventDefault();const r=sim.getBoundingClientRect();traf.av.path.push({x:e.clientX-r.left,y:e.clientY-r.top});});
+
+function loop(ts){requestAnimationFrame(loop);const dt=Math.min((ts-lastT)/1000,.05);lastT=ts;stepTraffic();draw();}
+resize();requestAnimationFrame(loop);
+</script>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; Artificial Intelligence Nigeria (RAIN)</div>
+</body></html>

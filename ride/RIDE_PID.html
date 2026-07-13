@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PID Control Laboratory — RIDE | RAIN Nigeria</title>
+<style>/* ═══════════════════════════════════════════════════
+   VROS THEME SYSTEM — RAIN Nigeria
+   Default: DARK (roboticists & GenZ preference)
+   Persisted via localStorage
+   Toggle via .theme-toggle button
+═══════════════════════════════════════════════════ */
+:root {
+  --rain-blue:    #3b82f6;
+  --rain-blue-dk: #1d4ed8;
+  --rain-blue-lt: #1e3a5f;
+  --green:   #22c55e;
+  --amber:   #f59e0b;
+  --purple:  #a78bfa;
+  --red:     #ef4444;
+
+  /* DARK (default) */
+  --bg:       #0f1117;
+  --bg2:      #161b27;
+  --bg3:      #1e2535;
+  --border:   #2a3245;
+  --border2:  #1e2535;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --canvas-bg:#0f1117;
+  --card-bg:  #161b27;
+  --tag-bg:   #1e2535;
+  --tag-text: #94a3b8;
+  --input-bg: #0f1117;
+  --shadow:   0 1px 4px rgba(0,0,0,0.4);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5);
+}
+[data-theme="light"] {
+  --bg:       #ffffff;
+  --bg2:      #f8fafc;
+  --bg3:      #f1f5f9;
+  --border:   #e2e8f0;
+  --border2:  #f1f5f9;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --text3:    #94a3b8;
+  --canvas-bg:#f8fafc;
+  --card-bg:  #ffffff;
+  --tag-bg:   #f1f5f9;
+  --tag-text: #475569;
+  --input-bg: #f8fafc;
+  --shadow:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:0 4px 12px rgba(0,0,0,0.1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;height:100vh;overflow:hidden;
+  display:flex;flex-direction:column;transition:background .2s,color .2s;
+}
+a{text-decoration:none;color:inherit}
+
+/* ── TOPBAR ── */
+.mod-topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:54px;
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  flex-shrink:0;box-shadow:var(--shadow);z-index:50;
+}
+.rain-brand{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.rain-logo-img{height:30px;width:auto;border-radius:4px;object-fit:contain}
+.rain-wordmark{
+  display:flex;flex-direction:column;line-height:1.1;
+}
+.rain-wordmark-main{font-size:12px;font-weight:800;color:var(--rain-blue);letter-spacing:.3px}
+.rain-wordmark-sub{font-size:9px;color:var(--text3);font-weight:500;display:none}
+.brand-div{width:1px;height:24px;background:var(--border);flex-shrink:0}
+.mod-title-wrap{flex:1;min-width:0}
+.mod-title{font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-subtitle{font-size:10px;color:var(--text3);font-weight:500}
+
+/* ── TOPBAR BUTTONS ── */
+.tb-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:8px;
+  border:1px solid var(--border);background:var(--bg3);
+  color:var(--text2);font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .13s;flex-shrink:0;white-space:nowrap;
+}
+.tb-btn:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.tb-btn.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.theme-btn{font-size:16px;padding:5px 10px}
+.status-pill{
+  display:flex;align-items:center;gap:5px;padding:4px 10px;
+  border-radius:20px;font-size:11px;font-weight:600;
+  background:rgba(34,197,94,0.15);color:var(--green);
+  border:1px solid rgba(34,197,94,0.3);flex-shrink:0;
+}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite}
+.sdot.paused{background:var(--amber);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.sidebar-toggle{display:none}
+
+/* ── LAYOUT ── */
+.mod-layout{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.mod-sidebar{
+  width:224px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+.mod-sidebar::-webkit-scrollbar{width:4px}
+.mod-sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.sb-sec{padding:12px 14px;border-bottom:1px solid var(--border2)}
+.sb-hd{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;
+}
+/* Inputs */
+.sb-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.sb-row label{flex:1;font-size:12px;font-weight:500;color:var(--text2)}
+.sb-row input[type=range]{flex:1;height:4px;accent-color:var(--rain-blue);cursor:pointer}
+.sb-row input[type=checkbox]{accent-color:var(--rain-blue);width:15px;height:15px;cursor:pointer}
+.sb-val{min-width:38px;text-align:right;font-size:11px;font-weight:700;color:var(--rain-blue);font-family:monospace}
+.sb-sel{
+  width:100%;padding:6px 9px;border-radius:7px;
+  border:1px solid var(--border);background:var(--input-bg);
+  color:var(--text);font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  font-family:inherit;
+}
+.sb-sel:focus{border-color:var(--rain-blue)}
+
+/* Button groups */
+.btn-grp{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.gb{
+  padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .12s;font-family:inherit;
+}
+.gb:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+.gb.active{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+
+/* Action buttons */
+.act{
+  display:block;width:100%;padding:7px 10px;
+  border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text2);
+  font-size:12px;font-weight:600;cursor:pointer;
+  text-align:left;margin-bottom:4px;transition:all .12s;font-family:inherit;
+}
+.act:hover{background:var(--rain-blue-lt);color:var(--rain-blue);border-color:var(--rain-blue)}
+.act.prim{background:var(--rain-blue);color:#fff;border-color:var(--rain-blue)}
+.act.prim:hover{opacity:.9}
+.act.danger{color:var(--red)}
+.act.danger:hover{background:rgba(239,68,68,.1);border-color:var(--red)}
+
+/* Upload */
+.upload-lbl{
+  display:block;width:100%;padding:7px 10px;margin-bottom:4px;
+  border-radius:7px;border:1px dashed var(--border);
+  background:var(--bg3);color:var(--text3);
+  font-size:11px;font-weight:600;cursor:pointer;text-align:center;transition:all .13s;
+}
+.upload-lbl:hover{border-color:var(--rain-blue);color:var(--rain-blue);background:var(--rain-blue-lt)}
+
+/* Metrics */
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mc{background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:7px 9px}
+.mc-lbl{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.3px}
+.mc-val{font-size:15px;font-weight:800;color:var(--text);font-family:monospace;margin-top:2px}
+.mc-val.good{color:var(--green)}
+.mc-val.warn{color:var(--amber)}
+.mc-val.bad{color:var(--red)}
+
+/* Status */
+.status-tag{
+  padding:6px 10px;border-radius:7px;font-size:11px;font-weight:700;
+  background:rgba(34,197,94,.12);color:var(--green);
+  border:1px solid rgba(34,197,94,.25);margin-top:6px;
+  transition:all .2s;
+}
+.status-tag.warn{background:rgba(245,158,11,.12);color:var(--amber);border-color:rgba(245,158,11,.3)}
+.status-tag.error{background:rgba(239,68,68,.12);color:var(--red);border-color:rgba(239,68,68,.3)}
+
+/* ── CANVAS ── */
+.mod-canvas-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.mod-canvas{display:block;width:100%;flex:1;background:var(--canvas-bg)}
+
+/* ── LEGEND ── */
+.legend-bar{
+  display:flex;gap:14px;flex-wrap:wrap;padding:6px 14px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  font-size:11px;color:var(--text3);flex-shrink:0;
+}
+.li{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ldsq{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* ── BOTTOM BAR ── */
+.mod-btmbar{
+  display:flex;align-items:center;gap:0;height:32px;
+  background:var(--bg2);border-top:1px solid var(--border);
+  flex-shrink:0;font-size:11px;font-weight:500;overflow-x:auto;
+}
+.bbi{
+  display:flex;align-items:center;gap:4px;padding:0 13px;
+  border-right:1px solid var(--border2);height:100%;
+  white-space:nowrap;color:var(--text3);flex-shrink:0;
+}
+.bbi strong{color:var(--rain-blue);font-family:monospace}
+.bb-space{flex:1}
+.rain-credit{
+  display:flex;align-items:center;gap:6px;padding:0 14px;
+  font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0;
+}
+.rain-credit img{height:16px;opacity:.5;border-radius:2px}
+
+/* ── CHART TABS ── */
+.chart-tabs{display:flex;background:var(--bg2);border-top:1px solid var(--border);flex-shrink:0}
+.ctab{
+  padding:5px 14px;font-size:11px;font-weight:600;
+  color:var(--text3);cursor:pointer;border:none;background:none;
+  border-bottom:2px solid transparent;transition:all .12s;font-family:inherit;
+}
+.ctab.active{color:var(--rain-blue);border-bottom-color:var(--rain-blue)}
+.ctab:hover:not(.active){color:var(--text)}
+
+/* ── MATH OVERLAY ── */
+.math-overlay{
+  position:absolute;top:8px;right:8px;width:290px;
+  max-height:calc(100% - 16px);background:var(--bg2);
+  border:1px solid var(--border);border-radius:10px;
+  box-shadow:var(--shadow-md);display:none;flex-direction:column;
+  z-index:30;overflow:hidden;
+}
+.math-overlay.open{display:flex}
+.math-hdr{
+  display:flex;align-items:center;padding:9px 12px;
+  border-bottom:1px solid var(--border);background:var(--rain-blue-lt);
+}
+.math-hdr span{font-size:12px;font-weight:700;color:var(--rain-blue);flex:1}
+.math-hdr button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px}
+.math-body{flex:1;overflow-y:auto;padding:10px 12px;font-family:'Courier New',monospace;font-size:11px}
+.math-body::-webkit-scrollbar{width:3px}
+.math-body::-webkit-scrollbar-thumb{background:var(--border)}
+.math-eq{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:9px 11px;margin-bottom:7px;position:relative}
+.math-eq-lbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px;font-family:-apple-system,sans-serif}
+.math-eq-body{color:var(--rain-blue);line-height:1.9;white-space:pre-wrap}
+.exbtn{font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--rain-blue);background:none;color:var(--rain-blue);cursor:pointer;margin-top:4px;font-family:inherit}
+.exbox{font-size:10px;color:var(--text2);line-height:1.6;margin-top:5px;padding:6px 8px;background:var(--rain-blue-lt);border-radius:5px;display:none;font-family:-apple-system,sans-serif}
+
+/* ── SIDEBAR OVERLAY (mobile) ── */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39}
+.sb-overlay.open{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:720px){
+  .mod-sidebar{
+    position:fixed;bottom:32px;left:0;right:0;
+    width:100%;max-height:58vh;border-right:none;
+    border-top:1px solid var(--border);z-index:40;
+    transform:translateY(100%);transition:transform .25s ease;
+    box-shadow:0 -4px 24px rgba(0,0,0,.3);
+  }
+  .mod-sidebar.open{transform:translateY(0)}
+  .sidebar-toggle{display:flex !important}
+  .rain-wordmark-sub{display:block}
+  .mod-title{font-size:13px}
+}
+
+/* ── THEME JS SNIPPET (inline in each page) ── */</style>
+</head>
+<body>
+<div class="mod-topbar">
+  <a href="index.html" class="rain-brand">
+    <img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="RAIN" class="rain-logo-img" onerror="this.style.display='none'">
+    <div class="rain-wordmark"><span class="rain-wordmark-main">RAIN Nigeria</span><span class="rain-wordmark-sub">Robotics &amp; AI</span></div>
+  </a>
+  <div class="brand-div"></div>
+  <div class="mod-title-wrap">
+    <div class="mod-title">📈 PID Control Laboratory</div>
+    <div class="mod-subtitle">RIDE · Robotics &amp; Artificial Intelligence Nigeria</div>
+  </div>
+  <button class="sidebar-toggle tb-btn" onclick="toggleSidebar()">☰ Controls</button>
+  <button class="tb-btn theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
+  <div class="status-pill" id="run-pill"><span class="sdot" id="run-dot"></span><span id="run-txt">Running</span></div>
+  <a href="index.html" class="tb-btn">← Home</a>
+</div>
+<div class="sb-overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+<div class="mod-layout">
+<div class="mod-sidebar" id="mod-sidebar">
+
+  <div class="sb-sec">
+    <div class="sb-hd">Controller Mode</div>
+    <select class="sb-sel" onchange="pid.mode=this.value;resetMeta()">
+      <option value="pid">PID — Full controller</option>
+      <option value="p">P — Proportional only</option>
+      <option value="pd">PD — No integral</option>
+      <option value="pi">PI — No derivative</option>
+      <option value="lqr">LQR (approximated)</option>
+      <option value="mpc">MPC (approximated)</option>
+    </select>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Gains</div>
+    <div class="sb-row"><label>Kp</label><input type="range" min="0" max="10" step="0.05" value="2.5" oninput="pid.kp=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2);updateMathLaw()"><span class="sb-val">2.50</span></div>
+    <div class="sb-row"><label>Ki</label><input type="range" min="0" max="3" step="0.01" value="0.2" oninput="pid.ki=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2);updateMathLaw()"><span class="sb-val">0.20</span></div>
+    <div class="sb-row"><label>Kd</label><input type="range" min="0" max="3" step="0.01" value="0.6" oninput="pid.kd=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2);updateMathLaw()"><span class="sb-val">0.60</span></div>
+    <div class="sb-row"><label>Anti-windup</label><input type="range" min="0.5" max="5" step="0.1" value="2" oninput="pid.windup=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)"><span class="sb-val">2.0</span></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Setpoint</div>
+    <div class="sb-row"><label>Target SP</label><input type="range" min="-0.9" max="0.9" step="0.05" value="0.6" oninput="pid.sp=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2);resetMeta()"><span class="sb-val">0.60</span></div>
+    <div class="sb-row"><label>Step delay</label><input type="range" min="0" max="5" step="0.5" value="0" oninput="pid.stepDelay=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(1)+'s'"><span class="sb-val">0.0s</span></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Plant Model</div>
+    <div class="sb-row"><label>Gain</label><input type="range" min="0.2" max="3" step="0.05" value="0.88" oninput="pid.plantGain=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.88</span></div>
+    <div class="sb-row"><label>Time const τ</label><input type="range" min="0.1" max="2" step="0.05" value="0.3" oninput="pid.plantTau=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.30</span></div>
+    <div class="sb-row"><label>Dead time</label><input type="range" min="0" max="1" step="0.05" value="0" oninput="pid.deadTime=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.00</span></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Disturbance</div>
+    <div class="btn-grp">
+      <button class="gb" onclick="pid.dist=1.2;setTimeout(()=>pid.dist=0,300)">Push +</button>
+      <button class="gb" onclick="pid.dist=-1.2;setTimeout(()=>pid.dist=0,300)">Push −</button>
+    </div>
+    <div class="btn-grp" style="margin-top:4px">
+      <button class="gb" id="noise-btn" onclick="pid.noisy=!pid.noisy;this.classList.toggle('active')">Sensor Noise</button>
+      <button class="gb" onclick="pid.pv=-0.9;resetMeta()">Reset PV</button>
+    </div>
+    <div class="sb-row" style="margin-top:6px"><label>Noise amp</label><input type="range" min="0.01" max="0.2" step="0.01" value="0.05" oninput="pid.noiseAmp=+this.value;this.nextElementSibling.textContent=(+this.value).toFixed(2)"><span class="sb-val">0.05</span></div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Symbolic Math</div>
+    <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 11px;margin-bottom:6px">
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Control Law</div>
+      <div id="math-law" style="font-family:'Courier New',monospace;font-size:12px;color:var(--rain-blue);line-height:1.8">u = 2.50·e + 0.20·∫e + 0.60·ė</div>
+    </div>
+    <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:7px;padding:9px 11px">
+      <div style="font-size:9px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Live Values</div>
+      <div id="math-vals" style="font-family:'Courier New',monospace;font-size:11px;color:var(--text2);line-height:1.8">e=0.000  u=0.000</div>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Performance Metrics</div>
+    <div class="metric-grid">
+      <div class="mc"><div class="mc-lbl">Overshoot</div><div class="mc-val" id="pm-ov">0.0%</div></div>
+      <div class="mc"><div class="mc-lbl">Settle (s)</div><div class="mc-val" id="pm-st">—</div></div>
+      <div class="mc"><div class="mc-lbl">SS Error</div><div class="mc-val" id="pm-ss">0.000</div></div>
+      <div class="mc"><div class="mc-lbl">Rise (s)</div><div class="mc-val" id="pm-rs">—</div></div>
+      <div class="mc"><div class="mc-lbl">Peak</div><div class="mc-val" id="pm-pk">—</div></div>
+      <div class="mc"><div class="mc-lbl">IAE</div><div class="mc-val" id="pm-iae">0</div></div>
+    </div>
+  </div>
+
+  <div class="sb-sec">
+    <div class="sb-hd">Playback</div>
+    <div class="btn-grp">
+      <button class="gb" id="pbtn" onclick="togglePause()">⏸ Pause</button>
+      <button class="gb" onclick="resetAll()">↺ Reset</button>
+    </div>
+    <div class="sb-row" style="margin-top:6px"><label>Sim speed</label><input type="range" min="1" max="5" value="1" oninput="simSpd=+this.value;this.nextElementSibling.textContent=this.value+'x'"><span class="sb-val">1x</span></div>
+  </div>
+
+</div><!-- /sidebar -->
+
+<div class="mod-canvas-wrap">
+  <canvas class="mod-canvas" id="sim"></canvas>
+  <div class="chart-tabs">
+    <button class="ctab active" onclick="setChart('signal',this)">Signal Plot</button>
+    <button class="ctab" onclick="setChart('terms',this)">P / I / D Terms</button>
+    <button class="ctab" onclick="setChart('phase',this)">Phase Portrait</button>
+    <button class="ctab" onclick="setChart('compare',this)">Compare Modes</button>
+  </div>
+  <canvas id="chartc" style="width:100%;height:160px;flex-shrink:0;background:var(--bg2);display:block"></canvas>
+</div>
+</div>
+
+<div class="mod-btmbar">
+  <div class="bbi">Mode <strong id="sb-mode">PID</strong></div>
+  <div class="bbi">PV <strong id="sb-pv">0.000</strong></div>
+  <div class="bbi">Error <strong id="sb-err">0.000</strong></div>
+  <div class="bbi">Output <strong id="sb-out">0.000</strong></div>
+  <div class="bbi">Time <strong id="sb-t">0.0s</strong></div>
+  <div class="bb-space"></div>
+  <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; AI Nigeria (RAIN)</div>
+</div>
+
+<script>
+function initTheme(){const t=localStorage.getItem('ride-theme')||'dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'');document.getElementById('theme-btn').textContent=t==='light'?'🌙':'☀️';}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme');const n=c==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n==='light'?'light':'');localStorage.setItem('ride-theme',n);document.getElementById('theme-btn').textContent=n==='light'?'🌙':'☀️';}
+function toggleSidebar(){document.getElementById('mod-sidebar').classList.toggle('open');document.getElementById('sb-overlay').classList.toggle('open');}
+function setPaused(p){const d=document.getElementById('run-dot'),t=document.getElementById('run-txt'),pi=document.getElementById('run-pill');d.className='sdot'+(p?' paused':'');t.textContent=p?'Paused':'Running';pi.style.cssText=p?'background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)':'';}
+initTheme();
+
+const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
+const cc=document.getElementById('chartc'),cctx=cc.getContext('2d');
+let W,H,paused=false,simSpd=1,chartMode='signal',simTime=0;
+const pid={kp:2.5,ki:0.2,kd:0.6,sp:0.6,pv:-0.9,integ:0,prevE:0,out:0,dist:0,noisy:false,noiseAmp:0.05,mode:'pid',plantGain:0.88,plantTau:0.3,deadTime:0,windup:2,stepDelay:0};
+let meta={maxPV:-Infinity,settled:false,stT:null,rsT:null,rsA:false,iae:0,t:0};
+const MAXH=300;let hist=[];
+
+function resize(){
+  const wrap=document.querySelector('.mod-canvas-wrap');
+  const tabs=document.querySelector('.chart-tabs');
+  sim.width=wrap.clientWidth;sim.height=wrap.clientHeight-tabs.offsetHeight-160;
+  W=sim.width;H=sim.height;
+  cc.width=wrap.clientWidth;cc.height=160;
+}
+window.addEventListener('resize',resize);
+
+function getColor(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+function resetMeta(){meta={maxPV:-Infinity,settled:false,stT:null,rsT:null,rsA:false,iae:0,t:0};hist=[];}
+function resetAll(){pid.pv=-0.9;pid.integ=0;pid.prevE=0;simTime=0;resetMeta();}
+function updateMathLaw(){document.getElementById('math-law').textContent='u = '+pid.kp.toFixed(2)+'·e + '+pid.ki.toFixed(2)+'·∫e + '+pid.kd.toFixed(2)+'·ė';}
+function setChart(m,btn){chartMode=m;document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));if(btn)btn.classList.add('active');}
+function togglePause(){paused=!paused;document.getElementById('pbtn').textContent=paused?'▶ Resume':'⏸ Pause';setPaused(paused);}
+
+function stepPID(dt){
+  meta.t+=dt;simTime+=dt;
+  const activeSP=simTime>=pid.stepDelay?pid.sp:-0.9;
+  const err=activeSP-pid.pv;
+  const noise=pid.noisy?(Math.random()-.5)*pid.noiseAmp*2:0;
+  const me=err+noise;let u=0;
+  if(['p','pd','pid','lqr','mpc'].includes(pid.mode))u+=pid.kp*me;
+  if(['pi','pid'].includes(pid.mode)){pid.integ+=me*dt;pid.integ=Math.max(-pid.windup,Math.min(pid.windup,pid.integ));u+=pid.ki*pid.integ;}
+  if(['pd','pid'].includes(pid.mode))u+=pid.kd*(me-pid.prevE)/Math.max(dt,0.001);
+  if(pid.mode==='lqr')u=pid.kp*me+pid.kd*(me-pid.prevE)/Math.max(dt,0.001);
+  if(pid.mode==='mpc')u=pid.kp*me+pid.ki*pid.integ+pid.kd*(me-pid.prevE)/Math.max(dt,0.001)*1.2;
+  pid.prevE=me;pid.out=Math.max(-1,Math.min(1,u));
+  const dpv=(pid.out*pid.plantGain-pid.pv/pid.plantTau)*dt*2.5+pid.dist*dt*4+noise;
+  pid.pv=Math.max(-1.1,Math.min(1.1,pid.pv+dpv));pid.dist*=0.88;
+  hist.push({sp:activeSP,pv:pid.pv,out:pid.out,err:me,p:pid.kp*me,i:pid.ki*(pid.integ||0),d:pid.kd*(me-pid.prevE)/Math.max(dt,0.001)});
+  if(hist.length>MAXH)hist.shift();
+  meta.iae+=Math.abs(err)*dt;
+  if(pid.pv>meta.maxPV)meta.maxPV=pid.pv;
+  if(!meta.rsA&&pid.pv>activeSP*0.9&&activeSP>0){meta.rsT=meta.t.toFixed(2);meta.rsA=true;}
+  if(Math.abs(err)<0.02&&!meta.settled){meta.settled=true;meta.stT=meta.t.toFixed(2);}
+  if(Math.abs(err)>0.05)meta.settled=false;
+  const ov=activeSP>0?Math.max(0,(meta.maxPV-activeSP)/activeSP*100):0;
+  document.getElementById('pm-ov').textContent=ov.toFixed(1)+'%';
+  document.getElementById('pm-st').textContent=meta.stT||'—';
+  document.getElementById('pm-ss').textContent=Math.abs(err).toFixed(3);
+  document.getElementById('pm-rs').textContent=meta.rsT||'—';
+  document.getElementById('pm-pk').textContent=isFinite(meta.maxPV)?meta.maxPV.toFixed(3):'—';
+  document.getElementById('pm-iae').textContent=meta.iae.toFixed(2);
+  document.getElementById('sb-pv').textContent=pid.pv.toFixed(3);
+  document.getElementById('sb-err').textContent=err.toFixed(3);
+  document.getElementById('sb-out').textContent=pid.out.toFixed(3);
+  document.getElementById('sb-t').textContent=simTime.toFixed(1)+'s';
+  document.getElementById('sb-mode').textContent=pid.mode.toUpperCase();
+  document.getElementById('math-vals').textContent='e='+err.toFixed(3)+'  u='+pid.out.toFixed(3)+'\nSP='+pid.sp.toFixed(2)+'  PV='+pid.pv.toFixed(3);
+}
+
+function cssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()||v;}
+
+function drawSim(){
+  ctx.clearRect(0,0,W,H);
+  const bg=cssVar('--canvas-bg');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(128,128,128,0.08)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=50){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=50){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const spy=H/2-pid.sp*H*0.32;
+  ctx.strokeStyle='rgba(59,130,246,0.35)';ctx.lineWidth=1.5;ctx.setLineDash([6,5]);
+  ctx.beginPath();ctx.moveTo(0,spy);ctx.lineTo(W,spy);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(59,130,246,0.6)';ctx.font='bold 11px -apple-system,sans-serif';ctx.fillText('SP: '+pid.sp.toFixed(2),10,spy-8);
+  ctx.strokeStyle='rgba(128,128,128,0.12)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+  const rx=W/2+pid.pv*W*0.32,ry=H/2-pid.pv*H*0.32;
+  if(hist.length>2){ctx.strokeStyle='rgba(59,130,246,0.1)';ctx.lineWidth=1;ctx.beginPath();hist.forEach((p,i)=>{const x=W*0.1+i/MAXH*W*.8,y=H/2-p.pv*H*.32;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.stroke();}
+  const spx=W/2+pid.sp*W*0.32;
+  ctx.strokeStyle='rgba(239,68,68,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,4]);
+  ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(spx,spy);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#3b82f6';ctx.beginPath();ctx.arc(spx,spy,7,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();
+  const ang=Math.atan2(pid.sp-pid.pv,1)*0.5;
+  ctx.save();ctx.translate(rx,ry);ctx.rotate(ang);
+  ctx.fillStyle='#3b82f6';ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-14,-9);ctx.lineTo(-14,9);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='white';ctx.lineWidth=2;ctx.stroke();ctx.restore();
+  ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='bold 11px monospace';ctx.fillText('PV='+pid.pv.toFixed(3),rx+16,ry-12);
+  ctx.strokeStyle='rgba(245,158,11,0.45)';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(rx,ry);ctx.lineTo(rx+pid.out*70,ry);ctx.stroke();
+  if(Math.abs(pid.dist)>0.05){ctx.fillStyle='#ef4444';ctx.font='bold 12px -apple-system,sans-serif';ctx.fillText('⚡ DISTURBANCE',W/2-60,30);}
+  ctx.fillStyle='rgba(59,130,246,0.3)';ctx.font='bold 10px -apple-system,sans-serif';ctx.fillText(pid.mode.toUpperCase()+' CONTROLLER',10,H-10);
+}
+
+function drawChart(){
+  if(!cctx)return;const cw=cc.width,ch=cc.height;
+  cctx.clearRect(0,0,cw,ch);
+  const bg2=cssVar('--bg2');cctx.fillStyle=bg2;cctx.fillRect(0,0,cw,ch);
+  if(!hist.length)return;
+  cctx.strokeStyle='rgba(128,128,128,0.08)';cctx.lineWidth=1;
+  for(let i=1;i<=3;i++){cctx.beginPath();cctx.moveTo(0,ch*i/4);cctx.lineTo(cw,ch*i/4);cctx.stroke();}
+  const sy=v=>(ch/2)-(v*ch*0.42);
+  cctx.strokeStyle='rgba(59,130,246,0.3)';cctx.lineWidth=1;cctx.setLineDash([4,4]);
+  cctx.beginPath();cctx.moveTo(0,sy(hist[0].sp));cctx.lineTo(cw,sy(hist[hist.length-1].sp));cctx.stroke();cctx.setLineDash([]);
+  if(chartMode==='signal'){
+    [{k:'err',c:'#ef4444',w:1},{k:'out',c:'#f59e0b',w:1},{k:'pv',c:'#22c55e',w:2.5}].forEach(({k,c,w})=>{
+      cctx.strokeStyle=c;cctx.lineWidth=w;cctx.beginPath();hist.forEach((p,i)=>{const x=i/MAXH*cw,y=sy(p[k]);i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();
+    });
+    [{c:'#ef4444',l:'Error'},{c:'#f59e0b',l:'Output'},{c:'#22c55e',l:'PV'},{c:'#3b82f6',l:'SP'}].forEach(({c,l},i)=>{cctx.fillStyle=c;cctx.font='bold 9px -apple-system,sans-serif';cctx.fillText('■ '+l,6+i*58,11);});
+  }else if(chartMode==='terms'){
+    [{k:'p',c:'#3b82f6',l:'P'},{k:'i',c:'#22c55e',l:'I'},{k:'d',c:'#f59e0b',l:'D'}].forEach(({k,c,l},li)=>{
+      cctx.strokeStyle=c;cctx.lineWidth=1.8;cctx.beginPath();hist.forEach((p,i)=>{const x=i/MAXH*cw,y=sy((p[k]||0)*0.5);i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();
+      cctx.fillStyle=c;cctx.font='bold 9px -apple-system,sans-serif';cctx.fillText('■ '+l+'-term',6+li*70,11);
+    });
+  }else if(chartMode==='phase'){
+    cctx.strokeStyle='#a78bfa';cctx.lineWidth=1.5;cctx.beginPath();hist.forEach((p,i)=>{const x=cw/2+p.err*cw*0.4,y=ch/2-p.out*ch*0.4;i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();
+    cctx.strokeStyle='rgba(128,128,128,0.15)';cctx.lineWidth=1;cctx.beginPath();cctx.moveTo(cw/2,0);cctx.lineTo(cw/2,ch);cctx.stroke();cctx.beginPath();cctx.moveTo(0,ch/2);cctx.lineTo(cw,ch/2);cctx.stroke();
+    cctx.fillStyle='rgba(167,139,250,0.5)';cctx.font='bold 9px monospace';cctx.fillText('e →',cw-28,ch/2-4);cctx.fillText('ė↑',cw/2+4,12);
+  }else{
+    cctx.strokeStyle='#22c55e';cctx.lineWidth=2;cctx.beginPath();hist.forEach((p,i)=>{const x=i/MAXH*cw,y=sy(p.pv);i===0?cctx.moveTo(x,y):cctx.lineTo(x,y);});cctx.stroke();
+    cctx.fillStyle='rgba(128,128,128,0.4)';cctx.font='bold 9px -apple-system,sans-serif';cctx.fillText('Compare: switch controller modes to overlay responses. Current: '+pid.mode.toUpperCase(),6,11);
+  }
+}
+
+let lastT=0;
+function loop(ts){
+  requestAnimationFrame(loop);
+  const dt=Math.min((ts-lastT)/1000,0.05);lastT=ts;
+  if(!paused){const steps=simSpd*2;for(let i=0;i<steps;i++)stepPID(dt/steps);}
+  drawSim();drawChart();
+}
+resize();resetAll();requestAnimationFrame(loop);
+</script>
+</body>
+</html>
