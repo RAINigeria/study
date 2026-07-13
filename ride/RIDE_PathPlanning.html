@@ -240,9 +240,9 @@ body{display:flex;flex-direction:column;background:var(--bg);color:var(--text);t
     <div class="cp-sec">
       <div class="cp-hd">Draw Tool</div>
       <div class="btn-grp">
-        <button class="gb active" id="tool-wall" onclick="setTool('wall')">✏ Wall</button>
+        <button class="gb" id="tool-wall" onclick="setTool('wall')">✏ Wall</button>
         <button class="gb" id="tool-erase" onclick="setTool('erase')">⌫ Erase</button>
-        <button class="gb" id="tool-goal" onclick="setTool('goal')">🎯 Goal</button>
+        <button class="gb active" id="tool-goal" onclick="setTool('goal')">🎯 Goal</button>
         <button class="gb" id="tool-start" onclick="setTool('start')">🟢 Start</button>
       </div>
       <p style="font-size:10px;color:var(--text3);line-height:1.5">Drag to draw walls · Right-click erases</p>
@@ -359,8 +359,8 @@ initTheme();
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 let W,H,COLS,ROWS;
 const CELL=20;
-let algo='astar',movement=4,robotSize=1,robotShape='arrow';
-let rSpd=4,simSpd=10,paused=false,tool='wall';
+let algo='astar',movement=4,robotSize=1,robotShape='circle';
+let rSpd=4,simSpd=10,paused=false,tool='goal';
 let sLidar=true,sExp=true,sTree=true,sCspace=false,sGrid=true;
 let agentSpd=2;
 let rawGrid=[],cGrid=[];
@@ -394,7 +394,7 @@ function initGrid(){
 function robotRadiusPx(){return robotSize*CELL*0.5;}
 function robotRadiusCells(){return Math.max(0,Math.floor(robotSize/2));}
 function buildCGrid(){
-  const r=robotRadiusCells();
+  const r=robotRadiusCells()+1; // +1 extra buffer so body never clips walls
   cGrid=Array.from({length:ROWS},()=>new Array(COLS).fill(0));
   for(let row=0;row<ROWS;row++)for(let col=0;col<COLS;col++)if(rawGrid[row][col])for(let dr=-r;dr<=r;dr++)for(let dc=-r;dc<=r;dc++){const nr=row+dr,nc=col+dc;if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS)cGrid[nr][nc]=1;}
 }
@@ -534,39 +534,149 @@ function clearAgents(){agents=[];}
 function purgeStuckAgents(){const r=CELL*0.45;agents=agents.filter(a=>!bodyHitsWall(a.x*CELL+CELL/2,a.y*CELL+CELL/2,r));}
 function stepAgents(){
   purgeStuckAgents();
+  const AGENT_R=CELL*0.44;
+  const SEP_AA=CELL*1.0;  // agent-agent separation distance (px)
+  const SEP_RA=robotRadiusPx()+AGENT_R+CELL*0.4; // robot-agent separation
+
   agents.forEach(a=>{
+    // Repick goal if done
     if(!a.path.length||a.pathIdx>=a.path.length-1){
-      let gx,gy,tries=0;do{gx=3+Math.floor(Math.random()*(COLS-6));gy=3+Math.floor(Math.random()*(ROWS-6));tries++;}while((rawGrid[gy]?.[gx]||cGrid[gy]?.[gx])&&tries<50);
-      const np=planAgent(Math.round(a.x),Math.round(a.y),gx,gy);if(np.length){a.path=np;a.pathIdx=0;a.gx=gx;a.gy=gy;}return;
+      let gx,gy,tries=0;
+      do{gx=3+Math.floor(Math.random()*(COLS-6));gy=3+Math.floor(Math.random()*(ROWS-6));tries++;}
+      while((rawGrid[gy]?.[gx]||cGrid[gy]?.[gx])&&tries<50);
+      const np=planAgent(Math.round(a.x),Math.round(a.y),gx,gy);
+      if(np.length){a.path=np;a.pathIdx=0;a.gx=gx;a.gy=gy;}
+      return;
     }
-    const tgt=a.path[Math.min(a.pathIdx+1,a.path.length-1)];const dx=tgt.x-a.x,dy=tgt.y-a.y,dist=Math.sqrt(dx**2+dy**2);
-    if(dist<0.35){a.pathIdx++;return;}
-    const spd=agentSpd*0.025,nx=a.x+dx/dist*spd,ny=a.y+dy/dist*spd;
-    if(!bodyHitsWall(nx*CELL+CELL/2,ny*CELL+CELL/2,CELL*0.45)){a.vx=dx/dist*spd;a.vy=dy/dist*spd;a.x=nx;a.y=ny;}
-    else{a.path=[];a.pathIdx=0;}
+
+    // Skip passed waypoints
+    while(a.pathIdx<a.path.length-1){
+      const tp=a.path[a.pathIdx+1];
+      if(Math.sqrt((tp.x-a.x)**2+(tp.y-a.y)**2)<0.45)a.pathIdx++;
+      else break;
+    }
+
+    const tgt=a.path[Math.min(a.pathIdx+1,a.path.length-1)];
+    const dx=tgt.x-a.x,dy=tgt.y-a.y,dist=Math.sqrt(dx**2+dy**2);
+    if(dist<0.4){a.pathIdx++;return;}
+
+    const spd=agentSpd*0.022;
+    let mvx=dx/dist*spd,mvy=dy/dist*spd;
+
+    // Agent-agent separation force
+    agents.forEach(b=>{
+      if(b===a)return;
+      const adx=(a.x-b.x)*CELL,ady=(a.y-b.y)*CELL;
+      const adist=Math.sqrt(adx**2+ady**2);
+      if(adist<SEP_AA&&adist>0.5){
+        const strength=(SEP_AA-adist)/SEP_AA*spd*2.0;
+        mvx+=adx/adist*strength/CELL;
+        mvy+=ady/adist*strength/CELL;
+      }
+    });
+
+    // Robot-agent separation force (agents yield to robot)
+    const rdx=(a.x-robot.x)*CELL,rdy=(a.y-robot.y)*CELL;
+    const rdist=Math.sqrt(rdx**2+rdy**2);
+    if(rdist<SEP_RA&&rdist>0.5){
+      const strength=(SEP_RA-rdist)/SEP_RA*spd*3.0;
+      mvx+=rdx/rdist*strength/CELL;
+      mvy+=rdy/rdist*strength/CELL;
+    }
+
+    // Clamp to max speed
+    const ms=Math.sqrt(mvx**2+mvy**2);
+    if(ms>spd*2.2){mvx=mvx/ms*spd*2.2;mvy=mvy/ms*spd*2.2;}
+
+    const nx=a.x+mvx,ny=a.y+mvy;
+    const npx=nx*CELL+CELL/2,npy=ny*CELL+CELL/2;
+    if(!bodyHitsWall(npx,npy,AGENT_R)){
+      a.x=nx;a.y=ny;a.vx=mvx;a.vy=mvy;
+    } else if(!bodyHitsWall(npx,a.y*CELL+CELL/2,AGENT_R)){
+      a.x=nx;a.vx=mvx;a.vy=0;
+    } else if(!bodyHitsWall(a.x*CELL+CELL/2,npy,AGENT_R)){
+      a.y=ny;a.vy=mvy;a.vx=0;
+    } else {
+      a.path=[];a.pathIdx=0;a.vx=0;a.vy=0;
+    }
   });
 }
 function moveRobot(){
   const rpx=robot.x*CELL+CELL/2,rpy=robot.y*CELL+CELL/2;
-  if(bodyHitsWall(rpx,rpy,robotRadiusPx()*0.9)){
-    for(let r=1;r<=6;r++){let found=false;for(let dr=-r;dr<=r&&!found;dr++)for(let dc=-r;dc<=r&&!found;dc++){if(Math.abs(dr)!==r&&Math.abs(dc)!==r)continue;const tx=robot.x+dc,ty=robot.y+dr;if(!bodyHitsWall(tx*CELL+CELL/2,ty*CELL+CELL/2,robotRadiusPx()*0.9)){robot.x=tx;robot.y=ty;found=true;}}if(found)break;}
-    path=[];return;
+  const pr=robotRadiusPx()*0.88;
+
+  // If body overlaps wall, find nearest free position and replan
+  if(bodyHitsWall(rpx,rpy,pr)){
+    let found=false;
+    for(let r=1;r<=8&&!found;r++){
+      for(let dr=-r;dr<=r&&!found;dr++){
+        for(let dc=-r;dc<=r&&!found;dc++){
+          if(Math.abs(dr)!==r&&Math.abs(dc)!==r)continue;
+          const tx=Math.round(robot.x)+dc,ty=Math.round(robot.y)+dr;
+          if(tx<1||ty<1||tx>=COLS-1||ty>=ROWS-1)continue;
+          if(!bodyHitsWall(tx*CELL+CELL/2,ty*CELL+CELL/2,pr)){
+            robot.x=tx;robot.y=ty;robot.vx=0;robot.vy=0;found=true;
+          }
+        }
+      }
+    }
+    path=[];pathIdx=0;plan();return;
   }
-  if(!path.length||pathIdx>=path.length-1){robot.vx*=0.85;robot.vy*=0.85;return;}
-  const tgt=path[Math.min(pathIdx+1,path.length-1)];const dx=tgt.x-robot.x,dy=tgt.y-robot.y,dist=Math.sqrt(dx**2+dy**2);
-  if(dist<0.35){pathIdx++;return;}
-  const spd=rSpd*0.03,nx=robot.x+dx/dist*spd,ny=robot.y+dy/dist*spd;
-  if(!bodyHitsWall(nx*CELL+CELL/2,ny*CELL+CELL/2,robotRadiusPx()*0.85)){robot.vx=dx/dist*spd;robot.vy=dy/dist*spd;robot.x=nx;robot.y=ny;robot.angle=Math.atan2(robot.vy,robot.vx);}
-  if(pathIdx>=path.length-1){
-    const fdx=goalPx.x/CELL-robot.x,fdy=goalPx.y/CELL-robot.y,fd=Math.sqrt(fdx**2+fdy**2);
-    if(fd>0.4){const fn=robot.x+fdx/fd*spd,fny=robot.y+fdy/fd*spd;if(!bodyHitsWall(fn*CELL+CELL/2,fny*CELL+CELL/2,robotRadiusPx()*0.85)){robot.x=fn;robot.y=fny;robot.angle=Math.atan2(fdy,fdx);}}
-    else{let nx,ny,tries=0;do{nx=2+Math.floor(Math.random()*(COLS-4));ny=2+Math.floor(Math.random()*(ROWS-4));tries++;}while(cGrid[ny]?.[nx]&&tries<100);goalCell={x:nx,y:ny};plan();}
+
+  if(!path.length||pathIdx>=path.length-1){robot.vx*=0.8;robot.vy*=0.8;return;}
+
+  // Skip waypoints already passed
+  while(pathIdx<path.length-1){
+    const tp=path[pathIdx+1];
+    if(Math.sqrt((tp.x-robot.x)**2+(tp.y-robot.y)**2)<0.45)pathIdx++;
+    else break;
+  }
+
+  const tgt=path[Math.min(pathIdx+1,path.length-1)];
+  const dx=tgt.x-robot.x,dy=tgt.y-robot.y,dist=Math.sqrt(dx**2+dy**2);
+  if(dist<0.4){pathIdx++;return;}
+
+  const spd=rSpd*0.025;
+  const nx=robot.x+dx/dist*spd,ny=robot.y+dy/dist*spd;
+  const npx=nx*CELL+CELL/2,npy=ny*CELL+CELL/2;
+
+  if(!bodyHitsWall(npx,npy,pr)){
+    robot.x=nx;robot.y=ny;
+    robot.vx=dx/dist*spd;robot.vy=dy/dist*spd;
+    robot.angle=Math.atan2(robot.vy,robot.vx);
+  } else if(!bodyHitsWall(npx,rpy,pr)){
+    robot.x=nx;robot.vx=dx/dist*spd;robot.vy=0;
+    robot.angle=Math.atan2(0,dx);
+  } else if(!bodyHitsWall(rpx,npy,pr)){
+    robot.y=ny;robot.vy=dy/dist*spd;robot.vx=0;
+    robot.angle=Math.atan2(dy,0);
+  } else {
+    // Truly blocked on this waypoint - skip it
+    pathIdx=Math.min(pathIdx+2,path.length-1);
+    robot.vx=0;robot.vy=0;
+  }
+
+  // Reached goal: pick new random goal
+  if(pathIdx>=path.length-1&&dist<0.8){
+    let gx,gy,tries=0;
+    do{gx=2+Math.floor(Math.random()*(COLS-4));gy=2+Math.floor(Math.random()*(ROWS-4));tries++;}
+    while(cGrid[gy]?.[gx]&&tries<100);
+    goalCell={x:gx,y:gy};plan();
   }
 }
 function checkAgentBlock(){
   if(!path.length||pathIdx>=path.length-1)return;
-  const la=path.slice(pathIdx,Math.min(pathIdx+6,path.length));
-  for(const a of agents)for(const p of la)if(Math.sqrt((a.x-p.x)**2+(a.y-p.y)**2)<1.5){replanCount++;document.getElementById('m-replan').textContent=replanCount;plan();return;}
+  const la=path.slice(pathIdx,Math.min(pathIdx+8,path.length));
+  const minSep=(robotRadiusPx()+CELL*0.44)/CELL+0.4;
+  for(const a of agents){
+    for(const p of la){
+      if(Math.sqrt((a.x-p.x)**2+(a.y-p.y)**2)<minSep){
+        replanCount++;
+        document.getElementById('m-replan').textContent=replanCount;
+        plan();return;
+      }
+    }
+  }
 }
 
 function drawRobot(x,y,angle){
@@ -604,8 +714,8 @@ function drawRobot(x,y,angle){
 
 function draw(ts){
   ctx.clearRect(0,0,W,H);
-  ctx.fillStyle=cssV('--canvas-bg');ctx.fillRect(0,0,W,H);
-  if(sGrid){ctx.strokeStyle='rgba(128,128,128,0.07)';ctx.lineWidth=.5;for(let x=0;x<=W;x+=CELL){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<=H;y+=CELL){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
+  if(sGrid){ctx.strokeStyle='rgba(0,0,0,0.07)';ctx.lineWidth=.5;for(let x=0;x<=W;x+=CELL){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<=H;y+=CELL){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
   if(sCspace){for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(cGrid[r][c]&&!rawGrid[r][c]){ctx.fillStyle='rgba(239,68,68,.1)';ctx.fillRect(c*CELL,r*CELL,CELL,CELL);}}
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(rawGrid[r][c]){ctx.fillStyle='#000000';ctx.fillRect(c*CELL,r*CELL,CELL,CELL);ctx.fillStyle='#111111';ctx.fillRect(c*CELL+1,r*CELL+1,CELL-2,CELL-2);}
   if(sTree){const lim=frameStep>0?frameStep:treeEdges.length;ctx.strokeStyle='rgba(59,130,246,.08)';ctx.lineWidth=.5;treeEdges.slice(0,lim).forEach(e=>{ctx.beginPath();ctx.moveTo(e.x1*CELL+CELL/2,e.y1*CELL+CELL/2);ctx.lineTo(e.x2*CELL+CELL/2,e.y2*CELL+CELL/2);ctx.stroke();});}
