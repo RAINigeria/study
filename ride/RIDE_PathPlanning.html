@@ -369,6 +369,7 @@ let replanCount=0,frameStep=0;
 let robot={x:2,y:2,angle:0,vx:0,vy:0};
 let goalCell={x:0,y:0},startCell={x:2,y:2},goalPx={x:0,y:0};
 let agents=[];
+let agentGrid=null; // dynamic agent obstacles for A*
 let fps=0,fcnt=0,ftimer=0;
 
 function cssV(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
@@ -430,6 +431,21 @@ function hasLOS(x1,y1,x2,y2){let dx=Math.abs(x2-x1),dy=Math.abs(y2-y1),sx=x1<x2?
 
 function plan(){
   buildCGrid();computeGoalPx();explored=[];treeEdges=[];path=[];frameStep=0;
+  // Build dynamic agent obstacle layer
+  agentGrid=new Float32Array(ROWS*COLS).fill(0);
+  const AGENT_R_CELLS=Math.ceil((CELL*0.44+CELL*0.3)/CELL);
+  agents.forEach(a=>{
+    const ax=Math.round(a.x),ay=Math.round(a.y);
+    for(let dr=-AGENT_R_CELLS;dr<=AGENT_R_CELLS;dr++){
+      for(let dc=-AGENT_R_CELLS;dc<=AGENT_R_CELLS;dc++){
+        const nr=ay+dr,nc=ax+dc;
+        if(nr>=0&&nr<ROWS&&nc>=0&&nc<COLS){
+          const d=Math.sqrt(dr**2+dc**2);
+          if(d<=AGENT_R_CELLS) agentGrid[nr*COLS+nc]=Math.max(agentGrid[nr*COLS+nc],50*(1-d/AGENT_R_CELLS));
+        }
+      }
+    }
+  });
   const sx=Math.round(robot.x),sy=Math.round(robot.y);
   let ex=goalCell.x,ey=goalCell.y;
   if(cGrid[ey]?.[ex]){
@@ -471,8 +487,8 @@ function runGridSearch(sx,sy,ex,ey){
     for(const d of dirs){
       const nx=cur.x+d.x,ny=cur.y+d.y;if(!isFree(nx,ny))continue;if(closed[key(nx,ny)])continue;
       if(movement===8&&d.cost>1&&(!isFree(cur.x+d.x,cur.y)||!isFree(cur.x,cur.y+d.y)))continue;
-      let ng=gScore[ck]+d.cost;
-      if(algo==='theta'&&parentX[ck]!==-1){const ppx=parentX[ck],ppy=parentY[ck];if(hasLOS(ppx,ppy,nx,ny)){const ppk=key(ppx,ppy);const ng2=gScore[ppk]+Math.sqrt((nx-ppx)**2+(ny-ppy)**2);if(ng2<ng){ng=ng2;const nk=key(nx,ny);if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=ppx;parentY[nk]=ppy;open.push({x:nx,y:ny,g:ng,f:ng+heur(nx,ny,ex,ey)});treeEdges.push({x1:ppx,y1:ppy,x2:nx,y2:ny});}continue;}}}
+      let ng=gScore[ck]+d.cost+(agentGrid?agentGrid[ny*COLS+nx]:0);
+      if(algo==='theta'&&parentX[ck]!==-1){const ppx=parentX[ck],ppy=parentY[ck];if(hasLOS(ppx,ppy,nx,ny)){const ppk=key(ppx,ppy);const ng2=gScore[ppk]+Math.sqrt((nx-ppx)**2+(ny-ppy)**2)+(agentGrid?agentGrid[ny*COLS+nx]:0);if(ng2<ng){ng=ng2;const nk=key(nx,ny);if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=ppx;parentY[nk]=ppy;open.push({x:nx,y:ny,g:ng,f:ng+heur(nx,ny,ex,ey)});treeEdges.push({x1:ppx,y1:ppy,x2:nx,y2:ny});}continue;}}}
       const nk=key(nx,ny);if(ng<gScore[nk]){gScore[nk]=ng;parentX[nk]=cur.x;parentY[nk]=cur.y;open.push({x:nx,y:ny,g:ng,f:ng+heur(nx,ny,ex,ey)});treeEdges.push({x1:cur.x,y1:cur.y,x2:nx,y2:ny});}
     }
   }
@@ -517,7 +533,8 @@ function addAgent(){
   let gx,gy,tries2=0;
   do{gx=3+Math.floor(Math.random()*(COLS-6));gy=3+Math.floor(Math.random()*(ROWS-6));tries2++;}while((cGrid[gy]?.[gx]||rawGrid[gy]?.[gx])&&tries2<200);
   if(tries2>=200)return;
-  agents.push({x:ax,y:ay,gx,gy,path:planAgent(ax,ay,gx,gy),pathIdx:0,vx:0,vy:0,color:`hsl(${20+Math.random()*20},85%,55%)`});
+  agents.push({x:ax,y:ay,gx,gy,path:planAgent(ax,ay,gx,gy),pathIdx:0,vx:0,vy:0,replanTimer:0,color:`hsl(${20+Math.random()*20},85%,55%)`});
+  plan(); // replan robot path to account for new agent
 }
 function planAgent(sx,sy,ex,ey){
   if(!isFree(sx,sy)||!isFree(ex,ey))return[];
@@ -531,7 +548,29 @@ function planAgent(sx,sy,ex,ey){
   }return[];
 }
 function clearAgents(){agents=[];}
-function purgeStuckAgents(){const r=CELL*0.45;agents=agents.filter(a=>!bodyHitsWall(a.x*CELL+CELL/2,a.y*CELL+CELL/2,r));}
+function purgeStuckAgents(){
+  const r=CELL*0.44;
+  agents=agents.filter(a=>{
+    if(bodyHitsWall(a.x*CELL+CELL/2,a.y*CELL+CELL/2,r)){
+      // Try to rescue agent by moving it to nearest free cell
+      for(let d=1;d<=5;d++){
+        for(let dr=-d;dr<=d;dr++){
+          for(let dc=-d;dc<=d;dc++){
+            if(Math.abs(dr)!==d&&Math.abs(dc)!==d)continue;
+            const tx=Math.round(a.x)+dc,ty=Math.round(a.y)+dr;
+            if(tx<1||ty<1||tx>=COLS-1||ty>=ROWS-1)continue;
+            if(!bodyHitsWall(tx*CELL+CELL/2,ty*CELL+CELL/2,r)){
+              a.x=tx;a.y=ty;a.vx=0;a.vy=0;a.path=[];a.pathIdx=0;
+              return true; // rescued
+            }
+          }
+        }
+      }
+      return false; // remove agent if truly stuck
+    }
+    return true;
+  });
+}
 function stepAgents(){
   purgeStuckAgents();
   const AGENT_R=CELL*0.44;
@@ -539,13 +578,17 @@ function stepAgents(){
   const SEP_RA=robotRadiusPx()+AGENT_R+CELL*0.4; // robot-agent separation
 
   agents.forEach(a=>{
-    // Repick goal if done
-    if(!a.path.length||a.pathIdx>=a.path.length-1){
+    // Periodic replan if stuck or path gone stale
+    a.replanTimer=(a.replanTimer||0)+1;
+    if(!a.path.length||a.pathIdx>=a.path.length-1||
+       (a.replanTimer>60&&Math.sqrt(a.vx**2+a.vy**2)<0.001)){
+      a.replanTimer=0;
       let gx,gy,tries=0;
       do{gx=3+Math.floor(Math.random()*(COLS-6));gy=3+Math.floor(Math.random()*(ROWS-6));tries++;}
       while((rawGrid[gy]?.[gx]||cGrid[gy]?.[gx])&&tries<50);
       const np=planAgent(Math.round(a.x),Math.round(a.y),gx,gy);
       if(np.length){a.path=np;a.pathIdx=0;a.gx=gx;a.gy=gy;}
+      else{a.path=[];a.pathIdx=0;}
       return;
     }
 
@@ -597,7 +640,11 @@ function stepAgents(){
     } else if(!bodyHitsWall(a.x*CELL+CELL/2,npy,AGENT_R)){
       a.y=ny;a.vy=mvy;a.vx=0;
     } else {
-      a.path=[];a.pathIdx=0;a.vx=0;a.vy=0;
+      // Blocked by wall - replan immediately from current position
+      const np=planAgent(Math.round(a.x),Math.round(a.y),a.gx,a.gy);
+      if(np.length){a.path=np;a.pathIdx=0;}
+      else{a.path=[];a.pathIdx=0;}
+      a.vx=0;a.vy=0;
     }
   });
 }
