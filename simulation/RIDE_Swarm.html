@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Swarm Robotics Engine — RIDE | RAIN Nigeria</title>
 <style>/* ═══════════════════════════════════════════════════
-   RIDE THEME SYSTEM — RAIN Nigeria
+   VROS THEME SYSTEM — RAIN Nigeria
    Default: DARK (roboticists & GenZ preference)
    Persisted via localStorage
    Toggle via .theme-toggle button
@@ -367,7 +367,7 @@ a{text-decoration:none;color:inherit}
   <div class="rain-credit"><img src="https://study.rainigeria.com/static/rainlogo.jpg" alt="" onerror="this.style.display='none'">Robotics &amp; AI Nigeria (RAIN)</div>
 </div>
 <script>
-function initTheme(){const t=localStorage.getItem("RIDE-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("RIDE-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
+function initTheme(){const t=localStorage.getItem("ride-theme")||"dark";document.documentElement.setAttribute("data-theme",t==="light"?"light":"");document.getElementById("theme-btn").textContent=t==="light"?"🌙":"☀️";}function toggleTheme(){const c=document.documentElement.getAttribute("data-theme");const n=c==="light"?"dark":"light";document.documentElement.setAttribute("data-theme",n==="light"?"light":"");localStorage.setItem("ride-theme",n);document.getElementById("theme-btn").textContent=n==="light"?"🌙":"☀️";}function toggleSidebar(){document.getElementById("mod-sidebar").classList.toggle("open");document.getElementById("sb-overlay").classList.toggle("open");}function setPaused(p){const d=document.getElementById("run-dot"),t=document.getElementById("run-txt"),pi=document.getElementById("run-pill");d.className="sdot"+(p?" paused":"");t.textContent=p?"Paused":"Running";pi.style.cssText=p?"background:rgba(245,158,11,.15);color:#f59e0b;border-color:rgba(245,158,11,.3)":"";}initTheme();
 const sim=document.getElementById('sim'),ctx=sim.getContext('2d');
 let W,H,paused=false,simSpd=1,fps=0,fcnt=0,ft=0,lastT=0;
 const sw={agents:[],mode:'flock',sep:1.5,ali:1.0,coh:0.8,maxspd:2.5,pr:65,sr:22,avoid:2,rings:false,vel:true,trails:false,density:false,colorspd:false,loss:0,target:{x:0,y:0},obstacles:[],trails_arr:[]};
