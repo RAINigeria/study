@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f14">
+<title>Look360 — capture & replay a spot</title>
+<script type="importmap">
+{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
+</script>
+<style>
+:root{
+  --bg:#0b0f14; --panel:#131a22; --line:#26323f;
+  --ink:#e8eef5; --dim:#8fa2b5;
+  --live:#3ddc97;      /* recording / covered */
+  --warn:#ffb03a;
+  --bad:#ff6b6b;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font:15px/1.45 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;overscroll-behavior:none}
+button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;padding:12px 16px;letter-spacing:.02em}
+button:active{background:#1c2732}
+button[disabled]{opacity:.4}
+button.primary{background:var(--live);border-color:var(--live);color:#04150e;font-weight:700}
+button.stop{background:var(--bad);border-color:var(--bad);color:#2a0505;font-weight:700}
+.screen{position:fixed;inset:0;display:none;flex-direction:column}
+.screen.on{display:flex}
+/* start */
+#start{padding:28px 22px;justify-content:center;gap:18px;max-width:520px;margin:0 auto}
+h1{font-size:26px;margin:0;letter-spacing:-.02em}
+h1 span{color:var(--live)}
+p.lead{color:var(--dim);margin:0}
+.stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel)}
+.stat b{font-size:22px}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.note{font-size:12.5px;color:var(--dim)}
+.err{color:var(--bad)}
+/* capture */
+#cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.hud{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 14px);pointer-events:none}
+.hud>*{pointer-events:auto}
+.bar{display:flex;gap:10px;align-items:center;background:rgba(11,15,20,.72);backdrop-filter:blur(6px);
+  border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.bar .k{color:var(--dim);font-size:12px}
+.bar .v{font-size:18px;font-weight:700}
+#compass{display:block;margin:0 auto;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+.dot{width:9px;height:9px;border-radius:50%;background:#555}
+.dot.rec{background:var(--bad);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+.controls{display:flex;gap:10px}
+.controls button{flex:1}
+#capFlash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .18s}
+/* playback */
+#view{position:absolute;inset:0;touch-action:none}
+#pbTop,#pbBot{position:absolute;left:12px;right:12px;display:flex;gap:8px;align-items:center}
+#pbTop{top:calc(env(safe-area-inset-top) + 12px)}
+#pbBot{bottom:calc(env(safe-area-inset-bottom) + 12px);flex-wrap:wrap}
+#pbBot button,#pbTop button{padding:10px 12px;font-size:13px}
+button.on{border-color:var(--live);color:var(--live)}
+.fov{display:flex;align-items:center;gap:8px;flex:1 1 100%;background:rgba(11,15,20,.72);
+  border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--dim)}
+.fov input{flex:1}
+#pbMsg{position:absolute;left:0;right:0;top:45%;text-align:center;color:var(--dim);padding:0 24px}
+</style>
+</head>
+<body>
+
+<!-- ─────────── START ─────────── -->
+<section id="start" class="screen on">
+  <div>
+    <h1>Look<span>360</span></h1>
+    <p class="lead">Stand in one spot, turn slowly, and the phone grabs a frame every 15°. Then anyone can look around from that spot.</p>
+  </div>
+  <div class="stat">
+    <div class="note">Frames stored on this device</div>
+    <b id="frameCount">—</b>
+    <div class="note" id="coverNote"></div>
+  </div>
+  <div class="row">
+    <button class="primary" id="goCapture">Capture a spot</button>
+    <button id="goPlayback">Look around</button>
+  </div>
+  <button id="clearAll">Delete stored frames</button>
+  <p class="note" id="envNote"></p>
+</section>
+
+<!-- ─────────── CAPTURE ─────────── -->
+<section id="capture" class="screen">
+  <video id="cam" playsinline autoplay muted></video>
+  <div id="capFlash"></div>
+  <div class="hud">
+    <div class="bar">
+      <div class="dot" id="recDot"></div>
+      <div><div class="k">FRAMES</div><div class="v" id="capCount">0</div></div>
+      <div><div class="k">HEADING</div><div class="v" id="capHead">--</div></div>
+      <div><div class="k">TILT</div><div class="v" id="capTilt">--</div></div>
+      <div style="flex:1"></div>
+      <div style="text-align:right"><div class="k">COVERAGE</div><div class="v" id="capCover">0%</div></div>
+    </div>
+
+    <canvas id="compass" width="260" height="260"></canvas>
+
+    <div>
+      <div class="bar" style="margin-bottom:10px"><span class="k" id="capMsg">Grant camera and motion access to begin.</span></div>
+      <div class="controls">
+        <button class="primary" id="btnStart">Start capture</button>
+        <button class="stop" id="btnStop" disabled>Stop</button>
+        <button id="btnToPlay">Playback</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── PLAYBACK ─────────── -->
+<section id="playback" class="screen">
+  <div id="view"></div>
+  <div id="pbMsg"></div>
+  <div id="pbTop">
+    <button id="pbBack">← Back</button>
+    <div style="flex:1"></div>
+    <div class="bar"><span class="k" id="pbHead">--</span></div>
+  </div>
+  <div id="pbBot">
+    <button id="pbGyro">Use phone tilt</button>
+    <button id="pbRecenter">Recenter</button>
+    <label class="fov">LENS WIDTH <input id="pbFov" type="range" min="30" max="110" value="62"><span id="pbFovVal">62°</span></label>
+  </div>
+</section>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ══════════ storage ══════════ */
+const DB='look360', STORE='frames';
+function db(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);
+  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});};
+  r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function putFrame(f){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).add(f);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+async function allFrames(){const d=await db();return new Promise((res,rej)=>{const r=d.transaction(STORE,'readonly').objectStore(STORE).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function countFrames(){const d=await db();return new Promise((res,rej)=>{const r=d.transaction(STORE,'readonly').objectStore(STORE).count();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
+async function clearFrames(){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).clear();t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+
+/* ══════════ orientation ══════════
+   W3C: R = Rz(alpha)·Rx(beta)·Ry(gamma). The rear camera points down device −Z.
+   Result is expressed in East / North / Up, so heading and tilt are independent
+   of how the phone is rotated in the hand. ══════════ */
+const D=Math.PI/180;
+function rearDirection(a,b,g){
+  const ca=Math.cos(a*D),sa=Math.sin(a*D),cb=Math.cos(b*D),sb=Math.sin(b*D),cg=Math.cos(g*D),sg=Math.sin(g*D);
+  const E=-ca*sg - sa*sb*cg, N=-sa*sg + ca*sb*cg, U=-cb*cg;
+  let heading=Math.atan2(E,N)/D; if(heading<0)heading+=360;
+  const tilt=Math.asin(Math.max(-1,Math.min(1,U)))/D;
+  return {heading,tilt};
+}
+
+const orient={heading:null,tilt:0,absolute:false,listening:false,cbs:new Set()};
+function onOrient(e){
+  let h=null,t=0;
+  if(typeof e.webkitCompassHeading==='number' && !isNaN(e.webkitCompassHeading)){
+    const d=rearDirection(360-e.webkitCompassHeading,e.beta||0,e.gamma||0);
+    h=d.heading;t=d.tilt;orient.absolute=true;
+  }else if(e.alpha!==null){
+    const d=rearDirection(e.alpha,e.beta||0,e.gamma||0);
+    h=d.heading;t=d.tilt;
+    if(e.absolute||e.type==='deviceorientationabsolute')orient.absolute=true;
+  }
+  if(h===null)return;
+  orient.heading=h;orient.tilt=t;
+  orient.cbs.forEach(fn=>fn(orient));
+}
+async function startOrientation(){
+  if(orient.listening)return true;
+  const DOE=window.DeviceOrientationEvent;
+  if(!DOE)throw new Error('This browser has no motion sensor API.');
+  if(typeof DOE.requestPermission==='function'){
+    const r=await DOE.requestPermission();
+    if(r!=='granted')throw new Error('Motion access was denied. Enable it and reload.');
+  }
+  if('ondeviceorientationabsolute' in window)
+    window.addEventListener('deviceorientationabsolute',onOrient,true);
+  window.addEventListener('deviceorientation',onOrient,true);
+  orient.listening=true;
+  await new Promise(r=>setTimeout(r,600));
+  if(orient.heading===null)throw new Error('No sensor readings. Move the phone, or check Chrome → Site settings → Motion sensors.');
+  return true;
+}
+
+/* ══════════ screens ══════════ */
+const S={start:document.getElementById('start'),capture:document.getElementById('capture'),playback:document.getElementById('playback')};
+let current='start';
+function show(name){Object.entries(S).forEach(([k,el])=>el.classList.toggle('on',k===name));current=name;}
+
+const $=id=>document.getElementById(id);
+const SECTORS=24, SECTOR_DEG=360/SECTORS, TILT_BAND=20;
+
+/* ══════════ start screen ══════════ */
+async function refreshStart(){
+  const n=await countFrames().catch(()=>0);
+  $('frameCount').textContent=n;
+  const fs=n?await allFrames():[];
+  const covered=new Set(fs.map(f=>Math.floor(f.heading/SECTOR_DEG)%SECTORS));
+  $('coverNote').textContent=n?`${Math.round(covered.size/SECTORS*100)}% of the circle covered`:'Nothing captured yet.';
+  $('goPlayback').disabled=n===0;
+}
+if(!window.isSecureContext)
+  $('envNote').innerHTML='<span class="err">This page needs HTTPS (or localhost). Camera and sensors stay blocked over plain http.</span>';
+else $('envNote').textContent='Works in Chrome on Android. Hold the phone upright in portrait while capturing.';
+
+$('clearAll').onclick=async()=>{await clearFrames();refreshStart();};
+$('goPlayback').onclick=()=>enterPlayback();
+$('goCapture').onclick=()=>enterCapture();
+refreshStart();
+
+/* ══════════ CAPTURE ══════════ */
+let stream=null,recording=false,frames=0,covered=new Map(),lastShot=0,wakeLock=null;
+const video=$('cam'),cc=$('compass').getContext('2d');
+
+async function enterCapture(){
+  show('capture');
+  drawCompass();
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
+    video.srcObject=stream;await video.play();
+    $('capMsg').textContent='Camera ready. Waiting for compass…';
+  }catch(e){$('capMsg').innerHTML='<span class="err">Camera blocked: '+e.message+'</span>';return;}
+  try{
+    await startOrientation();
+    $('capMsg').textContent=orient.absolute
+      ? 'Ready. Press start, then turn slowly on the spot.'
+      : 'Compass is relative, not true north — playback will still work. Press start.';
+  }catch(e){$('capMsg').innerHTML='<span class="err">'+e.message+'</span>';}
+  orient.cbs.add(onCaptureTick);
+}
+function leaveCapture(){
+  recording=false;orient.cbs.delete(onCaptureTick);
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;}
+  if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}
+}
+
+function onCaptureTick(o){
+  $('capHead').textContent=Math.round(o.heading)+'°';
+  $('capTilt').textContent=(o.tilt>=0?'+':'')+Math.round(o.tilt)+'°';
+  drawCompass();
+  if(!recording)return;
+  const sector=Math.floor(o.heading/SECTOR_DEG)%SECTORS;
+  const band=Math.round(o.tilt/TILT_BAND);
+  const key=sector+'|'+band;
+  if(covered.has(key))return;
+  if(performance.now()-lastShot<350)return;
+  covered.set(key,true);
+  lastShot=performance.now();
+  shoot(o.heading,o.tilt,sector);
+}
+
+async function shoot(heading,tilt,sector){
+  if(!video.videoWidth)return;
+  const MAX=1024, s=Math.min(1,MAX/Math.max(video.videoWidth,video.videoHeight));
+  const w=Math.round(video.videoWidth*s),h=Math.round(video.videoHeight*s);
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  c.getContext('2d').drawImage(video,0,0,w,h);
+  const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
+  if(!blob)return;
+  await putFrame({blob,heading,tilt,w,h,t:Date.now()});
+  frames++;$('capCount').textContent=frames;
+  const secs=new Set([...covered.keys()].map(k=>+k.split('|')[0]));
+  $('capCover').textContent=Math.round(secs.size/SECTORS*100)+'%';
+  drawCompass();
+  const f=$('capFlash');f.style.opacity=.55;setTimeout(()=>f.style.opacity=0,60);
+}
+
+function drawCompass(){
+  const W=260,R=104,cx=130,cy=130;
+  cc.clearRect(0,0,W,W);
+  const secs=new Set([...covered.keys()].map(k=>+k.split('|')[0]));
+  for(let i=0;i<SECTORS;i++){
+    const a0=(i*SECTOR_DEG-90-SECTOR_DEG/2+1)*D, a1=(i*SECTOR_DEG-90+SECTOR_DEG/2-1)*D;
+    cc.beginPath();cc.arc(cx,cy,R,a0,a1);
+    cc.lineWidth=14;cc.strokeStyle=secs.has(i)?'#3ddc97':'rgba(232,238,245,.16)';cc.stroke();
+  }
+  cc.beginPath();cc.arc(cx,cy,R-24,0,7);cc.strokeStyle='rgba(232,238,245,.12)';cc.lineWidth=1;cc.stroke();
+  cc.fillStyle='#8fa2b5';cc.font='11px ui-monospace,monospace';cc.textAlign='center';cc.textBaseline='middle';
+  [['N',0],['E',90],['S',180],['W',270]].forEach(([l,d])=>{
+    const a=(d-90)*D;cc.fillText(l,cx+Math.cos(a)*(R-30),cy+Math.sin(a)*(R-30));});
+  if(orient.heading!==null){
+    const a=(orient.heading-90)*D;
+    cc.beginPath();cc.moveTo(cx,cy);cc.lineTo(cx+Math.cos(a)*(R-14),cy+Math.sin(a)*(R-14));
+    cc.strokeStyle='#ffb03a';cc.lineWidth=3;cc.stroke();
+    cc.beginPath();cc.arc(cx,cy,4,0,7);cc.fillStyle='#ffb03a';cc.fill();
+  }
+}
+
+$('btnStart').onclick=async()=>{
+  if(orient.heading===null){$('capMsg').innerHTML='<span class="err">No compass reading yet — motion access may be blocked.</span>';return;}
+  recording=true;$('recDot').classList.add('rec');
+  $('btnStart').disabled=true;$('btnStop').disabled=false;
+  $('capMsg').textContent='Recording. Turn slowly in a full circle, then tilt up and go round again.';
+  try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}
+};
+$('btnStop').onclick=async()=>{
+  recording=false;$('recDot').classList.remove('rec');
+  $('btnStart').disabled=false;$('btnStop').disabled=true;
+  $('capMsg').textContent=frames+' frames saved to this device.';
+  if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}
+  refreshStart();
+};
+$('btnToPlay').onclick=()=>{leaveCapture();enterPlayback();};
+
+/* ══════════ PLAYBACK ══════════ */
+let renderer,scene,camera,planes=[],raf=0,pbActive=false;
+let yaw=0,pitch=0,tYaw=0,tPitch=0,useGyro=false,yawOffset=0,fovDeg=62;
+const RADIUS=10;
+
+async function enterPlayback(){
+  show('playback');pbActive=true;
+  $('pbMsg').textContent='Loading frames…';
+  const fs=await allFrames();
+  if(!fs.length){$('pbMsg').textContent='No frames stored. Capture a spot first.';return;}
+  await buildScene(fs);
+  $('pbMsg').textContent='';
+  tYaw=yaw=-fs[0].heading*D;tPitch=pitch=fs[0].tilt*D;
+  loop();
+}
+function leavePlayback(){
+  pbActive=false;cancelAnimationFrame(raf);
+  orient.cbs.delete(onGyroView);useGyro=false;$('pbGyro').classList.remove('on');
+  planes.forEach(p=>{p.mesh.material.map.dispose();p.mesh.material.dispose();p.mesh.geometry.dispose();});
+  planes=[];
+  if(renderer){renderer.dispose();$('view').innerHTML='';renderer=null;}
+}
+
+async function buildScene(fs){
+  const host=$('view');host.innerHTML='';
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(host.clientWidth,host.clientHeight);
+  host.appendChild(renderer.domElement);
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0f14);
+  camera=new THREE.PerspectiveCamera(68,host.clientWidth/host.clientHeight,0.1,100);
+  camera.rotation.order='YXZ';
+
+  const geo=new THREE.PlaneGeometry(1,1);
+  for(const f of fs){
+    const tex=await textureFromBlob(f.blob);
+    const mat=new THREE.MeshBasicMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false});
+    const mesh=new THREE.Mesh(geo,mat);
+    const h=f.heading*D, t=f.tilt*D;
+    const dir=new THREE.Vector3(Math.cos(t)*Math.sin(h),Math.sin(t),-Math.cos(t)*Math.cos(h));
+    mesh.position.copy(dir).multiplyScalar(RADIUS);
+    mesh.lookAt(0,0,0);
+    scene.add(mesh);
+    planes.push({mesh,dir,aspect:f.w/f.h});
+  }
+  applyFov();
+  addEventListener('resize',resize);
+  bindDrag(renderer.domElement);
+}
+async function textureFromBlob(blob){
+  const bmp=await createImageBitmap(blob);
+  const MAX=768,s=Math.min(1,MAX/Math.max(bmp.width,bmp.height));
+  const w=Math.round(bmp.width*s),h=Math.round(bmp.height*s);
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');
+  x.drawImage(bmp,0,0,w,h);bmp.close();
+  // feather the edges so neighbouring frames blend instead of showing a seam
+  const fx=w*0.14, fy=h*0.14;
+  x.globalCompositeOperation='destination-out';
+  const grads=[
+    [x.createLinearGradient(0,0,fx,0),0,0,fx,h],
+    [x.createLinearGradient(w,0,w-fx,0),w-fx,0,fx,h],
+    [x.createLinearGradient(0,0,0,fy),0,0,w,fy],
+    [x.createLinearGradient(0,h,0,h-fy),0,h-fy,w,fy]];
+  for(const [g,gx,gy,gw,gh] of grads){
+    g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=g;x.fillRect(gx,gy,gw,gh);
+  }
+  x.globalCompositeOperation='source-over';
+  const tex=new THREE.CanvasTexture(c);
+  tex.colorSpace=THREE.SRGBColorSpace;
+  tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;
+  return tex;
+}
+function applyFov(){
+  const w=2*RADIUS*Math.tan(fovDeg*D/2);
+  planes.forEach(p=>p.mesh.scale.set(w,w/p.aspect,1));
+}
+function resize(){
+  if(!renderer)return;const host=$('view');
+  renderer.setSize(host.clientWidth,host.clientHeight);
+  camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();
+}
+
+/* drag */
+function bindDrag(el){
+  let px=0,py=0,down=false;
+  el.addEventListener('pointerdown',e=>{down=true;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);});
+  el.addEventListener('pointermove',e=>{
+    if(!down||useGyro)return;
+    const k=0.0032*(camera.fov/68);
+    tYaw+=(e.clientX-px)*k;
+    tPitch+=(e.clientY-py)*k;
+    tPitch=Math.max(-1.35,Math.min(1.35,tPitch));
+    px=e.clientX;py=e.clientY;
+  });
+  ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,()=>down=false));
+}
+/* gyro */
+function onGyroView(o){
+  if(!useGyro)return;
+  tYaw=-(o.heading*D)+yawOffset;
+  tPitch=Math.max(-1.35,Math.min(1.35,o.tilt*D));
+}
+$('pbGyro').onclick=async()=>{
+  if(useGyro){useGyro=false;orient.cbs.delete(onGyroView);$('pbGyro').classList.remove('on');
+    $('pbGyro').textContent='Use phone tilt';return;}
+  try{await startOrientation();}catch(e){$('pbMsg').innerHTML='<span class="err">'+e.message+'</span>';
+    setTimeout(()=>$('pbMsg').textContent='',3500);return;}
+  useGyro=true;yawOffset=0;orient.cbs.add(onGyroView);
+  $('pbGyro').classList.add('on');$('pbGyro').textContent='Tilt is on';
+};
+$('pbRecenter').onclick=()=>{
+  if(!planes.length)return;
+  if(useGyro&&orient.heading!==null){yawOffset=yaw+orient.heading*D;}
+  else{tYaw=yaw;tPitch=0;}
+};
+$('pbFov').oninput=e=>{fovDeg=+e.target.value;$('pbFovVal').textContent=fovDeg+'°';applyFov();};
+$('pbBack').onclick=()=>{leavePlayback();refreshStart();show('start');};
+
+function loop(){
+  raf=requestAnimationFrame(loop);
+  if(!pbActive||!renderer)return;
+  yaw+=(tYaw-yaw)*0.16;pitch+=(tPitch-pitch)*0.16;
+  camera.rotation.set(pitch,yaw,0,'YXZ');
+  // nearest frame wins: draw it last, on top of its neighbours
+  const fwd=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);
+  let best=Infinity,bestP=null;
+  for(const p of planes){
+    const dot=Math.max(-1,Math.min(1,p.dir.dot(fwd)));
+    const ang=Math.acos(dot);
+    p.mesh.visible=ang<1.4;
+    p.mesh.renderOrder=-ang*1000;
+    if(ang<best){best=ang;bestP=p;}
+  }
+  if(bestP&&best>1.2)bestP.mesh.visible=true;   // gap: hold the nearest frame anyway
+  let hd=(-yaw/D)%360;if(hd<0)hd+=360;
+  $('pbHead').textContent=Math.round(hd)+'°  ·  '+(best<1.4?Math.round(best/D)+'° off frame':'gap');
+  renderer.render(scene,camera);
+}
+
+/* keep things tidy when leaving capture by any route */
+addEventListener('pagehide',()=>{leaveCapture();});
+</script>
+</body>
+</html>
