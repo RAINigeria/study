@@ -4,18 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0b0f14">
-<title>Look360 — capture & replay a spot</title>
+<title>Look360 — walkthrough</title>
 <script type="importmap">
 {"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js"}}
 </script>
 <style>
-:root{
-  --bg:#0b0f14; --panel:#131a22; --line:#26323f;
-  --ink:#e8eef5; --dim:#8fa2b5;
-  --live:#3ddc97;      /* recording / covered */
-  --warn:#ffb03a;
-  --bad:#ff6b6b;
-}
+:root{--bg:#0b0f14;--panel:#131a22;--line:#26323f;--ink:#e8eef5;--dim:#8fa2b5;
+  --live:#3ddc97;--warn:#ffb03a;--bad:#ff6b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
   font:15px/1.45 ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;overscroll-behavior:none}
@@ -25,315 +20,468 @@ button:active{background:#1c2732}
 button[disabled]{opacity:.4}
 button.primary{background:var(--live);border-color:var(--live);color:#04150e;font-weight:700}
 button.stop{background:var(--bad);border-color:var(--bad);color:#2a0505;font-weight:700}
+button.on{border-color:var(--live);color:var(--live)}
+input[type=range]{accent-color:var(--live)}
 .screen{position:fixed;inset:0;display:none;flex-direction:column}
 .screen.on{display:flex}
-/* start */
-#start{padding:28px 22px;justify-content:center;gap:18px;max-width:520px;margin:0 auto}
+#start{padding:26px 20px;justify-content:center;gap:16px;max-width:540px;margin:0 auto;overflow:auto}
 h1{font-size:26px;margin:0;letter-spacing:-.02em}
 h1 span{color:var(--live)}
 p.lead{color:var(--dim);margin:0}
-.stat{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel)}
-.stat b{font-size:22px}
-.row{display:flex;gap:10px}
-.row>*{flex:1}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--panel)}
+.card b{font-size:22px}
+.row{display:flex;gap:10px}.row>*{flex:1}
 .note{font-size:12.5px;color:var(--dim)}
 .err{color:var(--bad)}
-/* capture */
 #cam{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
 .hud{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;
-  padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 14px);pointer-events:none}
+  padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);pointer-events:none}
 .hud>*{pointer-events:auto}
-.bar{display:flex;gap:10px;align-items:center;background:rgba(11,15,20,.72);backdrop-filter:blur(6px);
+.bar{display:flex;gap:12px;align-items:center;background:rgba(11,15,20,.74);backdrop-filter:blur(6px);
   border:1px solid var(--line);border-radius:12px;padding:10px 12px}
-.bar .k{color:var(--dim);font-size:12px}
-.bar .v{font-size:18px;font-weight:700}
-#compass{display:block;margin:0 auto;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
-.dot{width:9px;height:9px;border-radius:50%;background:#555}
+.bar .k{color:var(--dim);font-size:11px}
+.bar .v{font-size:17px;font-weight:700}
+#compass{display:block;margin:0 auto}
+.dot{width:9px;height:9px;border-radius:50%;background:#555;flex:none}
 .dot.rec{background:var(--bad);animation:pulse 1s infinite}
 @keyframes pulse{50%{opacity:.25}}
-.controls{display:flex;gap:10px}
-.controls button{flex:1}
+.controls{display:flex;gap:8px}.controls button{flex:1;padding:12px 8px;font-size:14px}
 #capFlash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;transition:opacity .18s}
+/* walk sheet */
+#walk{position:absolute;inset:0;background:rgba(11,15,20,.94);display:none;flex-direction:column;
+  justify-content:center;gap:14px;padding:24px;z-index:5}
+#walk.on{display:flex}
+.big{font-size:44px;font-weight:700;letter-spacing:-.03em}
+.slider{display:flex;align-items:center;gap:10px}
+.slider input{flex:1}
 /* playback */
 #view{position:absolute;inset:0;touch-action:none}
-#pbTop,#pbBot{position:absolute;left:12px;right:12px;display:flex;gap:8px;align-items:center}
-#pbTop{top:calc(env(safe-area-inset-top) + 12px)}
-#pbBot{bottom:calc(env(safe-area-inset-bottom) + 12px);flex-wrap:wrap}
-#pbBot button,#pbTop button{padding:10px 12px;font-size:13px}
-button.on{border-color:var(--live);color:var(--live)}
-.fov{display:flex;align-items:center;gap:8px;flex:1 1 100%;background:rgba(11,15,20,.72);
-  border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;color:var(--dim)}
+#fade{position:absolute;inset:0;background:#0b0f14;opacity:0;pointer-events:none;transition:opacity .18s}
+#pbTop{position:absolute;top:calc(env(safe-area-inset-top) + 10px);left:10px;right:10px;display:flex;gap:8px;align-items:flex-start}
+#pbBot{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 10px);left:10px;right:10px;display:flex;gap:8px;flex-wrap:wrap}
+#pbBot button,#pbTop button{padding:9px 11px;font-size:13px}
+.fov{display:flex;align-items:center;gap:8px;flex:1 1 100%;background:rgba(11,15,20,.74);
+  border:1px solid var(--line);border-radius:10px;padding:7px 11px;font-size:12px;color:var(--dim)}
 .fov input{flex:1}
-#pbMsg{position:absolute;left:0;right:0;top:45%;text-align:center;color:var(--dim);padding:0 24px}
+#pbMsg{position:absolute;left:0;right:0;top:46%;text-align:center;color:var(--dim);padding:0 24px}
+canvas.map{background:rgba(11,15,20,.74);border:1px solid var(--line);border-radius:12px;display:block}
+#miniWrap{position:absolute;right:10px;bottom:calc(env(safe-area-inset-bottom) + 96px)}
 </style>
 </head>
 <body>
 
-<!-- ─────────── START ─────────── -->
+<!-- ═══ START ═══ -->
 <section id="start" class="screen on">
   <div>
-    <h1>Look<span>360</span></h1>
-    <p class="lead">Stand in one spot, turn slowly, and the phone grabs a frame every 15°. Then anyone can look around from that spot.</p>
+    <h1>Look<span>360</span> <span style="font-size:15px;color:var(--dim)">walkthrough</span></h1>
+    <p class="lead">Capture a spot by turning in place. Then walk to the next spot — the phone counts your steps and heading to work out where it is — and capture again. Playback lets you look around and step between spots.</p>
   </div>
-  <div class="stat">
-    <div class="note">Frames stored on this device</div>
-    <b id="frameCount">—</b>
-    <div class="note" id="coverNote"></div>
+  <div class="card">
+    <div class="note">Saved on this device</div>
+    <b id="statLine">—</b>
+    <canvas id="startMap" class="map" width="300" height="200" style="margin-top:12px;width:100%"></canvas>
   </div>
   <div class="row">
-    <button class="primary" id="goCapture">Capture a spot</button>
-    <button id="goPlayback">Look around</button>
+    <button class="primary" id="goCapture">Capture spots</button>
+    <button id="goPlayback">Walk through</button>
   </div>
-  <button id="clearAll">Delete stored frames</button>
+  <button id="clearAll">Delete everything</button>
   <p class="note" id="envNote"></p>
 </section>
 
-<!-- ─────────── CAPTURE ─────────── -->
+<!-- ═══ CAPTURE ═══ -->
 <section id="capture" class="screen">
   <video id="cam" playsinline autoplay muted></video>
   <div id="capFlash"></div>
   <div class="hud">
     <div class="bar">
       <div class="dot" id="recDot"></div>
+      <div><div class="k">SPOT</div><div class="v" id="capSpot">1</div></div>
       <div><div class="k">FRAMES</div><div class="v" id="capCount">0</div></div>
       <div><div class="k">HEADING</div><div class="v" id="capHead">--</div></div>
-      <div><div class="k">TILT</div><div class="v" id="capTilt">--</div></div>
       <div style="flex:1"></div>
-      <div style="text-align:right"><div class="k">COVERAGE</div><div class="v" id="capCover">0%</div></div>
+      <div style="text-align:right"><div class="k">CIRCLE</div><div class="v" id="capCover">0%</div></div>
     </div>
 
-    <canvas id="compass" width="260" height="260"></canvas>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <canvas id="compass" width="230" height="230"></canvas>
+      <canvas id="capMap" class="map" width="150" height="200"></canvas>
+    </div>
 
     <div>
-      <div class="bar" style="margin-bottom:10px"><span class="k" id="capMsg">Grant camera and motion access to begin.</span></div>
+      <div class="bar" style="margin-bottom:8px"><span class="k" id="capMsg">Grant camera and motion access to begin.</span></div>
       <div class="controls">
         <button class="primary" id="btnStart">Start capture</button>
         <button class="stop" id="btnStop" disabled>Stop</button>
-        <button id="btnToPlay">Playback</button>
+        <button id="btnWalk" disabled>Walk on →</button>
+        <button id="btnToPlay">Play</button>
       </div>
     </div>
   </div>
+
+  <!-- walk sheet -->
+  <div id="walk">
+    <div>
+      <div class="note">WALKING TO NEXT SPOT</div>
+      <div class="big"><span id="wDist">0.0</span> m</div>
+      <div class="note"><span id="wSteps">0</span> steps · heading <span id="wHead">--</span> · <span id="wGps">no GPS</span></div>
+    </div>
+    <div class="card">
+      <div class="note">Distance — adjust if the step count is off</div>
+      <div class="slider"><input id="wSlider" type="range" min="0.5" max="30" step="0.1" value="3"><span id="wSliderVal">3.0 m</span></div>
+      <div class="note" style="margin-top:8px">Stride <span id="wStrideVal">0.70</span> m</div>
+      <div class="slider"><input id="wStride" type="range" min="0.4" max="1.0" step="0.01" value="0.70"></div>
+      <button id="wUseGps" style="margin-top:10px;width:100%" disabled>Use GPS distance</button>
+    </div>
+    <div class="row">
+      <button id="wCancel">Cancel</button>
+      <button class="primary" id="wArrive">I'm here — capture</button>
+    </div>
+    <p class="note">Walk in a straight line if you can. Hold the phone steady, facing the way you're going.</p>
+  </div>
 </section>
 
-<!-- ─────────── PLAYBACK ─────────── -->
+<!-- ═══ PLAYBACK ═══ -->
 <section id="playback" class="screen">
   <div id="view"></div>
+  <div id="fade"></div>
   <div id="pbMsg"></div>
   <div id="pbTop">
     <button id="pbBack">← Back</button>
     <div style="flex:1"></div>
-    <div class="bar"><span class="k" id="pbHead">--</span></div>
+    <div class="bar"><span class="k" id="pbInfo">--</span></div>
   </div>
+  <div id="miniWrap"><canvas id="miniMap" class="map" width="150" height="150"></canvas></div>
   <div id="pbBot">
     <button id="pbGyro">Use phone tilt</button>
     <button id="pbRecenter">Recenter</button>
+    <button id="pbMapToggle" class="on">Map</button>
     <label class="fov">LENS WIDTH <input id="pbFov" type="range" min="30" max="110" value="62"><span id="pbFovVal">62°</span></label>
   </div>
 </section>
 
 <script type="module">
 import * as THREE from 'three';
+const $=id=>document.getElementById(id), D=Math.PI/180;
 
-/* ══════════ storage ══════════ */
-const DB='look360', STORE='frames';
-function db(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);
-  r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true});};
+/* ════════ storage: spots + frames ════════ */
+const DB='look360w', SPOTS='spots', FRAMES='frames';
+function db(){return new Promise((res,rej)=>{
+  const r=indexedDB.open(DB,1);
+  r.onupgradeneeded=()=>{const d=r.result;
+    if(!d.objectStoreNames.contains(SPOTS))d.createObjectStore(SPOTS,{keyPath:'id',autoIncrement:true});
+    if(!d.objectStoreNames.contains(FRAMES)){
+      const s=d.createObjectStore(FRAMES,{keyPath:'id',autoIncrement:true});
+      s.createIndex('spotId','spotId');}};
   r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
-async function putFrame(f){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).add(f);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
-async function allFrames(){const d=await db();return new Promise((res,rej)=>{const r=d.transaction(STORE,'readonly').objectStore(STORE).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
-async function countFrames(){const d=await db();return new Promise((res,rej)=>{const r=d.transaction(STORE,'readonly').objectStore(STORE).count();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});}
-async function clearFrames(){const d=await db();return new Promise((res,rej)=>{const t=d.transaction(STORE,'readwrite');t.objectStore(STORE).clear();t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+function tx(store,mode,fn){return db().then(d=>new Promise((res,rej)=>{
+  const t=d.transaction(store,mode),o=t.objectStore(store);let out;
+  out=fn(o);t.oncomplete=()=>res(out&&out.result!==undefined?out.result:out);t.onerror=()=>rej(t.error);}));}
+const addSpot=s=>tx(SPOTS,'readwrite',o=>o.add(s));
+const putSpot=s=>tx(SPOTS,'readwrite',o=>o.put(s));
+const allSpots=()=>tx(SPOTS,'readonly',o=>o.getAll());
+const addFrame=f=>tx(FRAMES,'readwrite',o=>o.add(f));
+const framesOf=id=>tx(FRAMES,'readonly',o=>o.index('spotId').getAll(id));
+const countFrames=()=>tx(FRAMES,'readonly',o=>o.count());
+const wipe=()=>db().then(d=>new Promise(res=>{
+  const t=d.transaction([SPOTS,FRAMES],'readwrite');
+  t.objectStore(SPOTS).clear();t.objectStore(FRAMES).clear();t.oncomplete=res;}));
 
-/* ══════════ orientation ══════════
-   W3C: R = Rz(alpha)·Rx(beta)·Ry(gamma). The rear camera points down device −Z.
-   Result is expressed in East / North / Up, so heading and tilt are independent
-   of how the phone is rotated in the hand. ══════════ */
-const D=Math.PI/180;
+/* ════════ orientation: heading + tilt, roll-independent ════════ */
 function rearDirection(a,b,g){
   const ca=Math.cos(a*D),sa=Math.sin(a*D),cb=Math.cos(b*D),sb=Math.sin(b*D),cg=Math.cos(g*D),sg=Math.sin(g*D);
-  const E=-ca*sg - sa*sb*cg, N=-sa*sg + ca*sb*cg, U=-cb*cg;
-  let heading=Math.atan2(E,N)/D; if(heading<0)heading+=360;
-  const tilt=Math.asin(Math.max(-1,Math.min(1,U)))/D;
-  return {heading,tilt};
+  const E=-ca*sg-sa*sb*cg, N=-sa*sg+ca*sb*cg, U=-cb*cg;
+  let h=Math.atan2(E,N)/D; if(h<0)h+=360;
+  return {heading:h,tilt:Math.asin(Math.max(-1,Math.min(1,U)))/D};
 }
-
 const orient={heading:null,tilt:0,absolute:false,listening:false,cbs:new Set()};
 function onOrient(e){
-  let h=null,t=0;
-  if(typeof e.webkitCompassHeading==='number' && !isNaN(e.webkitCompassHeading)){
-    const d=rearDirection(360-e.webkitCompassHeading,e.beta||0,e.gamma||0);
-    h=d.heading;t=d.tilt;orient.absolute=true;
+  let d=null;
+  if(typeof e.webkitCompassHeading==='number'&&!isNaN(e.webkitCompassHeading)){
+    d=rearDirection(360-e.webkitCompassHeading,e.beta||0,e.gamma||0);orient.absolute=true;
   }else if(e.alpha!==null){
-    const d=rearDirection(e.alpha,e.beta||0,e.gamma||0);
-    h=d.heading;t=d.tilt;
-    if(e.absolute||e.type==='deviceorientationabsolute')orient.absolute=true;
-  }
-  if(h===null)return;
-  orient.heading=h;orient.tilt=t;
-  orient.cbs.forEach(fn=>fn(orient));
+    d=rearDirection(e.alpha,e.beta||0,e.gamma||0);
+    if(e.absolute||e.type==='deviceorientationabsolute')orient.absolute=true;}
+  if(!d)return;
+  orient.heading=d.heading;orient.tilt=d.tilt;orient.cbs.forEach(f=>f(orient));
 }
 async function startOrientation(){
-  if(orient.listening)return true;
+  if(orient.listening)return;
   const DOE=window.DeviceOrientationEvent;
-  if(!DOE)throw new Error('This browser has no motion sensor API.');
+  if(!DOE)throw new Error('No motion sensor API in this browser.');
   if(typeof DOE.requestPermission==='function'){
-    const r=await DOE.requestPermission();
-    if(r!=='granted')throw new Error('Motion access was denied. Enable it and reload.');
-  }
-  if('ondeviceorientationabsolute' in window)
-    window.addEventListener('deviceorientationabsolute',onOrient,true);
-  window.addEventListener('deviceorientation',onOrient,true);
+    if(await DOE.requestPermission()!=='granted')throw new Error('Motion access denied. Enable it and reload.');}
+  if('ondeviceorientationabsolute' in window)addEventListener('deviceorientationabsolute',onOrient,true);
+  addEventListener('deviceorientation',onOrient,true);
   orient.listening=true;
   await new Promise(r=>setTimeout(r,600));
-  if(orient.heading===null)throw new Error('No sensor readings. Move the phone, or check Chrome → Site settings → Motion sensors.');
-  return true;
+  if(orient.heading===null)throw new Error('No sensor readings. Check Chrome → Site settings → Motion sensors.');
 }
 
-/* ══════════ screens ══════════ */
-const S={start:document.getElementById('start'),capture:document.getElementById('capture'),playback:document.getElementById('playback')};
-let current='start';
-function show(name){Object.entries(S).forEach(([k,el])=>el.classList.toggle('on',k===name));current=name;}
+/* ════════ pedometer ════════ */
+const ped={on:false,steps:0,ema:0,armed:false,last:0,headSum:{x:0,z:0}};
+function onMotion(e){
+  if(!ped.on)return;
+  const a=e.accelerationIncludingGravity;if(!a)return;
+  const m=Math.hypot(a.x||0,a.y||0,a.z||0);
+  ped.ema=ped.ema?ped.ema*0.88+m*0.12:m;
+  const dev=m-ped.ema, now=performance.now();
+  if(!ped.armed&&dev>1.15)ped.armed=true;
+  else if(ped.armed&&dev<0.3){
+    ped.armed=false;
+    if(now-ped.last>280){ped.last=now;ped.steps++;stepTick();}
+  }
+}
+async function startMotion(){
+  const DME=window.DeviceMotionEvent;
+  if(!DME)throw new Error('No accelerometer API.');
+  if(typeof DME.requestPermission==='function'){
+    if(await DME.requestPermission()!=='granted')throw new Error('Motion access denied.');}
+  addEventListener('devicemotion',onMotion,true);
+}
 
-const $=id=>document.getElementById(id);
-const SECTORS=24, SECTOR_DEG=360/SECTORS, TILT_BAND=20;
+/* ════════ screens ════════ */
+const S={start:$('start'),capture:$('capture'),playback:$('playback')};
+const show=n=>Object.entries(S).forEach(([k,el])=>el.classList.toggle('on',k===n));
 
-/* ══════════ start screen ══════════ */
+/* ════════ world model ════════
+   Spot positions live in metres on a plane: x = east, z = -north.
+   That matches the three.js frame used for frames, so headings agree everywhere. */
+let spots=[], currentSpotId=null;
+const SECTORS=24, SECTOR_DEG=15, TILT_BAND=20;
+
+function drawMap(cv,opts={}){
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height;
+  c.clearRect(0,0,W,H);
+  if(!spots.length){c.fillStyle='#8fa2b5';c.font='11px ui-monospace,monospace';c.textAlign='center';
+    c.fillText('no spots yet',W/2,H/2);return;}
+  const xs=spots.map(s=>s.x),zs=spots.map(s=>s.z);
+  const pad=22, minX=Math.min(...xs),maxX=Math.max(...xs),minZ=Math.min(...zs),maxZ=Math.max(...zs);
+  const span=Math.max(maxX-minX,maxZ-minZ,3);
+  const k=(Math.min(W,H)-pad*2)/span;
+  const px=s=>W/2+(s.x-(minX+maxX)/2)*k, py=s=>H/2+(s.z-(minZ+maxZ)/2)*k;
+  c.strokeStyle='rgba(232,238,245,.28)';c.lineWidth=1.5;
+  spots.forEach(s=>{if(s.from==null)return;const p=spots.find(q=>q.id===s.from);if(!p)return;
+    c.beginPath();c.moveTo(px(p),py(p));c.lineTo(px(s),py(s));c.stroke();});
+  spots.forEach((s,i)=>{
+    const cur=s.id===opts.here;
+    c.beginPath();c.arc(px(s),py(s),cur?7:5,0,7);
+    c.fillStyle=cur?'#3ddc97':(s.frames?'#8fa2b5':'#455563');c.fill();
+    if(cur){c.strokeStyle='#3ddc97';c.lineWidth=2;c.beginPath();c.arc(px(s),py(s),12,0,7);c.stroke();}
+    c.fillStyle='#8fa2b5';c.font='10px ui-monospace,monospace';c.textAlign='center';
+    c.fillText(i+1,px(s),py(s)-11);
+    s._sx=px(s);s._sy=py(s);
+  });
+  if(opts.here!=null&&opts.yaw!=null){
+    const s=spots.find(q=>q.id===opts.here);if(s){
+      const a=opts.yaw; // world heading in radians, 0 = north (-z)
+      c.strokeStyle='#ffb03a';c.lineWidth=2;c.beginPath();c.moveTo(s._sx,s._sy);
+      c.lineTo(s._sx+Math.sin(a)*16,s._sy-Math.cos(a)*16);c.stroke();}
+  }
+  c.fillStyle='#455563';c.font='9px ui-monospace,monospace';c.textAlign='left';
+  c.fillText(Math.round(span)+' m',6,H-6);
+}
+
+async function loadSpots(){
+  spots=await allSpots();
+  for(const s of spots)s.frames=(await framesOf(s.id)).length;
+}
+
+/* ════════ start screen ════════ */
 async function refreshStart(){
-  const n=await countFrames().catch(()=>0);
-  $('frameCount').textContent=n;
-  const fs=n?await allFrames():[];
-  const covered=new Set(fs.map(f=>Math.floor(f.heading/SECTOR_DEG)%SECTORS));
-  $('coverNote').textContent=n?`${Math.round(covered.size/SECTORS*100)}% of the circle covered`:'Nothing captured yet.';
+  await loadSpots();
+  const n=await countFrames();
+  $('statLine').textContent=`${spots.length} spot${spots.length===1?'':'s'} · ${n} frames`;
   $('goPlayback').disabled=n===0;
+  drawMap($('startMap'));
 }
-if(!window.isSecureContext)
-  $('envNote').innerHTML='<span class="err">This page needs HTTPS (or localhost). Camera and sensors stay blocked over plain http.</span>';
-else $('envNote').textContent='Works in Chrome on Android. Hold the phone upright in portrait while capturing.';
-
-$('clearAll').onclick=async()=>{await clearFrames();refreshStart();};
-$('goPlayback').onclick=()=>enterPlayback();
+$('envNote').innerHTML=window.isSecureContext
+  ? 'Chrome on Android. Hold the phone upright in portrait throughout.'
+  : '<span class="err">Needs HTTPS or localhost — camera and sensors stay blocked on plain http.</span>';
+$('clearAll').onclick=async()=>{await wipe();refreshStart();};
 $('goCapture').onclick=()=>enterCapture();
+$('goPlayback').onclick=()=>enterPlayback();
 refreshStart();
 
-/* ══════════ CAPTURE ══════════ */
-let stream=null,recording=false,frames=0,covered=new Map(),lastShot=0,wakeLock=null;
-const video=$('cam'),cc=$('compass').getContext('2d');
+/* ════════ CAPTURE ════════ */
+let stream=null,recording=false,covered=new Map(),frameN=0,lastShot=0,wakeLock=null;
+const video=$('cam'), cc=$('compass').getContext('2d');
 
 async function enterCapture(){
   show('capture');
+  await loadSpots();
+  drawMap($('capMap'),{here:currentSpotId});
   drawCompass();
   try{
     stream=await navigator.mediaDevices.getUserMedia({
       video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false});
     video.srcObject=stream;await video.play();
-    $('capMsg').textContent='Camera ready. Waiting for compass…';
   }catch(e){$('capMsg').innerHTML='<span class="err">Camera blocked: '+e.message+'</span>';return;}
-  try{
-    await startOrientation();
-    $('capMsg').textContent=orient.absolute
-      ? 'Ready. Press start, then turn slowly on the spot.'
-      : 'Compass is relative, not true north — playback will still work. Press start.';
+  try{await startOrientation();await startMotion();
+    $('capMsg').textContent=orient.absolute?'Ready. Press start, then turn slowly on the spot.'
+      :'Compass is relative, not true north — everything still lines up. Press start.';
   }catch(e){$('capMsg').innerHTML='<span class="err">'+e.message+'</span>';}
   orient.cbs.add(onCaptureTick);
+  if(currentSpotId===null)await newSpot(0,0,null);
 }
 function leaveCapture(){
   recording=false;orient.cbs.delete(onCaptureTick);
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;video.srcObject=null;}
   if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}
 }
+async function newSpot(x,z,from){
+  const id=await addSpot({x,z,from,createdAt:Date.now(),gps:lastFix?{...lastFix}:null});
+  currentSpotId=id;covered=new Map();frameN=0;
+  await loadSpots();
+  $('capSpot').textContent=spots.length;$('capCount').textContent=0;$('capCover').textContent='0%';
+  $('btnWalk').disabled=true;
+  drawMap($('capMap'),{here:currentSpotId});drawCompass();
+}
 
 function onCaptureTick(o){
   $('capHead').textContent=Math.round(o.heading)+'°';
-  $('capTilt').textContent=(o.tilt>=0?'+':'')+Math.round(o.tilt)+'°';
   drawCompass();
   if(!recording)return;
-  const sector=Math.floor(o.heading/SECTOR_DEG)%SECTORS;
-  const band=Math.round(o.tilt/TILT_BAND);
-  const key=sector+'|'+band;
-  if(covered.has(key))return;
-  if(performance.now()-lastShot<350)return;
-  covered.set(key,true);
-  lastShot=performance.now();
-  shoot(o.heading,o.tilt,sector);
+  const key=(Math.floor(o.heading/SECTOR_DEG)%SECTORS)+'|'+Math.round(o.tilt/TILT_BAND);
+  if(covered.has(key)||performance.now()-lastShot<350)return;
+  covered.set(key,1);lastShot=performance.now();
+  shoot(o.heading,o.tilt);
 }
-
-async function shoot(heading,tilt,sector){
+async function shoot(heading,tilt){
   if(!video.videoWidth)return;
-  const MAX=1024, s=Math.min(1,MAX/Math.max(video.videoWidth,video.videoHeight));
+  const MAX=1024,s=Math.min(1,MAX/Math.max(video.videoWidth,video.videoHeight));
   const w=Math.round(video.videoWidth*s),h=Math.round(video.videoHeight*s);
   const c=document.createElement('canvas');c.width=w;c.height=h;
   c.getContext('2d').drawImage(video,0,0,w,h);
   const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',0.82));
   if(!blob)return;
-  await putFrame({blob,heading,tilt,w,h,t:Date.now()});
-  frames++;$('capCount').textContent=frames;
+  await addFrame({spotId:currentSpotId,blob,heading,tilt,w,h,t:Date.now()});
+  frameN++;$('capCount').textContent=frameN;
   const secs=new Set([...covered.keys()].map(k=>+k.split('|')[0]));
   $('capCover').textContent=Math.round(secs.size/SECTORS*100)+'%';
   drawCompass();
-  const f=$('capFlash');f.style.opacity=.55;setTimeout(()=>f.style.opacity=0,60);
+  const f=$('capFlash');f.style.opacity=.5;setTimeout(()=>f.style.opacity=0,60);
 }
-
 function drawCompass(){
-  const W=260,R=104,cx=130,cy=130;
-  cc.clearRect(0,0,W,W);
+  const R=92,cx=115,cy=115;cc.clearRect(0,0,230,230);
   const secs=new Set([...covered.keys()].map(k=>+k.split('|')[0]));
   for(let i=0;i<SECTORS;i++){
-    const a0=(i*SECTOR_DEG-90-SECTOR_DEG/2+1)*D, a1=(i*SECTOR_DEG-90+SECTOR_DEG/2-1)*D;
-    cc.beginPath();cc.arc(cx,cy,R,a0,a1);
-    cc.lineWidth=14;cc.strokeStyle=secs.has(i)?'#3ddc97':'rgba(232,238,245,.16)';cc.stroke();
-  }
-  cc.beginPath();cc.arc(cx,cy,R-24,0,7);cc.strokeStyle='rgba(232,238,245,.12)';cc.lineWidth=1;cc.stroke();
+    cc.beginPath();cc.arc(cx,cy,R,(i*SECTOR_DEG-90-6.5)*D,(i*SECTOR_DEG-90+6.5)*D);
+    cc.lineWidth=13;cc.strokeStyle=secs.has(i)?'#3ddc97':'rgba(232,238,245,.16)';cc.stroke();}
   cc.fillStyle='#8fa2b5';cc.font='11px ui-monospace,monospace';cc.textAlign='center';cc.textBaseline='middle';
   [['N',0],['E',90],['S',180],['W',270]].forEach(([l,d])=>{
-    const a=(d-90)*D;cc.fillText(l,cx+Math.cos(a)*(R-30),cy+Math.sin(a)*(R-30));});
+    const a=(d-90)*D;cc.fillText(l,cx+Math.cos(a)*(R-26),cy+Math.sin(a)*(R-26));});
   if(orient.heading!==null){
     const a=(orient.heading-90)*D;
-    cc.beginPath();cc.moveTo(cx,cy);cc.lineTo(cx+Math.cos(a)*(R-14),cy+Math.sin(a)*(R-14));
-    cc.strokeStyle='#ffb03a';cc.lineWidth=3;cc.stroke();
-    cc.beginPath();cc.arc(cx,cy,4,0,7);cc.fillStyle='#ffb03a';cc.fill();
-  }
+    cc.beginPath();cc.moveTo(cx,cy);cc.lineTo(cx+Math.cos(a)*(R-13),cy+Math.sin(a)*(R-13));
+    cc.strokeStyle='#ffb03a';cc.lineWidth=3;cc.stroke();}
 }
 
 $('btnStart').onclick=async()=>{
-  if(orient.heading===null){$('capMsg').innerHTML='<span class="err">No compass reading yet — motion access may be blocked.</span>';return;}
+  if(orient.heading===null){$('capMsg').innerHTML='<span class="err">No compass reading yet.</span>';return;}
   recording=true;$('recDot').classList.add('rec');
   $('btnStart').disabled=true;$('btnStop').disabled=false;
-  $('capMsg').textContent='Recording. Turn slowly in a full circle, then tilt up and go round again.';
+  $('capMsg').textContent='Recording. Turn slowly in a full circle.';
   try{wakeLock=await navigator.wakeLock.request('screen');}catch(e){}
 };
 $('btnStop').onclick=async()=>{
   recording=false;$('recDot').classList.remove('rec');
-  $('btnStart').disabled=false;$('btnStop').disabled=true;
-  $('capMsg').textContent=frames+' frames saved to this device.';
+  $('btnStart').disabled=false;$('btnStop').disabled=true;$('btnWalk').disabled=frameN===0;
+  $('capMsg').textContent=frameN+' frames at this spot. Walk on, or keep adding here.';
   if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}
-  refreshStart();
+  await loadSpots();drawMap($('capMap'),{here:currentSpotId});
 };
 $('btnToPlay').onclick=()=>{leaveCapture();enterPlayback();};
 
-/* ══════════ PLAYBACK ══════════ */
-let renderer,scene,camera,planes=[],raf=0,pbActive=false;
-let yaw=0,pitch=0,tYaw=0,tPitch=0,useGyro=false,yawOffset=0,fovDeg=62;
-const RADIUS=10;
+/* ════════ walking between spots ════════ */
+let walkHeadings=[], stride=0.70, manualDist=null, gpsStart=null, gpsDist=null, lastFix=null, geoWatch=null;
+
+function stepTick(){
+  const d=ped.steps*stride;
+  $('wSteps').textContent=ped.steps;
+  if(manualDist===null){$('wSlider').value=Math.min(30,Math.max(0.5,d));setDistLabel();}
+}
+function setDistLabel(){
+  const v=+$('wSlider').value;
+  $('wDist').textContent=v.toFixed(1);$('wSliderVal').textContent=v.toFixed(1)+' m';
+}
+function onWalkOrient(o){
+  walkHeadings.push(o.heading);
+  if(walkHeadings.length>400)walkHeadings.shift();
+  $('wHead').textContent=Math.round(o.heading)+'°';
+}
+function meanHeading(list){
+  let x=0,z=0;for(const h of list){x+=Math.sin(h*D);z+=Math.cos(h*D);}
+  let a=Math.atan2(x,z)/D;return a<0?a+360:a;
+}
+function startGps(){
+  if(!navigator.geolocation)return;
+  geoWatch=navigator.geolocation.watchPosition(p=>{
+    lastFix={lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy};
+    if(!gpsStart&&lastFix.acc<=20)gpsStart={...lastFix};
+    if(gpsStart){
+      const R=6371000,dLat=(lastFix.lat-gpsStart.lat)*D,
+        dLon=(lastFix.lon-gpsStart.lon)*D*Math.cos(lastFix.lat*D);
+      gpsDist=Math.hypot(dLat,dLon)*R;
+      $('wGps').textContent='GPS ±'+Math.round(lastFix.acc)+'m → '+gpsDist.toFixed(1)+'m';
+      $('wUseGps').disabled=!(lastFix.acc<=15&&gpsDist>1);
+    }else $('wGps').textContent='GPS ±'+Math.round(lastFix.acc)+'m (too rough)';
+  },()=>{$('wGps').textContent='no GPS';},{enableHighAccuracy:true,maximumAge:1000,timeout:8000});
+}
+function stopGps(){if(geoWatch!=null){navigator.geolocation.clearWatch(geoWatch);geoWatch=null;}gpsStart=null;gpsDist=null;}
+
+$('btnWalk').onclick=()=>{
+  ped.on=true;ped.steps=0;ped.ema=0;ped.armed=false;
+  walkHeadings=[];manualDist=null;
+  $('wSlider').value=1;setDistLabel();$('wSteps').textContent='0';$('wUseGps').disabled=true;
+  orient.cbs.add(onWalkOrient);
+  startGps();
+  $('walk').classList.add('on');
+};
+$('wSlider').oninput=()=>{manualDist=+$('wSlider').value;setDistLabel();};
+$('wStride').oninput=e=>{stride=+e.target.value;$('wStrideVal').textContent=stride.toFixed(2);};
+$('wUseGps').onclick=()=>{if(gpsDist){manualDist=gpsDist;$('wSlider').value=Math.min(30,gpsDist);setDistLabel();}};
+$('wCancel').onclick=()=>{closeWalk();};
+function closeWalk(){
+  ped.on=false;orient.cbs.delete(onWalkOrient);stopGps();$('walk').classList.remove('on');
+}
+$('wArrive').onclick=async()=>{
+  const dist=+$('wSlider').value;
+  const h=walkHeadings.length?meanHeading(walkHeadings):(orient.heading||0);
+  const prev=spots.find(s=>s.id===currentSpotId)||{x:0,z:0};
+  const x=prev.x+dist*Math.sin(h*D), z=prev.z-dist*Math.cos(h*D);
+  const from=currentSpotId;
+  closeWalk();
+  await newSpot(x,z,from);
+  $('capMsg').textContent=`Spot ${spots.length} placed ${dist.toFixed(1)} m away at ${Math.round(h)}°. Press start.`;
+};
+
+/* ════════ PLAYBACK ════════ */
+let renderer,scene,camera,raf=0,pbActive=false;
+let planes=[],arrows=[],texCache=new Map();
+let yaw=0,pitch=0,tYaw=0,tPitch=0,useGyro=false,yawOffset=0,fovDeg=62,busy=false;
+const RADIUS=10, EYE=-2.1;
 
 async function enterPlayback(){
-  show('playback');pbActive=true;
-  $('pbMsg').textContent='Loading frames…';
-  const fs=await allFrames();
-  if(!fs.length){$('pbMsg').textContent='No frames stored. Capture a spot first.';return;}
-  await buildScene(fs);
+  show('playback');pbActive=true;$('pbMsg').textContent='Loading…';
+  await loadSpots();
+  const withFrames=spots.filter(s=>s.frames>0);
+  if(!withFrames.length){$('pbMsg').textContent='No frames stored. Capture a spot first.';return;}
+  initRenderer();
+  await gotoSpot(withFrames[0].id,true);
   $('pbMsg').textContent='';
-  tYaw=yaw=-fs[0].heading*D;tPitch=pitch=fs[0].tilt*D;
   loop();
 }
 function leavePlayback(){
   pbActive=false;cancelAnimationFrame(raf);
-  orient.cbs.delete(onGyroView);useGyro=false;$('pbGyro').classList.remove('on');
-  planes.forEach(p=>{p.mesh.material.map.dispose();p.mesh.material.dispose();p.mesh.geometry.dispose();});
-  planes=[];
+  orient.cbs.delete(onGyroView);useGyro=false;
+  $('pbGyro').classList.remove('on');$('pbGyro').textContent='Use phone tilt';
+  clearNode();
+  for(const [k,list] of texCache)list.forEach(t=>t.tex.dispose());
+  texCache.clear();
   if(renderer){renderer.dispose();$('view').innerHTML='';renderer=null;}
 }
-
-async function buildScene(fs){
+function initRenderer(){
   const host=$('view');host.innerHTML='';
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -342,90 +490,171 @@ async function buildScene(fs){
   scene=new THREE.Scene();scene.background=new THREE.Color(0x0b0f14);
   camera=new THREE.PerspectiveCamera(68,host.clientWidth/host.clientHeight,0.1,100);
   camera.rotation.order='YXZ';
-
-  const geo=new THREE.PlaneGeometry(1,1);
-  for(const f of fs){
-    const tex=await textureFromBlob(f.blob);
-    const mat=new THREE.MeshBasicMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false});
-    const mesh=new THREE.Mesh(geo,mat);
-    const h=f.heading*D, t=f.tilt*D;
-    const dir=new THREE.Vector3(Math.cos(t)*Math.sin(h),Math.sin(t),-Math.cos(t)*Math.cos(h));
-    mesh.position.copy(dir).multiplyScalar(RADIUS);
-    mesh.lookAt(0,0,0);
-    scene.add(mesh);
-    planes.push({mesh,dir,aspect:f.w/f.h});
-  }
-  applyFov();
   addEventListener('resize',resize);
-  bindDrag(renderer.domElement);
+  bindInput(renderer.domElement);
+}
+function resize(){if(!renderer)return;const h=$('view');
+  renderer.setSize(h.clientWidth,h.clientHeight);
+  camera.aspect=h.clientWidth/h.clientHeight;camera.updateProjectionMatrix();}
+
+function clearNode(){
+  planes.forEach(p=>{scene.remove(p.mesh);p.mesh.geometry.dispose();p.mesh.material.dispose();});
+  arrows.forEach(a=>{scene.remove(a.mesh);a.mesh.geometry.dispose();a.mesh.material.map.dispose();a.mesh.material.dispose();});
+  planes=[];arrows=[];
+}
+async function texturesFor(spotId){
+  if(texCache.has(spotId))return texCache.get(spotId);
+  const fs=await framesOf(spotId);
+  const list=[];
+  for(const f of fs)list.push({tex:await textureFromBlob(f.blob),heading:f.heading,tilt:f.tilt,aspect:f.w/f.h});
+  texCache.set(spotId,list);
+  // keep memory sane: hold at most three spots' textures
+  if(texCache.size>3){
+    for(const k of texCache.keys()){
+      if(k===spotId)continue;
+      texCache.get(k).forEach(t=>t.tex.dispose());texCache.delete(k);break;}
+  }
+  return list;
 }
 async function textureFromBlob(blob){
   const bmp=await createImageBitmap(blob);
   const MAX=768,s=Math.min(1,MAX/Math.max(bmp.width,bmp.height));
   const w=Math.round(bmp.width*s),h=Math.round(bmp.height*s);
   const c=document.createElement('canvas');c.width=w;c.height=h;
-  const x=c.getContext('2d');
-  x.drawImage(bmp,0,0,w,h);bmp.close();
-  // feather the edges so neighbouring frames blend instead of showing a seam
-  const fx=w*0.14, fy=h*0.14;
-  x.globalCompositeOperation='destination-out';
-  const grads=[
-    [x.createLinearGradient(0,0,fx,0),0,0,fx,h],
-    [x.createLinearGradient(w,0,w-fx,0),w-fx,0,fx,h],
-    [x.createLinearGradient(0,0,0,fy),0,0,w,fy],
-    [x.createLinearGradient(0,h,0,h-fy),0,h-fy,w,fy]];
-  for(const [g,gx,gy,gw,gh] of grads){
-    g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');
-    x.fillStyle=g;x.fillRect(gx,gy,gw,gh);
-  }
+  const x=c.getContext('2d');x.drawImage(bmp,0,0,w,h);bmp.close();
+  const fx=w*.14,fy=h*.14;x.globalCompositeOperation='destination-out';
+  [[x.createLinearGradient(0,0,fx,0),0,0,fx,h],
+   [x.createLinearGradient(w,0,w-fx,0),w-fx,0,fx,h],
+   [x.createLinearGradient(0,0,0,fy),0,0,w,fy],
+   [x.createLinearGradient(0,h,0,h-fy),0,h-fy,w,fy]]
+  .forEach(([g,gx,gy,gw,gh])=>{g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');
+    x.fillStyle=g;x.fillRect(gx,gy,gw,gh);});
   x.globalCompositeOperation='source-over';
-  const tex=new THREE.CanvasTexture(c);
-  tex.colorSpace=THREE.SRGBColorSpace;
-  tex.minFilter=THREE.LinearFilter;tex.generateMipmaps=false;
-  return tex;
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;
+  t.minFilter=THREE.LinearFilter;t.generateMipmaps=false;return t;
+}
+function arrowTexture(label){
+  const c=document.createElement('canvas');c.width=c.height=256;
+  const x=c.getContext('2d');
+  x.strokeStyle='rgba(61,220,151,.95)';x.lineWidth=16;x.lineJoin='round';x.lineCap='round';
+  x.beginPath();x.moveTo(60,150);x.lineTo(128,72);x.lineTo(196,150);x.stroke();
+  x.globalAlpha=.55;x.beginPath();x.moveTo(70,206);x.lineTo(128,138);x.lineTo(186,206);x.stroke();
+  x.globalAlpha=1;x.fillStyle='rgba(232,238,245,.9)';x.font='bold 30px ui-monospace,monospace';
+  x.textAlign='center';x.fillText(label,128,244);
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
+}
+
+async function gotoSpot(id,instant){
+  if(busy)return;busy=true;
+  if(!instant){$('fade').style.opacity=1;await new Promise(r=>setTimeout(r,190));}
+  const list=await texturesFor(id);
+  clearNode();
+  currentSpotId=id;
+  const geo=new THREE.PlaneGeometry(1,1);
+  for(const f of list){
+    const mat=new THREE.MeshBasicMaterial({map:f.tex,transparent:true,depthTest:false,depthWrite:false});
+    const mesh=new THREE.Mesh(geo.clone(),mat);
+    const h=f.heading*D,t=f.tilt*D;
+    const dir=new THREE.Vector3(Math.cos(t)*Math.sin(h),Math.sin(t),-Math.cos(t)*Math.cos(h));
+    mesh.position.copy(dir).multiplyScalar(RADIUS);mesh.lookAt(0,0,0);
+    scene.add(mesh);planes.push({mesh,dir,aspect:f.aspect});
+  }
+  buildArrows(id);
+  applyFov();
+  if(instant&&list.length){tYaw=yaw=-list[0].heading*D;tPitch=pitch=list[0].tilt*D;}
+  $('fade').style.opacity=0;
+  busy=false;
+  preloadNeighbours(id);
+}
+function neighboursOf(id){
+  const me=spots.find(s=>s.id===id);if(!me)return [];
+  return spots.filter(s=>{
+    if(s.id===id||!s.frames)return false;
+    if(s.from===id||me.from===s.id)return true;
+    return Math.hypot(s.x-me.x,s.z-me.z)<=5;   // nearby spots are reachable too
+  });
+}
+function buildArrows(id){
+  const me=spots.find(s=>s.id===id);
+  for(const n of neighboursOf(id)){
+    const dx=n.x-me.x,dz=n.z-me.z,dist=Math.hypot(dx,dz)||0.001;
+    const ux=dx/dist,uz=dz/dist, place=Math.min(3.2,Math.max(1.8,dist*0.5));
+    const mat=new THREE.MeshBasicMaterial({map:arrowTexture(dist.toFixed(1)+' m'),transparent:true,depthTest:false});
+    const mesh=new THREE.Mesh(new THREE.PlaneGeometry(1.7,1.7),mat);
+    mesh.position.set(ux*place,EYE,uz*place);
+    mesh.rotation.set(-Math.PI/2,Math.atan2(-ux,-uz),0,'YXZ');
+    mesh.renderOrder=5000;
+    scene.add(mesh);arrows.push({mesh,target:n.id,dist});
+  }
+}
+async function preloadNeighbours(id){
+  for(const n of neighboursOf(id).slice(0,2)){
+    if(!texCache.has(n.id)){await texturesFor(n.id);break;}   // one at a time, stay light
+  }
 }
 function applyFov(){
   const w=2*RADIUS*Math.tan(fovDeg*D/2);
   planes.forEach(p=>p.mesh.scale.set(w,w/p.aspect,1));
 }
-function resize(){
-  if(!renderer)return;const host=$('view');
-  renderer.setSize(host.clientWidth,host.clientHeight);
-  camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();
-}
 
-/* drag */
-function bindDrag(el){
-  let px=0,py=0,down=false;
-  el.addEventListener('pointerdown',e=>{down=true;px=e.clientX;py=e.clientY;el.setPointerCapture(e.pointerId);});
+/* input: drag to look, tap an arrow or the map to move */
+const ray=new THREE.Raycaster(), ptr=new THREE.Vector2();
+function bindInput(el){
+  let px=0,py=0,sx=0,sy=0,down=false,moved=0;
+  el.addEventListener('pointerdown',e=>{down=true;px=sx=e.clientX;py=sy=e.clientY;moved=0;
+    el.setPointerCapture(e.pointerId);});
   el.addEventListener('pointermove',e=>{
-    if(!down||useGyro)return;
-    const k=0.0032*(camera.fov/68);
-    tYaw+=(e.clientX-px)*k;
-    tPitch+=(e.clientY-py)*k;
-    tPitch=Math.max(-1.35,Math.min(1.35,tPitch));
+    if(!down)return;
+    moved+=Math.abs(e.clientX-px)+Math.abs(e.clientY-py);
+    if(!useGyro){
+      const k=0.0032;
+      tYaw+=(e.clientX-px)*k;
+      tPitch=Math.max(-1.35,Math.min(1.35,tPitch+(e.clientY-py)*k));
+    }
     px=e.clientX;py=e.clientY;
   });
-  ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,()=>down=false));
+  el.addEventListener('pointerup',e=>{
+    down=false;
+    if(moved>14||busy)return;
+    const r=el.getBoundingClientRect();
+    ptr.x=((e.clientX-r.left)/r.width)*2-1;
+    ptr.y=-((e.clientY-r.top)/r.height)*2+1;
+    ray.setFromCamera(ptr,camera);
+    const hit=ray.intersectObjects(arrows.map(a=>a.mesh),false)[0];
+    if(hit){const a=arrows.find(a=>a.mesh===hit.object);if(a)gotoSpot(a.target,false);}
+  });
+  el.addEventListener('pointercancel',()=>down=false);
+  // map taps
+  $('miniMap').addEventListener('pointerup',e=>{
+    const r=e.target.getBoundingClientRect();
+    const mx=(e.clientX-r.left)*(e.target.width/r.width), my=(e.clientY-r.top)*(e.target.height/r.height);
+    let best=null,bd=1e9;
+    spots.forEach(s=>{if(!s.frames||s._sx==null)return;
+      const d=Math.hypot(s._sx-mx,s._sy-my);if(d<bd){bd=d;best=s;}});
+    if(best&&bd<18&&best.id!==currentSpotId)gotoSpot(best.id,false);
+  });
 }
-/* gyro */
 function onGyroView(o){
   if(!useGyro)return;
   tYaw=-(o.heading*D)+yawOffset;
   tPitch=Math.max(-1.35,Math.min(1.35,o.tilt*D));
 }
 $('pbGyro').onclick=async()=>{
-  if(useGyro){useGyro=false;orient.cbs.delete(onGyroView);$('pbGyro').classList.remove('on');
-    $('pbGyro').textContent='Use phone tilt';return;}
-  try{await startOrientation();}catch(e){$('pbMsg').innerHTML='<span class="err">'+e.message+'</span>';
+  if(useGyro){useGyro=false;orient.cbs.delete(onGyroView);
+    $('pbGyro').classList.remove('on');$('pbGyro').textContent='Use phone tilt';return;}
+  try{await startOrientation();}catch(e){
+    $('pbMsg').innerHTML='<span class="err">'+e.message+'</span>';
     setTimeout(()=>$('pbMsg').textContent='',3500);return;}
   useGyro=true;yawOffset=0;orient.cbs.add(onGyroView);
   $('pbGyro').classList.add('on');$('pbGyro').textContent='Tilt is on';
 };
 $('pbRecenter').onclick=()=>{
-  if(!planes.length)return;
-  if(useGyro&&orient.heading!==null){yawOffset=yaw+orient.heading*D;}
+  if(useGyro&&orient.heading!==null)yawOffset=yaw+orient.heading*D;
   else{tYaw=yaw;tPitch=0;}
+};
+$('pbMapToggle').onclick=()=>{
+  const w=$('miniWrap'), on=w.style.display!=='none';
+  w.style.display=on?'none':'block';$('pbMapToggle').classList.toggle('on',!on);
 };
 $('pbFov').oninput=e=>{fovDeg=+e.target.value;$('pbFovVal').textContent=fovDeg+'°';applyFov();};
 $('pbBack').onclick=()=>{leavePlayback();refreshStart();show('start');};
@@ -435,24 +664,21 @@ function loop(){
   if(!pbActive||!renderer)return;
   yaw+=(tYaw-yaw)*0.16;pitch+=(tPitch-pitch)*0.16;
   camera.rotation.set(pitch,yaw,0,'YXZ');
-  // nearest frame wins: draw it last, on top of its neighbours
   const fwd=new THREE.Vector3(0,0,-1).applyEuler(camera.rotation);
   let best=Infinity,bestP=null;
   for(const p of planes){
-    const dot=Math.max(-1,Math.min(1,p.dir.dot(fwd)));
-    const ang=Math.acos(dot);
-    p.mesh.visible=ang<1.4;
-    p.mesh.renderOrder=-ang*1000;
+    const ang=Math.acos(Math.max(-1,Math.min(1,p.dir.dot(fwd))));
+    p.mesh.visible=ang<1.4;p.mesh.renderOrder=-ang*1000;
     if(ang<best){best=ang;bestP=p;}
   }
-  if(bestP&&best>1.2)bestP.mesh.visible=true;   // gap: hold the nearest frame anyway
+  if(bestP&&best>1.2)bestP.mesh.visible=true;
+  const idx=spots.findIndex(s=>s.id===currentSpotId);
   let hd=(-yaw/D)%360;if(hd<0)hd+=360;
-  $('pbHead').textContent=Math.round(hd)+'°  ·  '+(best<1.4?Math.round(best/D)+'° off frame':'gap');
+  $('pbInfo').textContent=`spot ${idx+1}/${spots.length} · ${Math.round(hd)}°`+(best<1.4?'':' · gap');
+  drawMap($('miniMap'),{here:currentSpotId,yaw:-yaw});
   renderer.render(scene,camera);
 }
-
-/* keep things tidy when leaving capture by any route */
-addEventListener('pagehide',()=>{leaveCapture();});
+addEventListener('pagehide',()=>leaveCapture());
 </script>
 </body>
 </html>
