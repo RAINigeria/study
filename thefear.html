@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAIN Communiqué, 11 September 2026</title>
+<style>
+  :root {
+    --ink: #1c2b24;
+    --paper: #f6f3ea;
+    --paper-deep: #efe9d8;
+    --rule: #c9bd9c;
+    --gold: #96792f;
+    --leaf: #3c5c45;
+    --red: #7a3b2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e9e4d3;
+      --paper: #14201a;
+      --paper-deep: #1a281f;
+      --rule: #46503e;
+      --gold: #c9ab5f;
+      --leaf: #7fa587;
+      --red: #c17a63;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #e9e4d3;
+    --paper: #14201a;
+    --paper-deep: #1a281f;
+    --rule: #46503e;
+    --gold: #c9ab5f;
+    --leaf: #7fa587;
+    --red: #c17a63;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.62;
+  }
+
+  .masthead {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 20px;
+    text-align: center;
+    border-bottom: 4px double var(--ink);
+  }
+
+  .masthead .kicker {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+    color: var(--leaf);
+    margin: 0 0 6px;
+  }
+
+  .masthead h1 {
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .masthead .dateline {
+    margin-top: 14px;
+    font-size: 0.95rem;
+    color: var(--ink);
+    opacity: 0.75;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 8px 24px 90px;
+  }
+
+  .standfirst {
+    font-size: 1.18rem;
+    line-height: 1.6;
+    margin: 34px 0 10px;
+    color: var(--ink);
+    border-left: 3px solid var(--gold);
+    padding-left: 18px;
+  }
+
+  .byline {
+    font-size: 0.85rem;
+    opacity: 0.65;
+    font-style: italic;
+    margin: 0 0 40px 21px;
+  }
+
+  section.item {
+    margin-top: 46px;
+  }
+
+  section.item h2 {
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px;
+  }
+
+  section.item .subhead {
+    font-style: italic;
+    color: var(--leaf);
+    font-size: 0.98rem;
+    margin: 10px 0 18px;
+  }
+
+  p { margin: 0 0 16px; max-width: 68ch; }
+
+  .exchange {
+    background: var(--paper-deep);
+    border-left: 3px solid var(--red);
+    padding: 14px 20px;
+    margin: 20px 0;
+    border-radius: 2px;
+  }
+  .exchange p:last-child { margin-bottom: 0; }
+  .exchange .tag {
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--red);
+    margin: 0 0 8px;
+    letter-spacing: 0.01em;
+  }
+
+  .pull {
+    font-size: 1.28rem;
+    line-height: 1.5;
+    font-style: italic;
+    color: var(--leaf);
+    margin: 30px 0;
+    padding: 0 10px;
+    text-align: center;
+  }
+
+  .rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 46px 0;
+  }
+
+  .closing {
+    background: var(--paper-deep);
+    padding: 26px 26px 6px;
+    border-radius: 3px;
+    margin-top: 10px;
+  }
+  .closing h2 { border: none; padding-bottom: 0; }
+
+  .notice-box {
+    margin-top: 54px;
+    padding: 22px 24px;
+    border: 1px solid var(--rule);
+    background: var(--paper-deep);
+    border-radius: 3px;
+  }
+  .notice-box h3 {
+    margin: 0 0 10px;
+    font-size: 1.05rem;
+    color: var(--gold);
+  }
+  .notice-box p { font-size: 0.96rem; margin-bottom: 10px; }
+  .notice-box .sig {
+    font-style: italic;
+    opacity: 0.8;
+    margin-top: 14px;
+  }
+
+  .reference {
+    margin-top: 36px;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+  .reference a { color: var(--leaf); }
+
+  footer {
+    text-align: center;
+    padding: 30px 24px 60px;
+    font-size: 0.82rem;
+    opacity: 0.6;
+    font-style: italic;
+  }
+
+  ::selection { background: var(--gold); color: var(--paper); }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <p class="kicker">RAIN Media &middot; Field Report</p>
+  <h1>The RAIN Communiqué</h1>
+  <div class="dateline">
+    <span>Ibadan, Nigeria</span>
+    <span>11 September 2026</span>
+    <span>Open Seminar Proceedings</span>
+  </div>
+</div>
+
+<main>
+
+  <p class="standfirst">Members of Robotics and Artificial Intelligence Nigeria, developers under the certification programme, faculty, staff, and principal officials alike, gathered in Ibadan for an unscripted, wide-ranging seminar on whether artificial intelligence poses a genuine threat to humanity. The seminar was prompted by a former industry insider's warning that the danger could materialise within a decade. What emerged was less a lecture than an argument: contributors agreed on little, but sharpened each other's thinking considerably.</p>
+  <p class="byline">Reported by RAIN Media, from the proceedings of 11 September 2026</p>
+
+  <section class="item">
+    <h2>Who controls the story, and who is racing whom</h2>
+    <p>The session opened on a note of pressure. Emmanuel Nwani set the frame: companies are pushed to ship AI capability fast by commercial demand, while nations separately chase AI-driven superpower status. Together, these two forces pull development in erratic, uncoordinated directions. Emmanuel Okunlola agreed with the diagnosis entirely, then gave it a sharper edge: AI development, he said, is a blackboard controlled by the big tech giants: the public sees only what those companies choose to write on it.</p>
+    <p>A quieter but pointed observation followed: Africa is largely absent from this race. The continent trains capable people in AI and robotics, only to watch them leave for opportunities abroad.</p>
+  </section>
+
+  <section class="item">
+    <h2>Where the danger actually comes from</h2>
+    <p>Dr Femi Lawal drew a distinction worth keeping. AI causes harm "if well motivated," but that motivation, he argued, can arrive by two very different routes: a bad actor deliberately prompting a system toward harmful ends, or a system's judgment quietly skewed by biased or insufficient training data, with no human ever giving a harmful instruction at all. His remedy was blunt: mandatory safety and regulation training for AI trainees and researchers, mandated by government, not left to universities or the industry to police itself. Left unchecked, he warned, AI agents could eventually initiate or escalate conflict between states; restricting access to advanced hardware such as GPUs was floated as one practical lever, alongside a call for dedicated research into how safety rules can actually be enforced rather than merely declared.</p>
+  </section>
+
+  <section class="item">
+    <h2>The black box no one fully controls</h2>
+    <p>Mrs Aminat Ayoola, Director of AI, introduced the seminar's most technically unsettling idea: emergent abilities. Once a model is trained and released into use, it can begin doing things it was never explicitly trained to do, and even its own developers do not fully grasp where those limits lie, because deep learning systems are black boxes that learn from data and generate their own new insights.</p>
+    <p>The point was offered without embellishment, but its implication is stark: a model trained purely to write code was never taught to write malware, yet coding ability, combined with other learned skills, could compose into something harmful without anyone ever training it to do so. Not by design. By addition: one capability plus another.</p>
+  </section>
+
+  <section class="item">
+    <h2>An uncomfortable proposal, and the argument it provoked</h2>
+    <div class="exchange">
+      <p class="tag">Nurudeen Adesokan, opening the exchange</p>
+      <p>Likening the moment to Y2K, while conceding AI is a different order of problem, Adesokan pointed to a structural flaw: AI-illiterate people sit at the tables where AI law gets written, while capability grows geometrically and regulation crawls behind it. His proposed fix: draw former AI-company staff into advocacy and policy work, using their insider knowledge to sharpen legislative scrutiny.</p>
+    </div>
+    <div class="exchange">
+      <p class="tag">Dr Ayoola, in response</p>
+      <p>Dr Ayoola was not persuaded. If companies watch their own former employees feed insider knowledge to regulators, she argued, they will not conclude that oversight is working. They will conclude that humans, generally, cannot be trusted with the process. The predictable response is not more caution but less, an accelerated push toward autonomous systems with fewer humans in the loop. The fix, in her reading, could produce exactly the outcome it was meant to prevent.</p>
+    </div>
+  </section>
+
+  <section class="item">
+    <h2>Is the fear itself the product?</h2>
