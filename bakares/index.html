@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meet the Bakares — The Group Chat Series</title>
+<meta name="description" content="A Nigerian family drama told entirely inside one group chat. 12 episodes. Created by Dr. Olusola Sayeed Ayoola, Founder &amp; CEO of RAIN.">
+<!-- Link preview (WhatsApp, Facebook, LinkedIn, X). If you host this somewhere other than
+     study.rainigeria.com/bakares/, change SITE below in the three places it appears. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Meet the Bakares">
+<meta property="og:title" content="Meet the Bakares — The Group Chat Series">
+<meta property="og:description" content="A Nigerian family drama told entirely inside one group chat. By Dr. Olusola Sayeed Ayoola, Founder &amp; CEO of RAIN.">
+<meta property="og:url" content="https://study.rainigeria.com/bakares/">
+<meta property="og:image" content="https://study.rainigeria.com/bakares/share.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Meet the Bakares — a group chat series by Dr. Olusola Sayeed Ayoola">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meet the Bakares — The Group Chat Series">
+<meta name="twitter:description" content="A Nigerian family drama told entirely inside one group chat.">
+<meta name="twitter:image" content="https://study.rainigeria.com/bakares/share.jpg">
+<meta name="theme-color" content="#FFCE3D">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%AC%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--danfo:#FFCE3D;--ink:#1A1A2E;--tomato:#E8452C;--palm:#0E7C66;--mine:#FFF1B0;--wall:#EFE8D8;--card:#fff;--text:#1A1A2E;--soft:#6B6B7E;
+  --f:"Bricolage Grotesque","Arial Black",system-ui,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--danfo);color:var(--ink);font:16px/1.5 var(--f);-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:3px solid var(--tomato);outline-offset:3px;border-radius:8px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);border-radius:999px;padding:10px 18px;font-weight:700;background:var(--ink);color:var(--danfo);box-shadow:4px 4px 0 var(--ink);text-decoration:none;transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.btn.alt{background:#fff;color:var(--ink)}
+.btn.sm{padding:7px 13px;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+
+/* HOME */
+#home{max-width:1120px;margin:0 auto;padding:36px 22px 70px}
+.brand{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand b{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.brand b span{background:var(--ink);color:var(--danfo);border-radius:8px;padding:2px 8px;margin-left:4px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:end;margin:40px 0 34px}
+.hero h1{font-size:clamp(3rem,8.5vw,6.6rem);line-height:.86;letter-spacing:-.045em;margin:0;font-weight:800}
+.hero p{font-size:1.25rem;font-weight:600;max-width:34ch;margin:18px 0 0;line-height:1.35}
+.credit{background:var(--ink);color:#fff;border-radius:18px;padding:16px 18px;transform:rotate(1.5deg)}
+.credit small{opacity:.8}.credit b{display:block;color:var(--danfo);font-size:1.2rem}
+.eps{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.ep{position:relative;text-align:left;border:2px solid var(--ink);border-radius:22px;background:#fff;padding:18px;box-shadow:5px 5px 0 var(--ink);display:flex;flex-direction:column;gap:6px;min-height:190px}
+.ep:nth-child(3n+1){background:#FFF6D6}.ep:nth-child(3n+2){background:#E8F5EF}.ep:nth-child(3n){background:#FFE6E0}
+.ep:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.ep .no{font-weight:800;color:var(--tomato);font-size:.95rem}
+.ep h3{margin:0;font-size:1.35rem;line-height:1.1;letter-spacing:-.02em}
+.ep p{margin:0;font-size:.92rem;color:#3E3E52;line-height:1.4}
+.ep .foot{margin-top:auto;display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:var(--soft)}
+.ep .seen{color:var(--palm)}
+.note{margin-top:40px;font-size:.9rem;color:#3E3E52;max-width:70ch}
+
+/* PLAYER */
+#player{position:fixed;inset:0;display:none;background:var(--ink);z-index:10;height:100%}
+#player.on{display:grid;grid-template-rows:1fr auto;justify-items:center}
+.stage{width:100%;height:100%;display:grid;place-items:center;padding:14px 10px 6px;min-height:0}
+.phone{width:min(420px,100%);height:100%;max-height:860px;background:var(--wall);border-radius:34px;border:3px solid #000;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 0 0 6px #2A2A40}
+.chead{background:var(--ink);color:#fff;display:flex;align-items:center;gap:10px;padding:12px 14px}
+.chead .x{background:none;border:0;color:#fff;font-size:22px;width:34px;height:34px}
+.chead .av{width:38px;height:38px;border-radius:50%;background:var(--danfo);display:grid;place-items:center;font-size:19px}
+.chead .nm{flex:1;min-width:0}
+.chead .nm b{display:block;font-size:15px}
+.chead .nm small{display:block;font-size:12px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chead .nm small.typing{color:var(--danfo);opacity:1}
+.feed{flex:1;overflow-y:auto;padding:12px 10px 18px;display:flex;flex-direction:column;gap:6px;
+  background-image:radial-gradient(rgba(26,26,46,.07) 1.5px,transparent 1.6px);background-size:18px 18px}
+.row{display:flex;flex-direction:column;align-items:flex-start;animation:pop .28s ease-out}
+.row.me{align-items:flex-end}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.row{animation:none}}
+.b{max-width:82%;background:var(--card);border-radius:4px 16px 16px 16px;padding:7px 11px 7px;font-size:15px;line-height:1.38;box-shadow:0 1px 0 rgba(0,0,0,.08);overflow-wrap:anywhere}
+.me .b{background:var(--mine);border-radius:16px 4px 16px 16px}
+.b .who{display:block;font-size:12.5px;font-weight:800;margin-bottom:1px}
+.b .fw{display:block;font-size:12px;color:var(--soft);font-style:italic;margin-bottom:2px}
+.b .tm{display:block;text-align:right;font-size:10.5px;color:var(--soft);margin-top:2px}
+.b.ai{background:linear-gradient(#fff,#fff) padding-box,linear-gradient(120deg,#0E7C66,#7B2CBF,#E8452C) border-box;border:2px solid transparent}
+.b.del{color:var(--soft);font-style:italic}
+.sys{align-self:center;background:rgba(26,26,46,.78);color:#fff;font-size:12.5px;border-radius:10px;padding:5px 11px;margin:4px 0;text-align:center;animation:pop .28s}
+.day{align-self:center;background:#fff;color:var(--ink);font-weight:700;font-size:12.5px;border-radius:10px;padding:5px 12px;margin:8px 0 4px;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.sys.end{background:var(--tomato);font-weight:800;font-size:14px;padding:8px 16px}
+.photo{width:250px;max-width:100%;border-radius:12px;height:150px;display:grid;place-items:center;font-size:54px;margin:3px 0 5px;border:1px solid rgba(0,0,0,.06)}
+.cap{font-size:14.5px}
+.vn{display:flex;align-items:center;gap:9px;min-width:220px}
+.vn .pl{width:34px;height:34px;border-radius:50%;background:var(--palm);color:#fff;display:grid;place-items:center;font-size:13px;flex:none}
+.wave{flex:1;display:flex;align-items:center;gap:2px;height:28px}
+.wave i{flex:1;background:#B9B4A6;border-radius:2px}
+.vn.play .wave i{background:var(--palm);animation:wv .8s ease-in-out infinite}
+@keyframes wv{50%{transform:scaleY(.4)}}
+.vn .len{font-size:11.5px;color:var(--soft);flex:none}
+.sub{display:block;margin-top:6px;font-size:14px;color:#2E2E42;border-top:1px dashed #DDD7C8;padding-top:5px}
+.sub::before{content:"🔊 ";font-size:12px}
+.poll{align-self:stretch;background:#fff;border:2px solid var(--ink);border-radius:16px;padding:12px;margin:6px 4px;box-shadow:4px 4px 0 var(--ink)}
+.poll b{display:block;margin-bottom:8px}
+.poll button{display:block;width:100%;text-align:left;border:1.5px solid var(--ink);background:#FFFBEA;border-radius:10px;padding:9px 11px;margin-top:6px;font-weight:600}
+.poll button.pick{background:var(--danfo)}
+.poll small{display:block;margin-top:8px;color:var(--soft)}
+/* overlays */
+.card{position:absolute;inset:0;background:var(--danfo);display:none;flex-direction:column;justify-content:center;padding:30px;z-index:3;text-align:left}
+.card.on{display:flex}
+.card .k{font-weight:800;color:var(--tomato)}
+.card h2{font-size:2.6rem;line-height:.95;letter-spacing:-.04em;margin:8px 0 12px}
+.card p{margin:0 0 10px;font-weight:600}
+.card .by{margin-top:18px;background:var(--ink);color:#fff;border-radius:14px;padding:12px 14px;font-size:.92rem}
+.card .by b{color:var(--danfo)}
+.card .talk{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:14px;margin:12px 0 16px;box-shadow:4px 4px 0 var(--ink);font-weight:600}
+.card .acts{display:flex;gap:10px;flex-wrap:wrap}
+/* controls */
+.ctl{width:min(420px,100%);display:flex;gap:8px;align-items:center;padding:8px 10px 12px;color:#fff}
+.ctl button{background:#2A2A40;border:0;border-radius:12px;height:42px;min-width:44px;padding:0 12px;color:#fff;font-weight:800}
+.ctl button[aria-pressed="true"]{background:var(--danfo);color:var(--ink)}
+.bar{flex:1;height:6px;background:#2A2A40;border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--danfo);transition:width .25s}
+@media (max-width:760px){.hero{grid-template-columns:1fr}.credit{transform:none}.stage{padding:0}.phone{border-radius:0;border:0;box-shadow:none;max-height:none}}
+</style>
+</head>
+<body>
+<main id="home">
+  <div class="brand"><b>the <span>Bakares</span></b><button class="btn sm" id="cont">Start Episode 1</button></div>
+  <section class="hero">
+    <div>
+      <h1>Meet the Bakares</h1>
+      <p>A family drama told entirely inside one group chat. No narrator. No cameras. Just the family — typing.</p>
+    </div>
+    <div class="credit"><small>A group chat series created by</small><b>Dr. Olusola Sayeed Ayoola</b><small>Founder &amp; CEO, Robotics and Artificial Intelligence Nigeria (RAIN)</small></div>
+  </section>
+  <div class="eps" id="eps"></div>
+  <p class="note">Watching from Jennifer’s phone. Plays slowly by default (0.25×) — tap the speed button for 0.5×, 1×, 1.5× or 2×. Tap 🔊 for message sounds and spoken voice notes. Space pauses, → skips ahead.</p>
+</main>
+
+<div id="player" role="dialog" aria-label="Episode player">
+  <div class="stage"><div class="phone">
+    <div class="chead">
+      <button class="x" id="back" aria-label="Back to episodes">‹</button>
+      <div class="av">🏠</div>
+      <div class="nm"><b>BAKARES HQ</b><small id="members"></small></div>
+    </div>
+    <div class="feed" id="feed" aria-live="polite"></div>
+    <div class="card" id="title"></div>
+    <div class="card" id="end"></div>
+  </div></div>
+  <div class="ctl">
+    <button id="pp" aria-label="Pause">❚❚</button>
+    <button id="spd" aria-label="Playback speed">0.25×</button>
+    <div class="bar"><i id="prog"></i></div>
+    <button id="snd" aria-pressed="false" aria-label="Sound">🔊</button>
+    <button id="skip" aria-label="Skip ahead">»</button>
+  </div>
+</div>
+
+<script>
+const M=(f,m)=>({f,m}), F=(f,m)=>({f,m,fw:1}), V=(f,s,m)=>({f,vn:s,m}), P=(f,e,c,bg)=>({f,img:e,cap:c,bg}), VID=(f,e,c,s)=>({f,vid:e,cap:c,len:s}),
+      D=v=>({day:v}), S=v=>({sys:v}), T=f=>({ghost:f}), X=f=>({del:f}), Q=(q,o)=>({poll:q,o}), W=v=>({wait:v});
+const EPISODES=[
+{n:1,title:"Bakares HQ",logline:"A rumour at 6:14 a.m. A father who refuses to lose. And a machine that settles it.",
+ talk:"How can our family check whether something is true before we forward it?",
+ s:[D("Thursday"),S("6:14 AM"),
+ F("Uncle Kunle","BREAKING!!! Government to increase import duty on building materials by 40% from next week. Forward to everybody you love!!! 🙏🏾🙏🏾"),
+ M("Daddy","Kunle this is false. Where is your source?"),
+ M("Uncle Kunle","Brother Bayo my source is reliable. My friend’s cousin works at customs."),
+ M("Daddy","Your friend’s cousin also said the world would end in 2012. We are still here."),
+ M("Uncle Kunle","😂😂 Ok when prices increase next week don’t come and cry to me"),
+ P("Grandma","🌻","HAVE A BLESSED TUESDAY","#FFE27A"),
+ M("Jennifer","Grandma it’s Thursday 😭"),
+ M("Grandma","Every day is a blessing my child"),
+ M("Daddy","Stella your brother is spreading false news again"),
+ M("Mummy","I’m standing in the kitchen Bayo. You can talk to me."),
+ M("Mummy","And is it false? Prove it."),
+ T("Daddy"),
+ M("Jennifer","Daddy just ask Meta AI. Type @Meta AI in the group"),
+ M("Daddy","In the group?? In front of Kunle??"),
+ M("Jennifer","Yes Daddy. In front of Kunle."),
+ P("Michael","👓👓","Daddy is wearing TWO glasses to type one message 😂 #evidence","#DDE7FF"),
+ M("Daddy","@Meta AI is the Federal Government increasing import duty on building materials by 40% next week? Please answer with facts."),
+ M("Meta AI","There is no official announcement of any such increase. Tariff changes are published by the proper agencies with dates and references. No named source, urgent language and “forward to everybody you love” are the usual pattern of a rumour."),
+ M("Uncle Kunle","Hmm."),
+ M("Uncle Kunle","Ok."),
+ M("Uncle Kunle","I said my friend’s cousin. I didn’t say confirmed."),
+ M("Daddy","😂😂😂😂😂😂😂"),
+ M("Jennifer","DADDY USED AN EMOJI 😭😭😭 SCREENSHOT"),
+ M("Grandma","Who is Meta? Is he a pastor?"),
+ D("Later"),S("7:40 PM · NEPA took light"),
+ V("Michael",4,"Big Mummy! I’m starting the gen!"),
+ P("Michael","📦🏍️","My pothole detector on the bike. It feels every jolt and saves the location.","#FFD8C7"),
+ M("Michael","Rode round Ring Road today. 41 potholes mapped. The big ones only 😅"),
+ M("Mummy","And what will you do with 41 potholes?"),
+ M("Michael","Somebody should want this. Government. The road people. Somebody."),
+ M("Daddy","Somebody should want it. But who have you told?"),
+ T("Michael"),
+ M("Daddy","Michael?"),
+ S("Michael is offline")]},
+{n:2,title:"Providence Brought Me Here",logline:"Matriculation day at UI. Two thousand freshers. One sentence written on a hand in biro.",
+ talk:"What does it mean to use AI as a study partner — not a teacher, not a ghost-writer?",
+ s:[D("Matriculation day"),
+ P("Daddy","🎓🏛️","My daughter at the University of Ibadan! First and best!","#FFE9A8"),
+ P("Daddy","🎓🌳","Under the tree","#E2F4D8"),
+ P("Daddy","🎓🚙","Beside the car","#E8E3FF"),
+ M("Jennifer","Daddy that is not our car"),
+ M("Daddy","It is a good car. The photo is for the car."),
+ M("Grandma","GLORY BE TO GOD!!! My granddaughter is a scholar 🙌🏾🙌🏾"),
+ M("Uncle Kunle","Congrats Jenny! Now remember to use ChatGPT for all your assignments 😎"),
+ M("Mummy","Kunle."),
+ M("Uncle Kunle","I’m joking o"),
+ V("Jennifer",28,"Guys the guest lecturer was on FIRE. He made two thousand of us say “Providence brought me here.” Then he said — providence brought you here, but only diligence will keep you here. And excellence will take you there."),
+ P("Jennifer","✍🏾","I wrote this on my hand because my notebook was under my seat","#FFF1D6"),
+ M("Michael","“Locked-up brilliance helps nobody.” Hmm. That’s hard."),
+ M("Jennifer","And he said AI is an amplifier. If you show it hard work it amplifies hard work. If you show it laziness it amplifies laziness."),
+ M("Uncle Kunle","So I can’t use ChatGPT? 😂"),
+ M("Jennifer","He said use it like a study partner. Discuss before class, debrief after. Then CLOSE it and write what you think."),
+ M("Mummy","That is wisdom."),
+ M("Mummy","Jennifer. You did this. Not us. You. Remember that when it gets hard."),
+ M("Jennifer","It won’t get hard Mummy 😌"),
+ T("Mummy"),
+ M("Michael","So are you going to use ChatGPT for your assignments?"),
+ M("Jennifer","I’m going to use it properly."),
+ M("Michael","What does properly mean?"),
+ T("Jennifer"),
+ S("Jennifer is offline")]},
+{n:3,title:"The Widow's File",logline:"A woman on a bench for six hours. A file asleep for eight months. And the word that changes Stella.",
+ talk:"The widow had every document and still waited 22 months. What went wrong — the people, or the system?",
+ s:[D("Monday"),S("2:04 PM"),
+ V("Mummy",22,"There’s a woman on the bench outside my office. She has been sitting there since eight this morning. In black. Holding a folder like it will fly away. Let me go and see what is wrong."),
+ M("Daddy","Ok. Don’t forget lunch"),
+ S("3:40 PM"),
+ V("Mummy",31,"Her husband was a teacher for twenty-six years. He died twenty-two months ago. She has EVERY document. Death certificate, affidavit, newspaper notice — she paid for it herself. Twenty-two months and not one naira. They keep telling her the file is moving."),
+ M("Jennifer","22 MONTHS??"),
+ M("Uncle Kunle","Na so e be for this country"),
+ M("Grandma","God will fight for that widow"),
+ S("4:50 PM"),
+ P("Mummy","🧴📁","Found the file. Bottom drawer. Officer transferred 8 months ago. It was under a bottle of hand cream.","#F3E6D6"),
+ M("Michael","Under HAND CREAM?? 💀"),
+ M("Mummy","It wasn’t moving. It was sleeping."),
+ M("Daddy","Stella. Take it to the Permanent Secretary yourself."),
+ V("Mummy",19,"Accounts officer is now telling me “logistics.” Bayo, I know what logistics means in that tone. I have told him if it is not on the payment schedule by Friday, I walk it to the Perm Sec and tell him where I found it."),
+ M("Jennifer","Mummy is in her villain era for good 😤"),
+ M("Daddy","That’s my wife 💪🏾"),
+ D("Night"),S("7:40 PM · NEPA took light"),
+ M("Mummy","@Meta AI how do other countries make sure government files are never lost?"),
+ M("Meta AI","Many countries use digital records with audit trails: every file movement is logged with who handled it and when. Citizens track claims with a reference number. Agencies share one database, so nothing depends on one drawer or one person."),
+ M("Mummy","Every movement leaves a fingerprint."),
+ M("Daddy","Stella you’re typing like a professor. Come to bed"),
+ M("Mummy","Systems."),
+ M("Jennifer","?"),
+ M("Mummy","Nothing. Goodnight my loves.")]},
+{n:4,title:"The Pothole Hunter",logline:"Six hundred potholes. A viral post. A handshake with the Governor. Then silence.",
+ talk:"“A headline is not a customer.” What is the difference between people admiring your work and people paying for it?",
+ s:[P("Michael","🗺️🔴","612 potholes in Ibadan. Every red dot is one. Challenge alone has 38.","#FFE0E0"),
+ M("Michael","A keke fell into the one at Felele on Tuesday. The man broke his arm."),
+ M("Mummy","The government should have this."),
+ M("Jennifer","Posting it 🔥"),
+ S("Next morning"),
+ M("Jennifer","190,000 VIEWS 😭😭😭 MICHAEL YOU’RE TRENDING"),
+ F("Uncle Kunle","Poly Student Maps Ibadan’s Potholes With Homemade Device"),
+ M("Grandma","A television person called the house phone. I told them to hold on while I found my glasses. Did they wait?"),
+ M("Michael","Grandma they waited 12 minutes 😂"),
+ D("Wednesday"),
+ P("Michael","🤝🏾🏛️","Me and the Governor!!!","#FFE9A8"),
+ M("Grandma","GLORY BE TO GOD!!!! My grandson with the Governor!!! I am forwarding to everybody!!! 🙌🏾🙌🏾🙌🏾"),
+ M("Uncle Kunle","Proud of you my guy. Now make sure they pay you o"),
+ M("Daddy","Well done son. What is the next step?"),
+ M("Michael","He said his people will get in touch 🙏🏾"),
+ D("Two weeks later"),
+ M("Daddy","Any news from the Governor’s office?"),
+ M("Michael","Called 6 times. Meeting. Retreat. Meeting."),
+ D("Four weeks later"),
+ T("Michael"),
+ P("Michael","📰","Page 9.","#EDEDED"),
+ M("Michael","Road condition survey contract. Awarded to a foreign consultancy. For more than Daddy’s business makes in 2 years."),
+ M("Jennifer","NO. 😡"),
+ M("Uncle Kunle","Na wa"),
+ S("Michael left"),
+ M("Daddy","Stella…"),
+ M("Mummy","I’m going to his room."),
+ S("Mummy added Michael"),
+ M("Mummy","A headline is not a customer. A handshake is not a contract. They won because somebody tested them before. Nobody has tested you yet."),
+ M("Michael","Nobody LET me test anything."),
+ M("Mummy","Exactly. So the next question is not who have you told. It is where can you prove it."),
+ T("Michael"),
+ M("Michael","Ok."),
+ M("Grandma","I have deleted the Governor picture from my status. He should come and ask me why.")]},
+{n:5,title:"Forty Minutes",logline:"Three years of bank statements. One laptop. A pattern nobody wanted to see.",
+ talk:"The machine found the pattern, but Bayo had to decide what to do. Which decisions must always stay with a human?",
+ s:[D("Saturday"),
+ P("Jennifer","📚🧾💻","Daddy’s entire business on the dining table 😭","#FFF1D6"),
+ M("Daddy","Why is this column shouting at me?"),
+ M("Jennifer","It’s hash signs Daddy. The column is too narrow"),
+ M("Daddy","Then why doesn’t it say too narrow. Why does it make noise like a madman"),
+ M("Michael","😂😂😂"),
+ M("Jennifer","Ok. Mr Adeniran’s ledger in one sheet. Bank statements in the other. Asking the AI to compare three years."),
+ M("Daddy","It will take the whole weekend."),
+ S("11 minutes later"),
+ T("Jennifer"),
+ M("Jennifer","Daddy come and look at this"),
+ P("Jennifer","📊","Small payments every month for 36 months. ₦35k, ₦42k, ₦48k. All to “Olumide Ventures — haulage”.","#E0ECFF"),
+ M("Daddy","We don’t use Olumide Ventures. We have our own lorries."),
+ S("40 minutes after we started"),
+ M("Jennifer","Daddy the total… it’s a car. It’s the warehouse roof."),
+ T("Daddy"),
+ S("Daddy removed Uncle Kunle"),
+ S("Daddy removed Grandma"),
+ M("Mummy","Bayo why did you remove them"),
+ V("Daddy",24,"Because this is not for everybody. Eleven years, Stella. Adeniran drove through a flood to bring me a cheque. I’m asking him to come to the house on Monday. I don’t want advice from twenty people. I want to think."),
+ M("Mummy","The machine found the pattern. It can’t tell you what to do. That is still your job."),
+ D("Monday night"),
+ V("Daddy",33,"He didn’t deny it. His daughter. Kidney. Dialysis, then a transplant in India. He said every month, next month I will pay it back. I told him — you were ashamed to ask, but not ashamed to take."),
+ M("Michael","So what are you going to do Daddy?"),
+ M("Daddy","He leaves the company. He signs for every naira. He repays in instalments. My lawyer holds the paper. No police if the instalments come."),
+ M("Jennifer","That’s… actually fair"),
+ M("Daddy","Justice without mercy is only arithmetic."),
+ M("Daddy","But from today no more exercise books. My business will not run blind again."),
+ S("Daddy added Uncle Kunle"),
+ S("Daddy added Grandma"),
+ M("Uncle Kunle","WHY WAS I REMOVED?? What did I miss??"),
+ M("Grandma","I was praying and I was removed. Is this how you treat your mother-in-law?"),
+ M("Daddy","Mama you were removed for your own peace. Kunle you were removed for everybody’s peace."),
+ M("Jennifer","💀💀💀")]},
+{n:6,title:"Exam Night, No Light",logline:"The grid collapses the night before Jennifer’s first exam. Big Mummy is empty. The network is gone.",
+ talk:"Which subjects do you truly know — and which do you only know how to look up?",
+ s:[D("Thursday"),S("6:52 PM"),
+ F("Uncle Kunle","National grid collapses again. Nationwide blackout."),
+ M("Uncle Kunle","This one is not a rumour. I checked 😤"),
+ M("Grandma","Kunle is growing"),
+ V("Michael",6,"Big Mummy is not starting. No diesel. NO DIESEL."),
+ M("Mummy","There was diesel on Monday"),
+ M("Michael","Mummy on Monday Daddy ran her for nine hours for the match"),
+ M("Daddy","This is not the time to discuss the match"),
+ M("Jennifer","Guys my exam is 9am tomorrow. Laptop 11%. Phone 23%. 😭"),
+ V("Daddy",14,"I’m going to the filling station. Two jerrycans. Don’t worry my daughter, your father will bring light."),
+ M("Jennifer","The network is going too"),
+ M("Jennifer","hello?"),
+ X("Jennifer"),
+ S("Waiting for network…"),
+ P("Michael","☀️🔋🧵","Old solar panel from the roof + Daddy’s Peugeot battery + a charge controller + the clothes line.","#FFF6CC"),
+ M("Mummy","Michael if you electrocute yourself the night before your sister’s exam I will kill you"),
+ M("Michael","It’s only 12 volts Mummy"),
+ M("Mummy","Whose clothes line is that?"),
+ M("Michael","…Nobody’s, now."),
+ S("9:34 PM"),
+ P("Jennifer","💡⚡","IT’S CHARGING!!! MICHAEL YOU’RE A GENIUS","#E2F4D8"),
+ M("Michael","I’m a mech student with a car battery. Not the same thing 😎"),
+ M("Jennifer","No network so I’m reading the actual textbook"),
+ M("Jennifer","Guys some of these pages are strangers. I asked AI to summarise them and never actually met them."),
+ M("Mummy","Now you know the difference between knowing where the answer is and knowing the answer."),
+ V("Daddy",18,"Still in the queue. A man just tried to sell me his place for five thousand naira. I said my brother, I have my own suffering to enjoy."),
+ V("Grandma",26,"In our time we read by lantern. My father used to say, the lantern is not your problem, your head is your problem. If your head is empty, a thousand bulbs cannot fill it."),
+ M("Mummy","Mama in your time there were not two hundred million people waiting for one grid"),
+ M("Grandma","That is why you must stop waiting for the grid."),
+ T("Michael"),
+ P("Michael","📝","Every blackout is a specification for a product.","#FFFFFF"),
+ S("5:17 AM · Light came back. Everybody was asleep.")]},
+{n:7,title:"The Squeeze",logline:"A council that does not exist. A budget due Friday. An envelope on the desk.",
+ talk:"Have you ever been pressured to lower a standard? Was it time, money, or scope?",
+ s:[D("Tuesday"),
+ M("Mummy","They made me chair of the Budget Review Committee 🙏🏾"),
+ M("Daddy","Congratulations my wife!"),
+ M("Mummy","My predecessor said it’s the most dangerous chair in the building."),
+ M("Uncle Kunle","Why dangerous?"),
+ M("Mummy","Because the budget is the only document in the building that turns paper into money."),
+ D("Thursday"),
+ V("Mummy",20,"There is a line here. State Council for Digital Integration. Big money. I asked which law created it. Nobody knows. Nobody knows where the office is."),
+ D("Four days later"),
+ P("Mummy","🏢❓","Their address is the third floor. This building has two floors.","#E6E6F2"),
+ M("Michael","A GHOST AGENCY 👻"),
+ M("Jennifer","Like ghost workers but grown up??"),
+ M("Mummy","Exactly that. Paper vouched for paper. Nobody asked."),
+ D("Wednesday"),
+ M("Mummy","Perm Sec says approve it. Budget must go by Friday. Review the issue next cycle."),
+ M("Mummy","Today someone left a white envelope under my file."),
+ M("Grandma","Did you open it??"),
+ M("Mummy","No Mama. Sealed it in front of a witness and sent it back. “Wrong office.”"),
+ M("Mummy","Now they have added three extra tasks. All by Friday. So I won’t have time to ask questions."),
+ M("Michael","Time. Money. Scope. They’re squeezing you from three sides."),
+ Q("If you were Stella, what would you do?",["Sign — it’s not worth my job","Refuse — and finish all the real work","Sign, then report it quietly"]),
+ V("Daddy",27,"Stella. When a building falls down in this country everybody asks, where was the engineer? Nobody asks where his boss was or his friend who said just sign it. The bridge does not ask whether you were in a hurry. It only asks whether you built it right."),
+ M("Mummy","Bayo that’s very profound. Where did you get it"),
+ M("Daddy","Jennifer sent it to this group last month 😅 Some engineers’ conference. It is still true."),
+ D("Friday"),
+ P("Mummy","🖊️🟥","Report submitted on time. Every line done. One line struck through in red: “Which law created this council?”","#FFE3DE"),
+ M("Jennifer","MUMMY 😭🔥🔥🔥"),
+ M("Uncle Kunle","My sister!!! 💪🏾"),
+ D("End of the month"),
+ P("Mummy","✉️","Transfer letter. Department of Records and Archives. The basement.","#EDEDED"),
+ M("Daddy","They are punishing you"),
+ V("Mummy",21,"Baba Lamidi welcomed me with tea. He said, they sent you here to hide you. But this is where all the files are. If you want to know where the bodies are buried in any government, you come to the archive."),
+ M("Mummy","😊")]},
+{n:8,title:"Nowhere to Test",logline:"“Test it first.” But nobody will let him. Then Michael walks through a gate in Iyaganku.",
+ talk:"Pick one problem in your area. What would a solution built for our conditions look like?",
+ s:[M("Michael","New version. FeederWatch. Clamps on a transformer, listens to heat and load, warns BEFORE it blows. Stores data when there’s no network, sends later."),
+ M("Michael","Distribution company said: test it first."),
+ M("Daddy","Good. So test it"),
+ M("Michael","They won’t let me put it on their transformer! Prove it in the real world, stay out of the real world. How??"),
+ V("Michael",16,"Universities teach you how. Companies buy things that are already finished. In between there is nothing. Nothing!"),
+ M("Mummy","Do you remember the place Jennifer mentioned? On Oba Adesida Road?"),
+ D("Friday"),
+ P("Michael","🚁🤖🖨️","I’m inside RAIN. Drones on the shelves. 3D printers. A six-legged robot. I can’t breathe","#E0F2EC"),
+ P("Michael","🎤🪑","Friday seminar. A trainee presenting to 40 people","#FFF1D6"),
+ V("Michael",34,"The lab lead said I’m standing in the valley of death. One to three is research, eight to nine is finished products. Nigeria funds one to three and buys eight to nine. Four to seven — where you test — is empty. That’s where good ideas die."),
+ P("Michael","🔌🖥️","Hardware in the loop. Real controller, simulated grid. It can fail a thousand times before it touches a live transformer.","#E6E6F2"),
+ M("Michael","Then shadow mode. My device runs beside the real system. Nobody acts on it. Just compare. If I’m right for months — proof."),
+ M("Jennifer","That’s actually genius"),
+ M("Michael","She said our constraints are not a disadvantage. They’re a design brief. If it survives Nigeria it survives anywhere."),
+ M("Michael","They have a 12-month Robot Development & Automation programme. 70% building. I want to go."),
+ T("Daddy"),
+ M("Daddy","How much"),
+ M("Michael","₦7.7m. In instalments"),
+ T("Daddy"),
+ M("Daddy","Seven point seven million."),
+ M("Grandma","Bayo breathe"),
+ M("Daddy","I paid for a Polytechnic. Where is the Polytechnic lab?"),
+ M("Michael","One oscilloscope. Broken since second year."),
+ M("Jennifer","Daddy just go and see it. Before you decide."),
+ D("Saturday"),
+ P("Daddy","🚁🪙","A boy landed a drone on a coin. A COIN.","#FFE9A8"),
+ V("Daddy",22,"Michael is going. And I met a young man called Tolu. He finished there. He builds systems for businesses. He is coming to my warehouse on Monday."),
+ M("Mummy","Bayo you went to look at a school for your son and came back with a consultant for yourself?"),
+ M("Daddy","I am a businessman Stella. I saw a pattern.")]},
+{n:9,title:"The Amplifier",logline:"A term paper due Monday. Forty seconds with an AI. Five references that never existed.",
+ talk:"Why is confidence not the same as correctness — in machines and in people?",
+ s:[D("Friday night"),
+ M("Jennifer","3,000 words due Monday. I have written 0. 😩"),
+ M("Michael","Study partner. Not ghost-writer 👀"),
+ M("Jennifer","Mind your business"),
+ T("Jennifer"),
+ S("11:58 PM"),
+ M("Jennifer","Done ✅😌"),
+ M("Mummy","Already? That was fast"),
+ T("Jennifer"),
+ D("Two weeks later"),
+ M("Mummy","Jennifer, you haven’t said anything all day. Are you ok?"),
+ T("Jennifer"),
+ T("Jennifer"),
+ V("Jennifer",38,"Dr Okonkwo called me. I let the AI write my paper. I changed some words. I didn’t check the references. Five of them don’t exist. It invented them. She’s on the editorial board of the journal. It never published volume fourteen."),
+ S("Jennifer left"),
+ M("Daddy","Stella add her back"),
+ S("Mummy added Jennifer"),
+ M("Mummy","You don’t leave this family because you made a mistake. Talk to us."),
+ M("Jennifer","I told her the truth. First time she asked. It was my fault, not the machine’s."),
+ M("Jennifer","The paper is still zero. But she won’t send it to the panel. I have to rewrite it myself and defend it in her office. No laptop. No phone."),
+ M("Grandma","Truth is a strong medicine. Bitter, but it heals"),
+ M("Daddy","Jennifer. I am prouder of that honesty than of any A."),
+ M("Uncle Kunle","Jenny I take back what I said about ChatGPT at matric 🙏🏾"),
+ V("Jennifer",19,"She said — use AI the way you would use a brilliant friend who sometimes lies. Discuss with it. Argue with it. Then check if it was telling the truth. Last time I gave it my tiredness and it amplified that beautifully."),
+ D("Three weeks later"),
+ P("Jennifer","📚🏛️","Library. Real books. The AI suggested 4 sources that don’t exist again 😂 I caught all 4","#FFF1D6"),
+ V("Jennifer",12,"Daddy thank you for the interview at Dugbe. Please it was a two-minute question."),
+ M("Daddy","Will I be quoted in a journal?"),
+ D("Tuesday"),
+ P("Jennifer","🟢✍🏾","Presented for 40 minutes. She interrupted 9 times. I answered every one. Then she wrote this on the front page:","#E2F4D8"),
+ M("Jennifer","“This is the student I admitted.”"),
+ M("Mummy","😭❤️"),
+ M("Michael","Locked-up brilliance…"),
+ M("Jennifer","…helps nobody 😌")]},
+{n:10,title:"Digitise Everything",logline:"A consultant in the family group. A robot that sells cement at midnight. And one very expensive mistake.",
+ talk:"The robot gave away 15%. Who was responsible — the machine, Tolu, or Bayo?",
+ s:[S("Daddy added Tolu"),
+ M("Tolu","Good morning sir, ma, everyone 🙏🏾"),
+ M("Grandma","Welcome my son. Are you married?"),
+ M("Mummy","Mama!!"),
+ P("Daddy","📱✅","Scanned the QR on his RAIN certificate. VERIFIED. I have been cheated once.","#E0F2EC"),
+ M("Tolu","Very wise sir 😅"),
+ D("Week 1"),
+ M("Daddy","Tolu you have been here five days and you have not done any computer"),
+ M("Tolu","Sir, if I digitise a bad process I just make the bad process run faster. First I understand what you actually do."),
+ D("Week 2"),
+ P("Tolu","📲🧾","Exercise books retired. Every sale on the tablet now.","#FFF1D6"),
+ V("Daddy",15,"Mama Sikira hated the tablet for four days. Today it warned her we were running out of roofing sheets before she noticed. Now she calls it my small boy."),
+ D("Week 4"),
+ P("Daddy","📈🏗️","Dashboard. We sell the most cement in MARCH. I have known it for 22 years but I never SAW it.","#E0ECFF"),
+ M("Daddy","So why have I been buying cement in April??"),
+ D("Week 5 · Sunday"),S("11:14 PM"),
+ P("Tolu","🤖💬","Sir, the assistant just sold 200 bags + 40 bundles to a contractor in Osogbo. Deposit paid.","#E2F4D8"),
+ D("Monday morning"),
+ M("Daddy","STELLA."),
+ M("Daddy","MY AI IS CLOSING DEALS AT MIDNIGHT WHILE I SLEEP"),
+ M("Mummy","You were snoring Bayo. I can confirm."),
+ M("Uncle Kunle","Brother Bayo is now tech bro 😂😂"),
+ M("Grandma","Is the robot a Christian?"),
+ D("Week 6"),
+ P("Daddy","😡💸","YOUR ROBOT GAVE A CUSTOMER 15% DISCOUNT","#FFE3DE"),
+ M("Tolu","My fault sir. I didn’t set a limit. Fixed — anything above 3% now comes to you or Mama Sikira first. And every week we review what it did."),
+ M("Daddy","Good. I have been cheated by a man. I will not now be cheated by a machine."),
+ M("Daddy","But I will honour the 15%. My word through a robot is still my word."),
+ D("Week 7"),
+ V("Daddy",29,"Yusuf and the boys asked if I will sack them. I said no. The machine counts, the machine writes receipts. So now you SELL. Visit contractors. Go to Osogbo. Handle the angry customers, because an angry man wants a person, not a machine."),
+ M("Tolu","That’s exactly it sir. Machine does the boring work. People do the human work."),
+ M("Daddy","Yusuf has asked for a tablet also 😂"),
+ D("Week 8"),
+ P("Jennifer","🎤👨🏾‍💼","Daddy lecturing 40 traders at Dugbe 😭","#FFE9A8"),
+ M("Jennifer","He started with “how many of you argued in a WhatsApp group this week?” EVERY HAND WENT UP"),
+ M("Uncle Kunle","Please tell me he did not tell the import duty story"),
+ M("Jennifer","He told the import duty story."),
+ M("Tolu","Sir, thank you for everything. I’ll leave the family group now so you can have your peace 😅"),
+ S("Tolu left"),
+ M("Grandma","He didn’t answer if he is married")]},
+{n:11,title:"The Sandbox",logline:"The ghost goes public. A red-ink note goes viral. And Stella has to walk out of the most important meeting of her life.",
+ talk:"Stella stepped away from the decision about her own son. Was that necessary? What would it have cost if she hadn’t?",
+ s:[F("Uncle Kunle","EXPOSED: The Ghost Council With An Office On A Floor That Doesn’t Exist"),
+ P("Uncle Kunle","🟥🧾","Look at the photo in the article. “Which law created this council?” 😳","#FFE3DE"),
+ M("Jennifer","THAT’S MUMMY’S HANDWRITING"),
+ M("Michael","It’s trending!!! #WhichLaw"),
+ M("Daddy","Stella you are famous"),
+ M("Mummy","I don’t want to be famous. I want it fixed."),
+ D("A week later"),
+ P("Mummy","✉️🏛️","Appointed to lead the Committee on Records Digitisation.","#E0F2EC"),
+ V("Mummy",36,"I told them: we don’t have a people problem, we have a systems problem. Not everybody is a suspect — most officers are honest and drowning in files. A heist needs only a few insiders and one unlocked door. Our door is analogue. I am here to close it."),
+ M("Mummy","Every file with a digital twin. Every movement logged. Widows track claims by reference number. A public register of agencies — with the law that created each one."),
+ M("Mummy","And a sandbox. So young engineers can prove their work on real data in shadow mode."),
+ T("Mummy"),
+ V("Mummy",25,"Then the RAIN adviser said the first candidate for a pilot is… FeederWatch. I had to declare an interest. I told them the engineer is my son. I left the room. An independent evaluator will judge it. If it’s good it passes without me."),
+ M("Michael","Mummy…"),
+ M("Mummy","We cannot build systems that make corruption impossible and then make an exception for my family."),
+ M("Daddy","That’s my wife."),
+ M("Grandma","That’s my daughter."),
+ D("Shadow test · Week 3"),
+ P("Michael","🌡️⚠️","FeederWatch says Transformer 2 on Challenge is overheating dangerously under evening load. Rules say nobody acts. We only record.","#FFF1D6"),
+ D("11 days later"),
+ F("Uncle Kunle","Challenge area: transformer blows, 600 homes in darkness"),
+ M("Michael","That was the one."),
+ M("Jennifer","😨"),
+ D("Week 7"),
+ M("Michael","Flagged another one. This time the evaluators asked permission to act. Crew found a failing connection. Fixed in one afternoon. Still running."),
+ D("Week 12"),
+ M("Mummy","The evaluators’ report came."),
+ M("Michael","And?"),
+ T("Mummy"),
+ M("Mummy","Come home early today. Some news is for face to face. ❤️")]},
+{n:12,title:"Around the Table",logline:"Sunday lunch. Jollof, efo riro, and a family that stopped waiting for somebody else.",
+ talk:"What is one problem in our community that our family could start working on — this month?",
+ s:[D("First Sunday of December"),
+ P("Mummy","🍛🥘🍗","Jollof. Efo riro. Plantain cut diagonally (Grandma’s law).","#FFE9A8"),
+ M("Grandma","Diagonal. It is not negotiable."),
+ M("Daddy","Big Mummy is fully fuelled and sleeping. Light is ON. God is good 🙌🏾"),
+ V("Daddy",30,"Mr Adeniran sent the eleventh instalment. His daughter is home from India. Walking. He thanked God and me, in that order. I don’t mind being second to God."),
+ M("Jennifer","All my first-year courses passed. And one A."),
+ M("Michael","From who?"),
+ M("Jennifer","Dr Okonkwo. Her first A in four years 😌"),
+ M("Uncle Kunle","JENNYYYYY 🔥🔥🔥"),
+ P("Michael","📄","Letter from the distribution company.","#E0F2EC"),
+ M("Michael","Supervised pilot. 200 transformers. A real contract. A real purchase order."),
+ M("Mummy","A headline is not a customer."),
+ M("Michael","This is a customer."),
+ P("Michael","🏅","Certified Robotics and Automation Developer.","#1A1A2E"),
+ P("Daddy","📱✅","I scanned the QR. VERIFIED. My son is on the register.","#E2F4D8"),
+ V("Daddy",7,"It’s the onions in the stew."),
+ M("Jennifer","Daddy there are no onions in efo riro 😭"),
+ M("Daddy","Then it is the pepper."),
+ D("Later"),
+ F("Mummy","Voice note from Mrs Oyelade, the widow from the bench:"),
+ V("Mummy",27,"Madam, my sister’s husband died in August. She got her money last week! She didn’t even come to the office, she did it on her phone. I told her there was a woman who carried my file with her own two hands. She said — but nobody carried my file. The system carried it."),
+ M("Mummy","That’s what I wanted. Not to be the woman who carries the file. To build the system that carries it."),
+ S("6:14 PM"),
+ F("Uncle Kunle","BREAKING!!! Government to ban all generators from January 1st!!! Forward to everybody you love!!! 🙏🏾🙏🏾🙏🏾"),
+ T("Daddy"),
+ M("Grandma","@Meta AI is this one true? Kunle is always forwarding."),
+ M("Meta AI","There is no official announcement of a generator ban. No source, urgent language, “forward to everybody you love” — the usual pattern of a rumour."),
+ M("Michael","GRANDMAAAAA 😭😭😭"),
+ M("Jennifer","I’m on the floor"),
+ M("Daddy","👏🏾👏🏾👏🏾👏🏾👏🏾 MY MOTHER-IN-LAW FOR PRESIDENT"),
+ M("Uncle Kunle","Mama you too??? 😭😭😭"),
+ M("Grandma","I am old, Kunle. I am not stupid. 🌸"),
+ W(1400),
+ M("Mummy","The problems haven’t gone away. But we’re not waiting for somebody else anymore."),
+ M("Michael","Every problem is a specification for a product."),
+ M("Jennifer","What you know and what you can build, nobody can take from you."),
+ M("Daddy","And you don’t need anybody’s permission to begin."),
+ M("Grandma","Begin on Monday morning. Amen."),
+ S("THE END")]}
+];
+
+const ME = 'Jennifer';
+const COLORS = {'Daddy':'#0E7C66','Mummy':'#C2185B','Uncle Kunle':'#7B2CBF','Grandma':'#E8452C','Michael':'#E65100','Jennifer':'#1565C0','Tolu':'#00838F','Meta AI':'#5E35B1'};
+const BASE = ['Daddy','Mummy','Jennifer','Michael','Grandma','Uncle Kunle'];
+const store = { get(k,d){try{const v=localStorage.getItem('bakares-chat:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}}, set(k,v){try{localStorage.setItem('bakares-chat:'+k,JSON.stringify(v))}catch(e){}} };
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const runtime = e => Math.max(2, Math.round(e.s.reduce((a,x)=>a+((x.m||x.cap||x.sys||x.day||'').length*.045+(x.vn?Math.min(x.vn,12):0)+1.6),0)/60));
+
+/* home */
+const seen = new Set(store.get('seen', []));
+function drawHome(){
+  const el = document.getElementById('eps'); el.innerHTML = '';
+  EPISODES.forEach(e => {
+    const b = document.createElement('button'); b.className = 'ep';
+    b.innerHTML = '<span class="no">Episode ' + e.n + '</span><h3>' + e.title + '</h3><p>' + e.logline + '</p><span class="foot"><span>' + runtime(e) + ' min</span><span class="seen">' + (seen.has(e.n) ? '✓ Watched' : '') + '</span></span>';
+    b.onclick = () => play(e.n); el.appendChild(b);
+  });
+  const next = EPISODES.find(e => !seen.has(e.n));
+  const c = document.getElementById('cont'); c.textContent = next ? (seen.size ? 'Continue: Episode ' + next.n : 'Start Episode 1') : 'Watch again';
+  c.onclick = () => play(next ? next.n : 1);
+}
+drawHome();
+
+/* player state */
+const feed = document.getElementById('feed'), membersEl = document.getElementById('members');
+const SPEEDS = [0.25, 0.5, 1, 1.5, 2];
+let ep = null, i = 0, timer = null, paused = false, speed = store.get('speed', 0.25), sound = store.get('sound', false), members = [], resolveWait = null, runId = 0;
+document.getElementById('snd').setAttribute('aria-pressed', sound);
+function setMembers(){ membersEl.classList.remove('typing'); membersEl.textContent = members.join(', '); }
+function typing(who){ membersEl.classList.add('typing'); membersEl.textContent = who + ' is typing…'; }
+function beep(){ if (!sound) return; try{ const a = beep.ctx || (beep.ctx = new (window.AudioContext||window.webkitAudioContext)()); const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; g.gain.setValueAtTime(.06, a.currentTime); g.gain.exponentialRampToValueAtTime(.0001, a.currentTime + .18); o.connect(g).connect(a.destination); o.start(); o.stop(a.currentTime + .2);}catch(e){} }
+function wait(ms, id, fixed){ return new Promise(r => { const t0 = Date.now(); const tick = () => { if (id !== runId) return; if (paused) { timer = setTimeout(tick, 120); return; } if (Date.now() - t0 >= (fixed ? ms : ms / speed) || tick.skip) return r(); timer = setTimeout(tick, 60); }; resolveWait = () => { tick.skip = true; }; tick(); }); }
+function scrollDown(){ feed.scrollTop = feed.scrollHeight; }
+function stamp(){ const t = new Date(); return ''; }
+
+function bubble(x){
+  const row = document.createElement('div'); row.className = 'row' + (x.f === ME ? ' me' : '');
+  const b = document.createElement('div'); b.className = 'b' + (x.f === 'Meta AI' ? ' ai' : '');
+  let h = x.f === ME ? '' : '<span class="who" style="color:' + (COLORS[x.f]||'#333') + '">' + esc(x.f) + (x.f === 'Meta AI' ? ' ✦' : '') + '</span>';
+  if (x.fw) h += '<span class="fw">↪ Forwarded</span>';
+  if (x.img) h += '<div class="photo" style="background:' + (x.bg||'#eee') + '">' + x.img + '</div>' + (x.cap ? '<span class="cap">' + esc(x.cap) + '</span>' : '');
+  else if (x.vn) h += '<div class="vn"><span class="pl">▶</span><span class="wave">' + Array.from({length:26},(_,k)=>'<i style="height:' + (20 + Math.round(70*Math.abs(Math.sin(k*1.7+x.vn)))) + '%"></i>').join('') + '</span><span class="len">0:' + String(x.vn).padStart(2,'0') + '</span></div><span class="sub" hidden>' + esc(x.m) + '</span>';
+  else h += esc(x.m);
+  b.innerHTML = h; row.appendChild(b); feed.appendChild(row); scrollDown(); beep();
+  return b;
+}
+function speak(text, id){
+  return new Promise(r => {
+    if (!sound || !('speechSynthesis' in window)) return r(false);
+    try { const u = new SpeechSynthesisUtterance(text); const v = speechSynthesis.getVoices().find(v => /en-NG/i.test(v.lang)) || speechSynthesis.getVoices().find(v => /en-GB/i.test(v.lang)); if (v) u.voice = v; u.rate = Math.min(1.6, Math.max(0.85, speed)); u.onend = () => r(true); u.onerror = () => r(false); speechSynthesis.speak(u); } catch(e){ r(false); }
+  });
+}
+async function step(x, id){
+  const len = (x.m || x.cap || '').length;
+  if (x.day){ const d = document.createElement('div'); d.className = 'day'; d.textContent = x.day; feed.appendChild(d); scrollDown(); return wait(700, id); }
+  if (x.wait) return wait(x.wait, id);
+  if (x.sys){
+    const d = document.createElement('div'); d.className = 'sys' + (x.sys === 'THE END' ? ' end' : ''); d.textContent = x.sys; feed.appendChild(d); scrollDown();
+    let m;
+    if ((m = x.sys.match(/^(.+) left$/)) || (m = x.sys.match(/removed (.+)$/))) members = members.filter(n => n !== m[1]);
+    if ((m = x.sys.match(/added (.+)$/)) && !members.includes(m[1])) members.push(m[1]);
+    setMembers(); return wait(1300, id);
+  }
+  if (x.ghost){ typing(x.ghost); await wait(2200, id); setMembers(); return wait(700, id); }
+  if (x.del){ typing(x.del); await wait(1200, id); setMembers(); const b = bubble({f:x.del, m:'🚫 This message was deleted'}); b.classList.add('del'); return wait(1200, id); }
+  if (x.poll){
+    const p = document.createElement('div'); p.className = 'poll'; p.innerHTML = '<b>📊 ' + esc(x.poll) + '</b>' + x.o.map((o,k) => '<button data-k="' + k + '">' + esc(o) + '</button>').join('') + '<small>Your vote is just for you. The story continues in a moment.</small>';
+    feed.appendChild(p); scrollDown();
+    const prev = store.get('poll-' + ep.n, null);
+    p.querySelectorAll('button').forEach(b => { if (+b.dataset.k === prev) b.classList.add('pick'); b.onclick = () => { p.querySelectorAll('button').forEach(z => z.classList.remove('pick')); b.classList.add('pick'); store.set('poll-' + ep.n, +b.dataset.k); resolveWait && resolveWait(); }; });
+    return wait(12000, id, true);
+  }
+  // a message
+  if (x.f !== 'Meta AI' || true){ typing(x.vn ? x.f + ' is recording' : x.f); }
+  await wait(Math.min(3000, Math.max(900, 500 + len * 20)) * (x.vn ? .7 : 1), id);
+  if (id !== runId) return;
+  setMembers();
+  const b = bubble(x);
+  if (x.vn){
+    const vn = b.querySelector('.vn'), sub = b.querySelector('.sub');
+    vn.classList.add('play'); sub.hidden = false; scrollDown();
+    const spoke = await speak(x.m, id);
+    if (!spoke) await wait(Math.min(9000, 1400 + len * 38), id);
+    vn.classList.remove('play'); vn.querySelector('.pl').textContent = '✓';
+    return wait(500, id);
+  }
+  return wait(Math.min(2600, Math.max(700, 350 + len * 17)), id);
+}
+function showTitle(){
+  const c = document.getElementById('title');
+  c.innerHTML = '<span class="k">Episode ' + ep.n + ' of 12</span><h2>' + ep.title + '</h2><p>' + ep.logline + '</p><div class="by">A group chat series by <b>Dr. Olusola Sayeed Ayoola</b><br><small>Founder &amp; CEO, RAIN</small></div>';
+  c.classList.add('on');
+}
+function showEnd(){
+  seen.add(ep.n); store.set('seen', [...seen]);
+  const c = document.getElementById('end'), next = EPISODES[ep.n];
+  const msg = 'We just watched "' + ep.title + '" — Meet the Bakares, a group chat series by Dr. Olusola Sayeed Ayoola.\n\nAround the Table: ' + ep.talk;
+  c.innerHTML = '<span class="k">End of Episode ' + ep.n + '</span><h2>Around the Table</h2><div class="talk">' + esc(ep.talk) + '</div><div class="acts">' +
+    (next ? '<button class="btn" id="nx">Next: ' + esc(next.title) + '</button>' : '<button class="btn" id="nx">Back to all episodes</button>') +
+    '<a class="btn alt" target="_blank" rel="noopener" href="https://wa.me/?text=' + encodeURIComponent(msg) + '">Send to our family group</a></div>' +
+    '<div class="by">Meet the Bakares · created by <b>Dr. Olusola Sayeed Ayoola</b></div>';
+  c.classList.add('on');
+  document.getElementById('nx').onclick = () => next ? play(next.n) : close();
+}
+async function play(n){
+  runId++; const id = runId; clearTimeout(timer); if ('speechSynthesis' in window) speechSynthesis.cancel();
+  ep = EPISODES[n - 1]; i = 0; paused = false; feed.innerHTML = ''; members = BASE.slice(); setMembers();
+  document.getElementById('end').classList.remove('on');
+  document.getElementById('home').style.display = 'none'; document.getElementById('player').classList.add('on');
+  document.getElementById('pp').textContent = '❚❚'; document.getElementById('prog').style.width = '0';
+  history.replaceState(null, '', '#ep-' + n);
+  showTitle(); await wait(3500, id, true); if (id !== runId) return;
+  document.getElementById('title').classList.remove('on');
+  for (i = 0; i < ep.s.length; i++){
+    if (id !== runId) return;
+    await step(ep.s[i], id);
+    document.getElementById('prog').style.width = ((i + 1) / ep.s.length * 100) + '%';
+  }
+  if (id === runId) { await wait(1200, id, true); if (id === runId) showEnd(); }
+}
+function close(){ runId++; clearTimeout(timer); if ('speechSynthesis' in window) speechSynthesis.cancel(); document.getElementById('player').classList.remove('on'); document.getElementById('home').style.display = ''; history.replaceState(null, '', '#'); drawHome(); }
+document.getElementById('back').onclick = close;
+document.getElementById('pp').onclick = () => { paused = !paused; document.getElementById('pp').textContent = paused ? '▶' : '❚❚'; if ('speechSynthesis' in window) paused ? speechSynthesis.pause() : speechSynthesis.resume(); };
+const spdBtn = document.getElementById('spd');
+const showSpeed = () => { spdBtn.textContent = speed + '×'; spdBtn.setAttribute('aria-label', 'Playback speed ' + speed + '×'); };
+showSpeed();
+spdBtn.onclick = () => { speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length]; store.set('speed', speed); showSpeed(); };
+document.getElementById('snd').onclick = () => { sound = !sound; store.set('sound', sound); document.getElementById('snd').setAttribute('aria-pressed', sound); if (!sound && 'speechSynthesis' in window) speechSynthesis.cancel(); };
+document.getElementById('skip').onclick = () => { if ('speechSynthesis' in window) speechSynthesis.cancel(); resolveWait && resolveWait(); };
+document.addEventListener('keydown', e => { if (!document.getElementById('player').classList.contains('on')) return; if (e.key === ' ') { e.preventDefault(); document.getElementById('pp').click(); } if (e.key === 'ArrowRight') document.getElementById('skip').click(); if (e.key === 'Escape') close(); });
+const h = location.hash.match(/^#ep-(\d+)$/); if (h && EPISODES[+h[1]-1]) play(+h[1]);
+</script>
+</body>
+</html>
