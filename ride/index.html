@@ -583,6 +583,20 @@ img { display: block; max-width: 100%; }
       <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
     </a>
 
+    <a class="mod-card" href="RIDE_ControlSystems.html" target="_blank" data-cat="control ai" data-search="control systems transfer function PID open loop closed loop step response impulse block diagram delay disturbance noise stability bode root locus routh poles zeros overshoot settling rise time saturation">
+      <div class="mod-card-thumb">
+        <canvas id="c-control"></canvas>
+        <span class="mod-card-cat">Control Systems</span>
+        <span class="mod-card-status status-ready"><span class="status-dot status-dot-ready"></span>Ready</span>
+      </div>
+      <div class="mod-card-body">
+        <div class="mod-card-title"><span class="icon">🎛️</span>Control Systems Lab</div>
+        <div class="mod-card-desc">Type any transfer function, build the block diagram, and compare open and closed loop. PID tuning, delay, saturation, disturbances and noise, with step and impulse responses, Bode, root locus and Routh stability.</div>
+        <div class="mod-card-tags"><span class="tag">PID</span><span class="tag">Transfer Functions</span><span class="tag">Bode</span><span class="tag">Root Locus</span></div>
+      </div>
+      <div class="mod-card-footer"><span class="open-link">Open module</span><span class="mod-card-meta">v1.0</span></div>
+    </a>
+
     <a class="mod-card" href="RIDE_Traffic.html" target="_blank" data-cat="planning ai" data-search="autonomous vehicle traffic city road smart lights pedestrians IDM car following">
       <div class="mod-card-thumb">
         <canvas id="c-traffic"></canvas>
@@ -1321,6 +1335,33 @@ function scrollToModules() {
 function scrollToHow() {
   document.getElementById('how').scrollIntoView({behavior:'smooth'});
 }
+</script>
+<script>
+(function(){
+  const cv = document.getElementById('c-control'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const sys = [{z:0.25,wn:3,c:'#f97316'},{z:0.6,wn:3,c:'#3b82f6'},{z:1.0,wn:3,c:'#22c55e'}];
+  const y = (t,z,wn) => { if (z >= 1) return 1 - Math.exp(-wn*t)*(1 + wn*t);
+    const wd = wn*Math.sqrt(1-z*z); return 1 - Math.exp(-z*wn*t)*(Math.cos(wd*t) + z/Math.sqrt(1-z*z)*Math.sin(wd*t)); };
+  function draw(ms){
+    const r = cv.parentElement.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+    if (cv.width !== Math.round(r.width*d)){ cv.width = Math.round(r.width*d); cv.height = Math.round(r.height*d); }
+    const W = r.width, H = r.height; ctx.setTransform(d,0,0,d,0,0);
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,W,H);
+    const L = 14, R = W-12, T = 18, B = H-16, Tmax = 5, Ymax = 1.6;
+    const X = t => L + t/Tmax*(R-L), Y = v => B - v/Ymax*(B-T);
+    ctx.strokeStyle = '#eef2f7'; ctx.lineWidth = 1;
+    for (let i=1;i<5;i++){ ctx.beginPath(); ctx.moveTo(X(i),T); ctx.lineTo(X(i),B); ctx.stroke(); }
+    ctx.strokeStyle = '#94a3b8'; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(L,Y(1)); ctx.lineTo(R,Y(1)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = '#cbd5e1'; ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,B); ctx.lineTo(R,B); ctx.stroke();
+    const tEnd = ((ms/1000) % 6.5)/5*Tmax;
+    sys.forEach(s => { ctx.strokeStyle = s.c; ctx.lineWidth = 2.5; ctx.beginPath();
+      for (let t=0; t<=Math.min(tEnd,Tmax); t+=0.02){ const px = X(t), py = Y(y(t,s.z,s.wn)); t ? ctx.lineTo(px,py) : ctx.moveTo(px,py); }
+      ctx.stroke(); });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
 </script>
 </body>
 </html>
